@@ -1,9 +1,7 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 <a href="<?= base_url('compliance/inventory/detail/' . $inventory['id']) ?>"
-  class="btn btn-sm btn-secondary mb-3">
-  ← Kembali
-</a>
+  class="btn btn-sm btn-secondary mb-3">← Kembali</a>
 
 <h5>Checklist: <?= esc($inventory['item_display_name']) ?></h5>
 
@@ -12,53 +10,66 @@
   • Key: <code><?= esc($period_key) ?></code>
 </p>
 
-<?php if (empty($questions)): ?>
-  <div class="alert alert-warning">
-    Tidak ada checklist untuk periode ini.
+<?php if ($isLocked): ?>
+  <div class="alert alert-success">
+    🔒 Checklist untuk periode ini <strong>sudah diisi</strong>.
   </div>
 <?php else: ?>
 
-  <form action="<?= base_url('compliance/checklist/submit') ?>" method="post" enctype="multipart/form-data">
-    <?= csrf_field() ?>
+  <?php if (empty($questions)): ?>
+    <div class="alert alert-warning">
+      Tidak ada checklist untuk periode ini.
+    </div>
+  <?php else: ?>
+    <form method="post" action="<?= base_url('compliance/checklist/submit') ?>">
+      <?= csrf_field() ?>
 
-    <input type="hidden" name="inventory_id" value="<?= $inventory['id'] ?>">
-    <input type="hidden" name="item_type_id" value="<?= $inventory['item_type_id'] ?>">
-    <input type="hidden" name="frequency" value="<?= $frequency ?>">
-    <input type="hidden" name="period_key" value="<?= $period_key ?>">
+      <!-- HIDDEN WAJIB -->
+      <input type="hidden" name="inventory_id" value="<?= $inventory['id'] ?>">
+      <input type="hidden" name="item_type_id" value="<?= $inventory['item_type_id'] ?>">
+      <input type="hidden" name="frequency" value="<?= $frequency ?>">
+      <input type="hidden" name="period_key" value="<?= $period_key ?>">
 
-
-    <table class="table table-bordered table-sm">
-      <thead>
-        <tr>
-          <th>Pertanyaan</th>
-          <th width="120">Status</th>
-          <th>Keterangan</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($questions as $q): ?>
+      <table class="table table-bordered">
+        <thead class="table-light">
           <tr>
-            <td><?= esc($q['question']) ?></td>
-            <td class="text-center">
-              <input type="radio"
-                name="questions[<?= $q['id'] ?>]"
-                value="ok"
-                required> ✅
-            </td>
-            <td class="text-center">
-              <input type="radio"
-                name="questions[<?= $q['id'] ?>]"
-                value="na"> ❌
-            </td>
+            <th>Pertanyaan</th>
+            <th class="text-center" width="120">OK</th>
+            <th class="text-center" width="120">NOT OK</th>
           </tr>
-        <?php endforeach; ?>
+        </thead>
+        <tbody>
 
-      </tbody>
-    </table>
+          <?php foreach ($questions as $q): ?>
+            <tr>
+              <td><?= esc($q['question']) ?></td>
 
-    <button class="btn btn-success">Simpan Checklist</button>
-  </form>
+              <td class="text-center">
+                <input type="radio"
+                  name="questions[<?= $q['id'] ?>]"
+                  value="ok"
+                  required>
+              </td>
 
+              <td class="text-center">
+                <input type="radio"
+                  name="questions[<?= $q['id'] ?>]"
+                  value="not_ok"
+                  required>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+
+        </tbody>
+      </table>
+
+      <button class="btn btn-success">
+        ✔ Simpan Checklist
+      </button>
+    </form>
+
+
+  <?php endif; ?>
 <?php endif; ?>
 
 

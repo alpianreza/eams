@@ -3,6 +3,13 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h5 class="mb-0">Compliance Inventory</h5>
+  <?php foreach ($inventories as $inv): ?>
+    <td>
+      <?= date('d M Y H:i', strtotime($inv['created_at'])) ?>
+    </td>
+  <?php endforeach; ?>
+
+
 
   <?php if ($isWritable ?? false): ?>
     <button class="btn btn-primary btn-sm"

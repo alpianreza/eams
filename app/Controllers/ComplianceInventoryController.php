@@ -242,6 +242,35 @@ class ComplianceInventoryController extends BaseController
     return $this->response->setJSON($items);
   }
 
+  private function generatePeriod(string $frequency): array
+  {
+    $today = date('Y-m-d');
+
+    if ($frequency === 'daily') {
+      return [
+        'period_key' => $today,
+        'label'      => $today
+      ];
+    }
+
+    if ($frequency === 'weekly') {
+      return [
+        'period_key' => date('o-\WW'), // contoh: 2026-W04
+        'label'      => 'Week ' . date('W') . ' ' . date('Y')
+      ];
+    }
+
+    if ($frequency === 'monthly') {
+      return [
+        'period_key' => date('Y-m'),
+        'label'      => date('F Y') // January 2026
+      ];
+    }
+
+    throw new \Exception('Invalid checklist frequency');
+  }
+
+
   public function checklist($inventoryId)
   {
     $inventory = $this->inventoryModel
@@ -249,33 +278,64 @@ class ComplianceInventoryController extends BaseController
             compliance_inventory.*,
             asset_item_types.name AS item_display_name
         ')
-      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->where('compliance_inventory.id', $inventoryId)
       ->first();
 
     if (!$inventory) {
       throw new \CodeIgniter\Exceptions\PageNotFoundException();
     }
+    $checklistMasterModel = new \App\Models\ChecklistMasterModel();
 
-    // Ambil pertanyaan WEEKLY saja
+    $frequencyRow = $checklistMasterModel
+      ->select('frequency')
+      ->where('item_type_id', $inventory['item_type_id'])
+      ->where('active', 1)
+      ->groupBy('frequency')
+      ->first();
+
+    if (!$frequencyRow) {
+      return redirect()->back()
+        ->with('error', 'Checklist belum diatur untuk item ini.');
+    }
+
+    $frequency = $frequencyRow['frequency'];
+
+    // === GENERATE PERIOD KEY (SEMENTARA, FIXED LOGIC) ===
+    $today = date('Y-m-d');
+    if ($frequency === 'daily') {
+      $periodKey = $today;
+    } elseif ($frequency === 'weekly') {
+      $periodKey = date('o-\WW'); // contoh: 2026-W04
+    } else { // monthly
+      $periodKey = date('Y-m'); // 2026-01
+    }
+
+    // === CEK SUDAH ADA CHECKLIST ATAU BELUM ===
+    $logModel = new \App\Models\ChecklistLogModel();
+    $exists = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->where('period_key', $periodKey)
+      ->first();
+
+    $isLocked = $exists ? true : false;
+
+    // === AMBIL PERTANYAAN SESUAI ITEM TYPE & FREQUENCY ===
     $questions = (new \App\Models\ChecklistMasterModel())
       ->where('item_type_id', $inventory['item_type_id'])
-      ->where('frequency', 'weekly')
+      ->where('frequency', $frequency)
       ->where('active', 1)
       ->findAll();
-
-    // Hitung period WEEK sekarang
-    $week = date('W');
-    $year = date('Y');
-    $periodKey = $year . '-W' . str_pad($week, 2, '0', STR_PAD_LEFT);
 
     return view('compliance/checklist/index', [
       'inventory'  => $inventory,
       'questions'  => $questions,
-      'frequency'  => 'weekly',
-      'period_key' => $periodKey
+      'frequency'  => $frequency,
+      'period_key' => $periodKey,
+      'isLocked'   => $isLocked
     ]);
   }
+
 
 
   public function submitChecklist()
@@ -283,8 +343,14 @@ class ComplianceInventoryController extends BaseController
     $inventoryId = $this->request->getPost('inventory_id');
     $periodKey   = $this->request->getPost('period_key');
     $frequency   = $this->request->getPost('frequency');
+    $itemTypeId  = $this->request->getPost('item_type_id');
+    $questions   = $this->request->getPost('questions');
+
+    $user = session()->get('username') ?? 'system';
 
     $logModel = new \App\Models\ChecklistLogModel();
+
+    // 🔒 LOCK PER PERIODE
     $exists = $logModel
       ->where('inventory_id', $inventoryId)
       ->where('period_key', $periodKey)
@@ -292,23 +358,19 @@ class ComplianceInventoryController extends BaseController
 
     if ($exists) {
       return redirect()->back()
-        ->with('error', 'Checklist untuk periode ini sudah diisi.');
+        ->with('error', 'Checklist periode ini sudah diisi.');
     }
 
-    $questions = $this->request->getPost('questions');
-    $user      = session()->get('name');
-
     foreach ($questions as $templateId => $answer) {
-
       $logModel->insert([
-        'inventory_id'           => $inventoryId,
-        'item_type_id'           => $this->request->getPost('item_type_id'),
-        'checklist_template_id'  => $templateId,
-        'check_date'             => date('Y-m-d'),
-        'period_key'             => $periodKey,
-        'status'                 => $answer, // ok / na
-        'checked_by'             => $user,
-        'created_at'             => date('Y-m-d H:i:s')
+        'inventory_id'         => $inventoryId,
+        'item_type_id'         => $itemTypeId,
+        'checklist_template_id' => $templateId,
+        'check_date'           => date('Y-m-d'),
+        'period_key'           => $periodKey,
+        'status'               => $answer, // ok / not_ok
+        'checked_by'           => $user,
+        'created_at'           => date('Y-m-d H:i:s')
       ]);
     }
 
