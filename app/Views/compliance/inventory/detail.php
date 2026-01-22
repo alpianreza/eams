@@ -48,7 +48,7 @@
     <table class="table table-sm table-bordered">
       <tr>
         <th width="30%">Nama Item</th>
-        <td><?= esc($inventory['item_name']) ?></td>
+        <td><?= esc($inventory['item_display_name']) ?></td>
       </tr>
       <tr>
         <th>No Inventaris</th>
@@ -87,12 +87,56 @@
   </div>
 </div>
 
-<a href="<?= base_url('compliance/inventory/' . $inventory['id'] . '/checklist') ?>"
-  class="btn btn-sm btn-success">
-  Mulai Checklist
+<a href="<?= base_url('compliance/checklist/' . $inventory['id']) ?>"
+  class="btn btn-success">
+  ✔ Checklist
 </a>
 
+<h5 class="mt-4">Checklist</h5>
 
+<table class="table table-bordered table-sm align-middle">
+  <thead class="table-light">
+    <tr>
+      <th width="20%">Tanggal</th>
+      <th width="15%">Periode</th>
+      <th width="15%">Status</th>
+      <th>Dicek Oleh</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <?php if (empty($checklists)): ?>
+      <tr>
+        <td colspan="4" class="text-center text-muted">
+          Belum ada checklist
+        </td>
+      </tr>
+    <?php else: ?>
+
+      <?php foreach ($checklists as $c): ?>
+        <tr>
+          <td><?= esc($c['check_date']) ?></td>
+
+          <td class="text-uppercase text-center">
+            <?= esc($c['period_key']) ?>
+          </td>
+
+          <td class="text-center">
+            <?php if ($c['final_status'] === 'ok'): ?>
+              <span class="badge bg-success">OK</span>
+            <?php else: ?>
+              <span class="badge bg-danger">NOT OK</span>
+            <?php endif; ?>
+          </td>
+
+          <td><?= esc($c['checked_by'] ?? '-') ?></td>
+        </tr>
+      <?php endforeach; ?>
+
+    <?php endif; ?>
+
+  </tbody>
+</table>
 
 
 <?= $this->endSection() ?>

@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\ComplianceInventoryModel;
 use App\Models\InventoryCategoryModel;
 use App\Models\AreaModel;
-use App\Models\AssetItemTypeModel;
+
 
 class ComplianceInventoryController extends BaseController
 {
@@ -140,8 +140,6 @@ class ComplianceInventoryController extends BaseController
       'photo'            => $photoName
     ];
 
-
-
     $this->inventoryModel->insert($data);
     $inventoryId = $this->inventoryModel->getInsertID();
 
@@ -178,14 +176,33 @@ class ComplianceInventoryController extends BaseController
       ->where('compliance_inventory.id', $id)
       ->first();
 
-    if (! $inventory) {
+    if (!$inventory) {
       throw new \CodeIgniter\Exceptions\PageNotFoundException('Inventory tidak ditemukan');
     }
 
+    // ✅ SUMMARY CHECKLIST PER PERIODE
+    $checklists = (new \App\Models\ChecklistLogModel())
+      ->select('
+            check_date,
+            period_key,
+            checked_by,
+            CASE
+              WHEN SUM(status = "ng") > 0 THEN "ng"
+              ELSE "ok"
+            END AS final_status
+        ')
+      ->where('inventory_id', $id)
+      ->groupBy('period_key, check_date, checked_by')
+      ->orderBy('check_date', 'DESC')
+      ->findAll();
+
     return view('compliance/inventory/detail', [
-      'inventory' => $inventory
+      'inventory'  => $inventory,
+      'checklists' => $checklists
     ]);
   }
+
+
 
   public function updatePhoto($id)
   {
@@ -223,5 +240,80 @@ class ComplianceInventoryController extends BaseController
       ->findAll();
 
     return $this->response->setJSON($items);
+  }
+
+  public function checklist($inventoryId)
+  {
+    $inventory = $this->inventoryModel
+      ->select('
+            compliance_inventory.*,
+            asset_item_types.name AS item_display_name
+        ')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('compliance_inventory.id', $inventoryId)
+      ->first();
+
+    if (!$inventory) {
+      throw new \CodeIgniter\Exceptions\PageNotFoundException();
+    }
+
+    // Ambil pertanyaan WEEKLY saja
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', $inventory['item_type_id'])
+      ->where('frequency', 'weekly')
+      ->where('active', 1)
+      ->findAll();
+
+    // Hitung period WEEK sekarang
+    $week = date('W');
+    $year = date('Y');
+    $periodKey = $year . '-W' . str_pad($week, 2, '0', STR_PAD_LEFT);
+
+    return view('compliance/checklist/index', [
+      'inventory'  => $inventory,
+      'questions'  => $questions,
+      'frequency'  => 'weekly',
+      'period_key' => $periodKey
+    ]);
+  }
+
+
+  public function submitChecklist()
+  {
+    $inventoryId = $this->request->getPost('inventory_id');
+    $periodKey   = $this->request->getPost('period_key');
+    $frequency   = $this->request->getPost('frequency');
+
+    $logModel = new \App\Models\ChecklistLogModel();
+    $exists = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->where('period_key', $periodKey)
+      ->first();
+
+    if ($exists) {
+      return redirect()->back()
+        ->with('error', 'Checklist untuk periode ini sudah diisi.');
+    }
+
+    $questions = $this->request->getPost('questions');
+    $user      = session()->get('name');
+
+    foreach ($questions as $templateId => $answer) {
+
+      $logModel->insert([
+        'inventory_id'           => $inventoryId,
+        'item_type_id'           => $this->request->getPost('item_type_id'),
+        'checklist_template_id'  => $templateId,
+        'check_date'             => date('Y-m-d'),
+        'period_key'             => $periodKey,
+        'status'                 => $answer, // ok / na
+        'checked_by'             => $user,
+        'created_at'             => date('Y-m-d H:i:s')
+      ]);
+    }
+
+    return redirect()
+      ->to(base_url('compliance/inventory/detail/' . $inventoryId))
+      ->with('success', 'Checklist berhasil disimpan.');
   }
 }
