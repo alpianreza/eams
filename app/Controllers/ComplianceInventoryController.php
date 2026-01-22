@@ -182,15 +182,7 @@ class ComplianceInventoryController extends BaseController
 
     // ✅ SUMMARY CHECKLIST PER PERIODE
     $checklists = (new \App\Models\ChecklistLogModel())
-      ->select('
-            check_date,
-            period_key,
-            checked_by,
-            CASE
-              WHEN SUM(status = "ng") > 0 THEN "ng"
-              ELSE "ok"
-            END AS final_status
-        ')
+      ->select('check_date, period_key, checked_by, status')
       ->where('inventory_id', $id)
       ->groupBy('period_key, check_date, checked_by')
       ->orderBy('check_date', 'DESC')
@@ -242,35 +234,6 @@ class ComplianceInventoryController extends BaseController
     return $this->response->setJSON($items);
   }
 
-  private function generatePeriod(string $frequency): array
-  {
-    $today = date('Y-m-d');
-
-    if ($frequency === 'daily') {
-      return [
-        'period_key' => $today,
-        'label'      => $today
-      ];
-    }
-
-    if ($frequency === 'weekly') {
-      return [
-        'period_key' => date('o-\WW'), // contoh: 2026-W04
-        'label'      => 'Week ' . date('W') . ' ' . date('Y')
-      ];
-    }
-
-    if ($frequency === 'monthly') {
-      return [
-        'period_key' => date('Y-m'),
-        'label'      => date('F Y') // January 2026
-      ];
-    }
-
-    throw new \Exception('Invalid checklist frequency');
-  }
-
-
   public function checklist($inventoryId)
   {
     $inventory = $this->inventoryModel
@@ -302,14 +265,8 @@ class ComplianceInventoryController extends BaseController
     $frequency = $frequencyRow['frequency'];
 
     // === GENERATE PERIOD KEY (SEMENTARA, FIXED LOGIC) ===
-    $today = date('Y-m-d');
-    if ($frequency === 'daily') {
-      $periodKey = $today;
-    } elseif ($frequency === 'weekly') {
-      $periodKey = date('o-\WW'); // contoh: 2026-W04
-    } else { // monthly
-      $periodKey = date('Y-m'); // 2026-01
-    }
+    $periodKey = generate_period_key($frequency);
+    $periodLabel = period_label($frequency, $periodKey);
 
     // === CEK SUDAH ADA CHECKLIST ATAU BELUM ===
     $logModel = new \App\Models\ChecklistLogModel();
@@ -332,6 +289,7 @@ class ComplianceInventoryController extends BaseController
       'questions'  => $questions,
       'frequency'  => $frequency,
       'period_key' => $periodKey,
+      'period_label' => $periodLabel,
       'isLocked'   => $isLocked
     ]);
   }
@@ -368,7 +326,7 @@ class ComplianceInventoryController extends BaseController
         'checklist_template_id' => $templateId,
         'check_date'           => date('Y-m-d'),
         'period_key'           => $periodKey,
-        'status'               => $answer, // ok / not_ok
+        'status'               => $answer,
         'checked_by'           => $user,
         'created_at'           => date('Y-m-d H:i:s')
       ]);

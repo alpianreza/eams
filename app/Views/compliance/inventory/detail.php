@@ -122,7 +122,7 @@
           </td>
 
           <td class="text-center">
-            <?php if ($c['final_status'] === 'ok'): ?>
+            <?php if ($c['status'] === 'ok'): ?>
               <span class="badge bg-success">OK</span>
             <?php else: ?>
               <span class="badge bg-danger">NOT OK</span>

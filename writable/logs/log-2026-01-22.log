@@ -2208,3 +2208,248 @@ DEBUG - 2026-01-22 07:22:06 --> Session: Class initialized using 'CodeIgniter\Se
 DEBUG - 2026-01-22 07:23:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-01-22 07:25:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-01-22 07:25:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:28:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:28:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:29:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:29:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:29:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:29:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:29:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:29:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:29:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:29:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:44:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:44:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:44:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:45:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:46:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:53:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:53:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:53:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:53:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:54:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:55:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:55:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:55:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:55:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:55:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 07:55:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:03:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:05:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:05:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:05:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:05:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:05:27 --> ErrorException: Undefined array key "status"
+[Method: GET, Route: compliance/inventory/detail/36]
+in APPPATH\Views\compliance\inventory\detail.php on line 125.
+ 1 APPPATH\Views\compliance\inventory\detail.php(125): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "status"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php', 125)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/detail', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(199): view('compliance/inventory/detail', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('36')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:11:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:11:14 --> ErrorException: Undefined array key "status"
+[Method: GET, Route: compliance/inventory/detail/36]
+in APPPATH\Views\compliance\inventory\detail.php on line 125.
+ 1 APPPATH\Views\compliance\inventory\detail.php(125): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "status"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php', 125)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/detail', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(199): view('compliance/inventory/detail', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('36')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:11:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:11:19 --> ErrorException: Undefined array key "status"
+[Method: GET, Route: compliance/inventory/detail/38]
+in APPPATH\Views\compliance\inventory\detail.php on line 125.
+ 1 APPPATH\Views\compliance\inventory\detail.php(125): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "status"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php', 125)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/detail', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(199): view('compliance/inventory/detail', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('38')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:11:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:11:26 --> ErrorException: Undefined array key "status"
+[Method: GET, Route: compliance/inventory/detail/37]
+in APPPATH\Views\compliance\inventory\detail.php on line 125.
+ 1 APPPATH\Views\compliance\inventory\detail.php(125): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "status"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php', 125)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/detail', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(199): view('compliance/inventory/detail', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('37')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:11:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:11:37 --> ErrorException: Undefined array key "status"
+[Method: GET, Route: compliance/inventory/detail/37]
+in APPPATH\Views\compliance\inventory\detail.php on line 125.
+ 1 APPPATH\Views\compliance\inventory\detail.php(125): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "status"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php', 125)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/detail', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(199): view('compliance/inventory/detail', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('37')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:11:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:11:50 --> ErrorException: Undefined array key "status"
+[Method: GET, Route: compliance/inventory/detail/38]
+in APPPATH\Views\compliance\inventory\detail.php on line 125.
+ 1 APPPATH\Views\compliance\inventory\detail.php(125): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "status"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php', 125)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/detail', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(199): view('compliance/inventory/detail', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('38')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:11:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:11:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:11:58 --> CodeIgniter\Exceptions\BadMethodCallException: Call to undefined method App\Models\ComplianceChecklistLogModel::getLastChecksByInventory
+[Method: GET, Route: compliance/dashboard]
+in SYSTEMPATH\Model.php on line 927.
+ 1 APPPATH\Controllers\ComplianceDashboardController.php(45): CodeIgniter\Model->__call('getLastChecksByInventory', [...])
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceDashboardController->index()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceDashboardController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:12:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:12:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:12:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:12:19 --> ErrorException: Undefined array key "status"
+[Method: GET, Route: compliance/inventory/detail/36]
+in APPPATH\Views\compliance\inventory\detail.php on line 125.
+ 1 APPPATH\Views\compliance\inventory\detail.php(125): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "status"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php', 125)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/detail', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(199): view('compliance/inventory/detail', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('36')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:12:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:12:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:12:23 --> ErrorException: Undefined array key "status"
+[Method: GET, Route: compliance/inventory/detail/37]
+in APPPATH\Views\compliance\inventory\detail.php on line 125.
+ 1 APPPATH\Views\compliance\inventory\detail.php(125): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "status"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php', 125)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\detail.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/detail', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(199): view('compliance/inventory/detail', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('37')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:20:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:26:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:26:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:27:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:27:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:27:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:32:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:36:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:36:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:37:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:37:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:37:57 --> ErrorException: Undefined variable $period_label
+[Method: GET, Route: compliance/checklist/37]
+in APPPATH\Views\compliance\checklist\index.php on line 12.
+ 1 APPPATH\Views\compliance\checklist\index.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $period_label', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\checklist\\index.php', 12)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\checklist\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/checklist/index', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(315): view('compliance/checklist/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('37')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:38:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:39:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:39:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:39:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:39:51 --> ErrorException: Undefined variable $period_label
+[Method: GET, Route: compliance/checklist/36]
+in APPPATH\Views\compliance\checklist\index.php on line 12.
+ 1 APPPATH\Views\compliance\checklist\index.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $period_label', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\checklist\\index.php', 12)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\checklist\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/checklist/index', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(315): view('compliance/checklist/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('36')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:39:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:46:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:47:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:47:15 --> ErrorException: Undefined variable $period_label
+[Method: GET, Route: compliance/checklist/36]
+in APPPATH\Views\compliance\checklist\index.php on line 12.
+ 1 APPPATH\Views\compliance\checklist\index.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $period_label', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\checklist\\index.php', 12)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\checklist\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/checklist/index', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(315): view('compliance/checklist/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('36')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:47:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:48:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:48:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:48:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-22 08:48:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-22 08:48:20 --> ErrorException: Undefined variable $period_label
+[Method: GET, Route: compliance/checklist/36]
+in APPPATH\Views\compliance\checklist\index.php on line 12.
+ 1 APPPATH\Views\compliance\checklist\index.php(12): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $period_label', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\checklist\\index.php', 12)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\checklist\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/checklist/index', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(287): view('compliance/checklist/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('36')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-22 08:52:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

@@ -1,23 +1,47 @@
 <?php
 
-function get_period_key(string $frequency, ?string $date = null): string
-{
-  $dt = new DateTime($date ?? 'now');
+if (!function_exists('generate_period_key')) {
+  function generate_period_key(string $frequency, ?string $date = null): string
+  {
+    $date = $date ?? date('Y-m-d');
 
-  switch ($frequency) {
+    if ($frequency === 'daily') {
+      return $date;
+    }
 
-    case 'daily':
-      return $dt->format('Y-m-d');
+    if ($frequency === 'weekly') {
+      return date('o-\WW', strtotime($date));
+    }
 
-    case 'weekly':
-      // minggu ke-n DALAM BULAN
-      $weekOfMonth = ceil($dt->format('j') / 7); // tanggal / 7
-      return $dt->format('Y-m') . '-W' . $weekOfMonth;
+    if ($frequency === 'monthly') {
+      return date('Y-m', strtotime($date));
+    }
 
-    case 'monthly':
-      return $dt->format('Y-m');
+    throw new Exception('Invalid frequency');
+  }
+}
 
-    default:
-      throw new InvalidArgumentException('Invalid frequency');
+if (!function_exists('period_label')) {
+  function period_label(string $frequency, string $periodKey): string
+  {
+    if ($frequency === 'daily') {
+      return date('d F Y (l)', strtotime($periodKey));
+    }
+
+    if ($frequency === 'weekly') {
+      // contoh periodKey: 2026-W04
+      [$year, $week] = explode('-W', $periodKey);
+
+      $date = new DateTime();
+      $date->setISODate((int)$year, (int)$week);
+
+      return 'Minggu ke-' . (int)$week . ' • ' . $date->format('F Y');
+    }
+
+    if ($frequency === 'monthly') {
+      return date('F Y', strtotime($periodKey . '-01'));
+    }
+
+    return $periodKey;
   }
 }
