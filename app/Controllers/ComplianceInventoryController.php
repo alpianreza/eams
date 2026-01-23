@@ -264,9 +264,23 @@ class ComplianceInventoryController extends BaseController
 
     $frequency = $frequencyRow['frequency'];
 
-    // === GENERATE PERIOD KEY (SEMENTARA, FIXED LOGIC) ===
+    // === GENERATE PERIOD ===
     $periodKey = generate_period_key($frequency);
     $periodLabel = period_label($frequency, $periodKey);
+
+    $periods = generate_calendar_periods(
+      $frequency,
+      date('Y'),
+      date('m')
+    );
+
+    foreach ($periods as &$p) {
+      $p['status'] = resolve_period_status(
+        $inventory['id'],
+        $frequency,
+        $p['period_key']
+      );
+    }
 
     // === CEK SUDAH ADA CHECKLIST ATAU BELUM ===
     $logModel = new \App\Models\ChecklistLogModel();
@@ -276,6 +290,14 @@ class ComplianceInventoryController extends BaseController
       ->first();
 
     $isLocked = $exists ? true : false;
+
+    $isAllowed = is_period_allowed($frequency, $periodKey);
+
+    if (! $isAllowed) {
+      return redirect()->back()
+        ->with('error', 'Periode checklist ini sudah lewat dan tidak dapat diisi.');
+    }
+
 
     // === AMBIL PERTANYAAN SESUAI ITEM TYPE & FREQUENCY ===
     $questions = (new \App\Models\ChecklistMasterModel())
@@ -290,7 +312,9 @@ class ComplianceInventoryController extends BaseController
       'frequency'  => $frequency,
       'period_key' => $periodKey,
       'period_label' => $periodLabel,
-      'isLocked'   => $isLocked
+      'isLocked'   => $isLocked,
+      'isAllowed'  => $isAllowed,
+      'periods'    => $periods
     ]);
   }
 
@@ -302,13 +326,18 @@ class ComplianceInventoryController extends BaseController
     $periodKey   = $this->request->getPost('period_key');
     $frequency   = $this->request->getPost('frequency');
     $itemTypeId  = $this->request->getPost('item_type_id');
-    $questions   = $this->request->getPost('questions');
+    $questions = $this->request->getPost('questions');
+    $remarks   = $this->request->getPost('remarks') ?? [];
+    $photos    = $this->request->getFiles()['photos'] ?? [];
+    $user      = session()->get('name');
 
-    $user = session()->get('username') ?? 'system';
+    if (!is_array($questions)) {
+      return redirect()->back()->with('error', 'Checklist tidak valid.');
+    }
 
     $logModel = new \App\Models\ChecklistLogModel();
 
-    // 🔒 LOCK PER PERIODE
+    // === LOCK PER PERIODE ===
     $exists = $logModel
       ->where('inventory_id', $inventoryId)
       ->where('period_key', $periodKey)
@@ -316,19 +345,43 @@ class ComplianceInventoryController extends BaseController
 
     if ($exists) {
       return redirect()->back()
-        ->with('error', 'Checklist periode ini sudah diisi.');
+        ->with('error', 'Checklist untuk periode ini sudah diisi.');
     }
 
-    foreach ($questions as $templateId => $answer) {
+    foreach ($questions as $templateId => $status) {
+
+      // === VALIDASI NG ===
+      if ($status === 'ng') {
+
+        if (empty($remarks[$templateId])) {
+          return redirect()->back()
+            ->with('error', 'Checklist NOT OK wajib diisi catatan.');
+        }
+
+        if (!isset($photos[$templateId]) || !$photos[$templateId]->isValid()) {
+          return redirect()->back()
+            ->with('error', 'Checklist NOT OK wajib disertai foto.');
+        }
+      }
+
+      // === UPLOAD FOTO ===
+      $photoName = null;
+      if (isset($photos[$templateId]) && $photos[$templateId]->isValid()) {
+        $photoName = $photos[$templateId]->getRandomName();
+        $photos[$templateId]->move(FCPATH . 'uploads/checklist', $photoName);
+      }
+
       $logModel->insert([
-        'inventory_id'         => $inventoryId,
-        'item_type_id'         => $itemTypeId,
+        'inventory_id'          => $inventoryId,
+        'item_type_id'          => $itemTypeId,
         'checklist_template_id' => $templateId,
-        'check_date'           => date('Y-m-d'),
-        'period_key'           => $periodKey,
-        'status'               => $answer,
-        'checked_by'           => $user,
-        'created_at'           => date('Y-m-d H:i:s')
+        'check_date'            => date('Y-m-d'),
+        'period_key'            => $periodKey,
+        'status'                => $status,
+        'remark'                => $remarks[$templateId] ?? null,
+        'photo'                 => $photoName,
+        'checked_by'            => $user,
+        'created_at'            => date('Y-m-d H:i:s')
       ]);
     }
 

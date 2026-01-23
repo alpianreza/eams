@@ -1,0 +1,24 @@
+DEBUG - 2026-01-23 00:27:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-23 00:27:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-23 00:27:22 --> ErrorException: Undefined array key "key"
+[Method: GET, Route: compliance/checklist/36]
+in APPPATH\Controllers\ComplianceInventoryController.php on line 281.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(281): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "key"', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\ComplianceInventoryController.php', 281)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('36')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-23 00:32:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-23 00:32:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-23 00:32:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-23 01:50:26 --> ParseError: Unclosed '{' on line 3
+[Method: GET, Route: compliance/checklist/36]
+in APPPATH\Helpers\calender_period_helper.php on line 98.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(488): helper([...])
+ 2 SYSTEMPATH\Boot.php(287): CodeIgniter\Autoloader\Autoloader->loadHelpers()
+ 3 SYSTEMPATH\Boot.php(65): CodeIgniter\Boot::autoloadHelpers()
+ 4 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-23 00:50:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-23 00:50:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

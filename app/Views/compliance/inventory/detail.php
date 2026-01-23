@@ -105,35 +105,41 @@
   </thead>
   <tbody>
 
-    <?php if (empty($checklists)): ?>
-      <tr>
-        <td colspan="4" class="text-center text-muted">
-          Belum ada checklist
+    <?php foreach ($checklists as $c): ?>
+
+      <?php
+      $rowClass = '';
+      if ($c['status'] === 'ok') {
+        $rowClass = 'table-success';
+      } elseif ($c['status'] === 'ng') {
+        $rowClass = 'table-danger';
+      } else {
+        $rowClass = 'table-secondary';
+      }
+      ?>
+
+      <tr class="<?= $rowClass ?>">
+        <td><?= esc($c['check_date']) ?></td>
+
+        <td class="text-uppercase text-center">
+          <?= esc($c['period_key']) ?>
         </td>
+
+        <td class="text-center fw-semibold">
+          <?php if ($c['status'] === 'ok'): ?>
+            ✅ OK
+          <?php elseif ($c['status'] === 'ng'): ?>
+            ❌ NOT OK
+          <?php else: ?>
+            N/A
+          <?php endif; ?>
+        </td>
+
+        <td><?= esc($c['checked_by'] ?? '-') ?></td>
       </tr>
-    <?php else: ?>
 
-      <?php foreach ($checklists as $c): ?>
-        <tr>
-          <td><?= esc($c['check_date']) ?></td>
+    <?php endforeach; ?>
 
-          <td class="text-uppercase text-center">
-            <?= esc($c['period_key']) ?>
-          </td>
-
-          <td class="text-center">
-            <?php if ($c['status'] === 'ok'): ?>
-              <span class="badge bg-success">OK</span>
-            <?php else: ?>
-              <span class="badge bg-danger">NOT OK</span>
-            <?php endif; ?>
-          </td>
-
-          <td><?= esc($c['checked_by'] ?? '-') ?></td>
-        </tr>
-      <?php endforeach; ?>
-
-    <?php endif; ?>
 
   </tbody>
 </table>
