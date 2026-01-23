@@ -137,6 +137,7 @@ $routes->get(
     'ComplianceInventoryController::getItemTypesByCategory/$1'
 );
 $routes->post('compliance/checklist/store', 'ComplianceChecklistController::store');
+
 $routes->get(
     'compliance/checklist/(:num)',
     'ComplianceInventoryController::checklist/$1'

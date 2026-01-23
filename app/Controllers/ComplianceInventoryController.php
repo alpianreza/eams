@@ -5,6 +5,8 @@ namespace App\Controllers;
 use App\Models\ComplianceInventoryModel;
 use App\Models\InventoryCategoryModel;
 use App\Models\AreaModel;
+use App\Models\ChecklistLogModel;
+use App\Models\ChecklistMasterModel;
 
 
 class ComplianceInventoryController extends BaseController
@@ -238,17 +240,18 @@ class ComplianceInventoryController extends BaseController
   {
     $inventory = $this->inventoryModel
       ->select('
-            compliance_inventory.*,
-            asset_item_types.name AS item_display_name
-        ')
+        compliance_inventory.*,
+        asset_item_types.name AS item_display_name
+      ')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->where('compliance_inventory.id', $inventoryId)
       ->first();
 
-    if (!$inventory) {
+    if (! $inventory) {
       throw new \CodeIgniter\Exceptions\PageNotFoundException();
     }
-    $checklistMasterModel = new \App\Models\ChecklistMasterModel();
+
+    $checklistMasterModel = new ChecklistMasterModel();
 
     $frequencyRow = $checklistMasterModel
       ->select('frequency')
@@ -257,17 +260,14 @@ class ComplianceInventoryController extends BaseController
       ->groupBy('frequency')
       ->first();
 
-    if (!$frequencyRow) {
-      return redirect()->back()
-        ->with('error', 'Checklist belum diatur untuk item ini.');
-    }
-
     $frequency = $frequencyRow['frequency'];
 
-    // === GENERATE PERIOD ===
-    $periodKey = generate_period_key($frequency);
+    // === PERIOD KEY (URL > DEFAULT) ===
+    $requestPeriodKey = $this->request->getGet('period_key');
+    $periodKey = $requestPeriodKey ?: generate_period_key($frequency);
     $periodLabel = period_label($frequency, $periodKey);
 
+    // === GENERATE CALENDAR ===
     $periods = generate_calendar_periods(
       $frequency,
       date('Y'),
@@ -275,15 +275,17 @@ class ComplianceInventoryController extends BaseController
     );
 
     foreach ($periods as &$p) {
-      $p['status'] = resolve_period_status(
+      $p['allowed'] = ! is_period_future($frequency, $p['period_key']);
+      $p['status']  = resolve_period_status(
         $inventory['id'],
         $frequency,
         $p['period_key']
       );
     }
+    unset($p);
 
-    // === CEK SUDAH ADA CHECKLIST ATAU BELUM ===
-    $logModel = new \App\Models\ChecklistLogModel();
+    // === LOCK ===
+    $logModel = new ChecklistLogModel();
     $exists = $logModel
       ->where('inventory_id', $inventoryId)
       ->where('period_key', $periodKey)
@@ -291,34 +293,23 @@ class ComplianceInventoryController extends BaseController
 
     $isLocked = $exists ? true : false;
 
-    $isAllowed = is_period_allowed($frequency, $periodKey);
-
-    if (! $isAllowed) {
-      return redirect()->back()
-        ->with('error', 'Periode checklist ini sudah lewat dan tidak dapat diisi.');
-    }
-
-
-    // === AMBIL PERTANYAAN SESUAI ITEM TYPE & FREQUENCY ===
-    $questions = (new \App\Models\ChecklistMasterModel())
+    // === QUESTIONS ===
+    $questions = $checklistMasterModel
       ->where('item_type_id', $inventory['item_type_id'])
       ->where('frequency', $frequency)
       ->where('active', 1)
       ->findAll();
 
     return view('compliance/checklist/index', [
-      'inventory'  => $inventory,
-      'questions'  => $questions,
-      'frequency'  => $frequency,
-      'period_key' => $periodKey,
+      'inventory'    => $inventory,
+      'questions'    => $questions,
+      'frequency'    => $frequency,
+      'period_key'   => $periodKey,
       'period_label' => $periodLabel,
-      'isLocked'   => $isLocked,
-      'isAllowed'  => $isAllowed,
-      'periods'    => $periods
+      'isLocked'     => $isLocked,
+      'periods'      => $periods
     ]);
   }
-
-
 
   public function submitChecklist()
   {
@@ -326,18 +317,19 @@ class ComplianceInventoryController extends BaseController
     $periodKey   = $this->request->getPost('period_key');
     $frequency   = $this->request->getPost('frequency');
     $itemTypeId  = $this->request->getPost('item_type_id');
-    $questions = $this->request->getPost('questions');
-    $remarks   = $this->request->getPost('remarks') ?? [];
-    $photos    = $this->request->getFiles()['photos'] ?? [];
-    $user      = session()->get('name');
+    $questions   = $this->request->getPost('questions');
+    $remarks     = $this->request->getPost('remarks') ?? [];
+    $photos      = $this->request->getFiles()['photos'] ?? [];
+    $user        = session()->get('name');
 
-    if (!is_array($questions)) {
-      return redirect()->back()->with('error', 'Checklist tidak valid.');
+    if (! is_array($questions)) {
+      return redirect()->back()
+        ->with('error', 'Checklist tidak valid.');
     }
 
-    $logModel = new \App\Models\ChecklistLogModel();
+    $logModel = new ChecklistLogModel();
 
-    // === LOCK PER PERIODE ===
+    // === LOCK ===
     $exists = $logModel
       ->where('inventory_id', $inventoryId)
       ->where('period_key', $periodKey)
@@ -350,9 +342,7 @@ class ComplianceInventoryController extends BaseController
 
     foreach ($questions as $templateId => $status) {
 
-      // === VALIDASI NG ===
       if ($status === 'ng') {
-
         if (empty($remarks[$templateId])) {
           return redirect()->back()
             ->with('error', 'Checklist NOT OK wajib diisi catatan.');
@@ -364,7 +354,6 @@ class ComplianceInventoryController extends BaseController
         }
       }
 
-      // === UPLOAD FOTO ===
       $photoName = null;
       if (isset($photos[$templateId]) && $photos[$templateId]->isValid()) {
         $photoName = $photos[$templateId]->getRandomName();
