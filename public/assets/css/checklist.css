@@ -1,0 +1,175 @@
+/* ===================================================
+   CHECKLIST UX – RESPONSIVE & LAPANGAN FRIENDLY (FINAL)
+   =================================================== */
+
+/* ---------- PAGE WRAPPER ---------- */
+
+body {
+  background-color: #f8f9fa;
+}
+
+.checklist-page {
+  padding-top: 1.5rem;
+  padding-bottom: 3rem;
+}
+
+/* ---------- CARD ---------- */
+
+.checklist-card {
+  border-radius: 12px;
+  box-shadow: 0 0.125rem 0.35rem rgba(52, 16, 16, 0.08);
+  margin-bottom: 1.5rem;
+}
+
+.checklist-card .card-header {
+  font-weight: 600;
+  background-color: #f8f9fa;
+}
+
+.checklist-card .card-body {
+  padding: 1.5rem;
+}
+
+/* ---------- TITLE ---------- */
+
+.checklist-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* ---------- CALENDAR ---------- */
+
+.calendar-grid {
+  row-gap: 0.75rem;
+}
+
+.calendar-grid .btn {
+  min-height: 44px;
+  font-size: 0.875rem;
+  border-radius: 10px;
+  white-space: normal;
+}
+
+/* Disabled calendar */
+.calendar-grid .btn.disabled {
+  opacity: 0.6;
+}
+
+/* ---------- MONTH NAV ---------- */
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.calendar-nav .btn {
+  min-width: 120px;
+}
+
+/* ---------- BADGE LEGEND ---------- */
+
+.badge-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.badge-legend .badge {
+  padding: 0.45em 0.6em;
+  font-weight: 500;
+}
+
+/* ---------- RADIO BUTTON (OK / NG) ---------- */
+
+.status-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+}
+
+.status-group .btn {
+  min-width: 90px;
+  font-size: 0.85rem;
+}
+
+/* ---------- NG SECTION ---------- */
+
+.ng-fields {
+  margin-top: 0.5rem;
+}
+
+.ng-fields textarea,
+.ng-fields input[type="file"] {
+  width: 100%;
+}
+
+.ng-alert {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* ---------- TABLE ---------- */
+
+.table-checklist {
+  margin-top: 1rem;
+}
+
+.table-checklist td,
+.table-checklist th {
+  vertical-align: middle;
+}
+
+.table-checklist th {
+  background-color: #f8f9fa;
+}
+
+/* ---------- STICKY SUBMIT (MOBILE) ---------- */
+
+.sticky-submit {
+  position: sticky;
+  bottom: 0;
+  background: #ffffff;
+  border-top: 1px solid #dee2e6;
+  padding: 0.75rem;
+  z-index: 1020;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Desktop hide */
+@media (min-width: 768px) {
+  .sticky-submit {
+    display: none;
+  }
+}
+
+/* ---------- TOUCH FRIENDLY ---------- */
+
+.btn {
+  min-height: 38px;
+}
+
+/* ---------- MOBILE ADJUSTMENT ---------- */
+
+@media (max-width: 767.98px) {
+  .checklist-card .card-body {
+    padding: 1rem;
+  }
+
+  .calendar-grid .col-6,
+  .calendar-grid .col-4 {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .calendar-grid .btn {
+    font-size: 0.82rem;
+  }
+
+  .status-group {
+    justify-content: flex-start;
+  }
+}

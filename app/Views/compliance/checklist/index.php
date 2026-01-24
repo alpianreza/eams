@@ -6,15 +6,18 @@
   ← Kembali
 </a>
 
-<div id="checklist-container">
+<div class="container-fluid checklist-page">
+  <div class="container-xl">
 
-  <?= $this->include('compliance/checklist/_calendar') ?>
+    <?= $this->include('compliance/checklist/_calendar') ?>
 
-  <?= $this->include('compliance/checklist/_form') ?>
+    <?= $this->include('compliance/checklist/_form') ?>
 
+  </div>
 </div>
 
 <?= $this->endSection() ?>
+
 
 <?= $this->section('scripts') ?>
 <script src="<?= base_url('js/checklist.js') ?>"></script>

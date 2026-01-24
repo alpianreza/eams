@@ -1,0 +1,110 @@
+/* =========================================
+   INVENTORY DETAIL – CLEAN & RESPONSIVE
+   ========================================= */
+
+.inventory-detail-wrapper {
+  padding-bottom: 2rem;
+}
+
+/* ---------- CARD ---------- */
+
+.inventory-detail-wrapper .card {
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ---------- PHOTO CARD ---------- */
+
+.inventory-detail-wrapper img {
+  object-fit: contain;
+}
+
+/* ---------- TABLE DETAIL ---------- */
+
+.inventory-detail-wrapper table th {
+  background-color: #f8f9fa;
+  vertical-align: middle;
+}
+
+.inventory-detail-wrapper table td {
+  vertical-align: middle;
+}
+
+/* ---------- CHECKLIST SUMMARY ---------- */
+
+.inventory-detail-wrapper .card-header {
+  font-weight: 600;
+}
+
+/* ---------- NAVIGATION BULAN ---------- */
+
+.inventory-detail-wrapper .month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* ---------- CHECKLIST TABLE ---------- */
+
+.inventory-detail-wrapper .table {
+  font-size: 0.875rem;
+}
+
+/* ---------- MOBILE TWEAK ---------- */
+
+@media (max-width: 767.98px) {
+  .inventory-detail-wrapper h5 {
+    font-size: 1.05rem;
+  }
+
+  .inventory-detail-wrapper table th,
+  .inventory-detail-wrapper table td {
+    font-size: 0.8rem;
+  }
+
+  .inventory-detail-wrapper .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* =================================
+   INVENTORY TABLE UPGRADE
+   ================================= */
+
+.inventory-info-table th {
+  width: 30%;
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.inventory-info-table td {
+  background-color: #fff;
+}
+
+/* =================================
+   CHECKLIST TABLE
+   ================================= */
+
+.table-checklist th {
+  background-color: #f8f9fa;
+  text-align: center;
+}
+
+.table-checklist td {
+  vertical-align: middle;
+}
+
+/* Hover lebih halus */
+.table-hover tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+/* Mobile font */
+@media (max-width: 767.98px) {
+  .table-checklist {
+    font-size: 0.8rem;
+  }
+}

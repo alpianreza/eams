@@ -26,6 +26,10 @@ $seg2 = $segments[1] ?? '';
     <!-- App Custom CSS -->
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
 
+    <link rel="stylesheet" href="<?= base_url('css/assets/checklist.css') ?>">
+
+    <link rel="stylesheet" href="<?= base_url('css/assets/inventory-detail.css') ?>">
+
     <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">

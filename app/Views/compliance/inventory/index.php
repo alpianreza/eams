@@ -104,11 +104,17 @@
 
           <!-- EDIT -->
           <button type="button"
-            class="btn btn-sm btn-outline-warning btn-edit"
+            class="btn btn-sm btn-warning btn-edit"
+
             data-id="<?= $inv['id'] ?>"
             data-category-id="<?= $inv['category_id'] ?>"
-            data-item-type-id="<?= $inv['item_type_id'] ?>"
+            data-category-name="<?= esc($inv['category_name']) ?>"
+
             data-area-id="<?= $inv['area_id'] ?>"
+            data-area-name="<?= esc($inv['area_name']) ?>"
+
+            data-item-type-id="<?= $inv['item_type_id'] ?>"
+
             data-code="<?= esc($inv['asset_code']) ?>"
             data-type="<?= esc($inv['type_description']) ?>"
             data-pic="<?= esc($inv['pic']) ?>"
@@ -116,6 +122,7 @@
             data-remark="<?= esc($inv['remark']) ?>">
             Edit
           </button>
+
 
           <!-- DELETE -->
           <form action="<?= base_url('compliance/inventory/delete/' . $inv['id']) ?>"
@@ -193,56 +200,70 @@ $end   = min(
 </script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('click', function(e) {
 
-    // OPEN MODAL + ISI DATA
-    document.querySelectorAll('.btn-edit').forEach(btn => {
-      btn.addEventListener('click', function() {
+    const btn = e.target.closest('.btn-edit');
+    if (!btn) return;
 
-        document.getElementById('edit_id').value = this.dataset.id;
-        document.getElementById('edit_category_id').value = this.dataset.categoryId;
-        document.getElementById('edit_area_id').value = this.dataset.areaId;
+    const categoryId = btn.dataset.categoryId;
+    const categoryName = btn.dataset.categoryName;
+    const areaId = btn.dataset.areaId;
+    const areaName = btn.dataset.areaName;
+    const itemTypeId = btn.dataset.itemTypeId;
 
-        document.getElementById('edit_item').value = this.dataset.item || '';
-        document.getElementById('edit_code').value = this.dataset.code || '';
-        document.getElementById('edit_type').value = this.dataset.type || '';
-        document.getElementById('edit_pic').value = this.dataset.pic || '';
-        document.getElementById('edit_status').value = this.dataset.status || '';
-        document.getElementById('edit_remark').value = this.dataset.remark || '';
+    // SET DISPLAY
+    document.getElementById('edit_id').value = btn.dataset.id;
+
+    document.getElementById('edit_category_display').value = categoryName;
+    document.getElementById('edit_category_id').value = categoryId;
+
+    document.getElementById('edit_area_display').value = areaName;
+    document.getElementById('edit_area_id').value = areaId;
+
+    document.getElementById('edit_code').value = btn.dataset.code || '';
+    document.getElementById('edit_type').value = btn.dataset.type || '';
+    document.getElementById('edit_pic').value = btn.dataset.pic || '';
+    document.getElementById('edit_status').value = btn.dataset.status || '';
+    document.getElementById('edit_remark').value = btn.dataset.remark || '';
+
+    // LOAD ITEM TYPE
+    const itemSelect = document.getElementById('edit_item_display');
+    itemSelect.innerHTML = '<option>Loading...</option>';
+
+    fetch(`<?= base_url('compliance/inventory/item-types') ?>/${categoryId}`)
+      .then(res => res.json())
+      .then(data => {
+
+        itemSelect.innerHTML = '';
+        let found = false;
+
+        data.forEach(item => {
+          const opt = document.createElement('option');
+          opt.value = item.id;
+          opt.textContent = item.name;
+
+          if (item.id == itemTypeId) {
+            opt.selected = true;
+            found = true;
+          }
+
+          itemSelect.appendChild(opt);
+        });
+
+        if (!found) {
+          itemSelect.innerHTML =
+            '<option selected>⚠ Item tidak ditemukan</option>';
+        }
+
+        document.getElementById('edit_item_type_id').value = itemTypeId;
 
         new bootstrap.Modal(
           document.getElementById('modalEditInventory')
         ).show();
       });
-    });
-
-
-    // SUBMIT VIA AJAX
-    document.getElementById('formEditInventory').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const formData = new FormData(this);
-      const id = formData.get('id');
-
-      fetch('<?= base_url('compliance/inventory/update') ?>/' + id, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        })
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success') {
-            location.reload(); // sementara reload biar aman
-          } else {
-            alert(res.message || 'Gagal update data');
-          }
-        });
-    });
-
   });
 </script>
+
 
 <script>
   document.getElementById('category_id').addEventListener('change', function() {
