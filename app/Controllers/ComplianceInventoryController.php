@@ -190,9 +190,28 @@ class ComplianceInventoryController extends BaseController
       ->orderBy('check_date', 'DESC')
       ->findAll();
 
+
+    $ym = $this->request->getGet('ym') ?? date('Y-m');
+
+    $rekap = (new \App\Models\ChecklistLogModel())
+      ->select("
+    COUNT(*) as total,
+    SUM(status = 'ok') as ok_count,
+    SUM(status = 'ng') as ng_count,
+    SUM(
+      status = 'ok'
+      AND created_at > DATE_ADD(check_date, INTERVAL 1 DAY)
+    ) as late_count
+  ")
+      ->where('inventory_id', $id)
+      ->like('period_key', $ym, 'after')
+      ->first();
+
     return view('compliance/inventory/detail', [
       'inventory'  => $inventory,
-      'checklists' => $checklists
+      'checklists' => $checklists,
+      'rekap' => $rekap,
+      'ym'    => $ym,
     ]);
   }
 
@@ -238,11 +257,12 @@ class ComplianceInventoryController extends BaseController
 
   public function checklist($inventoryId)
   {
+    // === INVENTORY ===
     $inventory = $this->inventoryModel
       ->select('
-        compliance_inventory.*,
-        asset_item_types.name AS item_display_name
-      ')
+            compliance_inventory.*,
+            asset_item_types.name AS item_display_name
+        ')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->where('compliance_inventory.id', $inventoryId)
       ->first();
@@ -251,7 +271,8 @@ class ComplianceInventoryController extends BaseController
       throw new \CodeIgniter\Exceptions\PageNotFoundException();
     }
 
-    $checklistMasterModel = new ChecklistMasterModel();
+    // === FREQUENCY ===
+    $checklistMasterModel = new \App\Models\ChecklistMasterModel();
 
     $frequencyRow = $checklistMasterModel
       ->select('frequency')
@@ -260,18 +281,62 @@ class ComplianceInventoryController extends BaseController
       ->groupBy('frequency')
       ->first();
 
+    if (! $frequencyRow) {
+      return redirect()->back()
+        ->with('error', 'Checklist belum diatur untuk item ini.');
+    }
+
     $frequency = $frequencyRow['frequency'];
 
-    // === PERIOD KEY (URL > DEFAULT) ===
+    // =====================================================
+    // MONTH NAVIGATION (YYYY-MM) — SUMBER KEBENARAN BULAN
+    // =====================================================
+    $ym = $this->request->getGet('ym');
+
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      $ym = date('Y-m'); // fallback aman
+    }
+
+    [$year, $month] = array_map('intval', explode('-', $ym));
+
+    // batas awal
+    $minYM  = '2026-01';
+    $prevYM = date('Y-m', strtotime("$ym -1 month"));
+    $nextYM = date('Y-m', strtotime("$ym +1 month"));
+
+    $canPrev = $prevYM >= $minYM;
+    $canNext = true; // navigasi bebas
+
+    // =====================================================
+    // PERIOD KEY (URL > DEFAULT)
+    // =====================================================
     $requestPeriodKey = $this->request->getGet('period_key');
-    $periodKey = $requestPeriodKey ?: generate_period_key($frequency);
+
+    if ($requestPeriodKey) {
+      // pakai period_key dari klik
+      $periodKey = $requestPeriodKey;
+    } else {
+      // DEFAULT SELALU IKUT BULAN NAVIGASI
+      if ($frequency === 'daily') {
+        $periodKey = $ym . '-01';
+      } elseif ($frequency === 'weekly') {
+        $periodKey = $ym . '-W1';
+      } else { // monthly
+        $periodKey = $ym;
+      }
+    }
+
+
+    // === BARU DI SINI HITUNG LABEL ===
     $periodLabel = period_label($frequency, $periodKey);
 
-    // === GENERATE CALENDAR ===
+    // =====================================================
+    // GENERATE CALENDAR (PAKAI BULAN NAVIGASI)
+    // =====================================================
     $periods = generate_calendar_periods(
       $frequency,
-      date('Y'),
-      date('m')
+      $year,
+      $month
     );
 
     foreach ($periods as &$p) {
@@ -284,14 +349,14 @@ class ComplianceInventoryController extends BaseController
     }
     unset($p);
 
-    // === LOCK ===
-    $logModel = new ChecklistLogModel();
-    $exists = $logModel
+    // =====================================================
+    // LOCK PER INVENTORY + PERIOD
+    // =====================================================
+    $logModel = new \App\Models\ChecklistLogModel();
+    $isLocked = $logModel
       ->where('inventory_id', $inventoryId)
       ->where('period_key', $periodKey)
-      ->first();
-
-    $isLocked = $exists ? true : false;
+      ->first() ? true : false;
 
     // === QUESTIONS ===
     $questions = $checklistMasterModel
@@ -300,6 +365,29 @@ class ComplianceInventoryController extends BaseController
       ->where('active', 1)
       ->findAll();
 
+    // =====================================================
+    // RESPONSE
+    // =====================================================
+
+    // AJAX → render partial (calendar + form)
+    if ($this->request->isAJAX() || $this->request->getGet('ajax') == '1') {
+      return view('compliance/checklist/_calendar', [
+        'inventory'    => $inventory,
+        'questions'    => $questions,
+        'frequency'    => $frequency,
+        'period_key'   => $periodKey,
+        'period_label' => $periodLabel,
+        'isLocked'     => $isLocked,
+        'periods'      => $periods,
+        'navYM'        => $ym,
+        'prevYM'       => $prevYM,
+        'nextYM'       => $nextYM,
+        'canPrev'      => $canPrev,
+        'canNext'      => $canNext,
+      ]);
+    }
+
+    // NORMAL → render halaman full
     return view('compliance/checklist/index', [
       'inventory'    => $inventory,
       'questions'    => $questions,
@@ -307,10 +395,20 @@ class ComplianceInventoryController extends BaseController
       'period_key'   => $periodKey,
       'period_label' => $periodLabel,
       'isLocked'     => $isLocked,
-      'periods'      => $periods
+      'periods'      => $periods,
+      'navYM'        => $ym,
+      'prevYM'       => $prevYM,
+      'nextYM'       => $nextYM,
+      'canPrev'      => $canPrev,
+      'canNext'      => $canNext,
     ]);
   }
 
+
+
+  /* =====================================================
+   * SUBMIT CHECKLIST
+   * ===================================================== */
   public function submitChecklist()
   {
     $inventoryId = $this->request->getPost('inventory_id');
@@ -377,5 +475,43 @@ class ComplianceInventoryController extends BaseController
     return redirect()
       ->to(base_url('compliance/inventory/detail/' . $inventoryId))
       ->with('success', 'Checklist berhasil disimpan.');
+  }
+
+  public function calendar($inventoryId)
+  {
+    helper('checklist');
+
+    $ym        = $this->request->getGet('ym');
+    $frequency = $this->request->getGet('frequency');
+
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      return $this->response->setStatusCode(400);
+    }
+
+    [$year, $month] = array_map('intval', explode('-', $ym));
+
+    $inventory = $this->inventoryModel->find($inventoryId);
+    if (! $inventory) {
+      return $this->response->setStatusCode(404);
+    }
+
+    $periods = generate_calendar_periods($frequency, $year, $month);
+
+    foreach ($periods as &$p) {
+      $p['allowed'] = ! is_period_future($frequency, $p['period_key']);
+      $p['status']  = resolve_period_status(
+        $inventoryId,
+        $frequency,
+        $p['period_key']
+      );
+    }
+    unset($p);
+
+    return view('compliance/checklist/_calendar', [
+      'inventoryId' => $inventoryId,
+      'periods'     => $periods,
+      'frequency'   => $frequency,
+      'ym'          => $ym
+    ]);
   }
 }

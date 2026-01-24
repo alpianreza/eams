@@ -39,6 +39,4 @@ abstract class BaseController extends Controller
 
         return view($view, $data);
     }
-
-    
 }

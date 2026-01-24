@@ -144,3 +144,8 @@ $routes->get(
 );
 
 $routes->post('compliance/checklist/submit', 'ComplianceInventoryController::submitChecklist');
+
+$routes->get(
+    'compliance/checklist/(:num)/calendar',
+    'ComplianceInventoryController::calendar/$1'
+);

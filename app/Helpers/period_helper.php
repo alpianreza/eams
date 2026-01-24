@@ -24,20 +24,31 @@ if (!function_exists('generate_period_key')) {
 if (!function_exists('period_label')) {
   function period_label(string $frequency, string $periodKey): string
   {
+    // ================= DAILY =================
     if ($frequency === 'daily') {
-      return date('d F Y (l)', strtotime($periodKey));
+      return date('d F Y', strtotime($periodKey));
     }
 
+    // ================= WEEKLY =================
     if ($frequency === 'weekly') {
-      // contoh periodKey: 2026-W04
-      [$year, $week] = explode('-W', $periodKey);
+      // format: YYYY-MM-Wn
+      if (!preg_match('/^(\d{4})-(\d{2})-W([1-4])$/', $periodKey, $m)) {
+        return $periodKey;
+      }
 
-      $date = new DateTime();
-      $date->setISODate((int)$year, (int)$week);
+      $year  = (int) $m[1];
+      $month = (int) $m[2];
+      $week  = (int) $m[3];
 
-      return 'Minggu ke-' . (int)$week . ' • ' . $date->format('F Y');
+      return sprintf(
+        'Minggu ke-%d · %s %d',
+        $week,
+        date('F', strtotime("$year-$month-01")),
+        $year
+      );
     }
 
+    // ================= MONTHLY =================
     if ($frequency === 'monthly') {
       return date('F Y', strtotime($periodKey . '-01'));
     }

@@ -94,6 +94,52 @@
 
 <h5 class="mt-4">Checklist</h5>
 
+<div class="card mb-4">
+  <div class="card-header">
+    <strong>Rekap Checklist Bulan <?= date('F Y', strtotime($ym . '-01')) ?></strong>
+  </div>
+
+  <div class="card-body">
+    <div class="row text-center">
+
+      <div class="col">
+        <div class="fw-bold fs-4"><?= $rekap['total'] ?? 0 ?></div>
+        <div class="text-muted">Total</div>
+      </div>
+
+      <div class="col">
+        <div class="fw-bold fs-4 text-success"><?= $rekap['ok_count'] ?? 0 ?></div>
+        <div class="text-muted">OK</div>
+      </div>
+
+      <div class="col">
+        <div class="fw-bold fs-4 text-danger"><?= $rekap['ng_count'] ?? 0 ?></div>
+        <div class="text-muted">NG</div>
+      </div>
+
+      <div class="col">
+        <div class="fw-bold fs-4 text-warning"><?= $rekap['late_count'] ?? 0 ?></div>
+        <div class="text-muted">Late</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="mb-3">
+  <a href="?ym=<?= date('Y-m', strtotime($ym . ' -1 month')) ?>"
+    class="btn btn-sm btn-outline-secondary">⏪</a>
+
+  <span class="mx-2 fw-bold">
+    <?= date('F Y', strtotime($ym . '-01')) ?>
+  </span>
+
+  <a href="?ym=<?= date('Y-m', strtotime($ym . ' +1 month')) ?>"
+    class="btn btn-sm btn-outline-secondary">⏩</a>
+</div>
+
+
+
 <table class="table table-bordered table-sm align-middle">
   <thead class="table-light">
     <tr>
