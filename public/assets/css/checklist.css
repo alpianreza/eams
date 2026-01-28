@@ -99,7 +99,10 @@ body {
 /* ---------- NG SECTION ---------- */
 
 .ng-fields {
-  margin-top: 0.5rem;
+  background: #fff7e6;
+  border-left: 4px solid #ffc107;
+  padding: 10px;
+  border-radius: 6px;
 }
 
 .ng-fields textarea,

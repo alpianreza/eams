@@ -37,6 +37,7 @@ $seg2 = $segments[1] ?? '';
     <link rel="stylesheet" href="<?= base_url('assets/css/inventory-detail.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/inventory-mobile.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/login.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/calendar.css') ?>">
 
 </head>
 

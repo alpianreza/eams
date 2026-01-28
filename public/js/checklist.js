@@ -56,10 +56,17 @@ document.addEventListener("DOMContentLoaded", function () {
       const remark = fieldsEl.querySelector("textarea");
       const photo = fieldsEl.querySelector("input[type='file']");
 
-      if (isNg) {
+      if (isNg && !fieldsEl.dataset.scrolled) {
+        setTimeout(() => {
+          fieldsEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          fieldsEl.dataset.scrolled = "1";
+        }, 150);
         alertEl.classList.remove("d-none");
         fieldsEl.classList.remove("d-none");
-        if (remark) remark.required = true;
+        if (remark) {
+          remark.required = true;
+          setTimeout(() => remark.focus(), 200);
+        }
         if (photo) photo.required = true;
 
         setTimeout(() => {
@@ -122,10 +129,10 @@ document.addEventListener("DOMContentLoaded", function () {
           photo.files.length === 0
         ) {
           valid = false;
-          fieldsEl.classList.add("border", "border-danger");
+          fieldsEl.classList.add("border", "border-warning", "rounded");
           if (!firstError) firstError = fieldsEl;
         } else {
-          fieldsEl.classList.remove("border", "border-danger");
+          fieldsEl.classList.remove("border", "border-warning", "rounded");
         }
       });
 

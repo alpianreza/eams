@@ -1,0 +1,157 @@
+/* =========================================
+   CHECKLIST CALENDAR – RESPONSIVE FIX
+   (CSS ONLY, TANPA UBAH PHP)
+========================================= */
+
+/* CARD */
+.card {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+/* ===============================
+   NAVIGASI BULAN (PREV / NEXT)
+================================ */
+.card > .d-flex.justify-content-between {
+  gap: 8px;
+}
+
+.card > .d-flex.justify-content-between .btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.card > .d-flex.justify-content-between .fw-bold {
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+/* MOBILE: sembunyikan teks bulan di tombol */
+@media (max-width: 576px) {
+  .card > .d-flex.justify-content-between span.d-md-inline {
+    display: none !important;
+  }
+
+  .card > .d-flex.justify-content-between .fw-bold {
+    font-size: 14px;
+  }
+}
+
+/* ===============================
+   GRID PERIODE (WEEKLY / MONTHLY)
+================================ */
+.calendar-grid {
+  margin-top: 6px;
+}
+
+.calendar-grid .btn {
+  min-height: 44px;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  line-height: 1.2;
+  white-space: normal;
+  text-align: center;
+}
+
+.calendar-grid i {
+  font-size: 14px;
+}
+
+/* MOBILE: rapihin jarak kolom */
+@media (max-width: 576px) {
+  .calendar-grid .col-6 {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+}
+
+/* DESKTOP */
+@media (min-width: 768px) {
+  .calendar-grid .btn {
+    min-height: 48px;
+    font-size: 13px;
+  }
+}
+
+/* ===============================
+   STATUS WARNA (BIAR KONSISTEN)
+================================ */
+.calendar-grid .btn-success {
+  box-shadow: 0 2px 6px rgba(25, 135, 84, 0.35);
+}
+
+.calendar-grid .btn-danger {
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.35);
+}
+
+.calendar-grid .btn-warning {
+  box-shadow: 0 2px 6px rgba(255, 193, 7, 0.35);
+}
+
+.calendar-grid .btn-primary {
+  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.45);
+  transform: scale(1.03);
+}
+
+/* ===============================
+   LOCKED / FUTURE
+================================ */
+.calendar-grid .disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* ===============================
+   LEGEND
+================================ */
+.badge-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge-legend .badge {
+  font-size: 11px;
+  padding: 4px 6px;
+}
+
+/* ===============================
+   MOBILE SAFE AREA
+================================ */
+@media (max-width: 576px) {
+  .card-body {
+    padding: 12px;
+  }
+}
+
+/* ===============================
+   FIX GAP ADMINLTE CHECKLIST
+   =============================== */
+
+/* Target KHUSUS halaman checklist */
+.checklist-page {
+  margin-top: -1rem;
+}
+
+/* Override padding AdminLTE */
+.app-main .app-content .container-fluid.py-4 {
+  padding-top: 0.05rem !important;
+}
+
+/* Tombol kembali jangan terlalu turun */
+.checklist-page > .btn {
+  margin-bottom: 0.5rem !important;
+}
+
+/* Card pertama (calendar) */
+.checklist-page .card:first-child {
+  margin-top: 0 !important;
+}
