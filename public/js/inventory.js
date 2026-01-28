@@ -197,3 +197,79 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.style.removeProperty("padding-right");
   }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  const ajaxContainer = document.getElementById("inventoryAjax");
+  if (!ajaxContainer) return;
+
+  const filterCategory = document.getElementById("filterCategory");
+  const filterArea = document.getElementById("filterArea");
+
+  function loadInventory(url) {
+    fetch(url, {
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    })
+      .then((res) => res.text())
+      .then((html) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        const newContent = doc.querySelector("#inventoryAjax");
+        if (!newContent) return;
+
+        ajaxContainer.innerHTML = newContent.innerHTML;
+
+        // update URL tanpa reload
+        window.history.pushState({}, "", url);
+
+        bindPagination(); // rebind pagination
+      })
+      .catch((err) => console.error(err));
+  }
+
+  /* =========================
+     FILTER CHANGE
+  ========================= */
+  function applyFilter() {
+    const params = new URLSearchParams();
+
+    if (filterCategory && filterCategory.value) {
+      params.set("category", filterCategory.value);
+    }
+
+    if (filterArea && filterArea.value) {
+      params.set("area", filterArea.value);
+    }
+
+    const url =
+      BASE_URL +
+      "/compliance/inventory" +
+      (params.toString() ? "?" + params.toString() : "");
+
+    loadInventory(url);
+  }
+
+  if (filterCategory) {
+    filterCategory.addEventListener("change", applyFilter);
+  }
+
+  if (filterArea) {
+    filterArea.addEventListener("change", applyFilter);
+  }
+
+  /* =========================
+     PAGINATION AJAX
+  ========================= */
+  function bindPagination() {
+    document.querySelectorAll(".pagination a").forEach((link) => {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        loadInventory(this.href);
+      });
+    });
+  }
+
+  bindPagination();
+});

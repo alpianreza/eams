@@ -162,3 +162,89 @@
     font-size: 14px;
   }
 }
+
+/* ===============================
+   DESKTOP FILTER FIX
+================================ */
+/* ===============================
+   DESKTOP FILTER INVENTORY
+================================ */
+@media (min-width: 768px) {
+  .inventory-filter {
+    flex-wrap: nowrap;
+  }
+
+  .inventory-filter select {
+    width: 200px !important;
+    max-width: 200px;
+  }
+}
+
+/* ===============================
+   PAGINATION FIX (DESKTOP)
+================================ */
+.inventory-pagination .pagination {
+  margin-bottom: 0;
+}
+
+.inventory-pagination .page-link {
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.inventory-pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.inventory-pagination .page-link {
+  color: #495057;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .inventory-pagination {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pagination-wrapper {
+    justify-content: center;
+  }
+}
+
+/* ===============================
+   PAGINATION - ROUNDED PILLS
+================================ */
+/* PAGINATION CENTER + PILLS */
+.pagination {
+  justify-content: center;
+}
+
+.pagination .page-link {
+  border-radius: 999px !important;
+  margin: 0 4px;
+  padding: 6px 12px;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* FILTER DESKTOP */
+.inventory-filters .filter-select {
+  width: 220px;
+  max-width: 100%;
+}
+
+/* Biar rapi sejajar */
+.inventory-filters {
+  flex-wrap: nowrap;
+}

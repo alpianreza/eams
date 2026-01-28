@@ -238,8 +238,6 @@ class ComplianceInventoryController extends BaseController
   }
 
 
-
-
   public function updatePhoto($id)
   {
     $inventory = $this->inventoryModel->find($id);
@@ -427,11 +425,6 @@ class ComplianceInventoryController extends BaseController
     ]);
   }
 
-
-
-  /* =====================================================
-   * SUBMIT CHECKLIST
-   * ===================================================== */
   public function submitChecklist()
   {
     $inventoryId = $this->request->getPost('inventory_id');
