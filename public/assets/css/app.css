@@ -1,5 +1,5 @@
 /* === GLOBAL CARD STYLE (ADMTINY FEEL) === */
-b/* ===============================
+/* ===============================
    ADMINTY CARD STYLE
 ================================ */
 
@@ -211,7 +211,6 @@ pagination {
 /* Disabled */
 .pagination li.disabled span {
   color: #6c757d;
-  pointer-events: none;
   background-color: #fff;
   border-color: #dee2e6;
 }
@@ -221,4 +220,103 @@ pagination {
 }
 .table-secondary {
   background-color: #f5f5f5 !important;
+}
+
+/* ===== USER DROPDOWN (SAFE VERSION) ===== */
+
+/* ===============================
+   USER DROPDOWN – ADMINLTE STYLE
+   =============================== */
+
+.user-dropdown {
+  position: relative;
+}
+
+.user-dropdown summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.user-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.user-dropdown summary:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Username */
+.user-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #343a40;
+}
+
+/* Dropdown menu */
+.user-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 190px;
+  padding: 6px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  z-index: 9999;
+}
+
+/* Item */
+.user-menu .dropdown-item {
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Hover ala AdminLTE */
+.user-menu .dropdown-item:hover {
+  background-color: #f4f6f9;
+}
+
+/* Divider */
+.user-menu .dropdown-divider {
+  margin: 4px 0;
+}
+/* FIX: aktifkan kembali klik dropdown user */
+.app-header .user-dropdown,
+.app-header .user-dropdown * {
+  pointer-events: auto !important;
+}
+
+/* ===== DETAILS DROPDOWN FIX (WAJIB) ===== */
+
+/* sembunyikan menu saat tertutup */
+.user-dropdown .user-menu {
+  display: none;
+}
+
+/* tampilkan saat details open */
+.user-dropdown[open] .user-menu {
+  display: block;
+}
+
+/* ===============================
+   GLOBAL INTERACTION RESET (WAJIB)
+   =============================== */
+
+.app-wrapper,
+.app-main,
+.app-content,
+table,
+tbody,
+tr,
+td,
+button,
+a,
+.modal,
+.modal * {
+  pointer-events: auto !important;
 }

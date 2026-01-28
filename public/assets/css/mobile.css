@@ -1,0 +1,60 @@
+/* =========================
+   ADMINLTE MOBILE OVERRIDE
+========================= */
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+  h3 {
+    font-size: 1.1rem;
+  }
+  h4 {
+    font-size: 1rem;
+  }
+  h5 {
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    padding: 0.55rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 0.9rem;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .table td,
+  .table th {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  /* Checklist khusus */
+  .status-group .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Sidebar auto hidden */
+  .app-sidebar {
+    transform: translateX(-100%);
+  }
+
+  body.sidebar-open .app-sidebar {
+    transform: translateX(0);
+  }
+
+  .app-content {
+    padding: 0.75rem;
+  }
+}

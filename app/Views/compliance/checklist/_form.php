@@ -1,6 +1,11 @@
 <div class="card-body checklist-content">
 
-  <h5 class="checklist-title"><?= esc($inventory['item_display_name']) ?></h5>
+  <!-- TITLE -->
+  <h5 class="checklist-title mb-1">
+    <?= esc($inventory['item_display_name']) ?>
+    -
+    <?= esc($inventory['asset_code']) ?>
+  </h5>
 
   <p class="text-muted mb-4">
     Frekuensi: <strong><?= strtoupper($frequency) ?></strong><br>
@@ -8,16 +13,19 @@
   </p>
 
   <?php if ($isLocked): ?>
+
     <div class="alert alert-info">
       Checklist untuk periode ini sudah diisi dan terkunci.
     </div>
-  <?php endif ?>
 
-  <?php if (! $isLocked && ! empty($questions)): ?>
+  <?php elseif (! empty($questions)): ?>
 
-    <form action="<?= base_url('compliance/checklist/submit') ?>"
+    <form id="checklistForm"
+      action="<?= base_url('compliance/checklist/submit') ?>"
       method="post"
       enctype="multipart/form-data">
+
+
 
       <?= csrf_field() ?>
 
@@ -29,7 +37,8 @@
       <!-- ACTION BAR -->
       <div class="d-flex justify-content-end mb-3">
         <button type="button" class="btn btn-outline-success btn-sm" id="btn-ok-all">
-          ✅ Tandai Semua OK
+          <i class="bi bi-check2-square me-1"></i>
+          Tandai Semua OK
         </button>
       </div>
 
@@ -52,7 +61,8 @@
                 <td class="text-center">
 
                   <!-- STATUS BUTTON -->
-                  <div class="status-group" role="group">
+                  <div class="status-group d-flex justify-content-center gap-2">
+
                     <input type="radio"
                       class="btn-check status-radio"
                       name="questions[<?= $q['id'] ?>]"
@@ -60,8 +70,11 @@
                       value="ok"
                       data-qid="<?= $q['id'] ?>"
                       required>
-                    <label class="btn btn-outline-success btn-sm" for="ok-<?= $q['id'] ?>">
-                      ✅ OK
+
+                    <label class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
+                      for="ok-<?= $q['id'] ?>">
+                      <i class="bi bi-check-circle"></i>
+                      OK
                     </label>
 
                     <input type="radio"
@@ -71,18 +84,27 @@
                       value="ng"
                       data-qid="<?= $q['id'] ?>"
                       required>
-                    <label class="btn btn-outline-danger btn-sm" for="ng-<?= $q['id'] ?>">
-                      ❌ NOT OK
+
+
+                    <label class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
+                      for="ng-<?= $q['id'] ?>">
+                      <i class="bi bi-x-circle"></i>
+                      NOT OK
                     </label>
+
                   </div>
 
                   <!-- NG ALERT -->
-                  <div class="alert alert-warning ng-alert d-none" id="ng-alert-<?= $q['id'] ?>">
-                    ⚠️ Item ini NOT OK. Mohon isi catatan dan foto.
+                  <div class="alert alert-warning ng-alert d-none mt-2"
+                    id="ng-alert-<?= $q['id'] ?>">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    Item ini NOT OK. Mohon isi catatan dan foto.
                   </div>
 
                   <!-- NG FIELDS -->
-                  <div class="ng-fields d-none" id="ng-fields-<?= $q['id'] ?>">
+                  <div class="ng-fields d-none mt-2"
+                    id="ng-fields-<?= $q['id'] ?>">
+
                     <textarea
                       name="remarks[<?= $q['id'] ?>]"
                       class="form-control form-control-sm mb-2"
@@ -91,7 +113,8 @@
                     <input type="file"
                       name="photos[<?= $q['id'] ?>]"
                       class="form-control form-control-sm"
-                      accept="image/*">
+                      accept="image/*"
+                      capture="environment">
                   </div>
 
                 </td>
@@ -102,16 +125,10 @@
         </table>
       </div>
 
-      <!-- SUBMIT DESKTOP -->
-      <div class="d-none d-md-block mt-3">
+      <!-- SUBMIT -->
+      <div class="mt-3">
         <button class="btn btn-success">
-          Simpan Checklist
-        </button>
-      </div>
-
-      <!-- STICKY SUBMIT MOBILE -->
-      <div class="sticky-submit d-md-none">
-        <button class="btn btn-success w-100">
+          <i class="bi bi-save me-1"></i>
           Simpan Checklist
         </button>
       </div>
@@ -119,37 +136,11 @@
     </form>
 
   <?php else: ?>
+
     <div class="alert alert-warning">
       Tidak ada checklist untuk periode ini.
     </div>
+
   <?php endif ?>
-
-  <script>
-    // OK ALL
-    document.getElementById('btn-ok-all')?.addEventListener('click', function() {
-      document.querySelectorAll('.status-radio[value="ok"]').forEach(radio => {
-        radio.checked = true;
-        radio.dispatchEvent(new Event('change'));
-      });
-    });
-
-    // TOGGLE NG FIELD
-    document.querySelectorAll('.status-radio').forEach(radio => {
-      radio.addEventListener('change', function() {
-        const qid = this.dataset.qid;
-
-        const alertBox = document.getElementById('ng-alert-' + qid);
-        const fieldsBox = document.getElementById('ng-fields-' + qid);
-
-        if (this.value === 'ng') {
-          alertBox.classList.remove('d-none');
-          fieldsBox.classList.remove('d-none');
-        } else {
-          alertBox.classList.add('d-none');
-          fieldsBox.classList.add('d-none');
-        }
-      });
-    });
-  </script>
 
 </div>

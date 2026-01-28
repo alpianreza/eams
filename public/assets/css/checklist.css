@@ -173,3 +173,149 @@ body {
     justify-content: flex-start;
   }
 }
+
+/* ===============================
+   CHECKLIST MOBILE UX
+================================ */
+@media (max-width: 768px) {
+  /* title */
+  .checklist-title {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  /* table jadi card feel */
+  .table-checklist thead {
+    display: none;
+  }
+
+  .table-checklist tr {
+    display: block;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .table-checklist td {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 10px 12px;
+  }
+
+  .table-checklist td:first-child {
+    font-weight: 600;
+    background: #f8f9fa;
+  }
+
+  /* status button */
+  .status-group {
+    justify-content: space-between;
+  }
+
+  .status-group .btn {
+    flex: 1;
+    font-size: 14px;
+  }
+
+  /* NG fields */
+  .ng-fields textarea {
+    font-size: 14px;
+  }
+
+  .ng-fields input[type="file"] {
+    font-size: 13px;
+  }
+
+  /* sticky submit */
+  .sticky-submit {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+  }
+}
+
+/* ===============================
+   CHECKLIST MOBILE UX
+================================ */
+@media (max-width: 768px) {
+  /* title */
+  .checklist-title {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  /* table jadi card feel */
+  .table-checklist thead {
+    display: none;
+  }
+
+  .table-checklist tr {
+    display: block;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .table-checklist td {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 10px 12px;
+  }
+
+  .table-checklist td:first-child {
+    font-weight: 600;
+    background: #f8f9fa;
+  }
+
+  /* status button */
+  .status-group {
+    justify-content: space-between;
+  }
+
+  .status-group .btn {
+    flex: 1;
+    font-size: 14px;
+  }
+
+  /* NG fields */
+  .ng-fields textarea {
+    font-size: 14px;
+  }
+
+  .ng-fields input[type="file"] {
+    font-size: 13px;
+  }
+
+  /* sticky submit */
+  .sticky-submit {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.12);
+    z-index: 1000;
+  }
+}
+
+.status-group .btn-check:checked + .btn-outline-success {
+  background: #198754;
+  color: #fff;
+}
+
+.status-group .btn-check:checked + .btn-outline-danger {
+  background: #dc3545;
+  color: #fff;
+}

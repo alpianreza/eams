@@ -1,37 +1,52 @@
-<?= $this->extend('layouts/main') ?>
+<?= $this->extend('layouts/auth') ?>
 <?= $this->section('content') ?>
 
-<div class="row justify-content-center">
-    <div class="col-md-4">
+<div class="login-box">
+    <div class="login-logo mb-3">
+        <b>EAMS</b>
+    </div>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
+    <div class="card shadow-sm">
+        <div class="card-body login-card-body">
 
-                <h4 class="text-center mb-4">Login</h4>
+            <p class="login-box-msg">Silakan login</p>
 
-                <?php if (session()->getFlashdata('error')): ?>
-                    <div class="alert alert-danger">
-                        <?= session()->getFlashdata('error') ?>
-                    </div>
-                <?php endif; ?>
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="alert alert-danger py-2">
+                    <?= session()->getFlashdata('error') ?>
+                </div>
+            <?php endif; ?>
 
-                <form method="post" action="<?= base_url('login') ?>">
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" required>
-                    </div>
+            <form action="<?= base_url('login') ?>" method="post">
 
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" name="password" class="form-control" required>
-                    </div>
+                <div class="input-group mb-3">
+                    <input type="text"
+                        name="username"
+                        class="form-control"
+                        placeholder="Username"
+                        required>
+                    <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                    </span>
+                </div>
 
-                    <button class="btn btn-primary w-100">Login</button>
-                </form>
+                <div class="input-group mb-3">
+                    <input type="password"
+                        name="password"
+                        class="form-control"
+                        placeholder="Password"
+                        required>
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                </div>
 
-            </div>
+                <button type="submit" class="btn btn-primary w-100">
+                    Login
+                </button>
+            </form>
+
         </div>
-
     </div>
 </div>
 

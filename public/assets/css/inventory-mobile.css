@@ -1,0 +1,164 @@
+/* =========================
+   INVENTORY TABLE - MOBILE
+========================= */
+@media (max-width: 768px) {
+  /* sembunyikan header */
+  #inventoryTable thead {
+    display: none;
+  }
+
+  #inventoryTable,
+  #inventoryTable tbody,
+  #inventoryTable tr,
+  #inventoryTable td {
+    display: block;
+    width: 100%;
+  }
+
+  #inventoryTable tr {
+    background: #fff;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    padding: 10px;
+  }
+
+  #inventoryTable td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border: none;
+    font-size: 14px;
+  }
+
+  /* label kolom */
+  #inventoryTable td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6c757d;
+  }
+
+  /* status badge */
+  #inventoryTable .badge {
+    font-size: 12px;
+  }
+
+  /* aksi */
+  #inventoryTable td:last-child {
+    justify-content: flex-start;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  #inventoryTable td:last-child::before {
+    content: "Aksi";
+  }
+
+  /* tombol */
+  #inventoryTable .btn {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+}
+
+/* =========================
+   FIX OVERFLOW MOBILE
+========================= */
+@media (max-width: 768px) {
+  /* STOP HORIZONTAL SCROLL */
+  html,
+  body {
+    overflow-x: hidden !important;
+    width: 100%;
+  }
+
+  /* AdminLTE content */
+  .app-content,
+  .app-main,
+  .container-fluid {
+    max-width: 100%;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* DataTables wrapper */
+  .dataTables_wrapper {
+    width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Table responsive */
+  .table-responsive {
+    overflow-x: hidden !important;
+  }
+
+  /* Inventory table fix */
+  #inventoryTable {
+    width: 100% !important;
+    table-layout: fixed;
+  }
+
+  /* Pastikan setiap card full */
+  #inventoryTable tr {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Filter & search */
+  .dataTables_filter,
+  .dataTables_length {
+    width: 100%;
+    text-align: left;
+  }
+
+  .dataTables_filter input {
+    width: 100% !important;
+  }
+}
+
+/* ================================
+   INVENTORY RESPONSIVE FINAL
+================================ */
+
+.inventory-mobile {
+  display: none;
+}
+
+.inventory-desktop {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  /* STOP SCROLL SAMPING */
+  html,
+  body {
+    overflow-x: hidden !important;
+    width: 100%;
+  }
+
+  .container-fluid,
+  .app-content,
+  .app-main {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* SWITCH VIEW */
+  .inventory-desktop {
+    display: none !important;
+  }
+
+  .inventory-mobile {
+    display: block !important;
+  }
+
+  /* CARD */
+  .inventory-mobile .card {
+    border-radius: 14px;
+  }
+
+  .inventory-mobile .btn {
+    font-size: 14px;
+  }
+}

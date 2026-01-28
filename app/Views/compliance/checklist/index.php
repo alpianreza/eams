@@ -16,9 +16,16 @@
   </div>
 </div>
 
-<?= $this->endSection() ?>
+<script>
+  window.CHECKLIST_USER = "<?= esc(session('name')) ?>";
+  window.CHECKLIST_FLASH = {
+    success: <?= session()->getFlashdata('success')
+                ? '"' . esc(session('success')) . '"'
+                : 'null' ?>,
+    error: <?= session()->getFlashdata('error')
+              ? '"' . esc(session('error')) . '"'
+              : 'null' ?>
+  };
+</script>
 
-
-<?= $this->section('scripts') ?>
-<script src="<?= base_url('js/checklist.js') ?>"></script>
 <?= $this->endSection() ?>

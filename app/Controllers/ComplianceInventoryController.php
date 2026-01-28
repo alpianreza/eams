@@ -26,33 +26,39 @@ class ComplianceInventoryController extends BaseController
   {
     $request = $this->request;
 
-    $category = $request->getGet('category');
-    $area     = $request->getGet('area');
-    $keyword  = $request->getGet('q');
-    $perPage  = $request->getGet('perPage') ?? 20;
+    $categoryId = $request->getGet('category');
+    $areaId     = $request->getGet('area');
+    $keyword    = $request->getGet('q');
+    $perPage    = $request->getGet('perPage') ?? 20;
 
     $query = $this->inventoryModel
       ->select('
-            compliance_inventory.*,
-            inventory_categories.name AS category_name,
-            asset_item_types.name AS item_display_name,
-            areas.name AS area_name
-        ')
-      ->join('inventory_categories', 'inventory_categories.id = compliance_inventory.category_id')
+      compliance_inventory.*,
+      inventory_categories.name AS category_name,
+      asset_item_types.name AS item_display_name,
+      areas.name AS area_name
+    ')
+      ->join('inventory_categories', 'inventory_categories.id = compliance_inventory.category_id', 'left')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
-      ->join('areas', 'areas.id = compliance_inventory.area_id');
+      ->join('areas', 'areas.id = compliance_inventory.area_id', 'left');
 
-    // FILTER KATEGORI
-    if ($category) {
-      $query->where('inventory_categories.name', $category);
+    // ======================
+    // FILTER KATEGORI (ID)
+    // ======================
+    if ($categoryId) {
+      $query->where('compliance_inventory.category_id', $categoryId);
     }
 
-    // FILTER AREA
-    if ($area) {
-      $query->where('areas.name', $area);
+    // ======================
+    // FILTER AREA (ID)
+    // ======================
+    if ($areaId) {
+      $query->where('compliance_inventory.area_id', $areaId);
     }
 
-    // SEARCH (PAKAI NAMA ITEM SEBENARNYA)
+    // ======================
+    // SEARCH
+    // ======================
     if ($keyword) {
       $query->groupStart()
         ->like('asset_item_types.name', $keyword)
@@ -66,13 +72,14 @@ class ComplianceInventoryController extends BaseController
       'pager'       => $this->inventoryModel->pager,
       'categories'  => $this->categoryModel->findAll(),
       'areas'       => $this->areaModel->findAll(),
-      'category'    => $category,
-      'area'        => $area,
+      'category'    => $categoryId,
+      'area'        => $areaId,
       'keyword'     => $keyword,
       'perPage'     => $perPage,
       'isWritable'  => true
     ]);
   }
+
 
   public function update($id)
   {
@@ -167,42 +174,57 @@ class ComplianceInventoryController extends BaseController
   {
     $inventory = $this->inventoryModel
       ->select('
-            compliance_inventory.*,
-            inventory_categories.name AS category_name,
-            asset_item_types.name AS item_display_name,
-            areas.name AS area_name
-        ')
-      ->join('inventory_categories', 'inventory_categories.id = compliance_inventory.category_id')
+      compliance_inventory.*,
+      inventory_categories.name AS category_name,
+      asset_item_types.name AS item_display_name,
+      areas.name AS area_name
+    ')
+      ->join('inventory_categories', 'inventory_categories.id = compliance_inventory.category_id', 'left')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
-      ->join('areas', 'areas.id = compliance_inventory.area_id')
+      ->join('areas', 'areas.id = compliance_inventory.area_id', 'left')
       ->where('compliance_inventory.id', $id)
       ->first();
 
-    if (!$inventory) {
+    if (! $inventory) {
       throw new \CodeIgniter\Exceptions\PageNotFoundException('Inventory tidak ditemukan');
     }
 
-    // ✅ SUMMARY CHECKLIST PER PERIODE
+    // =========================
+    // CHECKLIST HISTORY
+    // =========================
     $checklists = (new \App\Models\ChecklistLogModel())
-      ->select('check_date, period_key, checked_by, status')
+      ->select('
+      period_key,
+      MAX(check_date) as check_date,
+      MAX(checked_by) as checked_by,
+      MAX(status) as status
+    ')
       ->where('inventory_id', $id)
-      ->groupBy('period_key, check_date, checked_by')
+      ->groupBy('period_key')
       ->orderBy('check_date', 'DESC')
       ->findAll();
 
+    // =========================
+    // BULAN AKTIF
+    // =========================
+    $ym = $this->request->getGet('ym');
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      $ym = date('Y-m');
+    }
 
-    $ym = $this->request->getGet('ym') ?? date('Y-m');
-
+    // =========================
+    // REKAP BULANAN
+    // =========================
     $rekap = (new \App\Models\ChecklistLogModel())
       ->select("
-    COUNT(*) as total,
-    SUM(status = 'ok') as ok_count,
-    SUM(status = 'ng') as ng_count,
-    SUM(
-      status = 'ok'
-      AND created_at > DATE_ADD(check_date, INTERVAL 1 DAY)
-    ) as late_count
-  ")
+      COUNT(DISTINCT period_key) as total,
+      SUM(status = 'ok') as ok_count,
+      SUM(status = 'ng') as ng_count,
+      SUM(
+        status = 'ok'
+        AND created_at > DATE_ADD(check_date, INTERVAL 1 DAY)
+      ) as late_count
+    ")
       ->where('inventory_id', $id)
       ->like('period_key', $ym, 'after')
       ->first();
@@ -210,10 +232,11 @@ class ComplianceInventoryController extends BaseController
     return view('compliance/inventory/detail', [
       'inventory'  => $inventory,
       'checklists' => $checklists,
-      'rekap' => $rekap,
-      'ym'    => $ym,
+      'rekap'      => $rekap,
+      'ym'         => $ym,
     ]);
   }
+
 
 
 

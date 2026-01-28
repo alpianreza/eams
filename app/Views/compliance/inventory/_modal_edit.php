@@ -2,14 +2,12 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content shadow rounded-4">
 
-      <form id="formEditInventory"
-        method="post"
-        action="<?= base_url('compliance/inventory/update') ?>">
-
+      <!-- ACTION DISET VIA JS -->
+      <form id="formEditInventory" method="post">
         <?= csrf_field() ?>
 
         <div class="modal-header">
-          <h5 class="modal-title">Edit Inventory</h5>
+          <h5 class="modal-title fw-semibold">Edit Inventory</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
@@ -18,28 +16,19 @@
           <!-- ID -->
           <input type="hidden" name="id" id="edit_id">
 
-          <!-- ===== LOCKED FIELD (DISPLAY ONLY) ===== -->
-
+          <!-- KATEGORI & AREA (LOCKED) -->
           <div class="row g-3 mb-3">
-
             <div class="col-md-6">
               <label class="form-label fw-semibold">Kategori</label>
-              <input type="text"
-                id="edit_category_display"
-                class="form-control"
-                disabled>
+              <input type="text" class="form-control" id="edit_category_text" disabled>
               <input type="hidden" name="category_id" id="edit_category_id">
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-semibold">Area</label>
-              <input type="text"
-                id="edit_area_display"
-                class="form-control"
-                disabled>
+              <input type="text" class="form-control" id="edit_area_text" disabled>
               <input type="hidden" name="area_id" id="edit_area_id">
             </div>
-
           </div>
 
           <hr>
@@ -49,40 +38,26 @@
             <!-- NAMA ITEM (LOCKED) -->
             <div class="col-md-6">
               <label class="form-label fw-semibold">Nama Item</label>
-              <select id="edit_item_display"
-                class="form-select"
-                disabled></select>
-
-              <input type="hidden"
-                name="item_type_id"
-                id="edit_item_type_id">
+              <input type="text" class="form-control" id="edit_item_name" disabled>
+              <input type="hidden" name="item_type_id" id="edit_item_type_id">
             </div>
 
             <!-- NO INVENTARIS -->
             <div class="col-md-6">
               <label class="form-label fw-semibold">No Inventaris</label>
-              <input type="text"
-                name="asset_code"
-                id="edit_code"
-                class="form-control">
+              <input type="text" name="asset_code" id="edit_code" class="form-control">
             </div>
 
             <!-- TIPE -->
             <div class="col-md-6">
               <label class="form-label fw-semibold">Tipe / Spesifikasi</label>
-              <input type="text"
-                name="type_description"
-                id="edit_type"
-                class="form-control">
+              <input type="text" name="type_description" id="edit_type" class="form-control">
             </div>
 
             <!-- PIC -->
             <div class="col-md-6">
               <label class="form-label fw-semibold">PIC</label>
-              <input type="text"
-                name="pic"
-                id="edit_pic"
-                class="form-control">
+              <input type="text" name="pic" id="edit_pic" class="form-control">
             </div>
 
             <!-- STATUS -->
@@ -95,13 +70,11 @@
               </select>
             </div>
 
+            <!-- REMARK -->
             <div class="col-12">
               <label class="form-label fw-semibold">Remark</label>
-              <textarea
-                name="remark"
-                id="edit_remark"
-                class="form-control"
-                rows="3"></textarea>
+              <textarea name="remark" id="edit_remark"
+                class="form-control" rows="3"></textarea>
             </div>
 
           </div>
@@ -112,13 +85,10 @@
             Kategori, Area, dan Item tidak dapat diubah
           </small>
           <div>
-            <button type="button"
-              class="btn btn-light"
-              data-bs-dismiss="modal">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
               Batal
             </button>
-            <button type="submit"
-              class="btn btn-primary px-4">
+            <button type="submit" class="btn btn-primary px-4">
               Update
             </button>
           </div>
