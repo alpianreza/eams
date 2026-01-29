@@ -26,8 +26,6 @@ $seg2 = $segments[1] ?? '';
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- DataTables Bootstrap 5 -->
-    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= base_url('adminlte4/css/adminlte.min.css') ?>">
@@ -253,11 +251,6 @@ $seg2 = $segments[1] ?? '';
 <!-- SweetAlert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- DataTables -->
-<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
-<!-- Global App JS -->
 <script src="<?= base_url('js/app.js') ?>"></script>
 <script src="<?= base_url('js/checklist.js') ?>"></script>
 

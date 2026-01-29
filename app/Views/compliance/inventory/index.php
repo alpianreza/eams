@@ -1,8 +1,8 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<!-- ================= HEADER ================= -->
 <div class="inventory-header mb-3">
+
   <div class="d-flex justify-content-between align-items-start">
     <div>
       <h5 class="mb-0">Compliance Inventory</h5>
@@ -18,73 +18,60 @@
     <?php endif; ?>
   </div>
 
-  <!-- MOBILE SEARCH -->
-  <div class="inventory-search mt-2 d-md-none">
-    <input type="text"
-      id="mobileSearch"
-      class="form-control form-control-sm"
-      placeholder="Cari inventory...">
-  </div>
-
-  <!-- FILTER -->
-  <!-- FILTER DESKTOP -->
-  <div class="inventory-filters d-none d-md-flex align-items-center gap-2 mt-2">
-
-    <select id="filterCategory" class="form-select form-select-sm filter-select">
+  <!-- FILTER BAR -->
+  <div class="d-flex gap-2 flex-wrap mt-2">
+    <select id="filterCategory" class="form-select form-select-sm w-auto">
       <option value="">Semua Kategori</option>
       <?php foreach ($categories as $cat): ?>
-        <option value="<?= $cat['id'] ?>"
-          <?= ($category == $cat['id']) ? 'selected' : '' ?>>
+        <option value="<?= $cat['id'] ?>" <?= $category == $cat['id'] ? 'selected' : '' ?>>
           <?= esc($cat['name']) ?>
         </option>
-      <?php endforeach; ?>
+      <?php endforeach ?>
     </select>
 
-    <select id="filterArea" class="form-select form-select-sm filter-select">
+    <select id="filterArea" class="form-select form-select-sm w-auto">
       <option value="">Semua Area</option>
       <?php foreach ($areas as $a): ?>
-        <option value="<?= $a['id'] ?>"
-          <?= ($area == $a['id']) ? 'selected' : '' ?>>
+        <option value="<?= $a['id'] ?>" <?= $area == $a['id'] ? 'selected' : '' ?>>
           <?= esc($a['name']) ?>
         </option>
-      <?php endforeach; ?>
+      <?php endforeach ?>
     </select>
 
-    <button
-      id="btnResetFilter"
-      class="btn btn-outline-danger btn-sm d-none">
+    <!-- DESKTOP SEARCH -->
+    <input type="text"
+      id="searchInput"
+      class="form-control form-control-sm"
+      style="max-width:240px"
+      placeholder="Cari inventory..."
+      value="<?= esc($keyword) ?>">
+
+    <button id="btnResetFilter" class="btn btn-outline-danger btn-sm d-none">
       Reset
     </button>
-
-
   </div>
+
 </div>
 
-
-<!-- AJAX CONTAINER -->
 <div id="inventoryAjax">
 
-  <?= $this->include('compliance/inventory/_table') ?>
-
-  <!-- PAGINATION -->
-  <?php
-  $start = (($pager->getCurrentPage() - 1) * $pager->getPerPage()) + 1;
-  $end   = min(
-    $pager->getCurrentPage() * $pager->getPerPage(),
-    $pager->getTotal()
-  );
-  ?>
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-3 gap-2">
-
-    <div class="text-muted small">
-      Showing <?= $start ?> to <?= $end ?> of <?= $pager->getTotal() ?> entries
-    </div>
-
-    <div class="pagination-wrapper">
-      <?= $pager->links() ?>
-    </div>
-
+  <!-- SKELETON -->
+  <div id="inventorySkeleton" class="d-none">
+    <table class="table align-middle">
+      <tbody>
+        <?php for ($i = 0; $i < 6; $i++): ?>
+          <tr>
+            <td colspan="11">
+              <div class="skeleton-row"></div>
+            </td>
+          </tr>
+        <?php endfor; ?>
+      </tbody>
+    </table>
   </div>
+
+  <?= $this->include('compliance/inventory/_table') ?>
+  <?= $this->include('compliance/inventory/_pagination') ?>
 
 </div>
 
@@ -138,24 +125,6 @@
   document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('[title]').forEach(el => {
       new bootstrap.Tooltip(el);
-    });
-  });
-</script>
-
-<!-- MOBILE SEARCH SCRIPT -->
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const searchInput = document.getElementById("mobileSearch");
-    if (!searchInput) return;
-
-    searchInput.addEventListener("input", function() {
-      const keyword = this.value.toLowerCase();
-
-      document.querySelectorAll(".inventory-card").forEach(card => {
-        const text = card.innerText.toLowerCase();
-        card.style.display = text.includes(keyword) ? "" : "none";
-      });
     });
   });
 </script>

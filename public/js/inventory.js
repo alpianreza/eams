@@ -202,14 +202,30 @@ document.addEventListener("DOMContentLoaded", function () {
   const ajaxContainer = document.getElementById("inventoryAjax");
   if (!ajaxContainer) return;
 
-  function getFilterElements() {
-    return {
-      category: document.getElementById("filterCategory"),
-      area: document.getElementById("filterArea"),
-    };
-  }
+  const skeleton = document.getElementById("inventorySkeleton");
 
+  // BASE URL aman
+  const BASE = BASE_URL.replace(/\/$/, "");
+
+  let debounceTimer;
+
+  /* =========================
+     GET FILTER ELEMENT (ONCE)
+  ========================= */
+  const filters = {
+    category: document.getElementById("filterCategory"),
+    area: document.getElementById("filterArea"),
+    search: document.getElementById("searchInput"),
+    reset: document.getElementById("btnResetFilter"),
+  };
+
+  /* =========================
+     LOAD INVENTORY (AJAX)
+  ========================= */
   function loadInventory(url) {
+    skeleton?.classList.remove("d-none");
+    ajaxContainer.classList.add("is-loading");
+
     fetch(url, {
       headers: { "X-Requested-With": "XMLHttpRequest" },
     })
@@ -222,68 +238,88 @@ document.addEventListener("DOMContentLoaded", function () {
         ajaxContainer.innerHTML = newContent.innerHTML;
         window.history.pushState({}, "", url);
 
-        bindFilters(); // 🔥 WAJIB
-        bindPagination(); // 🔥 WAJIB
+        bindPagination(); // ✅ hanya pagination
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => {
+        skeleton?.classList.add("d-none");
+        ajaxContainer.classList.remove("is-loading");
+      });
   }
 
   /* =========================
-     FILTER (REBIND SAFE)
+     APPLY FILTER (DEBOUNCE)
   ========================= */
-  function bindFilters() {
-    const { category, area } = getFilterElements();
-    const btnReset = document.getElementById("btnResetFilter");
+  function applyFilter() {
+    clearTimeout(debounceTimer);
 
-    function toggleReset() {
-      if ((category && category.value) || (area && area.value)) {
-        btnReset?.classList.remove("d-none");
-      } else {
-        btnReset?.classList.add("d-none");
-      }
-    }
-
-    function applyFilter() {
+    debounceTimer = setTimeout(() => {
       const params = new URLSearchParams();
 
-      if (category?.value) params.set("category", category.value);
-      if (area?.value) params.set("area", area.value);
+      if (filters.category?.value)
+        params.set("category", filters.category.value);
+
+      if (filters.area?.value) params.set("area", filters.area.value);
+
+      if (filters.search?.value.trim())
+        params.set("q", filters.search.value.trim());
 
       const url =
-        BASE_URL +
+        BASE +
         "/compliance/inventory" +
         (params.toString() ? "?" + params.toString() : "");
 
       loadInventory(url);
       toggleReset();
-    }
-
-    category?.addEventListener("change", applyFilter);
-    area?.addEventListener("change", applyFilter);
-
-    btnReset?.addEventListener("click", function () {
-      if (category) category.value = "";
-      if (area) area.value = "";
-      loadInventory(BASE_URL + "/compliance/inventory");
-      toggleReset();
-    });
-
-    toggleReset(); // ⬅️ PENTING
+    }, 250);
   }
+
+  /* =========================
+     RESET BUTTON
+  ========================= */
+  function toggleReset() {
+    if (
+      filters.category?.value ||
+      filters.area?.value ||
+      filters.search?.value.trim()
+    ) {
+      filters.reset?.classList.remove("d-none");
+    } else {
+      filters.reset?.classList.add("d-none");
+    }
+  }
+
+  /* =========================
+     BIND FILTERS (ONCE ONLY)
+  ========================= */
+  filters.category?.addEventListener("change", applyFilter);
+  filters.area?.addEventListener("change", applyFilter);
+  filters.search?.addEventListener("input", applyFilter);
+
+  filters.reset?.addEventListener("click", function () {
+    if (filters.category) filters.category.value = "";
+    if (filters.area) filters.area.value = "";
+    if (filters.search) filters.search.value = "";
+
+    loadInventory(BASE + "/compliance/inventory");
+    toggleReset();
+  });
 
   /* =========================
      PAGINATION AJAX
   ========================= */
   function bindPagination() {
     document.querySelectorAll(".pagination a").forEach((link) => {
-      link.addEventListener("click", function (e) {
+      link.onclick = function (e) {
         e.preventDefault();
         loadInventory(this.href);
-      });
+      };
     });
   }
 
-  // INIT FIRST LOAD
-  bindFilters();
+  /* =========================
+     INIT
+  ========================= */
+  toggleReset();
   bindPagination();
 });

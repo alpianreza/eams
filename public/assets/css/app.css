@@ -303,20 +303,3 @@ pagination {
   display: block;
 }
 
-/* ===============================
-   GLOBAL INTERACTION RESET (WAJIB)
-   =============================== */
-
-.app-wrapper,
-.app-main,
-.app-content,
-table,
-tbody,
-tr,
-td,
-button,
-a,
-.modal,
-.modal * {
-  pointer-events: auto !important;
-}
