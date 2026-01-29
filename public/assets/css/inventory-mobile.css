@@ -140,14 +140,13 @@
 
 #inventoryAjax.is-loading {
   opacity: 0.4;
-  pointer-events: none;
 }
 
 #inventorySkeleton {
   position: absolute;
   inset: 0;
   background: rgba(255, 255, 255, 0.6);
-  z-index: 5;
+  pointer-events: none;
 }
 
 .skeleton-row {
@@ -166,4 +165,19 @@
   100% {
     background-position: -100% 0;
   }
+}
+
+/* Modal header ala AdminLTE / Quick Example */
+.modal-content {
+  border-radius: 6px;
+  border-top: 3px solid #0d6efd; /* biru tipis */
+}
+
+.modal-header {
+  border-bottom: 1px solid #dee2e6;
+  padding: 14px 18px;
+}
+
+.modal-title {
+  font-size: 16px;
 }

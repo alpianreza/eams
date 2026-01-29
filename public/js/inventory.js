@@ -143,9 +143,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  /* =====================================================
-     =============== ADD INVENTORY =======================
-  ===================================================== */
   /* =========================
    ADD INVENTORY (AJAX + TOAST)
 ========================= */
@@ -322,4 +319,30 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================= */
   toggleReset();
   bindPagination();
+
+  /* =========================
+   DELETE INVENTORY (NON AJAX)
+========================= */
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".btn-delete");
+    if (!btn) return;
+
+    const form = btn.closest("form");
+    if (!form) return;
+
+    Swal.fire({
+      title: "Hapus Inventory?",
+      text: "Data yang sudah dihapus tidak bisa dikembalikan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc3545",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Ya, hapus",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        form.submit(); // ✅ submit biasa → controller redirect
+      }
+    });
+  });
 });

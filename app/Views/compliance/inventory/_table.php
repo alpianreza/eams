@@ -76,7 +76,8 @@
 
               <!-- DELETE -->
               <form action="<?= base_url('compliance/inventory/delete/' . $inv['id']) ?>"
-                method="post" class="d-inline form-delete">
+                method="post"
+                class="d-inline form-delete">
                 <?= csrf_field() ?>
                 <button type="button"
                   class="btn btn-sm btn-outline-danger btn-delete"
