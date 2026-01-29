@@ -202,61 +202,73 @@ document.addEventListener("DOMContentLoaded", function () {
   const ajaxContainer = document.getElementById("inventoryAjax");
   if (!ajaxContainer) return;
 
-  const filterCategory = document.getElementById("filterCategory");
-  const filterArea = document.getElementById("filterArea");
+  function getFilterElements() {
+    return {
+      category: document.getElementById("filterCategory"),
+      area: document.getElementById("filterArea"),
+    };
+  }
 
   function loadInventory(url) {
     fetch(url, {
-      headers: {
-        "X-Requested-With": "XMLHttpRequest",
-      },
+      headers: { "X-Requested-With": "XMLHttpRequest" },
     })
       .then((res) => res.text())
       .then((html) => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-
+        const doc = new DOMParser().parseFromString(html, "text/html");
         const newContent = doc.querySelector("#inventoryAjax");
         if (!newContent) return;
 
         ajaxContainer.innerHTML = newContent.innerHTML;
-
-        // update URL tanpa reload
         window.history.pushState({}, "", url);
 
-        bindPagination(); // rebind pagination
+        bindFilters(); // 🔥 WAJIB
+        bindPagination(); // 🔥 WAJIB
       })
-      .catch((err) => console.error(err));
+      .catch(console.error);
   }
 
   /* =========================
-     FILTER CHANGE
+     FILTER (REBIND SAFE)
   ========================= */
-  function applyFilter() {
-    const params = new URLSearchParams();
+  function bindFilters() {
+    const { category, area } = getFilterElements();
+    const btnReset = document.getElementById("btnResetFilter");
 
-    if (filterCategory && filterCategory.value) {
-      params.set("category", filterCategory.value);
+    function toggleReset() {
+      if ((category && category.value) || (area && area.value)) {
+        btnReset?.classList.remove("d-none");
+      } else {
+        btnReset?.classList.add("d-none");
+      }
     }
 
-    if (filterArea && filterArea.value) {
-      params.set("area", filterArea.value);
+    function applyFilter() {
+      const params = new URLSearchParams();
+
+      if (category?.value) params.set("category", category.value);
+      if (area?.value) params.set("area", area.value);
+
+      const url =
+        BASE_URL +
+        "/compliance/inventory" +
+        (params.toString() ? "?" + params.toString() : "");
+
+      loadInventory(url);
+      toggleReset();
     }
 
-    const url =
-      BASE_URL +
-      "/compliance/inventory" +
-      (params.toString() ? "?" + params.toString() : "");
+    category?.addEventListener("change", applyFilter);
+    area?.addEventListener("change", applyFilter);
 
-    loadInventory(url);
-  }
+    btnReset?.addEventListener("click", function () {
+      if (category) category.value = "";
+      if (area) area.value = "";
+      loadInventory(BASE_URL + "/compliance/inventory");
+      toggleReset();
+    });
 
-  if (filterCategory) {
-    filterCategory.addEventListener("change", applyFilter);
-  }
-
-  if (filterArea) {
-    filterArea.addEventListener("change", applyFilter);
+    toggleReset(); // ⬅️ PENTING
   }
 
   /* =========================
@@ -271,5 +283,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // INIT FIRST LOAD
+  bindFilters();
   bindPagination();
 });

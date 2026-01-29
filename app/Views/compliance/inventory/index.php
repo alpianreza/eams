@@ -50,12 +50,12 @@
       <?php endforeach; ?>
     </select>
 
-    <?php if ($category || $area): ?>
-      <a href="<?= base_url('compliance/inventory') ?>"
-        class="btn btn-outline-danger btn-sm">
-        Reset
-      </a>
-    <?php endif; ?>
+    <button
+      id="btnResetFilter"
+      class="btn btn-outline-danger btn-sm d-none">
+      Reset
+    </button>
+
 
   </div>
 </div>
@@ -132,34 +132,6 @@
   });
 </script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const filterCategory = document.getElementById("filterCategory");
-    const filterArea = document.getElementById("filterArea");
-
-    if (!filterCategory && !filterArea) return;
-
-    function applyFilter() {
-      const params = new URLSearchParams();
-
-      if (filterCategory && filterCategory.value) {
-        params.set("category", filterCategory.value);
-      }
-
-      if (filterArea && filterArea.value) {
-        params.set("area", filterArea.value);
-      }
-
-      window.location.href =
-        "<?= base_url('compliance/inventory') ?>" +
-        (params.toString() ? "?" + params.toString() : "");
-    }
-
-
-    filterCategory?.addEventListener("change", applyFilter);
-    filterArea?.addEventListener("change", applyFilter);
-  });
-</script>
 
 
 <script>
