@@ -26,6 +26,11 @@ $seg2 = $segments[1] ?? '';
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous">
+
+
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= base_url('adminlte4/css/adminlte.min.css') ?>">
@@ -170,6 +175,14 @@ $seg2 = $segments[1] ?? '';
                                     </li>
                                 </ul>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= site_url('compliance/checklist/master') ?>"
+                                    class="nav-link <?= url_is('compliance/checklist/master*') ? 'active' : '' ?>">
+                                    <i class="nav-icon fas fa-list-check"></i>
+                                    <p>Checklist Master</p>
+                                </a>
+                            </li>
+
 
                             <?php if ($role === 'admin'): ?>
                                 <li class="nav-header">ADMIN</li>
@@ -209,28 +222,6 @@ $seg2 = $segments[1] ?? '';
 
         </div>
 
-        <!-- TOAST -->
-        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
-            <div
-                id="appToast"
-                class="toast fade"
-                role="alert"
-                aria-live="assertive"
-                aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body" id="toastMessage">
-                        Pesan
-                    </div>
-                    <button
-                        type="button"
-                        class="btn-close me-2 m-auto"
-                        data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-
-
     <?php else: ?>
 
         <?= $this->renderSection('content') ?>
@@ -253,6 +244,45 @@ $seg2 = $segments[1] ?? '';
 
 <script src="<?= base_url('js/app.js') ?>"></script>
 <script src="<?= base_url('js/checklist.js') ?>"></script>
+<script src="<?= base_url('js/checklist-master.js') ?>"></script>
+
+<script>
+    window.FLASH_MESSAGE = {
+        success: <?= session()->getFlashdata('success')
+                        ? json_encode(session('success'))
+                        : 'null' ?>,
+        error: <?= session()->getFlashdata('error')
+                    ? json_encode(session('error'))
+                    : 'null' ?>,
+        warning: <?= session()->getFlashdata('warning')
+                        ? json_encode(session('warning'))
+                        : 'null' ?>,
+        info: <?= session()->getFlashdata('info')
+                    ? json_encode(session('info'))
+                    : 'null' ?>
+    };
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (window.FLASH_MESSAGE.success) {
+            safeToast(window.FLASH_MESSAGE.success, "success");
+        }
+
+        if (window.FLASH_MESSAGE.error) {
+            safeToast(window.FLASH_MESSAGE.error, "error");
+        }
+
+        if (window.FLASH_MESSAGE.warning) {
+            safeToast(window.FLASH_MESSAGE.warning, "warning");
+        }
+
+        if (window.FLASH_MESSAGE.info) {
+            safeToast(window.FLASH_MESSAGE.info, "info");
+        }
+    });
+</script>
+
 
 
 <!-- Page Specific Script -->

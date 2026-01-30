@@ -1,24 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
   /* =====================================================
-     GLOBAL TOAST (DIPAKAI EDIT & ADD)
-  ===================================================== */
-  function showToast(message, type = "success") {
-    const toastEl = document.getElementById("appToast");
-    const toastMsg = document.getElementById("toastMessage");
-    if (!toastEl || !toastMsg) return;
-
-    toastEl.className = "toast align-items-center border-0";
-    toastEl.classList.add(
-      type === "success" ? "text-bg-success" : "text-bg-danger",
-    );
-
-    toastMsg.innerText = message;
-    bootstrap.Toast.getOrCreateInstance(toastEl, {
-      delay: 2500,
-    }).show();
-  }
-
-  /* =====================================================
      =============== EDIT INVENTORY ======================
   ===================================================== */
   const editModalEl = document.getElementById("modalEditInventory");
@@ -55,15 +36,12 @@ document.addEventListener("DOMContentLoaded", function () {
       editForm.action = `${BASE_URL}/compliance/inventory/update/${id}`;
 
       editForm.querySelector("#edit_id").value = id;
-
       editForm.querySelector("#edit_category_text").value = currentRow
         .querySelector(".col-category")
         .innerText.trim();
-
       editForm.querySelector("#edit_area_text").value = currentRow
         .querySelector(".col-area")
         .innerText.trim();
-
       editForm.querySelector("#edit_item_name").value = currentRow
         .querySelector(".col-item")
         .innerText.trim();
@@ -99,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((res) => res.json())
         .then((res) => {
           if (!res || res.status !== "success") {
-            showToast("Gagal memperbarui inventory", "error");
+            safeToast("Gagal memperbarui inventory", "error");
             return;
           }
 
@@ -130,11 +108,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
           editModal.hide();
           cleanupModal();
-          showToast("Inventory berhasil diperbarui");
+          safeToast("Inventory berhasil diperbarui", "success");
         })
         .catch((err) => {
           console.error(err);
-          showToast("Terjadi kesalahan sistem", "error");
+          safeToast("Terjadi kesalahan sistem", "error");
         });
     });
 
@@ -144,8 +122,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /* =========================
-   ADD INVENTORY (AJAX + TOAST)
-========================= */
+     ADD INVENTORY (AJAX)
+  ========================= */
   const addModalEl = document.getElementById("modalAddInventory");
   const addForm = document.getElementById("formAddInventory");
 
@@ -165,8 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           addModal.hide();
           cleanupModal();
-
-          showToast("Inventory & QR Code berhasil ditambahkan");
+          safeToast("Inventory & QR Code berhasil ditambahkan", "success");
 
           setTimeout(() => {
             window.location.reload();
@@ -174,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch((err) => {
           console.error(err);
-          showToast("Gagal menambahkan inventory", "error");
+          safeToast("Gagal menambahkan inventory", "error");
         });
     });
 
@@ -320,9 +297,9 @@ document.addEventListener("DOMContentLoaded", function () {
   toggleReset();
   bindPagination();
 
-  /* =========================
-   DELETE INVENTORY (NON AJAX)
-========================= */
+  /* =====================================================
+     DELETE CONFIRMATION (SweetAlert2)
+  ===================================================== */
   document.addEventListener("click", function (e) {
     const btn = e.target.closest(".btn-delete");
     if (!btn) return;
@@ -331,18 +308,39 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!form) return;
 
     Swal.fire({
-      title: "Hapus Inventory?",
-      text: "Data yang sudah dihapus tidak bisa dikembalikan!",
+      title: "Yakin hapus data?",
+      text: "Data inventory yang dihapus tidak bisa dikembalikan.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#dc3545",
+      confirmButtonColor: "#d33",
       cancelButtonColor: "#6c757d",
       confirmButtonText: "Ya, hapus",
       cancelButtonText: "Batal",
     }).then((result) => {
-      if (result.isConfirmed) {
-        form.submit(); // ✅ submit biasa → controller redirect
-      }
+      if (!result.isConfirmed) return;
+
+      fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Delete failed");
+          return res.text(); // controller kamu redirect, bukan JSON
+        })
+        .then(() => {
+          // hapus row dari tabel
+          const row = btn.closest("tr");
+          if (row) row.remove();
+
+          safeToast("Inventory berhasil dihapus", "success");
+        })
+        .catch((err) => {
+          console.error(err);
+          safeToast("Gagal menghapus inventory", "error");
+        });
     });
   });
 });

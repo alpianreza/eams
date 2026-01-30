@@ -303,3 +303,69 @@ pagination {
   display: block;
 }
 
+/* =========================
+  TOASTR POSITION FIX
+========================= */
+
+.colored-toast.swal2-icon-success {
+  background: #28a745 !important;
+  color: #fff;
+}
+
+.colored-toast.swal2-icon-error {
+  background: #dc3545 !important;
+  color: #fff;
+}
+
+.colored-toast.swal2-icon-warning {
+  background: #ffc107 !important;
+  color: #000;
+}
+
+.colored-toast.swal2-icon-info {
+  background: #0dcaf0 !important;
+  color: #000;
+}
+
+/* =========================
+   BOX category card
+========================= */
+
+.checklist-box {
+  cursor: pointer;
+}
+.checklist-box:hover {
+  transform: translateY(-4px);
+}
+/* Samakan tinggi semua small-box */
+.checklist-box {
+  min-height: 140px;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Hover effect */
+.checklist-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Rapihin icon */
+.checklist-box .icon {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 64px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Biar footer rata bawah */
+.checklist-box .small-box-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}

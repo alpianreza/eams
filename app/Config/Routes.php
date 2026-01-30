@@ -149,3 +149,14 @@ $routes->get(
     'compliance/checklist/(:num)/calendar',
     'ComplianceInventoryController::calendar/$1'
 );
+
+$routes->group('compliance/checklist', function ($routes) {
+
+    // MASTER (MANAGEMENT)
+    $routes->get('master', 'ComplianceChecklistMasterController::masterIndex');
+    $routes->get('master/category/(:num)', 'ComplianceChecklistMasterController::masterByCategory/$1');
+    $routes->get('master/item/(:num)', 'ComplianceChecklistMasterController::masterItem/$1');
+
+    $routes->post('master/store', 'ComplianceChecklistMasterController::store');
+    $routes->post('master/update/(:num)', 'ComplianceChecklistMasterController::update/$1');
+});

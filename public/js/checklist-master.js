@@ -1,0 +1,85 @@
+document.addEventListener("DOMContentLoaded", function () {
+  /* ===============================
+     ADD CHECKLIST QUESTION (AJAX)
+     =============================== */
+  const formAdd = document.querySelector("#modalAdd form");
+  if (formAdd) {
+    formAdd.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      fetch(formAdd.action, {
+        method: "POST",
+        body: new FormData(formAdd),
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === "success") {
+            safeToast("Pertanyaan berhasil ditambahkan", "success");
+            bootstrap.Modal.getInstance(
+              document.getElementById("modalAdd"),
+            ).hide();
+
+            setTimeout(() => location.reload(), 500);
+          } else {
+            safeToast("Gagal menyimpan data", "danger");
+          }
+        })
+        .catch(() => {
+          safeToast("Terjadi kesalahan server", "danger");
+        });
+    });
+  }
+
+  /* ===============================
+     EDIT BUTTON CLICK (OPEN MODAL)
+     =============================== */
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest('[data-action="edit"]');
+    if (!btn) return;
+
+    document.getElementById("edit_question").value = btn.dataset.question;
+    document.getElementById("edit_frequency").value = btn.dataset.frequency;
+    document.getElementById("edit_require_photo").checked =
+      btn.dataset.require_photo == 1;
+    document.getElementById("edit_active").checked = btn.dataset.active == 1;
+
+    const formEdit = document.getElementById("formEdit");
+    formEdit.action = btn.dataset.updateUrl;
+
+    new bootstrap.Modal(document.getElementById("modalEdit")).show();
+  });
+
+  const formEdit = document.getElementById("formEdit");
+  if (formEdit) {
+    formEdit.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      fetch(formEdit.action, {
+        method: "POST",
+        body: new FormData(formEdit),
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === "success") {
+            safeToast("Pertanyaan berhasil diupdate", "success");
+            bootstrap.Modal.getInstance(
+              document.getElementById("modalEdit"),
+            ).hide();
+
+            setTimeout(() => location.reload(), 500);
+          } else {
+            safeToast("Gagal update data", "danger");
+          }
+        })
+        .catch(() => {
+          safeToast("Terjadi kesalahan server", "danger");
+        });
+    });
+  }
+});
