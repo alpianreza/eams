@@ -1,0 +1,371 @@
+DEBUG - 2026-01-31 00:10:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:15:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:18:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:33:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-31 00:33:46 --> ErrorException: Undefined variable $periodKey
+[Method: GET, Route: compliance/checklist/97]
+in APPPATH\Controllers\ComplianceInventoryController.php on line 363.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(363): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $periodKey', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\ComplianceInventoryController.php', 363)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-31 00:33:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-31 00:33:51 --> ErrorException: Undefined variable $periodKey
+[Method: GET, Route: compliance/checklist/97]
+in APPPATH\Controllers\ComplianceInventoryController.php on line 363.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(363): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $periodKey', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\ComplianceInventoryController.php', 363)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-31 00:33:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-31 00:33:53 --> ErrorException: Undefined variable $periodKey
+[Method: GET, Route: compliance/checklist/97]
+in APPPATH\Controllers\ComplianceInventoryController.php on line 363.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(363): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $periodKey', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\ComplianceInventoryController.php', 363)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-31 00:34:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:36:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:42:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:42:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:46:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:46:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:51:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:51:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:51:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:51:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:51:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:56:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:56:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:56:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:56:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:56:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 00:56:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:01:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:04:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:04:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:04:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:04:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:04:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-31 01:04:24 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-31 01:04:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:13:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:20:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:20:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:20:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:20:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:20:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:20:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:20:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:21:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:22:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:22:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:24:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:24:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:24:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:24:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:24:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:24:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:24:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:26:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:37:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-31 01:37:23 --> ErrorException: Undefined variable $seg3
+[Method: GET, Route: compliance/inventory]
+in APPPATH\Views\layouts\main.php on line 177.
+ 1 APPPATH\Views\layouts\main.php(177): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $seg3', 'C:\\xampp\\htdocs\\eams\\app\\Views\\layouts\\main.php', 177)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\layouts\\main.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\View\View.php(242): CodeIgniter\View\View->render('layouts/main', [], true)
+ 5 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/index', [], true)
+ 6 APPPATH\Controllers\ComplianceInventoryController.php(70): view('compliance/inventory/index', [...])
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-31 01:37:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:38:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:38:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:38:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:38:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:43:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:43:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:43:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:43:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:43:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:45:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:45:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:46:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:47:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-01-31 01:47:51 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U) in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `as...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `as...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `as...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `as...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\eams\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\eams\app\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+#10 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-01-31 01:47:51 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+[Method: POST, Route: compliance/item/store]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-01-31 01:47:51 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-01-31 01:47:51 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-31 01:51:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:51:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:52:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-31 01:53:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-01-31 01:53:46 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U) in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `as...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `as...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `as...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `as...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\eams\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\eams\app\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+#10 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-01-31 01:53:46 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+[Method: POST, Route: compliance/item/store]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-01-31 01:53:46 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-01-31 01:53:46 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-31 01:53:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-01-31 01:53:50 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U) in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `as...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `as...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `as...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `as...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\eams\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\eams\app\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+#10 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-01-31 01:53:50 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+[Method: POST, Route: compliance/item/store]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-01-31 01:53:50 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-01-31 01:53:50 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\ComplianceItemTypeController.php(33): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-31 01:54:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-01-31 01:54:52 --> mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U) in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `as...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `as...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `as...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `as...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(838): CodeIgniter\Model->doInsert(Array)
+#6 C:\xampp\htdocs\eams\system\Model.php(797): CodeIgniter\BaseModel->insert(Array, true)
+#7 C:\xampp\htdocs\eams\app\Controllers\ComplianceItemTypeController.php(31): CodeIgniter\Model->insert(Array)
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+#10 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#11 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#12 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#13 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#14 {main}
+CRITICAL - 2026-01-31 01:54:52 --> CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+[Method: POST, Route: compliance/item/store]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 2 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 3 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 4 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 5 APPPATH\Controllers\ComplianceItemTypeController.php(31): CodeIgniter\Model->insert([...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-01-31 01:54:52 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 4 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 5 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 6 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 7 APPPATH\Controllers\ComplianceItemTypeController.php(31): CodeIgniter\Model->insert([...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-01-31 01:54:52 --> [Caused by] mysqli_sql_exception: Cannot add or update a child row: a foreign key constraint fails (`asset_compliance_system`.`asset_item_types`, CONSTRAINT `fk_item_type_inventory_category` FOREIGN KEY (`inventory_category_id`) REFERENCES `inventory_categories` (`id`) ON DELETE CASCADE ON U)
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (\'First Aid Kit Content\', \'P3KC\', \'daily\', 1)')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(2345): CodeIgniter\Database\BaseConnection->query('INSERT INTO `asset_item_types` (`name`, `code`, `checklist_frequency`, `active`) VALUES (:name:, :code:, :checklist_frequency:, :active:)', [...], false)
+ 5 SYSTEMPATH\Model.php(394): CodeIgniter\Database\BaseBuilder->insert()
+ 6 SYSTEMPATH\BaseModel.php(838): CodeIgniter\Model->doInsert([...])
+ 7 SYSTEMPATH\Model.php(797): CodeIgniter\BaseModel->insert([...], true)
+ 8 APPPATH\Controllers\ComplianceItemTypeController.php(31): CodeIgniter\Model->insert([...])
+ 9 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceItemTypeController->store()
+10 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceItemTypeController))
+11 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+12 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

@@ -128,4 +128,24 @@ class ComplianceChecklistMasterController extends BaseController
 
     return redirect()->back();
   }
+
+  public function updateItemFrequency($itemTypeId)
+  {
+    $frequency = $this->request->getPost('frequency');
+
+    if (! in_array($frequency, ['daily', 'weekly', 'monthly'])) {
+      return $this->response->setJSON([
+        'status' => 'error',
+        'message' => 'Frekuensi tidak valid'
+      ]);
+    }
+
+    $this->assetItemTypeModel->update($itemTypeId, [
+      'checklist_frequency' => $frequency
+    ]);
+
+    return $this->response->setJSON([
+      'status' => 'success'
+    ]);
+  }
 }

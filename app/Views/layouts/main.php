@@ -97,6 +97,7 @@ $seg2 = $segments[1] ?? '';
 
             <!-- ================= SIDEBAR ================= -->
             <aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
+                <!-- BRAND -->
                 <div class="sidebar-brand">
                     <a href="<?= base_url('/') ?>" class="brand-link">
                         <span class="brand-text fw-bold">EAMS</span>
@@ -107,7 +108,7 @@ $seg2 = $segments[1] ?? '';
                     <nav class="mt-2">
                         <ul class="nav sidebar-menu flex-column" role="menu">
 
-                            <!-- Dashboard -->
+                            <!-- DASHBOARD -->
                             <li class="nav-item">
                                 <a href="<?= base_url('/') ?>"
                                     class="nav-link <?= $seg1 === '' ? 'active' : '' ?>">
@@ -116,6 +117,7 @@ $seg2 = $segments[1] ?? '';
                                 </a>
                             </li>
 
+                            <!-- ================= IT ASSET ================= -->
                             <li class="nav-header">IT ASSET</li>
 
                             <li class="nav-item">
@@ -134,6 +136,7 @@ $seg2 = $segments[1] ?? '';
                                 </a>
                             </li>
 
+                            <!-- ================= COMPLIANCE ================= -->
                             <li class="nav-header">COMPLIANCE</li>
 
                             <li class="nav-item">
@@ -144,10 +147,13 @@ $seg2 = $segments[1] ?? '';
                                 </a>
                             </li>
 
+                            <!-- COMPLIANCE CHECKLIST (OPERATIONAL) -->
                             <li class="nav-item">
-                                <a class="nav-link <?= $seg1 === 'compliance' ? 'active' : '' ?>"
+                                <a class="nav-link <?= $seg1 === 'compliance' && in_array($seg2, ['inventory', 'checklist']) ? 'active' : '' ?>"
                                     data-bs-toggle="collapse"
-                                    href="#menuCompliance">
+                                    href="#menuComplianceChecklist"
+                                    role="button"
+                                    aria-expanded="<?= $seg1 === 'compliance' && in_array($seg2, ['inventory', 'checklist']) ? 'true' : 'false' ?>">
                                     <i class="nav-icon bi bi-list-check"></i>
                                     <p>
                                         Checklist
@@ -155,35 +161,30 @@ $seg2 = $segments[1] ?? '';
                                     </p>
                                 </a>
 
-                                <ul class="collapse nav flex-column ms-4 <?= $seg1 === 'compliance' ? 'show' : '' ?>"
-                                    id="menuCompliance">
+                                <ul class="collapse nav flex-column ms-4
+            <?= $seg1 === 'compliance' && in_array($seg2, ['inventory', 'checklist']) ? 'show' : '' ?>"
+                                    id="menuComplianceChecklist">
+
                                     <li class="nav-item">
                                         <a href="<?= base_url('compliance/inventory') ?>"
                                             class="nav-link <?= $seg2 === 'inventory' ? 'active' : '' ?>">
                                             Inventory / Asset
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="<?= base_url('compliance/checklist/ctpat') ?>" class="nav-link">
-                                            CTPAT
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="<?= base_url('compliance/checklist/fire-safety') ?>" class="nav-link">
-                                            Fire Safety
-                                        </a>
-                                    </li>
+
                                 </ul>
                             </li>
+
+                            <!-- CHECKLIST MASTER (SETUP / CONFIG) -->
                             <li class="nav-item">
                                 <a href="<?= site_url('compliance/checklist/master') ?>"
                                     class="nav-link <?= url_is('compliance/checklist/master*') ? 'active' : '' ?>">
-                                    <i class="nav-icon fas fa-list-check"></i>
+                                    <i class="nav-icon fa-solid fa-list-check"></i>
                                     <p>Checklist Master</p>
                                 </a>
                             </li>
 
-
+                            <!-- ================= ADMIN ================= -->
                             <?php if ($role === 'admin'): ?>
                                 <li class="nav-header">ADMIN</li>
 

@@ -3,12 +3,26 @@
 
 <div class="container-fluid">
 
-  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <h4 class="mb-0"><?= esc($item['name']) ?></h4>
       <small class="text-muted">Pertanyaan checklist</small>
     </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="text-muted small">Frekuensi:</span>
+
+      <select
+        id="itemFrequency"
+        class="form-select form-select-sm w-auto"
+        data-url="<?= site_url('compliance/checklist/master/item-frequency/' . $item['id']) ?>">
+        <option value="daily" <?= $item['checklist_frequency'] === 'daily'   ? 'selected' : '' ?>>Daily</option>
+        <option value="weekly" <?= $item['checklist_frequency'] === 'weekly'  ? 'selected' : '' ?>>Weekly</option>
+        <option value="monthly" <?= $item['checklist_frequency'] === 'monthly' ? 'selected' : '' ?>>Monthly</option>
+      </select>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
 
     <div class="d-flex gap-2">
       <a href="<?= site_url('compliance/checklist/master/category/' . $item['inventory_category_id']) ?>"

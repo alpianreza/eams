@@ -1264,3 +1264,588 @@ WARNING - 2026-01-30 07:59:20 --> [DEPRECATED] preg_match(): Passing null to par
  7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 DEBUG - 2026-01-30 07:59:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-01-30 08:01:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:06:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:09:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:12:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:12:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:12:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:13:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:13:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:13:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:13:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:14:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:15:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:15:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:15:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:17:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:25:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:25:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:25:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:15 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:17 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:20 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:23 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:25 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:26 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:30 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:31 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:32 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:35 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:25:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:25:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:25:47 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:25:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:26:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:26:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:26:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:26:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:26:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:26:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:26:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:26:27 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:26:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:26:29 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:26:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:26:38 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:26:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:26:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:27:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:27:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:27:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:27:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:27:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:28:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:28:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:28:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:28:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:28:49 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:28:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:28:51 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:31:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:36:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:36:35 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:36:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:36:43 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:39:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:39:18 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:39:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:39:22 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:39:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:39:28 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:40:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:41:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:41:14 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:41:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:41:18 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:41:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:41:20 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:41:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:41:43 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 317.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(317): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:53:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:53:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:53:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:53:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:53:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:56:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:56:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:56:32 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:56:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 08:56:34 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 08:56:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 08:58:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:02:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:02:19 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:02:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:02:26 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:02:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:02:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:03:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:03:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:03:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:03:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:03:04 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:03:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:03:06 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:03:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:03:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:03:10 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:08:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:08:23 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:08:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:08:29 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:08:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:08:43 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:09:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:09:03 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:10:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:10:23 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:13:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:13:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:14:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:14:29 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:15:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:15:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:15:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:22:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:24:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-30 09:24:27 --> TypeError: period_label(): Argument #2 ($periodKey) must be of type string, null given, called in C:\xampp\htdocs\eams\app\Controllers\ComplianceInventoryController.php on line 338
+[Method: GET, Route: compliance/checklist/97]
+in APPPATH\Helpers\period_helper.php on line 25.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(338): period_label('monthly', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:24:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-01-30 09:24:33 --> TypeError: period_label(): Argument #2 ($periodKey) must be of type string, null given, called in C:\xampp\htdocs\eams\app\Controllers\ComplianceInventoryController.php on line 338
+[Method: GET, Route: compliance/checklist/97]
+in APPPATH\Helpers\period_helper.php on line 25.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(338): period_label('monthly', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('97')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:26:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:26:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:31:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:31:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:31:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:31:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:31:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:33:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:33:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:33:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:33:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:33:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:33:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:39:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:39:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:39:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:40:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:40:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:40:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:40:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:40:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:40:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:41:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:41:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:41:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 09:41:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:41:21 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:41:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 09:41:24 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 307.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(307): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->checklist('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 09:46:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 10:12:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 10:18:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 10:20:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 10:34:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 10:34:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 10:34:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 10:35:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 11:01:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 11:28:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 11:52:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:04:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:16:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:16:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:16:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:18:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:18:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:20:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:43:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 12:59:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 13:01:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 13:07:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 13:33:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 13:57:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 13:59:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 14:07:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 14:09:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 14:13:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 14:14:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 14:14:27 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 14:23:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 14:38:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 14:47:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 14:49:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 14:53:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+WARNING - 2026-01-30 14:53:08 --> [DEPRECATED] preg_match(): Passing null to parameter #2 ($subject) of type string is deprecated in APPPATH\Controllers\ComplianceInventoryController.php on line 211.
+ 1 APPPATH\Controllers\ComplianceInventoryController.php(211): preg_match('/^\\d{4}-\\d{2}$/', null)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->detail('42')
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-01-30 14:53:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 15:11:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 15:13:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 15:25:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 15:40:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 15:47:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 15:59:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:05:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:05:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:21:22 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:21:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:30:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:34:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:47:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:50:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:55:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 16:59:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 17:19:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 17:32:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 17:44:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 17:58:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 18:09:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 18:36:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 19:01:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 19:27:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 19:52:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 20:11:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 20:17:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 20:23:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 20:43:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 21:06:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 21:07:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 21:34:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 21:55:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 21:58:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:04:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:07:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:10:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:20:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:23:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:24:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:30:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:30:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:48:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 22:49:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 23:00:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 23:15:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 23:34:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 23:45:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-01-30 23:48:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

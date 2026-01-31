@@ -160,3 +160,13 @@ $routes->group('compliance/checklist', function ($routes) {
     $routes->post('master/store', 'ComplianceChecklistMasterController::store');
     $routes->post('master/update/(:num)', 'ComplianceChecklistMasterController::update/$1');
 });
+
+$routes->post(
+    'compliance/checklist/master/item-frequency/(:num)',
+    'ComplianceChecklistMasterController::updateItemFrequency/$1'
+);
+
+$routes->group('compliance/item', function ($routes) {
+    $routes->get('create', 'ComplianceItemTypeController::create');
+    $routes->post('store', 'ComplianceItemTypeController::store');
+});

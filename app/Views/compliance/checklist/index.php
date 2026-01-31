@@ -3,7 +3,10 @@
 
 <div class="checklist-page">
 
-  <?= $this->include('compliance/checklist/_calendar') ?>
+
+  <div id="checklistAjax">
+    <?= $this->include('compliance/checklist/_calendar') ?>
+  </div>
 
   <?= $this->include('compliance/checklist/_form') ?>
 

@@ -66,6 +66,21 @@
 
   <div class="card-body">
 
+    <?php if ($frequency === 'daily'): ?>
+      <div class="row g-2 calendar-grid">
+        <?php foreach ($periods as $p): ?>
+          <div class="col-6 col-md-3">
+            <a href="<?= base_url('compliance/checklist/' . $inventory['id']) ?>?period_key=<?= $p['period_key'] ?>"
+              class="btn w-100 <?= periodBtnClass($p['status'] ?? null, $p['period_key'] === $period_key) ?>">
+              <i class="bi bi-calendar-day"></i>
+              <?= esc($p['label']) ?>
+            </a>
+          </div>
+        <?php endforeach ?>
+      </div>
+    <?php endif ?>
+
+
     <!-- ===== WEEKLY ===== -->
     <?php if ($frequency === 'weekly'): ?>
       <div class="row g-2 calendar-grid">

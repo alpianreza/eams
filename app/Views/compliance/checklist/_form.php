@@ -1,38 +1,65 @@
 <div class="card-body checklist-content">
 
-  <!-- TITLE -->
-  <h5 class="checklist-title mb-1">
-    <?= esc($inventory['item_display_name']) ?>
-    -
-    <?= esc($inventory['asset_code']) ?>
-  </h5>
+  <!-- HEADER -->
+  <div class="mb-3">
+    <h5 class="fw-bold mb-1">
+      <?= esc($inventory['item_display_name']) ?>
+      <span class="text-muted fw-normal">– <?= esc($inventory['asset_code']) ?></span>
+    </h5>
 
-  <p class="text-muted mb-4">
-    Frekuensi: <strong><?= strtoupper($frequency) ?></strong><br>
-    Periode aktif: <strong><?= esc($period_label) ?></strong>
-  </p>
+    <div class="d-flex flex-wrap gap-3 small text-muted">
+      <div>
+        Frekuensi:
+        <span class="badge bg-info text-dark">
+          <?= strtoupper($frequency) ?>
+        </span>
+      </div>
 
-  <?php if ($isLocked): ?>
+      <div>
+        <?php if (! empty($period_label)): ?>
+          Periode aktif:
+          <strong><?= esc($period_label) ?></strong>
+        <?php else: ?>
+          <span class="text-muted fst-italic">
+            Silakan pilih periode checklist
+          </span>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
 
-    <div class="alert alert-info">
+  <hr class="mb-3">
+
+  <?php if (empty($period_key)): ?>
+
+    <!-- BELUM PILIH PERIODE -->
+    <div class="alert alert-light border d-flex align-items-center gap-2">
+      <i class="bi bi-calendar-event"></i>
+      Silakan pilih periode checklist terlebih dahulu.
+    </div>
+
+  <?php elseif ($isLocked): ?>
+
+    <!-- SUDAH TERKUNCI -->
+    <div class="alert alert-info d-flex align-items-center gap-2">
+      <i class="bi bi-lock-fill"></i>
       Checklist untuk periode ini sudah diisi dan terkunci.
     </div>
 
   <?php elseif (! empty($questions)): ?>
 
+    <!-- FORM CHECKLIST -->
     <form id="checklistForm"
       action="<?= base_url('compliance/checklist/submit') ?>"
       method="post"
       enctype="multipart/form-data">
 
-
-
       <?= csrf_field() ?>
 
       <input type="hidden" name="inventory_id" value="<?= $inventory['id'] ?>">
       <input type="hidden" name="item_type_id" value="<?= $inventory['item_type_id'] ?>">
-      <input type="hidden" name="frequency" value="<?= $frequency ?>">
       <input type="hidden" name="period_key" value="<?= $period_key ?>">
+      <input type="hidden" name="frequency" value="<?= $frequency ?>">
 
       <!-- ACTION BAR -->
       <div class="d-flex justify-content-end mb-3">
@@ -42,26 +69,26 @@
         </button>
       </div>
 
-      <!-- TABLE RESPONSIVE -->
+      <!-- TABLE -->
       <div class="table-responsive">
-        <table class="table table-bordered table-checklist align-middle">
+        <table class="table table-bordered table-checklist align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th width="5%">No</th>
+              <th width="5%" class="text-center">No</th>
               <th>Pertanyaan</th>
-              <th width="30%" class="text-center">Status</th>
+              <th width="32%" class="text-center">Status</th>
             </tr>
           </thead>
           <tbody>
 
             <?php foreach ($questions as $i => $q): ?>
               <tr>
-                <td><?= $i + 1 ?></td>
+                <td class="text-center"><?= $i + 1 ?></td>
                 <td><?= esc($q['question']) ?></td>
                 <td class="text-center">
 
-                  <!-- STATUS BUTTON -->
-                  <div class="status-group d-flex justify-content-center gap-2">
+                  <!-- STATUS -->
+                  <div class="status-group d-flex justify-content-center gap-2 mb-1">
 
                     <input type="radio"
                       class="btn-check status-radio"
@@ -73,8 +100,7 @@
 
                     <label class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
                       for="ok-<?= $q['id'] ?>">
-                      <i class="bi bi-check-circle"></i>
-                      OK
+                      <i class="bi bi-check-circle"></i> OK
                     </label>
 
                     <input type="radio"
@@ -85,30 +111,28 @@
                       data-qid="<?= $q['id'] ?>"
                       required>
 
-
                     <label class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
                       for="ng-<?= $q['id'] ?>">
-                      <i class="bi bi-x-circle"></i>
-                      NOT OK
+                      <i class="bi bi-x-circle"></i> NOT OK
                     </label>
-
                   </div>
 
                   <!-- NG ALERT -->
-                  <div class="alert alert-warning ng-alert d-none mt-2"
+                  <div class="alert alert-warning ng-alert d-none py-2 px-2 small text-start"
                     id="ng-alert-<?= $q['id'] ?>">
                     <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                    Item ini NOT OK. Mohon isi catatan dan foto.
+                    Item ini <strong>NOT OK</strong>. Mohon isi catatan dan foto.
                   </div>
 
                   <!-- NG FIELDS -->
-                  <div class="ng-fields d-none mt-2"
+                  <div class="ng-fields d-none mt-2 text-start"
                     id="ng-fields-<?= $q['id'] ?>">
 
                     <textarea
                       name="remarks[<?= $q['id'] ?>]"
                       class="form-control form-control-sm mb-2"
-                      placeholder="Wajib diisi jika NOT OK"></textarea>
+                      rows="2"
+                      placeholder="Catatan (wajib jika NOT OK)"></textarea>
 
                     <input type="file"
                       name="photos[<?= $q['id'] ?>]"
@@ -126,7 +150,7 @@
       </div>
 
       <!-- SUBMIT -->
-      <div class="mt-3">
+      <div class="mt-3 d-flex justify-content-end">
         <button class="btn btn-success">
           <i class="bi bi-save me-1"></i>
           Simpan Checklist

@@ -13,6 +13,7 @@ class AssetItemTypeModel extends Model
     'category_id',
     'name',
     'code',
+    'checklist_frequency',
     'active'
   ];
 }

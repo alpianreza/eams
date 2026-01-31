@@ -82,4 +82,29 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
   }
+
+  /* ===============================
+   UPDATE ITEM FREQUENCY
+   =============================== */
+  document
+    .getElementById("itemFrequency")
+    ?.addEventListener("change", function () {
+      fetch(this.dataset.url, {
+        method: "POST",
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+        body: new URLSearchParams({ frequency: this.value }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === "success") {
+            safeToast("Frekuensi item berhasil diubah", "success");
+            setTimeout(() => location.reload(), 300);
+          } else {
+            safeToast(res.message || "Gagal mengubah frekuensi", "danger");
+          }
+        })
+        .catch(() => {
+          safeToast("Terjadi kesalahan server", "danger");
+        });
+    });
 });
