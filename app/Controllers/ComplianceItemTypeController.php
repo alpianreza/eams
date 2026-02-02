@@ -28,6 +28,7 @@ class ComplianceItemTypeController extends BaseController
 
   public function store()
   {
+
     $this->itemTypeModel->insert([
       'inventory_category_id' => $this->request->getPost('inventory_category_id'),
       'name'                  => $this->request->getPost('name'),
@@ -36,9 +37,6 @@ class ComplianceItemTypeController extends BaseController
       'active'                => 1,
     ]);
 
-
-    return redirect()
-      ->to('compliance/checklist/master')
-      ->with('success', 'Item berhasil ditambahkan');
+    return redirect()->back()->with('success', 'Item berhasil ditambahkan');
   }
 }

@@ -73,4 +73,12 @@ if (! function_exists('resolve_period_status')) {
 
     return 'locked';
   }
+
+  if (! function_exists('is_holiday')) {
+    function is_holiday(string $date): bool
+    {
+      // TODO: nanti bisa diisi logic hari libur nasional / custom
+      return false;
+    }
+  }
 }
