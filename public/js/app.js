@@ -20,18 +20,4 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     });
   };
-
-  /* =====================================================
-     DATATABLE INVENTORY (OPSIONAL)
-     → boleh kamu hapus kalau benar-benar ga dipakai
-  ===================================================== */
-  if (window.$ && $("#inventoryTable").length) {
-    $("#inventoryTable").DataTable({
-      paging: false,
-      info: false,
-      searching: true,
-      ordering: true,
-      autoWidth: false,
-    });
-  }
 });

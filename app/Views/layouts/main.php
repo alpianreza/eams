@@ -171,6 +171,13 @@ $seg2 = $segments[1] ?? '';
                                             Inventory / Asset
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="<?= base_url('reports') ?>" class="nav-link">
+                                            <i class="nav-icon fas fa-file-alt"></i>
+                                            <p>Laporan</p>
+                                        </a>
+                                    </li>
+
 
                                 </ul>
                             </li>

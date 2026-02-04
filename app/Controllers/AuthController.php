@@ -46,7 +46,9 @@ class AuthController extends BaseController
             'permission' => $user['permission']
         ]);
 
-        return redirect()->to('/');
+        $redirect = session()->get('redirect_after_login');
+        session()->remove('redirect_after_login');
+        return redirect()->to($redirect ?? '/');
     }
 
     // logout

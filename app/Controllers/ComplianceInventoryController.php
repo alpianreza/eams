@@ -276,24 +276,19 @@ class ComplianceInventoryController extends BaseController
     return $this->response->setJSON($items);
   }
 
+
   public function checklist($inventoryId)
   {
     helper('checklist');
 
-    // =====================================================
-    // INVENTORY + ITEM TYPE
-    // =====================================================
+    // ================= INVENTORY =================
     $inventory = $this->inventoryModel
       ->select('
       compliance_inventory.*,
       asset_item_types.name AS item_display_name,
       asset_item_types.checklist_frequency
     ')
-      ->join(
-        'asset_item_types',
-        'asset_item_types.id = compliance_inventory.item_type_id',
-        'left'
-      )
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->where('compliance_inventory.id', $inventoryId)
       ->first();
 
@@ -301,99 +296,92 @@ class ComplianceInventoryController extends BaseController
       throw new \CodeIgniter\Exceptions\PageNotFoundException();
     }
 
-    // =====================================================
-    // 🔥 FREQUENCY FINAL — MILIK ITEM
-    // =====================================================
     $frequency = $inventory['checklist_frequency'] ?? 'monthly';
 
-    // =====================================================
-    // MONTH NAVIGATION (YYYY-MM)
-    // =====================================================
+    // ================= MONTH NAV =================
     $ym = $this->request->getGet('ym');
     if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
       $ym = date('Y-m');
     }
 
-    [$year, $month] = array_map('intval', explode('-', $ym));
+    [$year, $month] = explode('-', $ym);
 
-    $minYM  = '2026-01';
     $prevYM = date('Y-m', strtotime("$ym -1 month"));
     $nextYM = date('Y-m', strtotime("$ym +1 month"));
 
-    $canPrev = $prevYM >= $minYM;
+    $canPrev = true;
     $canNext = true;
 
-    // =====================================================
-    // PERIOD KEY (AMAN & UX BENAR)
-    // =====================================================
-    $requestPeriodKey = $this->request->getGet('period_key');
-    $periodKey       = null;
+    // ================= PERIOD KEY =================
+    $periodKey = $this->request->getGet('period_key');
 
-    // 1️⃣ Jika user klik periode
-    if ($requestPeriodKey) {
-      // pastikan period_key sesuai bulan navigasi
-      if (str_starts_with($requestPeriodKey, $ym)) {
-        $periodKey = $requestPeriodKey;
+    // DEFAULT PER FREQUENCY
+    if ($frequency === 'daily') {
+      $defaultPeriodKey = $ym . '-01';
+    } elseif ($frequency === 'weekly') {
+      $defaultPeriodKey = $ym . '-W1';
+    } else {
+      $defaultPeriodKey = $ym;
+    }
+
+    // VALIDASI period_key
+    if (! $periodKey) {
+      $periodKey = $defaultPeriodKey;
+    } else {
+      if (
+        ($frequency === 'daily'   && ! str_starts_with($periodKey, $ym . '-')) ||
+        ($frequency === 'weekly'  && ! str_starts_with($periodKey, $ym . '-W')) ||
+        ($frequency === 'monthly' && $periodKey !== $ym)
+      ) {
+        $periodKey = $defaultPeriodKey;
       }
     }
 
-    // 2️⃣ Default otomatis HANYA untuk bulan SEKARANG
-    if (! $periodKey && $ym === date('Y-m')) {
-      if ($frequency === 'daily') {
-        $periodKey = date('Y-m-d');
-      } elseif ($frequency === 'weekly') {
-        $periodKey = $ym . '-W1';
-      } else { // monthly
-        $periodKey = $ym;
-      }
-    }
+    $periodLabel = period_label($frequency, $periodKey);
 
-    // =====================================================
-    // PERIOD LABEL (AMAN)
-    // =====================================================
-    $periodLabel = null;
-    if (! empty($periodKey)) {
-      $periodLabel = period_label($frequency, $periodKey);
-    }
-
-    // =====================================================
-    // GENERATE CALENDAR (IKUT FREQUENCY ITEM)
-    // =====================================================
-    $periods = generate_calendar_periods($frequency, $year, $month);
+    // ================= CALENDAR =================
+    $periods = generate_calendar_periods($frequency, (int)$year, (int)$month);
 
     foreach ($periods as &$p) {
-      $p['allowed'] = ! is_period_future($frequency, $p['period_key']);
-      $p['status']  = resolve_period_status(
+      $p['allowed']   = is_period_editable($frequency, $p['period_key']);
+      $p['status']    = resolve_period_status(
         $inventory['id'],
         $frequency,
         $p['period_key']
       );
+      $p['is_active'] = ($p['period_key'] === $periodKey);
     }
     unset($p);
 
-    // =====================================================
-    // LOCK PER INVENTORY + PERIOD
-    // =====================================================
+    // ================= LOCK =================
+    $logModel = new \App\Models\ChecklistLogModel();
+
+    $exists = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->where('period_key', $periodKey)
+      ->first();
+
     $isLocked = false;
-    if (! empty($periodKey)) {
-      $isLocked = (new ChecklistLogModel())
-        ->where('inventory_id', $inventoryId)
-        ->where('period_key', $periodKey)
-        ->first() ? true : false;
+    $lockReason = null;
+
+    if ($exists) {
+      $isLocked = true;
+      $lockReason = 'done';
+    } elseif (is_period_future($frequency, $periodKey)) {
+      $isLocked = true;
+      $lockReason = 'future';
+    } elseif (! is_period_editable($frequency, $periodKey)) {
+      $isLocked = true;
+      $lockReason = 'expired';
     }
 
-    // =====================================================
-    // QUESTIONS (SEMUA IKUT ITEM)
-    // =====================================================
-    $questions = (new ChecklistMasterModel())
+    // ================= QUESTIONS =================
+    $questions = (new \App\Models\ChecklistMasterModel())
       ->where('item_type_id', $inventory['item_type_id'])
       ->where('active', 1)
       ->orderBy('id', 'ASC')
       ->findAll();
 
-    // =====================================================
-    // RESPONSE
-    // =====================================================
     return view('compliance/checklist/index', [
       'inventory'    => $inventory,
       'questions'    => $questions,
@@ -401,6 +389,7 @@ class ComplianceInventoryController extends BaseController
       'period_key'   => $periodKey,
       'period_label' => $periodLabel,
       'isLocked'     => $isLocked,
+      'lockReason'   => $lockReason,
       'periods'      => $periods,
       'navYM'        => $ym,
       'prevYM'       => $prevYM,
@@ -409,6 +398,7 @@ class ComplianceInventoryController extends BaseController
       'canNext'      => $canNext,
     ]);
   }
+
 
 
   public function submitChecklist()
@@ -499,14 +489,12 @@ class ComplianceInventoryController extends BaseController
     helper('checklist');
 
     $ym = $this->request->getGet('ym');
-
     if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
       return $this->response->setStatusCode(400);
     }
 
-    [$year, $month] = array_map('intval', explode('-', $ym));
+    [$year, $month] = explode('-', $ym);
 
-    // === AMBIL INVENTORY + ITEM FREQUENCY ===
     $inventory = $this->inventoryModel
       ->select('
       compliance_inventory.id,
@@ -520,26 +508,70 @@ class ComplianceInventoryController extends BaseController
       return $this->response->setStatusCode(404);
     }
 
-    // 🔥 FREQUENCY FINAL
     $frequency = $inventory['checklist_frequency'] ?? 'monthly';
 
-    $periods = generate_calendar_periods($frequency, $year, $month);
+    $requestPeriodKey = $this->request->getGet('period_key');
+
+    if ($frequency === 'daily') {
+      $defaultPeriodKey = $ym . '-01';
+    } elseif ($frequency === 'weekly') {
+      $defaultPeriodKey = $ym . '-W1';
+    } else {
+      $defaultPeriodKey = $ym;
+    }
+
+    if (! $requestPeriodKey) {
+      $periodKey = $defaultPeriodKey;
+    } else {
+      if (
+        ($frequency === 'daily'   && ! str_starts_with($requestPeriodKey, $ym . '-')) ||
+        ($frequency === 'weekly'  && ! str_starts_with($requestPeriodKey, $ym . '-W')) ||
+        ($frequency === 'monthly' && $requestPeriodKey !== $ym)
+      ) {
+        $periodKey = $defaultPeriodKey;
+      } else {
+        $periodKey = $requestPeriodKey;
+      }
+    }
+
+    $periods = generate_calendar_periods($frequency, (int)$year, (int)$month);
 
     foreach ($periods as &$p) {
-      $p['allowed'] = ! is_period_future($frequency, $p['period_key']);
-      $p['status']  = resolve_period_status(
-        $inventoryId,
+      $p['allowed']   = is_period_editable($frequency, $p['period_key']);
+      $p['status']    = resolve_period_status(
+        $inventory['id'],
         $frequency,
         $p['period_key']
       );
+      $p['is_active'] = ($p['period_key'] === $periodKey);
     }
     unset($p);
 
     return view('compliance/checklist/_calendar', [
+      'inventory'   => $inventory,
       'inventoryId' => $inventoryId,
       'periods'     => $periods,
       'frequency'   => $frequency,
-      'ym'          => $ym
+      'navYM'       => $ym,
+      'period_key'  => $periodKey,
     ]);
+  }
+
+
+  private function isPeriodKeyValidForYM(
+    string $frequency,
+    string $periodKey,
+    string $ym
+  ): bool {
+    if ($frequency === 'daily') {
+      return str_starts_with($periodKey, $ym . '-');
+    }
+
+    if ($frequency === 'weekly') {
+      return str_starts_with($periodKey, $ym . '-W');
+    }
+
+    // monthly
+    return $periodKey === $ym;
   }
 }

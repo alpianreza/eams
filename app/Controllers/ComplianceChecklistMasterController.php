@@ -148,4 +148,9 @@ class ComplianceChecklistMasterController extends BaseController
       'status' => 'success'
     ]);
   }
+
+  public function exportPeriodePage()
+  {
+    return view('checklist/export_periode');
+  }
 }

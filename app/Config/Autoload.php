@@ -88,5 +88,5 @@ class Autoload extends AutoloadConfig
      *
      * @var list<string>
      */
-    public $helpers = ['audit', 'ui', 'period', 'checklist', 'calender_period', 'period_status'];
+    public $helpers = ['audit', 'ui', 'period', 'checklist', 'calender_period', 'period_status', 'date'];
 }

@@ -87,11 +87,13 @@
               </form>
 
               <!-- QR -->
-              <?php if (!empty($inv['qr_image'])): ?>
-                <button type="button"
-                  class="btn btn-sm btn-outline-secondary btn-qr"
+              <?php if (! empty($inv['qr_image'])): ?>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-secondary btn-show-qr"
                   data-qr="<?= base_url('uploads/qr/' . $inv['qr_image']) ?>"
-                  title="QR Code">
+                  data-item="<?= esc($inv['item_display_name']) ?>"
+                  data-no="<?= esc($inv['asset_code']) ?>">
                   <i class="bi bi-qr-code"></i>
                 </button>
               <?php endif; ?>

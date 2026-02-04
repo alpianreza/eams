@@ -1,0 +1,148 @@
+body {
+  font-family: dejavusans, sans-serif;
+  font-size: 11px;
+  color: #000;
+}
+
+/* ================= HEADER ================= */
+.pdf-header {
+  width: 100%;
+  border-bottom: 2px solid #000;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+}
+
+.header-table {
+  width: 100%;
+}
+
+.header-left {
+  width: 55%;
+  vertical-align: top;
+}
+
+.header-right {
+  width: 45%;
+  text-align: right;
+  vertical-align: top;
+}
+
+.company-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1e88e5; /* biru langit */
+}
+
+.company-address {
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.report-title {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.report-subtitle {
+  font-size: 10px;
+  color: #555;
+}
+
+/* ================= META ================= */
+.meta {
+  margin-top: 6px;
+  font-size: 10px;
+}
+
+.meta td {
+  padding: 2px 4px;
+  vertical-align: top;
+}
+
+/* ================= TABLE ================= */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #000;
+  padding: 4px;
+}
+
+.table th {
+  text-align: center;
+  background: #f5f5f5;
+}
+
+.center {
+  text-align: center;
+}
+
+/* ================= FOOTER ================= */
+.pdf-footer {
+  position: fixed;
+  bottom: -15px;
+  left: 0;
+  right: 0;
+  font-size: 9px;
+  text-align: right;
+}
+
+/* ================= INVENTORY SEPARATOR ================= */
+.inventory-separator {
+  margin: 10px 0 8px 0;
+  padding: 8px;
+  border: 2px solid #000;
+  text-align: center;
+}
+
+.inventory-separator .title {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.inventory-separator .meta {
+  font-size: 10px;
+}
+
+.meta td {
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.table-checklist {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-checklist th,
+.table-checklist td {
+  border: 1px solid #000;
+  padding: 6px 8px;
+}
+
+.table-checklist th {
+  text-align: center;
+  font-weight: bold;
+}
+
+.col-no {
+  width: 8%;
+  text-align: center;
+}
+
+.col-question {
+  width: 72%;
+  text-align: left; /* 🔥 INI KUNCI */
+}
+
+.col-status {
+  width: 20%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}

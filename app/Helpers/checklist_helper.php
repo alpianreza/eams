@@ -1,46 +1,4 @@
 <?php
-
-function is_period_future(string $frequency, string $periodKey): bool
-{
-  $today = new DateTime(date('Y-m-d'));
-
-  if ($frequency === 'daily') {
-    return new DateTime($periodKey) > $today;
-  }
-
-  if ($frequency === 'weekly') {
-    // periodKey: YYYY-MM-Wn
-    [$ym, $w] = explode('-W', $periodKey);
-    [$year, $month] = explode('-', $ym);
-    $week = (int) $w;
-
-    $startDay = match ($week) {
-      1 => 1,
-      2 => 8,
-      3 => 15,
-      4 => 22,
-    };
-
-    $startDate = new DateTime(sprintf(
-      '%04d-%02d-%02d',
-      $year,
-      $month,
-      $startDay
-    ));
-
-    // future kalau hari ini < tanggal mulai minggu
-    return $today->format('Y-m-d') < $startDate->format('Y-m-d');
-  }
-
-  if ($frequency === 'monthly') {
-    $startDate = new DateTime($periodKey . '-01');
-    return $today < $startDate;
-  }
-
-  return false;
-}
-
-
 function generate_calendar_periods(
   string $frequency,
   int $year,

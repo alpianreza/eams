@@ -20,7 +20,7 @@
           Periode aktif:
           <strong><?= esc($period_label) ?></strong>
         <?php else: ?>
-          <span class="text-muted fst-italic">
+          <span class="fst-italic text-muted">
             Silakan pilih periode checklist
           </span>
         <?php endif; ?>
@@ -40,11 +40,25 @@
 
   <?php elseif ($isLocked): ?>
 
-    <!-- SUDAH TERKUNCI -->
-    <div class="alert alert-info d-flex align-items-center gap-2">
-      <i class="bi bi-lock-fill"></i>
-      Checklist untuk periode ini sudah diisi dan terkunci.
-    </div>
+    <?php if ($lockReason === 'done'): ?>
+      <div class="alert alert-info d-flex align-items-center gap-2">
+        <i class="bi bi-check-circle-fill"></i>
+        Checklist untuk periode ini <strong>sudah diisi</strong> dan terkunci.
+      </div>
+
+    <?php elseif ($lockReason === 'future'): ?>
+      <div class="alert alert-secondary d-flex align-items-center gap-2">
+        <i class="bi bi-lock-fill"></i>
+        Checklist untuk periode ini <strong>belum dapat diisi</strong>.
+      </div>
+
+    <?php elseif ($lockReason === 'expired'): ?>
+      <div class="alert alert-warning d-flex align-items-center gap-2">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        Checklist untuk periode ini <strong>sudah melewati batas pengisian</strong>.
+      </div>
+    <?php endif; ?>
+
 
   <?php elseif (! empty($questions)): ?>
 
@@ -100,7 +114,8 @@
 
                     <label class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
                       for="ok-<?= $q['id'] ?>">
-                      <i class="bi bi-check-circle"></i> OK
+                      <i class="bi bi-check-circle"></i>
+                      OK
                     </label>
 
                     <input type="radio"
@@ -113,7 +128,8 @@
 
                     <label class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
                       for="ng-<?= $q['id'] ?>">
-                      <i class="bi bi-x-circle"></i> NOT OK
+                      <i class="bi bi-x-circle"></i>
+                      NOT OK
                     </label>
                   </div>
 
@@ -121,7 +137,7 @@
                   <div class="alert alert-warning ng-alert d-none py-2 px-2 small text-start"
                     id="ng-alert-<?= $q['id'] ?>">
                     <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                    Item ini <strong>NOT OK</strong>. Mohon isi catatan dan foto.
+                    Item ini <strong>TIDAK SESUAI</strong>. Mohon isi catatan dan foto.
                   </div>
 
                   <!-- NG FIELDS -->
@@ -132,7 +148,7 @@
                       name="remarks[<?= $q['id'] ?>]"
                       class="form-control form-control-sm mb-2"
                       rows="2"
-                      placeholder="Catatan (wajib jika NOT OK)"></textarea>
+                      placeholder="Catatan (wajib jika tidak sesuai)"></textarea>
 
                     <input type="file"
                       name="photos[<?= $q['id'] ?>]"

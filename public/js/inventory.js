@@ -343,4 +343,59 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
   });
+
+  let CURRENT_QR_URL = null;
+  let CURRENT_QR_FILENAME = null;
+
+  document.addEventListener("click", function (e) {
+    /* ===============================
+     OPEN MODAL QR
+     =============================== */
+    const btn = e.target.closest(".btn-show-qr");
+    if (btn) {
+      const qrUrl = btn.dataset.qr;
+      const itemName = btn.dataset.item;
+      const inventoryNo = btn.dataset.no;
+
+      CURRENT_QR_URL = qrUrl;
+      CURRENT_QR_FILENAME =
+        itemName.replace(/\s+/g, "_") +
+        "_" +
+        inventoryNo.replace(/\s+/g, "_") +
+        "_QR.png";
+
+      const img = document.getElementById("qrImage");
+      img.src = qrUrl;
+
+      new bootstrap.Modal(document.getElementById("modalQr")).show();
+    }
+
+    /* ===============================
+     DOWNLOAD QR (INI FIX UTAMA)
+     =============================== */
+    if (e.target.closest("#btnDownloadQr")) {
+      if (!CURRENT_QR_URL) {
+        alert("QR belum siap");
+        return;
+      }
+
+      fetch(CURRENT_QR_URL)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const url = URL.createObjectURL(blob);
+
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = CURRENT_QR_FILENAME;
+          document.body.appendChild(a);
+          a.click();
+
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        })
+        .catch(() => {
+          alert("Gagal download QR");
+        });
+    }
+  });
 });

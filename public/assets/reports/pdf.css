@@ -1,0 +1,48 @@
+body {
+  font-family:
+    DejaVu Sans,
+    sans-serif;
+  font-size: 10px;
+  color: #000;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #000;
+  padding: 3px;
+  text-align: center;
+}
+
+th {
+  background: #f0f0f0;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.no-border,
+.no-border td {
+  border: none !important;
+}
+
+.legend {
+  font-size: 9px;
+  margin-top: 5px;
+}
+.page-break {
+  page-break-after: always;
+}
+
+h4 {
+  margin-bottom: 5px;
+}
+
+img {
+  max-height: 60px;
+}

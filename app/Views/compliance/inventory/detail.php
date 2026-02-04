@@ -97,13 +97,27 @@
           </table>
         </div>
 
-        <div class="mt-3 text-end">
+        <div class="mt-3 d-flex justify-content-end gap-2">
+
           <a href="<?= base_url('compliance/checklist/' . $inventory['id']) ?>"
             class="btn btn-success">
             <i class="bi bi-clipboard-check"></i> Checklist
           </a>
-        </div>
 
+          <?php if (session('role') === 'admin'): ?>
+            <a
+              href="<?= site_url(
+                      'pdf/checklist/single/' .
+                        $inventory['id'] . '/' .
+                        'monthly-' . $ym
+                    ) ?>"
+              target="_blank"
+              class="btn btn-danger">
+              <i class="bi bi-file-earmark-pdf"></i> Export PDF
+            </a>
+          <?php endif; ?>
+
+        </div>
       </div>
     </div>
   </div>
@@ -128,7 +142,7 @@
 
       <div class="col-6 col-md">
         <div class="fw-bold fs-4 text-danger"><?= $rekap['ng_count'] ?? 0 ?></div>
-        <div class="text-muted">NG</div>
+        <div class="text-muted">Tidak</div>
       </div>
 
       <div class="col-6 col-md">
@@ -189,7 +203,7 @@
                 <?php if ($c['status'] === 'ok'): ?>
                   <span class="badge bg-success">OK</span>
                 <?php elseif ($c['status'] === 'ng'): ?>
-                  <span class="badge bg-danger">NOT OK</span>
+                  <span class="badge bg-danger">Tidak</span>
                 <?php else: ?>
                   <span class="badge bg-secondary">N/A</span>
                 <?php endif; ?>

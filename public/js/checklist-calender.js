@@ -30,3 +30,12 @@ document.addEventListener("click", function (e) {
       alert("Gagal memuat checklist.");
     });
 });
+
+document.querySelectorAll("#calendarCollapse a").forEach((el) => {
+  el.addEventListener("click", () => {
+    const collapse = bootstrap.Collapse.getOrCreateInstance(
+      document.getElementById("calendarCollapse"),
+    );
+    collapse.hide();
+  });
+});

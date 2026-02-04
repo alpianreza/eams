@@ -38,6 +38,7 @@ class Filters extends BaseFilters
         'admin' => \App\Filters\AdminFilter::class,
         'admin' => \App\Filters\AdminFilter::class,
         'write' => \App\Filters\WriteFilter::class,
+        'pdfAccess'   => \App\Filters\PdfAccessFilter::class,
 
     ];
 

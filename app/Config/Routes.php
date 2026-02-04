@@ -69,104 +69,102 @@ $routes->group('settings', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'SettingsController::index');
     $routes->post('change-password', 'SettingsController::changePassword');
 });
+
 // Compliance Inventory
-$routes->group('compliance', function ($routes) {
-    $routes->get('inventory/(:num)', 'ComplianceInventoryController::detail/$1');
-});
-$routes->group('compliance', function ($routes) {
-    $routes->get('inventory/(:num)', 'ComplianceInventoryController::detail/$1');
+$routes->group('compliance', ['filter' => 'auth'], function ($routes) {
 
-    // checklist
-    $routes->get(
-        'inventory/(:num)/checklist/(:num)',
-        'ComplianceChecklistController::create/$1/$2'
-    );
-    $routes->post(
-        'inventory/(:num)/checklist/(:num)',
-        'ComplianceChecklistController::store/$1/$2'
-    );
-});
-
-// IMPORT EXCEL
-
-$routes->group('compliance', function ($routes) {
-    $routes->get('checklist/import', 'ComplianceChecklistImportController::index');
-    $routes->post('checklist/import', 'ComplianceChecklistImportController::import');
-});
-#compliance dashboard
-$routes->group('compliance', function ($routes) {
+    // =========================
+    // DASHBOARD
+    // =========================
     $routes->get('dashboard', 'ComplianceDashboardController::index');
+    $routes->get('overdue',   'ComplianceDashboardController::overdue');
+
+    // =========================
+    // INVENTORY
+    // =========================
+    $routes->group('inventory', function ($routes) {
+
+        $routes->get('/',            'ComplianceInventoryController::index');
+        $routes->get('create',       'ComplianceInventoryController::create');
+        $routes->post('store',       'ComplianceInventoryController::store');
+
+        $routes->get('edit/(:num)',  'ComplianceInventoryController::edit/$1');
+        $routes->post('update/(:num)', 'ComplianceInventoryController::update/$1');
+        $routes->post('delete/(:num)', 'ComplianceInventoryController::delete/$1');
+
+        $routes->get('detail/(:num)', 'ComplianceInventoryController::detail/$1');
+        $routes->post('update-photo/(:num)', 'ComplianceInventoryController::updatePhoto/$1');
+
+        $routes->get('regenerate-qr/(:num)', 'ComplianceInventoryController::regenerateQr/$1');
+
+        $routes->get(
+            'item-types/(:num)',
+            'ComplianceInventoryController::getItemTypesByCategory/$1'
+        );
+    });
+
+    // =========================
+    // CHECKLIST (OPERASIONAL)
+    // =========================
+    $routes->group('checklist', function ($routes) {
+
+        // halaman checklist utama
+        $routes->get('(:num)', 'ComplianceInventoryController::checklist/$1');
+
+        // submit checklist
+        $routes->post('submit', 'ComplianceInventoryController::submitChecklist');
+
+        // ajax calendar
+        $routes->get('(:num)/calendar', 'ComplianceInventoryController::calendar/$1');
+    });
+
+    // =========================
+    // CHECKLIST MASTER (SETTING)
+    // =========================
+    $routes->group('checklist/master', function ($routes) {
+
+        $routes->get('/',                 'ComplianceChecklistMasterController::masterIndex');
+        $routes->get('category/(:num)',   'ComplianceChecklistMasterController::masterByCategory/$1');
+        $routes->get('item/(:num)',       'ComplianceChecklistMasterController::masterItem/$1');
+
+        $routes->post('store',             'ComplianceChecklistMasterController::store');
+        $routes->post('update/(:num)',     'ComplianceChecklistMasterController::update/$1');
+
+        // update frekuensi item (CHECKPOINT)
+        $routes->post(
+            'item-frequency/(:num)',
+            'ComplianceChecklistMasterController::updateItemFrequency/$1'
+        );
+    });
+
+    // =========================
+    // ITEM TYPE (MASTER)
+    // =========================
+    $routes->group('item', function ($routes) {
+        $routes->get('create', 'ComplianceItemTypeController::create');
+        $routes->post('store', 'ComplianceItemTypeController::store');
+    });
 });
 
-$routes->get(
-    'compliance/inventory',
-    'ComplianceInventoryController::index'
-);
+$routes->group('pdf/checklist', [
+    'filter' => ['auth', 'pdfAccess']
+], function ($routes) {
 
-$routes->get(
-    'compliance/overdue',
-    'ComplianceDashboardController::overdue'
-);
+    // print satuan + lampiran
+    $routes->get(
+        'single/(:num)/(:segment)',
+        'ChecklistPdfController::singleItemWithAttachment/$1/$2'
+    );
 
-$routes->group('compliance', function ($routes) {
-    $routes->get('inventory/create', 'ComplianceInventoryController::create');
-    $routes->post('inventory/store', 'ComplianceInventoryController::store');
-});
+    // rekap periode (harian/mingguan/bulanan)
+    $routes->get(
+        'recap/(:segment)/(:num)/(:num)',
+        'ChecklistPdfController::recapMonthly/$1/$2/$3'
+    );
 
-$routes->get(
-    'compliance/inventory/(:num)/regenerate-qr',
-    'ComplianceInventoryController::regenerateQr/$1'
-);
-
-$routes->post('compliance/inventory/store', 'ComplianceInventoryController::store');
-$routes->group('compliance/inventory', function ($routes) {
-    $routes->get('/', 'ComplianceInventoryController::index');
-    $routes->post('store', 'ComplianceInventoryController::store');
-
-    $routes->get('edit/(:num)', 'ComplianceInventoryController::edit/$1');
-    $routes->post('update/(:num)', 'ComplianceInventoryController::update/$1');
-
-    $routes->post('delete/(:num)', 'ComplianceInventoryController::delete/$1');
-});
-
-$routes->get('compliance/inventory/detail/(:num)', 'ComplianceInventoryController::detail/$1');
-$routes->post('compliance/inventory/update-photo/(:num)', 'ComplianceInventoryController::updatePhoto/$1');
-
-$routes->get(
-    'compliance/inventory/item-types/(:num)',
-    'ComplianceInventoryController::getItemTypesByCategory/$1'
-);
-$routes->post('compliance/checklist/store', 'ComplianceChecklistController::store');
-
-$routes->get(
-    'compliance/checklist/(:num)',
-    'ComplianceInventoryController::checklist/$1'
-);
-
-$routes->post('compliance/checklist/submit', 'ComplianceInventoryController::submitChecklist');
-
-$routes->get(
-    'compliance/checklist/(:num)/calendar',
-    'ComplianceInventoryController::calendar/$1'
-);
-
-$routes->group('compliance/checklist', function ($routes) {
-
-    // MASTER (MANAGEMENT)
-    $routes->get('master', 'ComplianceChecklistMasterController::masterIndex');
-    $routes->get('master/category/(:num)', 'ComplianceChecklistMasterController::masterByCategory/$1');
-    $routes->get('master/item/(:num)', 'ComplianceChecklistMasterController::masterItem/$1');
-
-    $routes->post('master/store', 'ComplianceChecklistMasterController::store');
-    $routes->post('master/update/(:num)', 'ComplianceChecklistMasterController::update/$1');
-});
-
-$routes->post(
-    'compliance/checklist/master/item-frequency/(:num)',
-    'ComplianceChecklistMasterController::updateItemFrequency/$1'
-);
-
-$routes->group('compliance/item', function ($routes) {
-    $routes->get('create', 'ComplianceItemTypeController::create');
-    $routes->post('store', 'ComplianceItemTypeController::store');
+    // rekap tahunan per item (APAR Jan–Des)
+    $routes->get(
+        'item-yearly/(:num)/(:num)',
+        'ChecklistPdfController::recapItemYearly/$1/$2'
+    );
 });

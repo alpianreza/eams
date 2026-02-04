@@ -1,0 +1,1077 @@
+ERROR - 2026-02-02 06:36:29 --> mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id...', Array, false)
+#4 C:\xampp\htdocs\eams\app\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\eams\app\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 1)
+#6 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 1)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-02 06:36:29 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+[Method: GET, Route: reports/checklist/daily/1/area/1]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 2 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 1)
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 1)
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:36:29 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 1
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 1
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 4 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 1)
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 1)
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:36:29 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 1
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 1
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 1
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 5 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 1)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 1)
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2026-02-02 06:37:55 --> mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id...', Array, false)
+#4 C:\xampp\htdocs\eams\app\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\eams\app\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+#6 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-02 06:37:55 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+[Method: GET, Route: reports/checklist/daily/1/area/12]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 2 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:37:55 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 4 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:37:55 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 5 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 06:38:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-02 06:38:29 --> mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id...', Array, false)
+#4 C:\xampp\htdocs\eams\app\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\eams\app\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+#6 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-02 06:38:29 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+[Method: GET, Route: reports/checklist/daily/1/area/12]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 2 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:38:29 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 4 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:38:29 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 5 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 06:38:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-02 06:38:36 --> mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id...', Array, false)
+#4 C:\xampp\htdocs\eams\app\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\eams\app\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+#6 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-02 06:38:36 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+[Method: GET, Route: reports/checklist/daily/1/area/12]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 2 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:38:36 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 4 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:38:36 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 12
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 5 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 12)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 12)
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 06:43:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-02 06:43:40 --> mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id...', Array, false)
+#4 C:\xampp\htdocs\eams\app\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\eams\app\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 2)
+#6 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 2)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#9 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#10 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#11 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#12 {main}
+CRITICAL - 2026-02-02 06:43:40 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+[Method: GET, Route: reports/checklist/daily/1/area/2]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 2 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 3 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 2)
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 2)
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:43:40 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 2
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 2
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 4 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 5 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 2)
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 2)
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 06:43:40 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.item_types' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 2
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 2
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = 1
+AND `ci`.`area_id` = 2
+AND `ci`.`is_active` = 1
+ORDER BY `ci`.`inventory_code` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT `ci`.`id`, `ci`.`inventory_code`, `a`.`name` AS `area_name`, `it`.`name` AS `item_type_name`
+FROM `compliance_inventory` `ci`
+JOIN `areas` `a` ON `a`.`id` = `ci`.`area_id`
+JOIN `item_types` `it` ON `it`.`id` = `ci`.`item_type_id`
+WHERE `ci`.`item_type_id` = :ci.item_type_id:
+AND `ci`.`area_id` = :ci.area_id:
+AND `ci`.`is_active` = :ci.is_active:
+ORDER BY `ci`.`inventory_code` ASC', [...], false)
+ 5 APPPATH\Models\ReportModel.php(32): CodeIgniter\Database\BaseBuilder->get()
+ 6 APPPATH\Controllers\Reports\ChecklistReport.php(34): App\Models\ReportModel->getComplianceInventoryByArea(1, 2)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->daily(1, 2)
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:03:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:09:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:09:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:10:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:26:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:26:41 --> ErrorException: Undefined array key "item_type_name"
+[Method: GET, Route: reports]
+in APPPATH\Views\reports\index.php on line 19.
+ 1 APPPATH\Views\reports\index.php(19): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_type_name"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php', 19)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/index', [], true)
+ 5 APPPATH\Controllers\Reports\ReportHome.php(22): view('reports/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ReportHome->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ReportHome))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:26:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:26:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:26:52 --> ErrorException: Undefined array key "item_type_name"
+[Method: GET, Route: reports]
+in APPPATH\Views\reports\index.php on line 19.
+ 1 APPPATH\Views\reports\index.php(19): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_type_name"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php', 19)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/index', [], true)
+ 5 APPPATH\Controllers\Reports\ReportHome.php(22): view('reports/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ReportHome->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ReportHome))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:26:55 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:26:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:26:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:26:59 --> ErrorException: Undefined array key "item_type_name"
+[Method: GET, Route: reports]
+in APPPATH\Views\reports\index.php on line 19.
+ 1 APPPATH\Views\reports\index.php(19): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_type_name"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php', 19)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/index', [], true)
+ 5 APPPATH\Controllers\Reports\ReportHome.php(22): view('reports/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ReportHome->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ReportHome))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:29:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:37:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:37:17 --> ErrorException: Undefined array key "item_type_name"
+[Method: GET, Route: reports]
+in APPPATH\Views\reports\index.php on line 19.
+ 1 APPPATH\Views\reports\index.php(19): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_type_name"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php', 19)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/index', [], true)
+ 5 APPPATH\Controllers\Reports\ReportHome.php(22): view('reports/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ReportHome->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ReportHome))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:37:21 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:37:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:37:23 --> ErrorException: Undefined array key "item_type_name"
+[Method: GET, Route: reports]
+in APPPATH\Views\reports\index.php on line 19.
+ 1 APPPATH\Views\reports\index.php(19): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_type_name"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php', 19)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/index', [], true)
+ 5 APPPATH\Controllers\Reports\ReportHome.php(22): view('reports/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ReportHome->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ReportHome))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:38:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:38:49 --> ErrorException: Undefined array key "item_type_name"
+[Method: GET, Route: reports]
+in APPPATH\Views\reports\index.php on line 19.
+ 1 APPPATH\Views\reports\index.php(19): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_type_name"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php', 19)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/index', [], true)
+ 5 APPPATH\Controllers\Reports\ReportHome.php(22): view('reports/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ReportHome->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ReportHome))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:38:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:38:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:38:53 --> ErrorException: Undefined array key "item_type_name"
+[Method: GET, Route: reports]
+in APPPATH\Views\reports\index.php on line 19.
+ 1 APPPATH\Views\reports\index.php(19): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_type_name"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php', 19)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/index', [], true)
+ 5 APPPATH\Controllers\Reports\ReportHome.php(22): view('reports/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ReportHome->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ReportHome))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:41:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:41:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:43:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:46:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:50:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:50:00 --> ErrorException: Undefined array key "frequency"
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Controllers\Reports\ChecklistReport.php on line 40.
+ 1 APPPATH\Controllers\Reports\ChecklistReport.php(40): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "frequency"', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\Reports\\ChecklistReport.php', 40)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:50:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:50:16 --> ErrorException: Undefined array key "frequency"
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Controllers\Reports\ChecklistReport.php on line 40.
+ 1 APPPATH\Controllers\Reports\ChecklistReport.php(40): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "frequency"', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\Reports\\ChecklistReport.php', 40)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:51:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:51:41 --> ErrorException: Undefined array key "item_type_name"
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Controllers\Reports\ChecklistReport.php on line 65.
+ 1 APPPATH\Controllers\Reports\ChecklistReport.php(65): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_type_name"', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\Reports\\ChecklistReport.php', 65)
+ 2 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 3 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:52:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:52:38 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "reports/pdf_wrapper.php"
+[Method: GET, Route: reports/checklist/print]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('reports/pdf_wrapper.php')
+ 2 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/pdf_wrapper', [], true)
+ 3 APPPATH\Controllers\Reports\ChecklistReport.php(82): view('reports/pdf_wrapper', [...])
+ 4 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 5 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:53:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:55:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:55:11 --> ErrorException: Undefined variable $title
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Views\reports\_header.php on line 1.
+ 1 APPPATH\Views\reports\_header.php(1): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $title', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\_header.php', 1)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\_header.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('reports/_header', [...], true)
+ 5 APPPATH\Views\reports\pdf_wrapper.php(13): CodeIgniter\View\View->include('reports/_header', [...])
+ 6 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\pdf_wrapper.php')
+ 7 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 8 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/pdf_wrapper', [], true)
+ 9 APPPATH\Controllers\Reports\ChecklistReport.php(82): view('reports/pdf_wrapper', [...])
+10 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+11 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+12 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+13 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+15 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:55:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:55:17 --> ErrorException: Undefined variable $title
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Views\reports\_header.php on line 1.
+ 1 APPPATH\Views\reports\_header.php(1): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $title', 'C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\_header.php', 1)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\_header.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('reports/_header', [...], true)
+ 5 APPPATH\Views\reports\pdf_wrapper.php(13): CodeIgniter\View\View->include('reports/_header', [...])
+ 6 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\pdf_wrapper.php')
+ 7 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 8 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/pdf_wrapper', [], true)
+ 9 APPPATH\Controllers\Reports\ChecklistReport.php(82): view('reports/pdf_wrapper', [...])
+10 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+11 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+12 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+13 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+15 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:56:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 07:56:31 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "reports/_table_daily.php"
+[Method: GET, Route: reports/checklist/print]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('reports/_table_daily.php')
+ 2 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('reports/_table_daily', [...], true)
+ 3 APPPATH\Views\reports\pdf_wrapper.php(15): CodeIgniter\View\View->include('reports/_table_daily', [...])
+ 4 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\pdf_wrapper.php')
+ 5 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 6 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/pdf_wrapper', [], true)
+ 7 APPPATH\Controllers\Reports\ChecklistReport.php(82): view('reports/pdf_wrapper', [...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 07:57:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:57:53 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:58:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:58:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 07:58:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:00:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-02 08:00:00 --> mysqli_sql_exception: Unknown column 'is_active' in 'where clause' in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *\nFROM `...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\eams\app\Controllers\Reports\ChecklistReport.php(18): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->index()
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2026-02-02 08:00:00 --> CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'is_active' in 'where clause'
+[Method: GET, Route: reports]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `asset_item_types`
+WHERE `is_active` = :is_active:', [...], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\Reports\ChecklistReport.php(18): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->index()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 08:00:00 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Unknown column 'is_active' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `asset_item_types`
+WHERE `is_active` = 1')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `asset_item_types`
+WHERE `is_active` = 1')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `asset_item_types`
+WHERE `is_active` = :is_active:', [...], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\Reports\ChecklistReport.php(18): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->index()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 08:00:00 --> [Caused by] mysqli_sql_exception: Unknown column 'is_active' in 'where clause'
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *
+FROM `asset_item_types`
+WHERE `is_active` = 1', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `asset_item_types`
+WHERE `is_active` = 1')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `asset_item_types`
+WHERE `is_active` = 1')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `asset_item_types`
+WHERE `is_active` = :is_active:', [...], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\Reports\ChecklistReport.php(18): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->index()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 08:01:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:01:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 08:01:47 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "reports/_table_monthly.php"
+[Method: GET, Route: reports/checklist/print]
+in SYSTEMPATH\Exceptions\FrameworkException.php on line 39.
+ 1 SYSTEMPATH\View\View.php(214): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('reports/_table_monthly.php')
+ 2 SYSTEMPATH\View\View.php(475): CodeIgniter\View\View->render('reports/_table_monthly', [...], true)
+ 3 APPPATH\Views\reports\pdf_wrapper.php(15): CodeIgniter\View\View->include('reports/_table_monthly', [...])
+ 4 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\reports\\pdf_wrapper.php')
+ 5 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 6 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('reports/pdf_wrapper', [], true)
+ 7 APPPATH\Controllers\Reports\ChecklistReport.php(82): view('reports/pdf_wrapper', [...])
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 08:01:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:02:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:02:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:06:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:06:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:06:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:06:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:13:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 08:13:24 --> ErrorException: Undefined array key "question_id"
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Controllers\Reports\ChecklistReport.php on line 214.
+ 1 APPPATH\Controllers\Reports\ChecklistReport.php(214): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "question_id"', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\Reports\\ChecklistReport.php', 214)
+ 2 APPPATH\Controllers\Reports\ChecklistReport.php(81): App\Controllers\Reports\ChecklistReport->buildDailyRows(33, 2026, 1)
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 08:14:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:15:11 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 08:15:11 --> ErrorException: Undefined array key "checklist_master_id"
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Controllers\Reports\ChecklistReport.php on line 214.
+ 1 APPPATH\Controllers\Reports\ChecklistReport.php(214): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "checklist_master_id"', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\Reports\\ChecklistReport.php', 214)
+ 2 APPPATH\Controllers\Reports\ChecklistReport.php(81): App\Controllers\Reports\ChecklistReport->buildDailyRows(33, 2026, 1)
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 08:15:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 08:15:18 --> ErrorException: Undefined array key "checklist_master_id"
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Controllers\Reports\ChecklistReport.php on line 214.
+ 1 APPPATH\Controllers\Reports\ChecklistReport.php(214): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "checklist_master_id"', 'C:\\xampp\\htdocs\\eams\\app\\Controllers\\Reports\\ChecklistReport.php', 214)
+ 2 APPPATH\Controllers\Reports\ChecklistReport.php(81): App\Controllers\Reports\ChecklistReport->buildDailyRows(33, 2026, 1)
+ 3 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\Reports\ChecklistReport->print()
+ 4 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Reports\ChecklistReport))
+ 5 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 6 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 7 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 8 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 08:19:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 08:21:27 --> ParseError: syntax error, unexpected token "private"
+[Method: GET, Route: reports/checklist/print]
+in APPPATH\Controllers\Reports\ChecklistReport.php on line 232.
+ 1 SYSTEMPATH\Autoloader\Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile('C:\\xampp\\htdocs\\eams\\app\\Controllers\\Reports\\ChecklistReport.php')
+ 2 SYSTEMPATH\Autoloader\Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace('App\\Controllers\\Reports\\ChecklistReport')
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass('App\\Controllers\\Reports\\ChecklistReport')
+ 4 SYSTEMPATH\CodeIgniter.php(885): class_exists('\\App\\Controllers\\Reports\\ChecklistReport', true)
+ 5 SYSTEMPATH\CodeIgniter.php(494): CodeIgniter\CodeIgniter->startController()
+ 6 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 08:30:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:30:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:41:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:43:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:45:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:48:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:48:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 08:50:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 09:08:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 09:23:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 09:23:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 09:34:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 09:54:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 09:59:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:06:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:06:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:24:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:27:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:43:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:49:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:50:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:57:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 10:58:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 11:14:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 11:14:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 11:18:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 11:26:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 11:36:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 11:36:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 11:43:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 11:59:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 12:08:29 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 12:10:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 12:29:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 12:34:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 13:01:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 13:02:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 13:25:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 13:34:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 13:52:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 14:04:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 14:13:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 14:17:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 14:34:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 14:41:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 15:06:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 15:07:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 15:13:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 15:33:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 15:39:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 15:59:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 16:02:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 16:08:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 16:08:12 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 16:15:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 16:24:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 16:41:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 16:49:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 17:11:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 17:14:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 17:38:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 17:38:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 17:39:02 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 17:40:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 17:45:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 17:46:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 18:06:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 18:06:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 18:15:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 18:23:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 18:31:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 18:47:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 18:55:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 19:04:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 19:18:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 19:28:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 19:46:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 19:51:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 19:58:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:08:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:21:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:23:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:23:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:25:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:50:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:52:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:59:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 20:59:10 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 21:06:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 21:15:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 21:16:25 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 21:25:14 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 21:38:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 21:38:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 21:47:16 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-02 21:50:15 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@fs"
+[Method: GET, Route: @fs/app/.env]
+in SYSTEMPATH\Router\Router.php on line 741.
+ 1 SYSTEMPATH\Router\Router.php(207): CodeIgniter\Router\Router->checkDisallowedChars('@fs/app/.env')
+ 2 SYSTEMPATH\CodeIgniter.php(832): CodeIgniter\Router\Router->handle('@fs/app/.env')
+ 3 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 21:50:16 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@fs"
+[Method: GET, Route: @fs/root/.env]
+in SYSTEMPATH\Router\Router.php on line 741.
+ 1 SYSTEMPATH\Router\Router.php(207): CodeIgniter\Router\Router->checkDisallowedChars('@fs/root/.env')
+ 2 SYSTEMPATH\CodeIgniter.php(832): CodeIgniter\Router\Router->handle('@fs/root/.env')
+ 3 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 21:50:17 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@fs"
+[Method: GET, Route: @fs/proc/self/environ]
+in SYSTEMPATH\Router\Router.php on line 741.
+ 1 SYSTEMPATH\Router\Router.php(207): CodeIgniter\Router\Router->checkDisallowedChars('@fs/proc/self/environ')
+ 2 SYSTEMPATH\CodeIgniter.php(832): CodeIgniter\Router\Router->handle('@fs/proc/self/environ')
+ 3 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-02 21:50:18 --> CodeIgniter\HTTP\Exceptions\BadRequestException: The URI you submitted has disallowed characters: "@fs"
+[Method: GET, Route: @fs/.env]
+in SYSTEMPATH\Router\Router.php on line 741.
+ 1 SYSTEMPATH\Router\Router.php(207): CodeIgniter\Router\Router->checkDisallowedChars('@fs/.env')
+ 2 SYSTEMPATH\CodeIgniter.php(832): CodeIgniter\Router\Router->handle('@fs/.env')
+ 3 SYSTEMPATH\CodeIgniter.php(455): CodeIgniter\CodeIgniter->tryToRouteIt(Object(CodeIgniter\Router\RouteCollection))
+ 4 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 5 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 6 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 7 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-02 21:56:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 22:06:24 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 22:06:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 22:06:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 22:28:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 22:31:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 22:56:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 22:58:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 23:23:23 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 23:25:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 23:25:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 23:30:52 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-02 23:47:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
