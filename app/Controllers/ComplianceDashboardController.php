@@ -2,118 +2,279 @@
 
 namespace App\Controllers;
 
+use App\Controllers\BaseController;
 use App\Models\ComplianceInventoryModel;
-use App\Models\ComplianceChecklistLogModel;
+use App\Models\ChecklistLogModel;
+use App\Models\AssetItemTypeModel;
 
 class ComplianceDashboardController extends BaseController
 {
   protected $inventoryModel;
-  protected $logModel;
+  protected $checklistLogModel;
+  protected $itemTypeModel;
+
+  protected $startDate = '2026-01-01 00:00:00';
 
   public function __construct()
   {
-    $this->inventoryModel = new ComplianceInventoryModel();
-    $this->logModel       = new ComplianceChecklistLogModel();
+    $this->inventoryModel    = new ComplianceInventoryModel();
+    $this->checklistLogModel = new ChecklistLogModel();
+    $this->itemTypeModel     = new AssetItemTypeModel();
   }
 
   public function index()
   {
-    $category = $this->request->getGet('category');
-    $location = $this->request->getGet('location');
 
-    $builder = $this->inventoryModel->where('active', 1);
+    $selectedYear = $this->request->getGet('year') ?? date('Y');
 
-    if ($category) {
-      $builder->where('category', $category);
-    }
+    $data = [
+      'selectedYear'   => $selectedYear,
+      'availableYears' => $this->getAvailableYears(),
+      'kpi'            => $this->getKpiSummary($selectedYear),
+      'notifications'  => $this->getNotifications(),
+      'notOkPhotos'    => $this->getLatestNotOkWithPhoto($selectedYear),
+      'monthlyTrend' => $this->getMonthlyTrend($selectedYear),
+      'overview' => $this->getChecklistOverview(),
 
-    if ($location) {
-      $builder->where('location', $location);
-    }
 
-    $inventories = $builder->findAll();
-
-    $summary = [
-      'total_inventory' => count($inventories),
-      'ok' => 0,
-      'due' => 0,
-      'overdue' => 0,
     ];
 
-    foreach ($inventories as $inv) {
-      $checklists = $this->logModel
-        ->getLastChecksByInventory($inv['id']);
-
-      foreach ($checklists as $c) {
-        $result = checklist_status(
-          $c['last_check'],
-          $c['period']
-        );
-
-        if ($result['status'] === 'OK') {
-          $summary['ok']++;
-        } elseif ($result['status'] === 'DUE') {
-          $summary['due']++;
-        } else {
-          $summary['overdue']++;
-        }
-      }
-    }
-
-    // ambil dropdown data
-    $categories = $this->inventoryModel
-      ->select('category')
-      ->distinct()
-      ->findAll();
-
-    $locations = $this->inventoryModel
-      ->select('location')
-      ->distinct()
-      ->findAll();
-
-    return $this->render('compliance/dashboard/index', [
-      'title'      => 'Compliance Dashboard',
-      'summary'    => $summary,
-      'categories' => $categories,
-      'locations'  => $locations,
-      'selectedCategory' => $category,
-      'selectedLocation' => $location,
-    ]);
+    return view('compliance/dashboard/index', $data);
   }
 
 
-  public function overdue()
+  private function getAvailableYears()
   {
-    $inventories = $this->inventoryModel->getActive();
-    $overdues = [];
+    $currentYear = date('Y');
+    $years = [];
 
-    foreach ($inventories as $inv) {
-      $checklists = $this->logModel
-        ->getLastChecksByInventory($inv['id']);
+    for ($y = 2026; $y <= $currentYear; $y++) {
+      $years[] = $y;
+    }
 
-      foreach ($checklists as $c) {
-        $result = checklist_status(
-          $c['last_check'],
-          $c['period']
-        );
+    return $years;
+  }
 
-        if ($result['status'] === 'OVERDUE') {
-          $overdues[] = [
-            'inventory_id' => $inv['id'],
-            'asset_type'   => $inv['asset_type'],
-            'asset_code'   => $inv['asset_code'],
-            'location'     => $inv['location'],
-            'checklist'    => $c['name'],
-            'period'       => $c['period'],
-            'last_check'   => $c['last_check'],
-          ];
-        }
+  private function getCurrentPeriodKey(string $frequency): string
+  {
+    switch ($frequency) {
+
+      case 'daily':
+        return date('Y-m-d');
+
+      case 'weekly':
+        $week = ceil(date('d') / 7);
+        return date('Y-m') . '-W' . $week;
+
+      case 'monthly':
+        return date('Y-m');
+
+      default:
+        return date('Y-m');
+    }
+  }
+
+
+  private function getKpiSummary($year)
+  {
+    // Total inventory compliance aktif
+    $totalInventory = $this->inventoryModel
+      ->where('status', 1)
+      ->countAllResults();
+
+    // Ambil semua log tahun terpilih mulai 2026
+    $logs = $this->checklistLogModel
+      ->where('created_at >=', $this->startDate)
+      ->where('YEAR(created_at)', $year)
+      ->findAll();
+
+    $summary = [
+      'total'          => $totalInventory,
+      'sesuai'         => 0,
+      'tidak_sesuai'   => 0,
+      'tidak_berlaku'  => 0,
+      'late'           => 0,
+    ];
+
+    foreach ($logs as $log) {
+
+      switch ($log['status']) {
+        case 'ok':
+          $summary['sesuai']++;
+          break;
+
+        case 'not_ok':
+          $summary['tidak_sesuai']++;
+          break;
+
+        case 'na':
+          $summary['tidak_berlaku']++;
+          break;
       }
     }
 
-    return $this->render('compliance/dashboard/overdue', [
-      'title'    => 'Checklist Overdue',
-      'overdues' => $overdues,
-    ]);
+    // Hitung late per inventory
+    $inventories = $this->inventoryModel
+      ->where('status', 'active')
+      ->findAll();
+
+    foreach ($inventories as $inv) {
+
+      $itemType = $this->itemTypeModel
+        ->find($inv['item_type_id']);
+
+      if (!$itemType) continue;
+
+      $periodKey = $this->getCurrentPeriodKey(
+        $itemType['checklist_frequency']
+      );
+
+      $periodStatus = resolve_period_status(
+        $inv['id'],
+        $itemType['checklist_frequency'],
+        $periodKey
+      );
+
+      if ($periodStatus === 'late') {
+        $summary['late']++;
+      }
+    }
+
+    return $summary;
+  }
+
+  private function getNotifications()
+  {
+    $notifications = [];
+
+    // ===============================
+    // 1️⃣ CEK LATE
+    // ===============================
+    $inventories = $this->inventoryModel
+      ->where('status', 'active')
+      ->findAll();
+
+    foreach ($inventories as $inv) {
+
+      $itemType = $this->itemTypeModel
+        ->find($inv['item_type_id']);
+
+      if (!$itemType) continue;
+
+      $periodKey = $this->getCurrentPeriodKey(
+        $itemType['checklist_frequency']
+      );
+
+      $periodStatus = resolve_period_status(
+        $inv['id'],
+        $itemType['checklist_frequency'],
+        $periodKey
+      );
+
+      if ($periodStatus === 'late') {
+
+        $notifications[] = [
+          'type' => 'late',
+          'inventory_id' => $inv['id'],
+          'item' => $itemType['name'] ?? '-',
+          'area' => $inv['specific_area'] ?? '-',
+          'message' => 'Checklist belum dilakukan dan sudah melewati batas periode.'
+        ];
+      }
+    }
+
+    // ===============================
+    // 2️⃣ NOT_OK TERBARU (5 TERAKHIR)
+    // ===============================
+    $notOkLogs = $this->checklistLogModel
+      ->where('status', 'not_ok')
+      ->orderBy('created_at', 'DESC')
+      ->limit(5)
+      ->findAll();
+
+    foreach ($notOkLogs as $log) {
+
+      $inventory = $this->inventoryModel
+        ->find($log['inventory_id']);
+
+      if (!$inventory) continue;
+
+      $itemType = $this->itemTypeModel
+        ->find($inventory['item_type_id']);
+
+      if (!$itemType) continue;
+
+      $notifications[] = [
+        'type' => 'not_ok',
+        'inventory_id' => $inventory['id'],
+        'item' => $itemType['name'] ?? '-',
+        'area' => $inventory['specific_area'] ?? '-',
+        'message' => 'Terdapat temuan tidak sesuai.',
+        'photo' => $log['photo']
+      ];
+    }
+
+    return $notifications;
+  }
+
+
+
+
+  private function getLatestNotOkWithPhoto($year)
+  {
+    return $this->checklistLogModel
+      ->where('created_at >=', $this->startDate)
+      ->where('YEAR(created_at)', $year)
+      ->where('status', 'not_ok')
+      ->where('photo IS NOT NULL')
+      ->orderBy('created_at', 'DESC')
+      ->limit(10)
+      ->findAll();
+  }
+
+  private function getMonthlyTrend($year)
+  {
+    $result = array_fill(1, 12, 0);
+
+    $logs = $this->checklistLogModel
+      ->select("MONTH(created_at) as month, COUNT(*) as total")
+      ->where('created_at >=', $this->startDate)
+      ->where('YEAR(created_at)', $year)
+      ->groupBy("MONTH(created_at)")
+      ->findAll();
+
+    foreach ($logs as $row) {
+      $result[(int)$row['month']] = (int)$row['total'];
+    }
+
+    return $result;
+  }
+
+  private function getChecklistOverview()
+  {
+    $overview = [];
+
+    $inventories = $this->inventoryModel
+      ->where('active', 1)
+      ->findAll();
+
+    foreach ($inventories as $inv) {
+
+      $itemType = $this->itemTypeModel
+        ->find($inv['item_type_id']);
+
+      if (!$itemType) continue;
+
+      $overview[] = [
+        'id'        => $inv['id'],
+        'item'      => $itemType['name'],
+        'area'      => $inv['specific_area'],
+        'frequency' => $itemType['checklist_frequency'],
+        'status'    => '✓',
+        'raw_status' => 'done'
+      ];
+    }
+
+    return $overview;
   }
 }

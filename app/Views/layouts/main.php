@@ -30,6 +30,8 @@ $seg2 = $segments[1] ?? '';
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous">
 
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
 
 
     <!-- Custom CSS -->
@@ -41,6 +43,7 @@ $seg2 = $segments[1] ?? '';
     <link rel="stylesheet" href="<?= base_url('assets/css/inventory-mobile.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/login.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/calendar.css') ?>">
+
 
 </head>
 
@@ -172,6 +175,13 @@ $seg2 = $segments[1] ?? '';
                                         </a>
                                     </li>
                                     <li class="nav-item">
+                                        <a href="<?= site_url('compliance/checklist/master') ?>"
+                                            class="nav-link <?= url_is('compliance/checklist/master*') ? 'active' : '' ?>">
+                                            <i class="nav-icon fa-solid fa-list-check"></i>
+                                            <p>Checklist Master</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a href="<?= base_url('reports') ?>" class="nav-link">
                                             <i class="nav-icon fas fa-file-alt"></i>
                                             <p>Laporan</p>
@@ -183,13 +193,7 @@ $seg2 = $segments[1] ?? '';
                             </li>
 
                             <!-- CHECKLIST MASTER (SETUP / CONFIG) -->
-                            <li class="nav-item">
-                                <a href="<?= site_url('compliance/checklist/master') ?>"
-                                    class="nav-link <?= url_is('compliance/checklist/master*') ? 'active' : '' ?>">
-                                    <i class="nav-icon fa-solid fa-list-check"></i>
-                                    <p>Checklist Master</p>
-                                </a>
-                            </li>
+
 
                             <!-- ================= ADMIN ================= -->
                             <?php if ($role === 'admin'): ?>
@@ -250,10 +254,12 @@ $seg2 = $segments[1] ?? '';
 <!-- SweetAlert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
 <script src="<?= base_url('js/app.js') ?>"></script>
 <script src="<?= base_url('js/checklist.js') ?>"></script>
 <script src="<?= base_url('js/checklist-master.js') ?>"></script>
-
+<script src="<?= base_url('js/inventory-detail.js') ?>"></script>
 <script>
     window.FLASH_MESSAGE = {
         success: <?= session()->getFlashdata('success')

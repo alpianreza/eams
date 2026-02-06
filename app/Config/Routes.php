@@ -77,7 +77,6 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
     // DASHBOARD
     // =========================
     $routes->get('dashboard', 'ComplianceDashboardController::index');
-    $routes->get('overdue',   'ComplianceDashboardController::overdue');
 
     // =========================
     // INVENTORY

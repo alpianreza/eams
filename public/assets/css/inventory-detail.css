@@ -41,3 +41,30 @@
     min-width: 48%;
   }
 }
+
+/* =============================
+   MODAL ZOOM FOTO INVENTORY
+   ============================= */
+
+.modal-zoom-photo {
+  max-width: 90vw; /* jangan full layar */
+}
+
+.zoom-photo-img {
+  max-width: 100%;
+  max-height: 85vh; /* 🔥 ini yang penting */
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: zoom-out;
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+  .modal-zoom-photo {
+    max-width: 95vw;
+  }
+
+  .zoom-photo-img {
+    max-height: 75vh;
+  }
+}

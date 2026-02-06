@@ -178,8 +178,8 @@ class ComplianceInventoryController extends BaseController
     inventory_categories.name AS category_name,
     asset_item_types.name AS item_display_name,
     asset_item_types.checklist_frequency,
-    areas.name AS area_name
-  ')
+    areas.name AS area_name')
+
       ->join('inventory_categories', 'inventory_categories.id = compliance_inventory.category_id', 'left')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->join('areas', 'areas.id = compliance_inventory.area_id', 'left')
@@ -194,8 +194,11 @@ class ComplianceInventoryController extends BaseController
     // =========================
     // CHECKLIST HISTORY
     // =========================
-    $checklists = (new ChecklistLogModel())
-      ->select('period_key, MAX(check_date) as check_date')
+    $checklists = (new \App\Models\ChecklistLogModel())
+      ->select('
+    period_key,
+    MAX(check_date) as check_date,
+    MAX(checked_by) as checked_by')
       ->where('inventory_id', $id)
       ->groupBy('period_key')
       ->orderBy('check_date', 'DESC')
@@ -244,13 +247,24 @@ class ComplianceInventoryController extends BaseController
       }
     }
 
+    $nowYM = date('Y-m');
+    $isFutureMonth = $ym > $nowYM;
 
-    return view('compliance/inventory/detail', [
+
+
+    $data = [
       'inventory'  => $inventory,
       'checklists' => $checklists,
       'rekap'      => $rekap,
       'ym'         => $ym,
-    ]);
+      'nowYM'      => $nowYM,
+    ];
+
+    if ($this->request->isAJAX()) {
+      return view('compliance/inventory/_detail_month', $data);
+    }
+
+    return view('compliance/inventory/detail', $data);
   }
 
 
@@ -258,26 +272,76 @@ class ComplianceInventoryController extends BaseController
   {
     $inventory = $this->inventoryModel->find($id);
     if (! $inventory) {
+
+      // AJAX
+      if ($this->request->isAJAX()) {
+        return $this->response->setJSON([
+          'status'  => 'error',
+          'message' => 'Data tidak ditemukan'
+        ])->setStatusCode(404);
+      }
+
+      // NON-AJAX
       return redirect()->back()->with('error', 'Data tidak ditemukan');
     }
 
     $photo = $this->request->getFile('photo');
-    if ($photo && $photo->isValid() && ! $photo->hasMoved()) {
 
-      if (!empty($inventory['photo']) && file_exists(FCPATH . 'uploads/inventory/' . $inventory['photo'])) {
-        unlink(FCPATH . 'uploads/inventory/' . $inventory['photo']);
+    // ================= VALIDASI FILE =================
+    if (! $photo || ! $photo->isValid()) {
+
+      if ($this->request->isAJAX()) {
+        return $this->response->setJSON([
+          'status'  => 'error',
+          'message' => 'File foto tidak valid'
+        ])->setStatusCode(400);
       }
 
-      $newName = $photo->getRandomName();
-      $photo->move(FCPATH . 'uploads/inventory', $newName);
+      return redirect()->back()->with('error', 'File foto tidak valid');
+    }
 
-      $this->inventoryModel->update($id, [
-        'photo' => $newName
+    // ================= VALIDASI MIME =================
+    $allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
+    if (! in_array($photo->getMimeType(), $allowedMime)) {
+
+      if ($this->request->isAJAX()) {
+        return $this->response->setJSON([
+          'status'  => 'error',
+          'message' => 'Format foto tidak didukung'
+        ])->setStatusCode(400);
+      }
+
+      return redirect()->back()->with('error', 'Format foto tidak didukung');
+    }
+
+    // ================= HAPUS FOTO LAMA =================
+    if (! empty($inventory['photo'])) {
+      $oldPath = FCPATH . 'uploads/inventory/' . $inventory['photo'];
+      if (file_exists($oldPath)) {
+        unlink($oldPath);
+      }
+    }
+
+    // ================= SIMPAN FOTO BARU =================
+    $newName = $photo->getRandomName();
+    $photo->move(FCPATH . 'uploads/inventory', $newName);
+
+    $this->inventoryModel->update($id, [
+      'photo' => $newName
+    ]);
+
+    // ================= RESPONSE =================
+    if ($this->request->isAJAX()) {
+      return $this->response->setJSON([
+        'status' => 'success',
+        'photo'  => $newName,
+        'url'    => base_url('uploads/inventory/' . $newName)
       ]);
     }
 
     return redirect()->back()->with('success', 'Foto inventory berhasil diperbarui');
   }
+
 
   public function getItemTypesByCategory($categoryId)
   {
