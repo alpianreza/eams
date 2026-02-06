@@ -137,7 +137,7 @@
                   <div class="alert alert-warning ng-alert d-none py-2 px-2 small text-start"
                     id="ng-alert-<?= $q['id'] ?>">
                     <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                    Item ini <strong>TIDAK SESUAI</strong>. Mohon isi catatan dan foto.
+                    Item ini <strong>TIDAK SESUAI</strong>. Mohon isi catatan atau foto.
                   </div>
 
                   <!-- NG FIELDS -->

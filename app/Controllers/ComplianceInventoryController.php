@@ -527,20 +527,24 @@ class ComplianceInventoryController extends BaseController
 
     foreach ($questions as $templateId => $status) {
 
-      if ($status === 'ng') {
-        if (empty($remarks[$templateId])) {
-          return redirect()->back()
-            ->with('error', 'Checklist NOT OK wajib diisi catatan.');
-        }
+      // 🔥 MAPPING STATUS
+      $statusDb = match ($status) {
+        'ok' => 'ok',
+        'ng' => 'not_ok',
+        'na' => 'na',
+        default => 'na'
+      };
 
-        if (!isset($photos[$templateId]) || !$photos[$templateId]->isValid()) {
-          return redirect()->back()
-            ->with('error', 'Checklist NOT OK wajib disertai foto.');
-        }
+      $remarkValue = trim($remarks[$templateId] ?? '');
+      $hasPhoto = isset($photos[$templateId]) && $photos[$templateId]->isValid();
+
+      if ($status === 'ng' && $remarkValue === '' && ! $hasPhoto) {
+        return redirect()->back()
+          ->with('error', 'Checklist NOT OK wajib memiliki catatan atau foto.');
       }
 
       $photoName = null;
-      if (isset($photos[$templateId]) && $photos[$templateId]->isValid()) {
+      if ($hasPhoto) {
         $photoName = $photos[$templateId]->getRandomName();
         $photos[$templateId]->move(FCPATH . 'uploads/checklist', $photoName);
       }
@@ -551,13 +555,14 @@ class ComplianceInventoryController extends BaseController
         'checklist_template_id' => $templateId,
         'check_date'            => date('Y-m-d'),
         'period_key'            => $periodKey,
-        'status'                => $status,
-        'remark'                => $remarks[$templateId] ?? null,
+        'status'                => $statusDb, // 🔥 INI YANG DIGANTI
+        'remark'                => $remarkValue ?: null,
         'photo'                 => $photoName,
         'checked_by'            => $user,
         'created_at'            => date('Y-m-d H:i:s')
       ]);
     }
+
 
     return redirect()
       ->to(base_url('compliance/inventory/detail/' . $inventoryId))

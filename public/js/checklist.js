@@ -70,12 +70,11 @@ function initChecklistUI() {
           const remark = fieldsEl.querySelector("textarea");
           const photo = fieldsEl.querySelector("input[type='file']");
 
-          if (
-            !remark ||
-            remark.value.trim() === "" ||
-            !photo ||
-            photo.files.length === 0
-          ) {
+          const remarkValue = remark ? remark.value.trim() : "";
+          const hasPhoto = photo && photo.files.length > 0;
+
+          // ❗ Minimal salah satu ada
+          if (remarkValue === "" && !hasPhoto) {
             valid = false;
             fieldsEl.classList.add("border", "border-warning", "rounded");
             if (!firstError) firstError = fieldsEl;
@@ -89,7 +88,7 @@ function initChecklistUI() {
         Swal.fire({
           icon: "warning",
           title: "Checklist belum lengkap",
-          text: "Item NOT OK wajib diisi catatan dan foto",
+          text: "Item NOT OK wajib memiliki catatan atau foto",
         });
 
         if (firstError) {
