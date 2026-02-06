@@ -174,11 +174,12 @@ class ComplianceInventoryController extends BaseController
   {
     $inventory = $this->inventoryModel
       ->select('
-      compliance_inventory.*,
-      inventory_categories.name AS category_name,
-      asset_item_types.name AS item_display_name,
-      areas.name AS area_name
-    ')
+    compliance_inventory.*,
+    inventory_categories.name AS category_name,
+    asset_item_types.name AS item_display_name,
+    asset_item_types.checklist_frequency,
+    areas.name AS area_name
+  ')
       ->join('inventory_categories', 'inventory_categories.id = compliance_inventory.category_id', 'left')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->join('areas', 'areas.id = compliance_inventory.area_id', 'left')
@@ -189,16 +190,12 @@ class ComplianceInventoryController extends BaseController
       throw new \CodeIgniter\Exceptions\PageNotFoundException('Inventory tidak ditemukan');
     }
 
+
     // =========================
     // CHECKLIST HISTORY
     // =========================
-    $checklists = (new \App\Models\ChecklistLogModel())
-      ->select('
-      period_key,
-      MAX(check_date) as check_date,
-      MAX(checked_by) as checked_by,
-      MAX(status) as status
-    ')
+    $checklists = (new ChecklistLogModel())
+      ->select('period_key, MAX(check_date) as check_date')
       ->where('inventory_id', $id)
       ->groupBy('period_key')
       ->orderBy('check_date', 'DESC')
@@ -215,19 +212,38 @@ class ComplianceInventoryController extends BaseController
     // =========================
     // REKAP BULANAN
     // =========================
-    $rekap = (new \App\Models\ChecklistLogModel())
-      ->select("
-      COUNT(DISTINCT period_key) as total,
-      SUM(status = 'ok') as ok_count,
-      SUM(status = 'ng') as ng_count,
-      SUM(
-        status = 'ok'
-        AND created_at > DATE_ADD(check_date, INTERVAL 1 DAY)
-      ) as late_count
-    ")
-      ->where('inventory_id', $id)
-      ->like('period_key', $ym, 'after')
-      ->first();
+
+    $rekap = [
+      'total' => 0,
+      'ok'    => 0,
+      'ng'    => 0,
+      'late'  => 0,
+    ];
+
+    foreach ($checklists as $row) {
+
+      // hanya bulan aktif
+      if (strpos($row['period_key'], $ym) !== 0) {
+        continue;
+      }
+
+      $rekap['total']++;
+
+      $state = resolve_period_status(
+        $inventory['id'],
+        $inventory['checklist_frequency'],
+        $row['period_key']
+      );
+
+      if ($state === 'done') {
+        $rekap['ok']++;
+      } elseif ($state === 'late') {
+        $rekap['late']++;
+      } else {
+        $rekap['ng']++;
+      }
+    }
+
 
     return view('compliance/inventory/detail', [
       'inventory'  => $inventory,
