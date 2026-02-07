@@ -167,3 +167,11 @@ $routes->group('pdf/checklist', [
         'ChecklistPdfController::recapItemYearly/$1/$2'
     );
 });
+
+$routes->group('holidays', ['filter' => 'auth'], function ($routes) {
+
+    $routes->get('/', 'HolidayController::index');
+    $routes->post('store', 'HolidayController::store');
+    $routes->post('update/(:num)', 'HolidayController::update/$1');
+    $routes->post('delete/(:num)', 'HolidayController::delete/$1');
+});

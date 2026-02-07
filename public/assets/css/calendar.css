@@ -49,36 +49,74 @@
 ================================ */
 .calendar-grid {
   margin-top: 6px;
+  row-gap: 6px;
 }
 
+/* Kolom lebih rapat */
+.calendar-grid .col-4,
+.calendar-grid .col-md-2,
+.calendar-grid .col-3 {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+/* Tombol compact */
 .calendar-grid .btn {
-  min-height: 44px;
+  height: 32px; /* FIX tinggi */
+  padding: 2px 4px;
   font-size: 12px;
-  padding: 6px 8px;
-  border-radius: 10px;
-  line-height: 1.2;
-  white-space: normal;
+  border-radius: 6px;
+  line-height: 1;
+  white-space: nowrap;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Icon kecil */
 .calendar-grid i {
-  font-size: 14px;
+  font-size: 11px;
+  margin-right: 3px;
 }
 
-/* MOBILE: rapihin jarak kolom */
+/* MOBILE */
 @media (max-width: 576px) {
-  .calendar-grid .col-6 {
-    padding-left: 6px;
-    padding-right: 6px;
+  .calendar-grid .btn {
+    height: 30px;
+    font-size: 11px;
   }
 }
 
 /* DESKTOP */
 @media (min-width: 768px) {
   .calendar-grid .btn {
-    min-height: 48px;
-    font-size: 13px;
+    height: 34px; /* jangan 48 lagi */
+    font-size: 12px;
   }
+}
+
+@media (min-width: 992px) {
+  .calendar-grid .col-lg-1 {
+    flex: 0 0 14.28%;
+    max-width: 14.28%;
+  }
+}
+
+.btn-offday {
+  background-color: #fff;
+  border: 2px solid #dc3545;
+  color: #333;
+  cursor: not-allowed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-offday i {
+  color: #dc3545;
+  font-size: 12px;
 }
 
 /* ===============================

@@ -171,7 +171,8 @@ $seg2 = $segments[1] ?? '';
                                     <li class="nav-item">
                                         <a href="<?= base_url('compliance/inventory') ?>"
                                             class="nav-link <?= $seg2 === 'inventory' ? 'active' : '' ?>">
-                                            Inventory / Asset
+                                            <i class="fa-solid fa-industry"></i>
+                                            <p>Inventory / Asset</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -212,6 +213,14 @@ $seg2 = $segments[1] ?? '';
                                         class="nav-link <?= $seg1 === 'audit-logs' ? 'active' : '' ?>">
                                         <i class="nav-icon bi bi-shield-check"></i>
                                         <p>Audit Log</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="<?= site_url('holidays') ?>"
+                                        class="nav-link <?= uri_string() === 'holidays' ? 'active' : '' ?>">
+                                        <i class="nav-icon bi bi-calendar-event"></i>
+                                        <p>Hari Libur</p>
                                     </a>
                                 </li>
                             <?php endif; ?>

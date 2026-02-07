@@ -68,3 +68,7 @@
     max-height: 75vh;
   }
 }
+
+.bg-offday {
+  background-color: #f8d7da !important;
+}

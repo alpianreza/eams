@@ -66,7 +66,8 @@
     <form id="checklistForm"
       action="<?= base_url('compliance/checklist/submit') ?>"
       method="post"
-      enctype="multipart/form-data">
+      enctype="multipart/form-data"
+      novalidate>
 
       <?= csrf_field() ?>
 
@@ -132,23 +133,23 @@
                       NOT OK
                     </label>
                   </div>
+                </td>
+              </tr>
 
-                  <!-- NG ALERT -->
-                  <div class="alert alert-warning ng-alert d-none py-2 px-2 small text-start"
-                    id="ng-alert-<?= $q['id'] ?>">
-                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                    Item ini <strong>TIDAK SESUAI</strong>. Mohon isi catatan atau foto.
-                  </div>
+              <tr class="ng-row d-none" id="ng-row-<?= $q['id'] ?>">
+                <td colspan="3" class="p-2">
+                  <div class="ng-fields text-start">
 
-                  <!-- NG FIELDS -->
-                  <div class="ng-fields d-none mt-2 text-start"
-                    id="ng-fields-<?= $q['id'] ?>">
+                    <div class="small text-warning fw-semibold mb-2">
+                      <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                      TIDAK SESUAI – Isi catatan atau foto
+                    </div>
 
                     <textarea
                       name="remarks[<?= $q['id'] ?>]"
                       class="form-control form-control-sm mb-2"
                       rows="2"
-                      placeholder="Catatan (wajib jika tidak sesuai)"></textarea>
+                      placeholder="Catatan (jika diperlukan)"></textarea>
 
                     <input type="file"
                       name="photos[<?= $q['id'] ?>]"
@@ -156,8 +157,11 @@
                       accept="image/*"
                       capture="environment">
                   </div>
-
                 </td>
+              </tr>
+
+
+              </td>
               </tr>
             <?php endforeach ?>
 

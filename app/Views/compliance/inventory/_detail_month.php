@@ -61,6 +61,15 @@
 
   </div>
 
+  <?php if ($inventory['checklist_frequency'] === 'daily'): ?>
+    <?= $this->include('compliance/inventory/_detail_daily_grid') ?>
+  <?php elseif ($inventory['checklist_frequency'] === 'weekly'): ?>
+    <?= $this->include('compliance/inventory/_detail_weekly_grid') ?>
+  <?php else: ?>
+    <?= $this->include('compliance/inventory/_detail_monthly_table') ?>
+  <?php endif; ?>
+
+
 
   <!-- ================= TABEL CHECKLIST ================= -->
   <div class="card checklist-card">

@@ -136,4 +136,21 @@
 <!-- ================= MODAL ZOOM FOTO ================= -->
 <?= $this->include('compliance/inventory/_modal_zoom') ?>
 
+<script>
+  function openChecklistZoom(imageUrl) {
+
+    const img = document.getElementById('zoomChecklistImage');
+    img.src = imageUrl;
+
+    const modalElement = document.getElementById('modalZoomChecklist');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+  }
+
+  document.getElementById('modalZoomChecklist')
+    .addEventListener('hidden.bs.modal', function() {
+      document.getElementById('zoomChecklistImage').src = '';
+    });
+</script>
+
 <?= $this->endSection() ?>

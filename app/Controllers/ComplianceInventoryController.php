@@ -174,12 +174,11 @@ class ComplianceInventoryController extends BaseController
   {
     $inventory = $this->inventoryModel
       ->select('
-    compliance_inventory.*,
-    inventory_categories.name AS category_name,
-    asset_item_types.name AS item_display_name,
-    asset_item_types.checklist_frequency,
-    areas.name AS area_name')
-
+            compliance_inventory.*,
+            inventory_categories.name AS category_name,
+            asset_item_types.name AS item_display_name,
+            asset_item_types.checklist_frequency,
+            areas.name AS area_name')
       ->join('inventory_categories', 'inventory_categories.id = compliance_inventory.category_id', 'left')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->join('areas', 'areas.id = compliance_inventory.area_id', 'left')
@@ -190,20 +189,6 @@ class ComplianceInventoryController extends BaseController
       throw new \CodeIgniter\Exceptions\PageNotFoundException('Inventory tidak ditemukan');
     }
 
-
-    // =========================
-    // CHECKLIST HISTORY
-    // =========================
-    $checklists = (new \App\Models\ChecklistLogModel())
-      ->select('
-    period_key,
-    MAX(check_date) as check_date,
-    MAX(checked_by) as checked_by')
-      ->where('inventory_id', $id)
-      ->groupBy('period_key')
-      ->orderBy('check_date', 'DESC')
-      ->findAll();
-
     // =========================
     // BULAN AKTIF
     // =========================
@@ -212,52 +197,164 @@ class ComplianceInventoryController extends BaseController
       $ym = date('Y-m');
     }
 
+    [$year, $month] = explode('-', $ym);
+
     // =========================
-    // REKAP BULANAN
+    // AMBIL LOG BULAN AKTIF
     // =========================
+    $logs = (new \App\Models\ChecklistLogModel())
+      ->where('inventory_id', $id)
+      ->like('period_key', $ym, 'after')
+      ->findAll();
+
+    // =========================
+    // PERIOD GENERATION
+    // =========================
+    $periods = generate_calendar_periods(
+      $inventory['checklist_frequency'],
+      (int) $year,
+      (int) $month
+    );
 
     $rekap = [
-      'total' => 0,
+      'total' => count($periods),
       'ok'    => 0,
       'ng'    => 0,
       'late'  => 0,
     ];
 
-    foreach ($checklists as $row) {
+    foreach ($logs as $log) {
+      if ($log['status'] === 'ok') $rekap['ok']++;
+      if ($log['status'] === 'not_ok') $rekap['ng']++;
+    }
 
-      // hanya bulan aktif
-      if (strpos($row['period_key'], $ym) !== 0) {
-        continue;
+    foreach ($periods as $period) {
+
+      $periodKey = is_array($period)
+        ? ($period['key'] ?? $period['period_key'])
+        : $period;
+
+      $exists = false;
+
+      foreach ($logs as $log) {
+        if ($log['period_key'] === $periodKey) {
+          $exists = true;
+          break;
+        }
       }
 
-      $rekap['total']++;
-
-      $state = resolve_period_status(
-        $inventory['id'],
+      if (! $exists && is_period_late(
         $inventory['checklist_frequency'],
-        $row['period_key']
-      );
-
-      if ($state === 'done') {
-        $rekap['ok']++;
-      } elseif ($state === 'late') {
+        $periodKey
+      )) {
         $rekap['late']++;
-      } else {
-        $rekap['ng']++;
       }
     }
 
-    $nowYM = date('Y-m');
-    $isFutureMonth = $ym > $nowYM;
+    // =========================
+    // AMBIL SEMUA PERTANYAAN
+    // =========================
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', $inventory['item_type_id'])
+      ->orderBy('id', 'ASC')
+      ->findAll();
 
+    // =========================
+    // GRID GENERATOR
+    // =========================
+    $dailyDays  = [];
+    $dataGrid   = [];
+    $weeklyGrid = [];
+
+    $frequency = $inventory['checklist_frequency'];
+
+    if ($frequency === 'daily') {
+
+      $daysInMonth = cal_days_in_month(CAL_GREGORIAN, (int)$month, (int)$year);
+
+      for ($d = 1; $d <= $daysInMonth; $d++) {
+        $date = sprintf('%04d-%02d-%02d', $year, $month, $d);
+        $dailyDays[] = $date;
+      }
+
+      foreach ($logs as $log) {
+        $dataGrid[$log['checklist_template_id']][$log['period_key']] = $log['status'];
+      }
+    }
+
+    if ($frequency === 'weekly') {
+
+      foreach ($logs as $log) {
+
+        if (preg_match('/W([1-4])$/', $log['period_key'], $m)) {
+          $weekNumber = (int)$m[1];
+          $weeklyGrid[$log['checklist_template_id']][$weekNumber] = $log['status'];
+        }
+      }
+    }
+
+    $checklists = (new \App\Models\ChecklistLogModel())
+      ->select('
+        period_key,
+        MAX(check_date) as check_date,
+        MAX(checked_by) as checked_by
+    ')
+      ->where('inventory_id', $id)
+      ->groupBy('period_key')
+      ->orderBy('check_date', 'DESC')
+      ->findAll();
+
+
+    // =========================
+    // MONTHLY DETAIL
+    // =========================
+    $detailLogs = (new \App\Models\ChecklistLogModel())
+      ->select('
+            checklist_logs.*,
+            checklist_master.question
+        ')
+      ->join(
+        'checklist_master',
+        'checklist_master.id = checklist_logs.checklist_template_id',
+        'left'
+      )
+      ->where('checklist_logs.inventory_id', $id)
+      ->where('checklist_logs.period_key', $ym)
+      ->orderBy('checklist_logs.checklist_template_id', 'ASC')
+      ->findAll();
+
+    // Libur Nasional
+
+    $holidayDates = [];
+
+    if ($inventory['checklist_frequency'] === 'daily') {
+
+      $holidayModel = new \App\Models\HolidayModel();
+
+      $holidays = $holidayModel
+        ->where('holiday_date >=', $ym . '-01')
+        ->where('holiday_date <=', $ym . '-31')
+        ->findAll();
+
+      $holidayDates = array_column($holidays, 'holiday_date');
+    }
+
+
+    $nowYM = date('Y-m');
 
 
     $data = [
-      'inventory'  => $inventory,
+      'inventory'   => $inventory,
+      'rekap'       => $rekap,
+      'ym'          => $ym,
+      'nowYM'       => $nowYM,
+      'questions'   => $questions,
+      'dailyDays'   => $dailyDays,
+      'dataGrid'    => $dataGrid,
+      'weeklyGrid'  => $weeklyGrid,
+      'detailLogs'  => $detailLogs,
       'checklists' => $checklists,
-      'rekap'      => $rekap,
-      'ym'         => $ym,
-      'nowYM'      => $nowYM,
+      'holidayDates' => $holidayDates,
     ];
 
     if ($this->request->isAJAX()) {
@@ -266,7 +363,6 @@ class ComplianceInventoryController extends BaseController
 
     return view('compliance/inventory/detail', $data);
   }
-
 
   public function updatePhoto($id)
   {
@@ -356,7 +452,6 @@ class ComplianceInventoryController extends BaseController
     return $this->response->setJSON($items);
   }
 
-
   public function checklist($inventoryId)
   {
     helper('checklist');
@@ -422,16 +517,49 @@ class ComplianceInventoryController extends BaseController
     // ================= CALENDAR =================
     $periods = generate_calendar_periods($frequency, (int)$year, (int)$month);
 
+    $holidayModel = new \App\Models\HolidayModel();
+
     foreach ($periods as &$p) {
-      $p['allowed']   = is_period_editable($frequency, $p['period_key']);
-      $p['status']    = resolve_period_status(
+
+      $p['is_offday'] = false;
+
+      // ================= DAILY ONLY =================
+      if ($frequency === 'daily') {
+
+        $date = $p['period_key'];
+
+        $isSunday = date('w', strtotime($date)) == 0;
+
+        $isHoliday = $holidayModel
+          ->where('holiday_date', $date)
+          ->first() ? true : false;
+
+        $isOffday = $isSunday || $isHoliday;
+
+        $p['is_offday'] = $isOffday;
+
+        if ($isOffday) {
+          $p['allowed'] = false;
+          $p['status']  = 'future';
+          $p['is_active'] = ($p['period_key'] === $periodKey);
+          continue; // STOP di sini untuk daily
+        }
+      }
+
+      // ================= WEEKLY & MONTHLY =================
+      $p['allowed'] = is_period_editable($frequency, $p['period_key']);
+
+      $p['status'] = resolve_period_status(
         $inventory['id'],
         $frequency,
         $p['period_key']
       );
+
       $p['is_active'] = ($p['period_key'] === $periodKey);
     }
+
     unset($p);
+
 
     // ================= LOCK =================
     $logModel = new \App\Models\ChecklistLogModel();
@@ -478,8 +606,6 @@ class ComplianceInventoryController extends BaseController
       'canNext'      => $canNext,
     ]);
   }
-
-
 
   public function submitChecklist()
   {
@@ -548,6 +674,20 @@ class ComplianceInventoryController extends BaseController
         $photoName = $photos[$templateId]->getRandomName();
         $photos[$templateId]->move(FCPATH . 'uploads/checklist', $photoName);
       }
+
+      $holidayModel = new \App\Models\HolidayModel();
+
+      $isSunday = date('w', strtotime($periodKey)) == 0;
+
+      $isHoliday = $holidayModel
+        ->where('holiday_date', $periodKey)
+        ->first() ? true : false;
+
+      if ($isSunday || $isHoliday) {
+        return redirect()->back()
+          ->with('error', 'Checklist tidak dapat diisi pada hari libur.');
+      }
+
 
       $logModel->insert([
         'inventory_id'          => $inventoryId,

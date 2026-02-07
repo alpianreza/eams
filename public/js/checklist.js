@@ -1,44 +1,32 @@
 function initChecklistUI() {
   /* ================= TOGGLE OK / NG ================= */
   document.querySelectorAll(".status-radio").forEach((radio) => {
-    radio.onchange = function () {
+    radio.addEventListener("change", function () {
       const qid = this.dataset.qid;
       if (!qid) return;
 
       const isNg = this.value === "ng";
-      const alertEl = document.getElementById("ng-alert-" + qid);
-      const fieldsEl = document.getElementById("ng-fields-" + qid);
-      if (!alertEl || !fieldsEl) return;
+      const rowEl = document.getElementById("ng-row-" + qid);
+      if (!rowEl) return;
 
-      const remark = fieldsEl.querySelector("textarea");
-      const photo = fieldsEl.querySelector("input[type='file']");
+      const remark = rowEl.querySelector("textarea");
+      const photo = rowEl.querySelector("input[type='file']");
 
       if (isNg) {
-        alertEl.classList.remove("d-none");
-        fieldsEl.classList.remove("d-none");
+        rowEl.classList.remove("d-none");
 
         if (remark) {
-          remark.required = true;
-          setTimeout(() => remark.focus(), 200);
+          setTimeout(() => remark.focus(), 150);
         }
-        if (photo) photo.required = true;
-
-        fieldsEl.scrollIntoView({ behavior: "smooth", block: "center" });
       } else {
-        alertEl.classList.add("d-none");
-        fieldsEl.classList.add("d-none");
+        rowEl.classList.add("d-none");
 
-        if (remark) {
-          remark.required = false;
-          remark.value = "";
-        }
-        if (photo) {
-          photo.required = false;
-          photo.value = "";
-        }
+        if (remark) remark.value = "";
+        if (photo) photo.value = "";
       }
-    };
+    });
   });
+
 
   /* ================= TANDAI SEMUA OK ================= */
   const btnOkAll = document.getElementById("btn-ok-all");
@@ -64,22 +52,25 @@ function initChecklistUI() {
         .querySelectorAll(".status-radio[value='ng']:checked")
         .forEach((radio) => {
           const qid = radio.dataset.qid;
-          const fieldsEl = document.getElementById("ng-fields-" + qid);
-          if (!fieldsEl) return;
 
-          const remark = fieldsEl.querySelector("textarea");
-          const photo = fieldsEl.querySelector("input[type='file']");
+          const rowEl = document.getElementById("ng-row-" + qid);
+          if (!rowEl) return;
+
+          const remark = rowEl.querySelector("textarea");
+          const photo = rowEl.querySelector("input[type='file']");
 
           const remarkValue = remark ? remark.value.trim() : "";
           const hasPhoto = photo && photo.files.length > 0;
 
-          // ❗ Minimal salah satu ada
+          // ❗ Minimal salah satu wajib ada
           if (remarkValue === "" && !hasPhoto) {
             valid = false;
-            fieldsEl.classList.add("border", "border-warning", "rounded");
-            if (!firstError) firstError = fieldsEl;
+
+            rowEl.classList.add("border", "border-warning", "rounded");
+
+            if (!firstError) firstError = rowEl;
           } else {
-            fieldsEl.classList.remove("border", "border-warning", "rounded");
+            rowEl.classList.remove("border", "border-warning", "rounded");
           }
         });
 

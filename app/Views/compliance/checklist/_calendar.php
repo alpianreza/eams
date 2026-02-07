@@ -70,19 +70,29 @@
       <?php if ($frequency === 'daily'): ?>
         <div class="row g-2 calendar-grid">
           <?php foreach ($periods as $p): ?>
-            <div class="col-6 col-md-3">
-              <?php if ($p['allowed']): ?>
+            <div class="col-3 col-md-2 col-lg-1">
+              <?php if ($p['is_offday']): ?>
+
+                <div class="btn w-100 btn-offday">
+                  <i class="bi bi-calendar-x"></i>
+                  Libur
+                </div>
+
+              <?php elseif ($p['allowed']): ?>
+
                 <a href="<?= base_url('compliance/checklist/' . $inventory['id']) ?>?ym=<?= $navYM ?>&period_key=<?= $p['period_key'] ?>"
                   class="btn w-100 <?= periodBtnClass($p['status'], $p['is_active']) ?>">
-                  <i class="bi bi-calendar-day me-1"></i>
-                  <?= esc($p['label']) ?>
+                  <?= esc(date('d M', strtotime($p['period_key']))) ?>
                 </a>
+
               <?php else: ?>
+
                 <div class="btn w-100 btn-outline-secondary disabled">
-                  <i class="bi bi-lock me-1"></i>
-                  <?= esc($p['label']) ?>
+                  <?= esc(date('d M', strtotime($p['period_key']))) ?>
                 </div>
+
               <?php endif ?>
+
             </div>
           <?php endforeach ?>
         </div>
@@ -135,11 +145,20 @@
       <?php endif ?>
 
       <!-- ================= LEGEND ================= -->
-      <div class="mt-3">
-        <span class="badge bg-success me-2">DONE</span>
-        <span class="badge bg-danger me-2">LATE</span>
-        <span class="badge bg-warning text-dark me-2">PENDING</span>
-        <span class="badge bg-secondary">FUTURE</span>
+      <div class="mt-3 d-flex flex-wrap gap-2">
+
+        <span class="badge bg-success">SELESAI</span>
+
+        <span class="badge bg-danger">TERLAMBAT</span>
+
+        <span class="badge bg-warning text-dark">PENDING</span>
+
+        <!-- LIBUR -->
+        <span class="badge border border-danger text-danger bg-white d-flex align-items-center gap-1">
+          <i class="bi bi-calendar-x"></i>
+          LIBUR
+        </span>
+
       </div>
 
     </div>
