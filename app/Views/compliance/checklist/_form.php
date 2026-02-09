@@ -43,31 +43,36 @@
     <?php if ($lockReason === 'done'): ?>
       <div class="alert alert-info d-flex align-items-center gap-2">
         <i class="bi bi-check-circle-fill"></i>
-        Checklist untuk periode ini <strong>sudah diisi</strong> dan terkunci.
+        Checklist untuk periode ini sudah diisi.
       </div>
 
     <?php elseif ($lockReason === 'future'): ?>
       <div class="alert alert-secondary d-flex align-items-center gap-2">
         <i class="bi bi-lock-fill"></i>
-        Checklist untuk periode ini <strong>belum dapat diisi</strong>.
+        Checklist untuk periode ini belum dapat diisi.
       </div>
 
     <?php elseif ($lockReason === 'expired'): ?>
       <div class="alert alert-warning d-flex align-items-center gap-2">
         <i class="bi bi-exclamation-triangle-fill"></i>
-        Checklist untuk periode ini <strong>sudah melewati batas pengisian</strong>.
+        Checklist untuk periode ini sudah melewati batas pengisian.
+      </div>
+
+    <?php elseif ($lockReason === 'offday'): ?>
+      <div class="alert alert-danger d-flex align-items-center gap-2">
+        <i class="bi bi-calendar-x-fill"></i>
+        Hari ini adalah hari libur. Checklist tidak dapat diisi.
       </div>
     <?php endif; ?>
 
-
   <?php elseif (! empty($questions)): ?>
+
 
     <!-- FORM CHECKLIST -->
     <form id="checklistForm"
       action="<?= base_url('compliance/checklist/submit') ?>"
       method="post"
-      enctype="multipart/form-data"
-      novalidate>
+      enctype="multipart/form-data">
 
       <?= csrf_field() ?>
 
@@ -77,7 +82,7 @@
       <input type="hidden" name="frequency" value="<?= $frequency ?>">
 
       <!-- ACTION BAR -->
-      <div class="d-flex justify-content-end mb-3">
+      <div class="d-flex justify-content-end mt-3 mb-2">
         <button type="button" class="btn btn-outline-success btn-sm" id="btn-ok-all">
           <i class="bi bi-check2-square me-1"></i>
           Tandai Semua OK
@@ -130,7 +135,7 @@
                     <label class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
                       for="ng-<?= $q['id'] ?>">
                       <i class="bi bi-x-circle"></i>
-                      NOT OK
+                      NOT
                     </label>
                   </div>
                 </td>
@@ -158,10 +163,6 @@
                       capture="environment">
                   </div>
                 </td>
-              </tr>
-
-
-              </td>
               </tr>
             <?php endforeach ?>
 

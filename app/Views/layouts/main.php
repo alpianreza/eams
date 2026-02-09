@@ -2,13 +2,11 @@
 $isWritable = $isWritable ?? false;
 $role       = $role ?? session()->get('role') ?? 'viewer';
 
-$path = trim(parse_url(current_url(), PHP_URL_PATH), '/');
-$segments = $path === '' ? [] : explode('/', $path);
-
-$seg1 = $segments[0] ?? '';
-$seg2 = $segments[1] ?? '';
-
+$uri = service('uri');
+$seg1 = $uri->getSegment(1) ?? '';
+$seg2 = $uri->getSegment(2) ?? '';
 ?>
+
 
 <!DOCTYPE html>
 <html lang="id">
@@ -268,7 +266,7 @@ $seg2 = $segments[1] ?? '';
 <script src="<?= base_url('js/app.js') ?>"></script>
 <script src="<?= base_url('js/checklist.js') ?>"></script>
 <script src="<?= base_url('js/checklist-master.js') ?>"></script>
-<script src="<?= base_url('js/inventory-detail.js') ?>"></script>
+
 <script>
     window.FLASH_MESSAGE = {
         success: <?= session()->getFlashdata('success')

@@ -27,7 +27,6 @@ function initChecklistUI() {
     });
   });
 
-
   /* ================= TANDAI SEMUA OK ================= */
   const btnOkAll = document.getElementById("btn-ok-all");
   if (btnOkAll) {
@@ -43,16 +42,15 @@ function initChecklistUI() {
 
   /* ================= VALIDASI SUBMIT ================= */
   const form = document.getElementById("checklistForm");
+
   if (form) {
-    form.onsubmit = function (e) {
+    form.addEventListener("submit", function (e) {
       let valid = true;
-      let firstError = null;
 
       document
         .querySelectorAll(".status-radio[value='ng']:checked")
         .forEach((radio) => {
           const qid = radio.dataset.qid;
-
           const rowEl = document.getElementById("ng-row-" + qid);
           if (!rowEl) return;
 
@@ -62,31 +60,26 @@ function initChecklistUI() {
           const remarkValue = remark ? remark.value.trim() : "";
           const hasPhoto = photo && photo.files.length > 0;
 
-          // ❗ Minimal salah satu wajib ada
           if (remarkValue === "" && !hasPhoto) {
             valid = false;
 
-            rowEl.classList.add("border", "border-warning", "rounded");
+            rowEl.classList.add("border", "border-danger", "rounded");
 
-            if (!firstError) firstError = rowEl;
+            if (remark) {
+              remark.setCustomValidity("Isi catatan atau foto.");
+              remark.reportValidity();
+            }
           } else {
-            rowEl.classList.remove("border", "border-warning", "rounded");
+            rowEl.classList.remove("border", "border-danger", "rounded");
+
+            if (remark) remark.setCustomValidity("");
           }
         });
 
       if (!valid) {
         e.preventDefault();
-        Swal.fire({
-          icon: "warning",
-          title: "Checklist belum lengkap",
-          text: "Item NOT OK wajib memiliki catatan atau foto",
-        });
-
-        if (firstError) {
-          firstError.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
       }
-    };
+    });
   }
 
   /* ================= FOTO COMPRESS + WATERMARK ================= */
@@ -169,3 +162,36 @@ document.addEventListener("DOMContentLoaded", function () {
 window.reInitChecklistUI = function () {
   initChecklistUI();
 };
+
+document.addEventListener("click", function (e) {
+  const link = e.target.closest(".calendar-grid a, .calendar-nav a");
+  if (!link) return;
+
+  e.preventDefault();
+
+  const url = link.getAttribute("href");
+
+  fetch(url, {
+    headers: {
+      "X-Requested-With": "XMLHttpRequest",
+    },
+  })
+    .then((res) => res.text())
+    .then((html) => {
+      const container = document.getElementById("checklistAjax");
+      if (!container) return;
+
+      container.innerHTML = html;
+
+      // re-init UI setelah inject ulang
+      if (window.reInitChecklistUI) {
+        window.reInitChecklistUI();
+      }
+
+      // update URL tanpa reload
+      window.history.pushState({}, "", url);
+    })
+    .catch((err) => {
+      console.error("AJAX error:", err);
+    });
+});

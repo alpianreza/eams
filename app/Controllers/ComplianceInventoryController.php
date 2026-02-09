@@ -492,10 +492,70 @@ class ComplianceInventoryController extends BaseController
 
     // DEFAULT PER FREQUENCY
     if ($frequency === 'daily') {
-      $defaultPeriodKey = $ym . '-01';
+
+      $holidayModel = new \App\Models\HolidayModel();
+      $today = date('Y-m-d');
+
+      // ===============================
+      // 1️⃣ Kalau buka bulan sekarang
+      // ===============================
+      if ($ym === date('Y-m')) {
+
+        $candidate = $today;
+
+        // Kalau hari ini libur → mundur cari hari kerja terakhir
+        while (true) {
+
+          $isSunday = date('w', strtotime($candidate)) == 0;
+
+          $isHoliday = $holidayModel
+            ->where('holiday_date', $candidate)
+            ->first() ? true : false;
+
+          if (!$isSunday && !$isHoliday) {
+            break;
+          }
+
+          $candidate = date('Y-m-d', strtotime($candidate . ' -1 day'));
+
+          // Stop kalau keluar bulan
+          if (substr($candidate, 0, 7) !== $ym) {
+            break;
+          }
+        }
+
+        $defaultPeriodKey = $candidate;
+      } else {
+
+        // ===============================
+        // 2️⃣ Kalau buka bulan lain
+        // ===============================
+        $daysInMonth = date('t', strtotime($ym . '-01'));
+        $firstValidDate = null;
+
+        for ($d = 1; $d <= $daysInMonth; $d++) {
+
+          $date = $ym . '-' . str_pad($d, 2, '0', STR_PAD_LEFT);
+
+          $isSunday = date('w', strtotime($date)) == 0;
+
+          $isHoliday = $holidayModel
+            ->where('holiday_date', $date)
+            ->first() ? true : false;
+
+          if (!$isSunday && !$isHoliday) {
+            $firstValidDate = $date;
+            break;
+          }
+        }
+
+        $defaultPeriodKey = $firstValidDate ?? ($ym . '-01');
+      }
     } elseif ($frequency === 'weekly') {
+
       $defaultPeriodKey = $ym . '-W1';
     } else {
+
       $defaultPeriodKey = $ym;
     }
 
@@ -511,6 +571,7 @@ class ComplianceInventoryController extends BaseController
         $periodKey = $defaultPeriodKey;
       }
     }
+
 
     $periodLabel = period_label($frequency, $periodKey);
 
@@ -562,7 +623,9 @@ class ComplianceInventoryController extends BaseController
 
 
     // ================= LOCK =================
+    // ================= LOCK =================
     $logModel = new \App\Models\ChecklistLogModel();
+    $holidayModel = new \App\Models\HolidayModel();
 
     $exists = $logModel
       ->where('inventory_id', $inventoryId)
@@ -572,16 +635,39 @@ class ComplianceInventoryController extends BaseController
     $isLocked = false;
     $lockReason = null;
 
-    if ($exists) {
+    // DAILY OFFDAY CHECK
+    if ($frequency === 'daily') {
+
+      $isSunday = date('w', strtotime($periodKey)) == 0;
+
+      $isHoliday = $holidayModel
+        ->where('holiday_date', $periodKey)
+        ->first() ? true : false;
+
+      if ($isSunday || $isHoliday) {
+        $isLocked = true;
+        $lockReason = 'offday';
+      }
+    }
+
+    // DONE
+    if (!$isLocked && $exists) {
       $isLocked = true;
       $lockReason = 'done';
-    } elseif (is_period_future($frequency, $periodKey)) {
+    }
+
+    // FUTURE
+    if (!$isLocked && is_period_future($frequency, $periodKey)) {
       $isLocked = true;
       $lockReason = 'future';
-    } elseif (! is_period_editable($frequency, $periodKey)) {
+    }
+
+    // EXPIRED
+    if (!$isLocked && ! is_period_editable($frequency, $periodKey)) {
       $isLocked = true;
       $lockReason = 'expired';
     }
+
 
     // ================= QUESTIONS =================
     $questions = (new \App\Models\ChecklistMasterModel())
@@ -590,6 +676,32 @@ class ComplianceInventoryController extends BaseController
       ->orderBy('id', 'ASC')
       ->findAll();
 
+    if ($this->request->isAJAX()) {
+
+      return
+        view('compliance/checklist/_calendar', [
+          'inventory'   => $inventory,
+          'periods'     => $periods,
+          'frequency'   => $frequency,
+          'navYM'       => $ym,
+          'prevYM'      => $prevYM,
+          'nextYM'      => $nextYM,
+          'canPrev'     => $canPrev,
+          'canNext'     => $canNext,
+          'period_key'  => $periodKey,
+        ])
+        .
+        view('compliance/checklist/_form', [
+          'inventory'    => $inventory,
+          'questions'    => $questions,
+          'frequency'    => $frequency,
+          'period_key'   => $periodKey,
+          'period_label' => $periodLabel,
+          'isLocked'     => $isLocked,
+          'lockReason'   => $lockReason,
+        ]);
+    }
+    // ================= FULL PAGE =================
     return view('compliance/checklist/index', [
       'inventory'    => $inventory,
       'questions'    => $questions,
@@ -738,10 +850,34 @@ class ComplianceInventoryController extends BaseController
     $requestPeriodKey = $this->request->getGet('period_key');
 
     if ($frequency === 'daily') {
-      $defaultPeriodKey = $ym . '-01';
+
+      $daysInMonth = date('t', strtotime($ym . '-01'));
+      $holidayModel = new \App\Models\HolidayModel();
+
+      $firstValidDate = null;
+
+      for ($d = 1; $d <= $daysInMonth; $d++) {
+
+        $date = $ym . '-' . str_pad($d, 2, '0', STR_PAD_LEFT);
+
+        $isSunday = date('w', strtotime($date)) == 0;
+
+        $isHoliday = $holidayModel
+          ->where('holiday_date', $date)
+          ->first() ? true : false;
+
+        if (!$isSunday && !$isHoliday) {
+          $firstValidDate = $date;
+          break;
+        }
+      }
+
+      $defaultPeriodKey = $firstValidDate ?? ($ym . '-01');
     } elseif ($frequency === 'weekly') {
+
       $defaultPeriodKey = $ym . '-W1';
     } else {
+
       $defaultPeriodKey = $ym;
     }
 

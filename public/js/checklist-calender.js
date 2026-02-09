@@ -4,11 +4,19 @@ document.addEventListener("click", function (e) {
 
   e.preventDefault();
 
+  const container = document.getElementById("checklistAjax");
+  if (!container) return;
+
   const url = new URL(link.href);
   url.searchParams.set("ajax", "1");
 
-  const container = document.getElementById("checklistAjax");
-  if (!container) return;
+  // Loading kecil
+  container.innerHTML = `
+    <div class="text-center py-4 text-muted">
+      <div class="spinner-border spinner-border-sm me-2"></div>
+      Memuat checklist...
+    </div>
+  `;
 
   fetch(url.toString(), {
     headers: {
@@ -19,23 +27,19 @@ document.addEventListener("click", function (e) {
     .then((html) => {
       container.innerHTML = html;
 
-      // 🔥 WAJIB: hidupkan ulang checklist UI
+      // Hidupkan ulang semua event
       if (window.reInitChecklistUI) {
         window.reInitChecklistUI();
       }
 
-      container.scrollIntoView({ behavior: "smooth" });
+      // Update URL tanpa reload
+      window.history.pushState({}, "", link.href);
+
+      // Scroll halus ke atas checklist
+      container.scrollIntoView({ behavior: "smooth", block: "start" });
     })
     .catch(() => {
-      alert("Gagal memuat checklist.");
+      // fallback normal reload
+      window.location.href = link.href;
     });
-});
-
-document.querySelectorAll("#calendarCollapse a").forEach((el) => {
-  el.addEventListener("click", () => {
-    const collapse = bootstrap.Collapse.getOrCreateInstance(
-      document.getElementById("calendarCollapse"),
-    );
-    collapse.hide();
-  });
 });

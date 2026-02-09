@@ -9,7 +9,6 @@ body {
 }
 
 .checklist-page {
-  padding-top: 1.5rem;
   padding-bottom: 3rem;
 }
 
@@ -37,207 +36,40 @@ body {
   margin-bottom: 0.25rem;
 }
 
-/* ---------- CALENDAR ---------- */
-
-.calendar-grid {
-  row-gap: 0.75rem;
+.checklist-header {
+  margin-bottom: 1.5rem !important;
 }
 
-.calendar-grid .btn {
-  min-height: 44px;
-  font-size: 0.875rem;
-  border-radius: 10px;
-  white-space: normal;
-}
-
-/* Disabled calendar */
-.calendar-grid .btn.disabled {
-  opacity: 0.6;
-}
-
-/* ---------- MONTH NAV ---------- */
-
-.calendar-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.calendar-nav .btn {
-  min-width: 120px;
-}
-
-/* ---------- BADGE LEGEND ---------- */
-
-.badge-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.checklist-content {
   margin-top: 1rem;
 }
 
-.badge-legend .badge {
-  padding: 0.45em 0.6em;
-  font-weight: 500;
+.checklist-content .alert {
+  margin-top: 0.75rem;
+  border-radius: 10px;
 }
-
-/* ---------- RADIO BUTTON (OK / NG) ---------- */
-
-.status-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  justify-content: center;
-}
-
-.status-group .btn {
-  min-width: 90px;
-  font-size: 0.85rem;
-}
-
-/* ---------- NG SECTION ---------- */
-
-.ng-fields {
-  background: #fff7e6;
-  border-left: 4px solid #ffc107;
-  padding: 10px;
-  border-radius: 6px;
-}
-
-.ng-fields textarea,
-.ng-fields input[type="file"] {
-  width: 100%;
-}
-
-.ng-alert {
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-}
-
-/* ---------- TABLE ---------- */
 
 .table-checklist {
   margin-top: 1rem;
 }
 
-.table-checklist td,
-.table-checklist th {
-  vertical-align: middle;
+.table-checklist td {
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
-.table-checklist th {
-  background-color: #f8f9fa;
-}
-
-/* ---------- STICKY SUBMIT (MOBILE) ---------- */
-
-.sticky-submit {
-  position: sticky;
-  bottom: 0;
-  background: #ffffff;
-  border-top: 1px solid #dee2e6;
-  padding: 0.75rem;
-  z-index: 1020;
-  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
-}
-
-/* Desktop hide */
-@media (min-width: 768px) {
-  .sticky-submit {
-    display: none;
-  }
-}
-
-/* ---------- TOUCH FRIENDLY ---------- */
-
-.btn {
-  min-height: 38px;
-}
-
-/* ---------- MOBILE ADJUSTMENT ---------- */
-
-@media (max-width: 767.98px) {
-  .checklist-card .card-body {
-    padding: 1rem;
-  }
-
-  .calendar-grid .col-6,
-  .calendar-grid .col-4 {
-    padding-left: 4px;
-    padding-right: 4px;
-  }
-
-  .calendar-grid .btn {
-    font-size: 0.82rem;
-  }
-
-  .status-group {
-    justify-content: flex-start;
-  }
-}
-
-/* =========================================
-   MOBILE – SUPER COMPACT LAPANGAN MODE
-========================================= */
 @media (max-width: 768px) {
-  /* Card lebih rapat */
   .table-checklist tr {
-    margin-bottom: 8px;
-    border-radius: 12px;
-  }
-
-  .table-checklist td {
-    padding: 8px 10px;
-  }
-
-  /* Nomor + pertanyaan lebih compact */
-  .table-checklist td:first-child {
-    font-size: 13px;
-    font-weight: 600;
-    padding-bottom: 4px;
-  }
-
-  /* Status lebih cepat ditekan */
-  .status-group {
-    margin-top: 6px;
-    gap: 6px;
-  }
-
-  .status-group .btn {
-    flex: 1;
-    min-width: unset;
-    font-size: 13px;
-    padding: 6px 8px;
-    min-height: 36px;
-  }
-
-  /* NG fields lebih kecil */
-  .ng-fields {
-    padding: 8px;
-  }
-
-  .ng-fields textarea {
-    font-size: 13px;
-    padding: 6px;
-  }
-
-  .ng-fields input[type="file"] {
-    font-size: 12px;
-  }
-
-  /* Sticky submit lebih slim */
-  .sticky-submit {
-    padding: 8px;
+    margin-bottom: 14px;
   }
 }
 
-.status-group .btn-check:checked + .btn-outline-success {
-  background: #198754;
-  color: #fff;
-}
+@media (max-width: 768px) {
+  .calendar-nav {
+    margin-bottom: 0.75rem;
+  }
 
-.status-group .btn-check:checked + .btn-outline-danger {
-  background: #dc3545;
-  color: #fff;
+  .nav-current {
+    font-size: 14px;
+  }
 }
