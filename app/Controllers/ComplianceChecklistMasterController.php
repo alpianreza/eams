@@ -94,6 +94,7 @@ class ComplianceChecklistMasterController extends BaseController
    */
   public function store()
   {
+
     $this->checklistMasterModel->insert([
       'item_type_id' => $this->request->getPost('item_type_id'),
       'question'     => $this->request->getPost('question'),

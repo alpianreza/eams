@@ -8,8 +8,10 @@ class HolidayController extends BaseController
 {
   public function index()
   {
-    if (session('role') !== 'admin') {
-      return redirect()->to('/')->with('error', 'Tidak diizinkan');
+    page('Kelola Hari Libur Nasional');
+
+    if (! in_array(session('role'), ['admin', 'compliance'])) {
+      return redirect()->to('/unauthorized');
     }
 
     $year = $this->request->getGet('year') ?? date('Y');
@@ -29,8 +31,8 @@ class HolidayController extends BaseController
 
   public function store()
   {
-    if (session('role') !== 'admin') {
-      return redirect()->back();
+    if (! in_array(session('role'), ['admin', 'compliance'])) {
+      return redirect()->to('/unauthorized');
     }
 
     $model = new HolidayModel();
@@ -57,8 +59,8 @@ class HolidayController extends BaseController
 
   public function update($id)
   {
-    if (session('role') !== 'admin') {
-      return redirect()->back();
+    if (! in_array(session('role'), ['admin', 'compliance'])) {
+      return redirect()->to('/unauthorized');
     }
 
     $model = new \App\Models\HolidayModel();

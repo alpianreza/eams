@@ -15,10 +15,6 @@
   ?>
 <?php endif; ?>
 
-<a href="<?= base_url('compliance/inventory/detail/' . $inventory['id']) ?>"
-  class="btn btn-sm btn-secondary mb-3">
-  ← Kembali
-</a>
 
 <div class="checklist-header mb-4">
   <div class="card-header d-flex justify-content-between align-items-center">

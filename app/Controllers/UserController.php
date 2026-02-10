@@ -75,6 +75,11 @@ class UserController extends BaseController
   // UPDATE USER
   public function update($id)
   {
+    $user = $this->db->table('users')
+      ->where('id', $id)
+      ->get()
+      ->getRowArray();
+
     $data = [
       'name'       => $this->request->getPost('name'),
       'username'   => $this->request->getPost('username'),
@@ -91,6 +96,33 @@ class UserController extends BaseController
       );
     }
 
+    // ===== HANDLE PHOTO =====
+    $file = $this->request->getFile('photo');
+
+    if ($file && $file->isValid() && !$file->hasMoved()) {
+
+      // Validasi ukuran (max 2MB)
+      if ($file->getSize() > 2 * 1024 * 1024) {
+        return redirect()->back()->with('error', 'Maksimal ukuran foto 2MB');
+      }
+
+      // Validasi tipe file
+      $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!in_array($file->getMimeType(), $allowedTypes)) {
+        return redirect()->back()->with('error', 'Format foto tidak valid');
+      }
+
+      $newName = $file->getRandomName();
+      $file->move(FCPATH . 'uploads/users/', $newName);
+
+      // Hapus foto lama jika ada
+      if (!empty($user['photo']) && file_exists(FCPATH . 'uploads/users/' . $user['photo'])) {
+        unlink(FCPATH . 'uploads/users/' . $user['photo']);
+      }
+
+      $data['photo'] = $newName;
+    }
+
     $this->db->table('users')
       ->where('id', $id)
       ->update($data);
@@ -98,6 +130,7 @@ class UserController extends BaseController
     return redirect()->to('users')
       ->with('success', 'User berhasil diupdate');
   }
+
 
   // NONAKTIFKAN USER
   public function deactivate($id)

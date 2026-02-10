@@ -10,7 +10,7 @@ class AssetItemTypeModel extends Model
   protected $primaryKey = 'id';
 
   protected $allowedFields = [
-    'category_id',
+    'inventory_category_id',
     'name',
     'code',
     'checklist_frequency',

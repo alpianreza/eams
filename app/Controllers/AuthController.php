@@ -43,6 +43,7 @@ class AuthController extends BaseController
             'user_id'   => $user['id'],
             'name'      => $user['name'],
             'role'      => $user['role'],
+            'photo'     => $user['photo'] ?? null,
             'permission' => $user['permission']
         ]);
 

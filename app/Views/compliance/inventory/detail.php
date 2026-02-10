@@ -1,12 +1,11 @@
 <?= $this->extend('layouts/main') ?>
+
+<?php
+$title = 'Detail Inventory';
+$backUrl = base_url('compliance/inventory');
+?>
+
 <?= $this->section('content') ?>
-
-<a href="<?= base_url('compliance/inventory') ?>" class="btn btn-sm btn-secondary mb-3">
-  <i class="bi bi-arrow-left"></i> Kembali
-</a>
-
-<h5 class="mb-4 fw-semibold">Detail Inventory</h5>
-
 <div class="row g-4">
 
   <!-- ================= FOTO ================= -->
@@ -135,6 +134,9 @@
 
 <!-- ================= MODAL ZOOM FOTO ================= -->
 <?= $this->include('compliance/inventory/_modal_zoom') ?>
+
+<script src="<?= base_url('js/inventory-detail.js') ?>"></script>
+
 
 <script>
   function openChecklistZoom(imageUrl) {

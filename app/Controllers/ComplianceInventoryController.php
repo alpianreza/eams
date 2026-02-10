@@ -24,6 +24,9 @@ class ComplianceInventoryController extends BaseController
 
   public function index()
   {
+
+    page('Compliance Inventory');
+
     $request = $this->request;
 
     $categoryId = $request->getGet('category');
@@ -83,6 +86,10 @@ class ComplianceInventoryController extends BaseController
 
   public function update($id)
   {
+    if (! hasRole(['admin', 'compliance'])) {
+      return redirect()->to('/unauthorized');
+    }
+
     $this->inventoryModel->update($id, [
       'category_id'      => $this->request->getPost('category_id'),
       'area_id'          => $this->request->getPost('area_id'),
@@ -101,12 +108,21 @@ class ComplianceInventoryController extends BaseController
 
   public function delete($id)
   {
+    if (! hasRole(['admin', 'compliance'])) {
+      return redirect()->to('/unauthorized');
+    }
+
     $this->inventoryModel->delete($id);
     return redirect()->back();
   }
 
   public function store()
   {
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return redirect()->to('/unauthorized');
+    }
+
     if (! $this->validate([
       'category_id' => 'required|integer',
       'area_id'     => 'required|integer',
@@ -172,6 +188,8 @@ class ComplianceInventoryController extends BaseController
 
   public function detail($id)
   {
+    page('Detail Inventory', 'compliance/inventory');
+
     $inventory = $this->inventoryModel
       ->select('
             compliance_inventory.*,
@@ -454,6 +472,10 @@ class ComplianceInventoryController extends BaseController
 
   public function checklist($inventoryId)
   {
+    page(
+      'Checklist',
+      'compliance/inventory/detail/' . $inventoryId
+    );
     helper('checklist');
 
     // ================= INVENTORY =================
@@ -721,6 +743,11 @@ class ComplianceInventoryController extends BaseController
 
   public function submitChecklist()
   {
+    if (! hasRole(['admin', 'compliance', 'staff'])) {
+      return redirect()->to('/unauthorized');
+    }
+
+
     $inventoryId = $this->request->getPost('inventory_id');
     $periodKey   = $this->request->getPost('period_key');
     $itemTypeId  = $this->request->getPost('item_type_id');

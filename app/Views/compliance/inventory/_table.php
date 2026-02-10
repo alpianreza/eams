@@ -14,7 +14,10 @@
         <th>PIC</th>
         <th>Status</th>
         <th>Remark</th>
-        <th width="120" class="text-center">Aksi</th>
+        <?php if (hasRole(['admin', 'compliance'])): ?>
+          <th width="120" class="text-center">Aksi</th>
+        <?php endif; ?>
+
       </tr>
     </thead>
 
@@ -55,51 +58,55 @@
 
           <td><?= esc($inv['remark'] ?? '-') ?></td>
 
-          <td class="text-center">
-            <div class="d-flex justify-content-center gap-1">
+          <?php if (hasRole(['admin', 'compliance'])): ?>
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-1">
 
-              <!-- EDIT -->
-              <button type="button"
-                class="btn btn-sm btn-outline-warning btn-edit"
-                data-id="<?= $inv['id'] ?>"
-                data-category-id="<?= $inv['category_id'] ?>"
-                data-item-type-id="<?= $inv['item_type_id'] ?>"
-                data-area-id="<?= $inv['area_id'] ?>"
-                data-code="<?= esc($inv['asset_code']) ?>"
-                data-type="<?= esc($inv['type_description']) ?>"
-                data-pic="<?= esc($inv['pic']) ?>"
-                data-status="<?= esc($inv['status']) ?>"
-                data-remark="<?= esc($inv['remark']) ?>"
-                title="Edit">
-                <i class="bi bi-pencil-square"></i>
-              </button>
-
-              <!-- DELETE -->
-              <form action="<?= base_url('compliance/inventory/delete/' . $inv['id']) ?>"
-                method="post"
-                class="d-inline form-delete">
-                <?= csrf_field() ?>
+                <!-- EDIT -->
                 <button type="button"
-                  class="btn btn-sm btn-outline-danger btn-delete"
-                  title="Delete">
-                  <i class="bi bi-trash"></i>
+                  class="btn btn-sm btn-outline-warning btn-edit"
+                  data-id="<?= $inv['id'] ?>"
+                  data-category-id="<?= $inv['category_id'] ?>"
+                  data-item-type-id="<?= $inv['item_type_id'] ?>"
+                  data-area-id="<?= $inv['area_id'] ?>"
+                  data-code="<?= esc($inv['asset_code']) ?>"
+                  data-type="<?= esc($inv['type_description']) ?>"
+                  data-pic="<?= esc($inv['pic']) ?>"
+                  data-status="<?= esc($inv['status']) ?>"
+                  data-remark="<?= esc($inv['remark']) ?>"
+                  title="Edit">
+                  <i class="bi bi-pencil-square"></i>
                 </button>
-              </form>
 
-              <!-- QR -->
-              <?php if (! empty($inv['qr_image'])): ?>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-secondary btn-show-qr"
-                  data-qr="<?= base_url('uploads/qr/' . $inv['qr_image']) ?>"
-                  data-item="<?= esc($inv['item_display_name']) ?>"
-                  data-no="<?= esc($inv['asset_code']) ?>">
-                  <i class="bi bi-qr-code"></i>
-                </button>
-              <?php endif; ?>
+                <!-- DELETE -->
+                <form action="<?= base_url('compliance/inventory/delete/' . $inv['id']) ?>"
+                  method="post"
+                  class="d-inline form-delete">
+                  <?= csrf_field() ?>
+                  <button type="button"
+                    class="btn btn-sm btn-outline-danger btn-delete"
+                    title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
 
-            </div>
-          </td>
+                <!-- QR -->
+                <?php if (! empty($inv['qr_image'])): ?>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-secondary btn-show-qr"
+                    data-qr="<?= base_url('uploads/qr/' . $inv['qr_image']) ?>"
+                    data-item="<?= esc($inv['item_display_name']) ?>"
+                    data-no="<?= esc($inv['asset_code']) ?>">
+                    <i class="bi bi-qr-code"></i>
+                  </button>
+                <?php endif; ?>
+
+              </div>
+            </td>
+          <?php endif; ?>
+
+
         </tr>
       <?php endforeach; ?>
     </tbody>
