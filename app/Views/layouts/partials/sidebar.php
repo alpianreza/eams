@@ -120,8 +120,8 @@ $seg2 = $segments[1] ?? '';
         <!-- LAPORAN -->
         <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
           <li class="nav-item">
-            <a href="<?= base_url('reports') ?>"
-              class="nav-link <?= $seg1 === 'reports' ? 'active' : '' ?>">
+            <a href="<?= base_url('compliance/report') ?>"
+              class="nav-link <?= $seg1 === 'report' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>Laporan</p>
             </a>

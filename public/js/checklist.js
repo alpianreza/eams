@@ -29,15 +29,18 @@ function initChecklistUI() {
 
   /* ================= TANDAI SEMUA OK ================= */
   const btnOkAll = document.getElementById("btn-ok-all");
+
   if (btnOkAll) {
-    btnOkAll.onclick = function () {
+    btnOkAll.addEventListener("click", function () {
       document
         .querySelectorAll(".status-radio[value='ok']")
         .forEach((radio) => {
           radio.checked = true;
+
+          // trigger change biar ng-row ketutup
           radio.dispatchEvent(new Event("change", { bubbles: true }));
         });
-    };
+    });
   }
 
   /* ================= VALIDASI SUBMIT ================= */

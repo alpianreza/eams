@@ -645,7 +645,6 @@ class ComplianceInventoryController extends BaseController
 
 
     // ================= LOCK =================
-    // ================= LOCK =================
     $logModel = new \App\Models\ChecklistLogModel();
     $holidayModel = new \App\Models\HolidayModel();
 
@@ -657,7 +656,7 @@ class ComplianceInventoryController extends BaseController
     $isLocked = false;
     $lockReason = null;
 
-    // DAILY OFFDAY CHECK
+    /* ================= OFFDAY KHUSUS DAILY ================= */
     if ($frequency === 'daily') {
 
       $isSunday = date('w', strtotime($periodKey)) == 0;
@@ -672,19 +671,19 @@ class ComplianceInventoryController extends BaseController
       }
     }
 
-    // DONE
+    /* ================= DONE ================= */
     if (!$isLocked && $exists) {
       $isLocked = true;
       $lockReason = 'done';
     }
 
-    // FUTURE
+    /* ================= FUTURE ================= */
     if (!$isLocked && is_period_future($frequency, $periodKey)) {
       $isLocked = true;
       $lockReason = 'future';
     }
 
-    // EXPIRED
+    /* ================= EXPIRED ================= */
     if (!$isLocked && ! is_period_editable($frequency, $periodKey)) {
       $isLocked = true;
       $lockReason = 'expired';
@@ -814,18 +813,23 @@ class ComplianceInventoryController extends BaseController
         $photos[$templateId]->move(FCPATH . 'uploads/checklist', $photoName);
       }
 
-      $holidayModel = new \App\Models\HolidayModel();
+      /* ================= OFFDAY VALIDATION KHUSUS DAILY ================= */
+      if ($frequency === 'daily') {
 
-      $isSunday = date('w', strtotime($periodKey)) == 0;
+        $holidayModel = new \App\Models\HolidayModel();
 
-      $isHoliday = $holidayModel
-        ->where('holiday_date', $periodKey)
-        ->first() ? true : false;
+        $isSunday = date('w', strtotime($periodKey)) == 0;
 
-      if ($isSunday || $isHoliday) {
-        return redirect()->back()
-          ->with('error', 'Checklist tidak dapat diisi pada hari libur.');
+        $isHoliday = $holidayModel
+          ->where('holiday_date', $periodKey)
+          ->first() ? true : false;
+
+        if ($isSunday || $isHoliday) {
+          return redirect()->back()
+            ->with('error', 'Checklist tidak dapat diisi pada hari libur.');
+        }
       }
+
 
 
       $logModel->insert([

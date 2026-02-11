@@ -19,6 +19,9 @@
 
 
 <?= $this->section('scripts') ?>
+
+<script src="<?= base_url('js/checklist.js') ?>"></script>
+
 <script>
   window.CHECKLIST_USER = "<?= esc(session('name')) ?>";
   window.CHECKLIST_FLASH = {
@@ -30,6 +33,4 @@
               : 'null' ?>
   };
 </script>
-
-<script src="<?= base_url('assets/js/checklist.js') ?>"></script>
 <?= $this->endSection() ?>

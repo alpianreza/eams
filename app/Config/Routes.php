@@ -175,3 +175,10 @@ $routes->group('holidays', ['filter' => 'auth'], function ($routes) {
     $routes->post('update/(:num)', 'HolidayController::update/$1');
     $routes->post('delete/(:num)', 'HolidayController::delete/$1');
 });
+
+$routes->group('compliance/report', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'ComplianceReportController::index');
+    $routes->get('load', 'ComplianceReportController::loadAjax');
+    $routes->get('item-by-category', 'ComplianceReportController::getItemTypeByCategory');
+    $routes->get('inventory-by-type', 'ComplianceReportController::getInventoryByType');
+});

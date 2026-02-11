@@ -98,6 +98,8 @@ $seg2 = $segments[1] ?? '';
 
 
 
+
+
 <script src="<?= base_url('js/app.js') ?>"></script>
 <script src="<?= base_url('js/checklist-master.js') ?>"></script>
 
