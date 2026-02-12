@@ -79,6 +79,59 @@
 
   </div>
 
+  <div class="row">
+
+    <div class="col-md-3">
+      <div class="small-box bg-danger">
+        <div class="inner">
+          <h3><?= $followUpStats['open'] ?></h3>
+          <p>Temuan Open</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3><?= $followUpStats['monitoring'] ?></h3>
+          <p>Monitoring</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-search"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3><?= $followUpStats['closed_this_month'] ?></h3>
+          <p>Closed Bulan Ini</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="small-box bg-dark">
+        <div class="inner">
+          <h3><?= $followUpStats['over_30_days'] ?></h3>
+          <p>Open &gt; 30 Hari ⚠</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-clock"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
   <!-- ROW 3: NOTIFIKASI & FOTO -->
   <div class="row">
 

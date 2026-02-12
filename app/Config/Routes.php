@@ -187,4 +187,6 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
 
     $routes->get('evidence', 'ComplianceEvidenceController::index');
     $routes->get('evidence/ajax', 'ComplianceEvidenceController::getEvidenceAjax');
+    $routes->get('evidence/detail/(:num)', 'ComplianceEvidenceController::detail/$1');
+    $routes->post('evidence/update-followup', 'ComplianceEvidenceController::updateFollowUp');
 });

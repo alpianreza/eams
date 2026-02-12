@@ -35,6 +35,8 @@ class ComplianceDashboardController extends BaseController
       'notOkPhotos'    => $this->getLatestNotOkWithPhoto($selectedYear),
       'monthlyTrend' => $this->getMonthlyTrend($selectedYear),
       'overview' => $this->getChecklistOverview(),
+      'followUpStats' => $this->getFollowUpStats(),
+
 
 
     ];
@@ -276,5 +278,48 @@ class ComplianceDashboardController extends BaseController
     }
 
     return $overview;
+  }
+
+  private function getFollowUpStats(): array
+  {
+    // Semua temuan not_ok
+    $base = $this->checklistLogModel
+      ->where('status', 'not_ok');
+
+    // 🔴 Open
+    $open = clone $base;
+    $totalOpen = $open
+      ->where('follow_up_status', 'open')
+      ->countAllResults();
+
+    // 🟡 Monitoring
+    $monitoring = clone $base;
+    $totalMonitoring = $monitoring
+      ->where('follow_up_status', 'monitoring')
+      ->countAllResults();
+
+    // 🟢 Closed bulan ini
+    $closed = clone $base;
+    $totalClosed = $closed
+      ->where('follow_up_status', 'closed')
+      ->where('MONTH(follow_up_date)', date('m'))
+      ->where('YEAR(follow_up_date)', date('Y'))
+      ->countAllResults();
+
+    // ⚠ Open/Monitoring > 30 hari
+    $thirtyDaysAgo = date('Y-m-d', strtotime('-30 days'));
+
+    $over30 = $this->checklistLogModel
+      ->where('status', 'not_ok')
+      ->whereIn('follow_up_status', ['open', 'monitoring'])
+      ->where('check_date <', $thirtyDaysAgo)
+      ->countAllResults();
+
+    return [
+      'open'        => $totalOpen,
+      'monitoring'  => $totalMonitoring,
+      'closed_this_month' => $totalClosed,
+      'over_30_days' => $over30,
+    ];
   }
 }

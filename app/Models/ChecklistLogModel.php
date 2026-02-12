@@ -19,7 +19,10 @@ class ChecklistLogModel extends Model
     'remark',
     'photo',
     'checked_by',
-    'created_at'
+    'created_at',
+    'follow_up_status',
+    'follow_up_note',
+    'follow_up_date'
   ];
 
   protected $useTimestamps = false;
