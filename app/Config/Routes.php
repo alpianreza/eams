@@ -182,3 +182,9 @@ $routes->group('compliance/report', ['filter' => 'auth'], function ($routes) {
     $routes->get('item-by-category', 'ComplianceReportController::getItemTypeByCategory');
     $routes->get('inventory-by-type', 'ComplianceReportController::getInventoryByType');
 });
+
+$routes->group('compliance', ['filter' => 'auth'], function ($routes) {
+
+    $routes->get('evidence', 'ComplianceEvidenceController::index');
+    $routes->get('evidence/ajax', 'ComplianceEvidenceController::getEvidenceAjax');
+});

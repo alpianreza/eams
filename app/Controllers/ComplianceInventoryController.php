@@ -483,7 +483,8 @@ class ComplianceInventoryController extends BaseController
       ->select('
       compliance_inventory.*,
       asset_item_types.name AS item_display_name,
-      asset_item_types.checklist_frequency
+      asset_item_types.checklist_frequency,
+      asset_item_types.allow_na
     ')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->where('compliance_inventory.id', $inventoryId)

@@ -137,6 +137,25 @@
                       <i class="bi bi-x-circle"></i>
                       NOT
                     </label>
+
+                    <?php if (!empty($inventory['allow_na'])): ?>
+
+                      <input type="radio"
+                        class="btn-check status-radio"
+                        name="questions[<?= $q['id'] ?>]"
+                        id="na-<?= $q['id'] ?>"
+                        value="na"
+                        data-qid="<?= $q['id'] ?>"
+                        required>
+
+                      <label class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
+                        for="na-<?= $q['id'] ?>">
+                        <i class="bi bi-dash-circle"></i>
+                        NA
+                      </label>
+
+                    <?php endif; ?>
+
                   </div>
                 </td>
               </tr>

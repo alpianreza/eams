@@ -231,19 +231,24 @@ class ComplianceReportController extends BaseController
     }
     unset($log);
 
-    // ==============================
-    // PREV / NEXT
-    // ==============================
-    $allInventories = $this->inventoryModel
+    // PREV
+    $prevData = $this->inventoryModel
       ->where('item_type_id', $inventory['item_type_id'])
+      ->where('asset_code <', $inventory['asset_code'])
+      ->orderBy('asset_code', 'DESC')
+      ->first();
+
+    $prev = $prevData['id'] ?? null;
+
+    // NEXT
+    $nextData = $this->inventoryModel
+      ->where('item_type_id', $inventory['item_type_id'])
+      ->where('asset_code >', $inventory['asset_code'])
       ->orderBy('asset_code', 'ASC')
-      ->findAll();
+      ->first();
 
-    $ids = array_column($allInventories, 'id');
-    $currentIndex = array_search($inventoryId, $ids);
+    $next = $nextData['id'] ?? null;
 
-    $prev = $ids[$currentIndex - 1] ?? null;
-    $next = $ids[$currentIndex + 1] ?? null;
 
     return view('compliance/report/_table', [
       'inventory'   => $inventory,

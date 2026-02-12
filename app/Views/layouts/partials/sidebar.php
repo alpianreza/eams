@@ -128,6 +128,17 @@ $seg2 = $segments[1] ?? '';
           </li>
         <?php endif; ?>
 
+        <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('compliance/evidence') ?>"
+              class="nav-link <?= uri_string() == 'compliance/evidence' ? 'active' : '' ?>">
+              <i class="nav-icon fas fa-camera"></i>
+              <p>Evidence Center</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
+
         <!-- ================= ADMIN ================= -->
         <?php if (hasRole(['admin'])): ?>
           <li class="nav-header">ADMIN</li>

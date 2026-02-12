@@ -1,0 +1,479 @@
+DEBUG - 2026-02-12 00:03:15 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:09:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:10:56 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:10:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:19:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:20:19 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:20:20 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:24:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:24:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:24:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:24:59 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-02-12 00:25:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-12 00:25:00 --> mysqli_sql_exception: Table 'asset_compliance_system.inventories' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT COUNT(*)...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*)...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*)...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+#6 C:\xampp\htdocs\eams\app\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2026-02-12 00:25:00 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.inventories' doesn't exist
+[Method: GET, Route: compliance/evidence/ajax]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL', [...], false)
+ 2 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 3 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 4 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-12 00:25:00 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.inventories' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL', [...], false)
+ 4 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 5 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 6 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-12 00:25:00 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.inventories' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL', [...], false)
+ 5 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 6 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 7 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-12 00:25:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-12 00:25:03 --> mysqli_sql_exception: Table 'asset_compliance_system.inventories' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT COUNT(*)...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*)...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*)...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+#6 C:\xampp\htdocs\eams\app\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2026-02-12 00:25:03 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.inventories' doesn't exist
+[Method: GET, Route: compliance/evidence/ajax]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):', [...], false)
+ 2 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 3 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 4 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-12 00:25:03 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.inventories' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):', [...], false)
+ 4 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 5 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 6 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-12 00:25:03 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.inventories' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):', [...], false)
+ 5 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 6 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 7 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-12 00:25:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-12 00:25:05 --> mysqli_sql_exception: Table 'asset_compliance_system.inventories' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT COUNT(*)...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*)...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*)...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+#6 C:\xampp\htdocs\eams\app\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2026-02-12 00:25:05 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.inventories' doesn't exist
+[Method: GET, Route: compliance/evidence/ajax]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):
+AND `checklist_logs`.`item_type_id` = :checklist_logs.item_type_id:', [...], false)
+ 2 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 3 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 4 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-12 00:25:05 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.inventories' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'1\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'1\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):
+AND `checklist_logs`.`item_type_id` = :checklist_logs.item_type_id:', [...], false)
+ 4 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 5 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 6 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-12 00:25:05 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.inventories' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'1\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'1\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'1\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):
+AND `checklist_logs`.`item_type_id` = :checklist_logs.item_type_id:', [...], false)
+ 5 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 6 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 7 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+DEBUG - 2026-02-12 00:25:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+ERROR - 2026-02-12 00:25:30 --> mysqli_sql_exception: Table 'asset_compliance_system.inventories' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT COUNT(*)...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*)...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*)...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*)...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+#6 C:\xampp\htdocs\eams\app\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2026-02-12 00:25:30 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.inventories' doesn't exist
+[Method: GET, Route: compliance/evidence/ajax]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):
+AND `checklist_logs`.`item_type_id` = :checklist_logs.item_type_id:', [...], false)
+ 2 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 3 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 4 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-12 00:25:30 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.inventories' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'7\'')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'7\'')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):
+AND `checklist_logs`.`item_type_id` = :checklist_logs.item_type_id:', [...], false)
+ 4 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 5 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 6 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-02-12 00:25:30 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.inventories' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'7\'', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'7\'')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = \'not_ok\'
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = \'2026\'
+AND `checklist_logs`.`item_type_id` = \'7\'')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1733): CodeIgniter\Database\BaseConnection->query('SELECT COUNT(*) AS `numrows`
+FROM `checklist_logs`
+JOIN `inventories` ON `inventories`.`id` = `checklist_logs`.`inventory_id`
+JOIN `areas` ON `areas`.`id` = `inventories`.`area_id`
+JOIN `asset_item_types` ON `asset_item_types`.`id` = `checklist_logs`.`item_type_id`
+WHERE `checklist_logs`.`status` = :checklist_logs.status:
+AND `checklist_logs`.`photo` IS NOT NULL
+AND YEAR(check_date) = :YEAR(check_date):
+AND `checklist_logs`.`item_type_id` = :checklist_logs.item_type_id:', [...], false)
+ 5 SYSTEMPATH\Model.php(675): CodeIgniter\Database\BaseBuilder->countAllResults(false)
+ 6 SYSTEMPATH\BaseModel.php(1250): CodeIgniter\Model->countAllResults(false)
+ 7 APPPATH\Controllers\ComplianceEvidenceController.php(64): CodeIgniter\BaseModel->paginate(12)
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceEvidenceController->getEvidenceAjax()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceEvidenceController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
