@@ -33,10 +33,11 @@ class ComplianceItemTypeController extends BaseController
       'inventory_category_id' => $this->request->getPost('inventory_category_id'),
       'name'                  => $this->request->getPost('name'),
       'code'                  => $this->request->getPost('code'),
-      'checklist_frequency'   => $this->request->getPost('checklist_frequency'),
       'active'                => 1,
     ]);
 
-    return redirect()->back()->with('success', 'Item berhasil ditambahkan');
+    return redirect()
+      ->to(site_url('compliance/checklist/master'))
+      ->with('success', 'Item berhasil ditambahkan');
   }
 }

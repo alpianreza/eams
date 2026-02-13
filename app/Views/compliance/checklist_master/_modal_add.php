@@ -28,17 +28,6 @@
             </select>
           </div>
 
-          <!-- Frequency -->
-          <div class="mb-3">
-            <label class="form-label">Frequency</label>
-            <select name="frequency" class="form-select" required>
-              <option value="">-- Pilih --</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-            </select>
-          </div>
-
           <!-- Question -->
           <div class="mb-3">
             <label class="form-label">Pertanyaan</label>

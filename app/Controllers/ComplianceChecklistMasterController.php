@@ -70,7 +70,9 @@ class ComplianceChecklistMasterController extends BaseController
    */
   public function masterItem($itemTypeId)
   {
-    $item = $this->assetItemTypeModel->find($itemTypeId);
+    $item = $this->assetItemTypeModel
+      ->select('id, name, inventory_category_id, checklist_frequency')
+      ->find($itemTypeId);
 
     if (! $item) {
       return redirect()->back();
@@ -78,15 +80,19 @@ class ComplianceChecklistMasterController extends BaseController
 
     $questions = $this->checklistMasterModel
       ->where('item_type_id', $itemTypeId)
-      ->orderBy('frequency')
       ->orderBy('id')
       ->findAll();
+
+    // ambil frequency dari item
+    $frequency = $item['checklist_frequency'];
 
     return view('compliance/checklist_master/detail', [
       'item'      => $item,
       'questions' => $questions,
+      'frequency' => $frequency
     ]);
   }
+
 
   /**
    * STORE PERTANYAAN CHECKLIST
@@ -98,7 +104,6 @@ class ComplianceChecklistMasterController extends BaseController
     $this->checklistMasterModel->insert([
       'item_type_id' => $this->request->getPost('item_type_id'),
       'question'     => $this->request->getPost('question'),
-      'frequency'    => $this->request->getPost('frequency'),
       'require_photo' => $this->request->getPost('require_photo') ? 1 : 0,
       'active'       => 1,
     ]);
@@ -118,7 +123,6 @@ class ComplianceChecklistMasterController extends BaseController
   {
     $this->checklistMasterModel->update($id, [
       'question'      => $this->request->getPost('question'),
-      'frequency'     => $this->request->getPost('frequency'),
       'require_photo' => $this->request->getPost('require_photo') ? 1 : 0,
       'active'        => $this->request->getPost('active') ? 1 : 0,
     ]);
@@ -153,5 +157,19 @@ class ComplianceChecklistMasterController extends BaseController
   public function exportPeriodePage()
   {
     return view('checklist/export_periode');
+  }
+
+  public function delete($id)
+  {
+    if ($this->request->isAJAX()) {
+
+      $this->checklistMasterModel->delete($id);
+
+      return $this->response->setJSON([
+        'status' => 'success'
+      ]);
+    }
+
+    return redirect()->back();
   }
 }

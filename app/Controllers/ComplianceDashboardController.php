@@ -26,6 +26,8 @@ class ComplianceDashboardController extends BaseController
   {
 
     $selectedYear = $this->request->getGet('year') ?? date('Y');
+    $selectedMonth = $this->request->getGet('month');
+
 
     $data = [
       'selectedYear'   => $selectedYear,
@@ -36,7 +38,8 @@ class ComplianceDashboardController extends BaseController
       'monthlyTrend' => $this->getMonthlyTrend($selectedYear),
       'overview' => $this->getChecklistOverview(),
       'followUpStats' => $this->getFollowUpStats(),
-
+      'complianceTrend' => $this->getMonthlyComplianceSnapshot($selectedYear),
+      'selectedMonth' => $selectedMonth,
 
 
     ];
@@ -75,7 +78,6 @@ class ComplianceDashboardController extends BaseController
         return date('Y-m');
     }
   }
-
 
   private function getKpiSummary($year)
   {
@@ -219,9 +221,6 @@ class ComplianceDashboardController extends BaseController
     return $notifications;
   }
 
-
-
-
   private function getLatestNotOkWithPhoto($year)
   {
     return $this->checklistLogModel
@@ -321,5 +320,196 @@ class ComplianceDashboardController extends BaseController
       'closed_this_month' => $totalClosed,
       'over_30_days' => $over30,
     ];
+  }
+  private function getMonthlyComplianceSnapshot($year)
+  {
+    $result = [];
+
+    $inventories = $this->inventoryModel
+      ->where('active', 1)
+      ->findAll();
+
+    $totalAsset = count($inventories);
+
+    for ($month = 1; $month <= 12; $month++) {
+
+      $summary = [
+        'sesuai' => 0,
+        'late' => 0,
+        'pending' => 0,
+        'rate' => 0
+      ];
+
+      foreach ($inventories as $inv) {
+
+        $itemType = $this->itemTypeModel
+          ->find($inv['item_type_id']);
+
+        if (!$itemType) continue;
+
+        $frequency = $itemType['checklist_frequency'];
+
+        $periodKey = $this->generateMonthSnapshotKey($year, $month, $frequency);
+
+        $status = resolve_period_status(
+          $inv['id'],
+          $frequency,
+          $periodKey
+        );
+
+        if ($status === 'done') $summary['sesuai']++;
+        if ($status === 'late') $summary['late']++;
+        if ($status === 'pending') $summary['pending']++;
+      }
+
+      // Compliance Rate %
+      if ($totalAsset > 0) {
+        $summary['rate'] = round(($summary['sesuai'] / $totalAsset) * 100);
+      }
+
+      $result[$month] = $summary;
+    }
+
+    return $result;
+  }
+
+  private function generateMonthSnapshotKey($year, $month, $frequency)
+  {
+    $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+
+    switch ($frequency) {
+
+      case 'monthly':
+        return $year . '-' . $month;
+
+      case 'weekly':
+        return $year . '-' . $month . '-W4';
+
+      case 'daily':
+        $lastDay = date("t", strtotime("$year-$month-01"));
+        return $year . '-' . $month . '-' . $lastDay;
+
+      default:
+        return $year . '-' . $month;
+    }
+  }
+
+  public function ajaxData()
+  {
+    $year  = $this->request->getGet('year');
+    $month = $this->request->getGet('month');
+
+    return $this->response->setJSON([
+      'kpi'           => $this->getKpiSummaryByMonth($year, $month),
+      'notifications' => $this->getNotificationsByMonth($year, $month),
+      'notOkPhotos'   => $this->getNotOkPhotosByMonth($year, $month),
+      'overview'      => $this->getChecklistOverviewByMonth($year, $month),
+    ]);
+  }
+
+  private function getKpiSummaryByMonth($year, $month)
+  {
+    return $this->checklistLogModel
+      ->where('YEAR(created_at)', $year)
+      ->where('MONTH(created_at)', $month)
+      ->select("
+            SUM(status='ok') as sesuai,
+            SUM(status='not_ok') as tidak_sesuai,
+            SUM(status='na') as tidak_berlaku
+        ")
+      ->first();
+  }
+
+  private function getNotificationsByMonth($year, $month)
+  {
+    $notifications = [];
+
+    // 1️⃣ NOT_OK dalam bulan itu
+    $notOkLogs = $this->checklistLogModel
+      ->where('status', 'not_ok')
+      ->where('YEAR(created_at)', $year)
+      ->where('MONTH(created_at)', $month)
+      ->orderBy('created_at', 'DESC')
+      ->limit(5)
+      ->findAll();
+
+    foreach ($notOkLogs as $log) {
+
+      $inventory = $this->inventoryModel->find($log['inventory_id']);
+      if (!$inventory) continue;
+
+      $itemType = $this->itemTypeModel->find($inventory['item_type_id']);
+      if (!$itemType) continue;
+
+      $notifications[] = [
+        'type' => 'not_ok',
+        'inventory_id' => $inventory['id'],
+        'item' => $itemType['name'] ?? '-',
+        'area' => $inventory['specific_area'] ?? '-',
+        'message' => 'Terdapat temuan tidak sesuai.'
+      ];
+    }
+
+    return $notifications;
+  }
+
+
+  private function getNotOkPhotosByMonth($year, $month)
+  {
+    return $this->checklistLogModel
+      ->where('status', 'not_ok')
+      ->where('photo IS NOT NULL')
+      ->where('YEAR(created_at)', $year)
+      ->where('MONTH(created_at)', $month)
+      ->orderBy('created_at', 'DESC')
+      ->limit(10)
+      ->findAll();
+  }
+
+  private function getChecklistOverviewByMonth($year, $month)
+  {
+    $overview = [];
+
+    $inventories = $this->inventoryModel
+      ->where('active', 1)
+      ->findAll();
+
+    foreach ($inventories as $inv) {
+
+      $itemType = $this->itemTypeModel
+        ->find($inv['item_type_id']);
+
+      if (!$itemType) continue;
+
+      $frequency = $itemType['checklist_frequency'];
+
+      $periodKey = $this->generateMonthSnapshotKey($year, $month, $frequency);
+
+      $status = resolve_period_status(
+        $inv['id'],
+        $frequency,
+        $periodKey
+      );
+
+      // Mapping simbol
+      $symbol = match ($status) {
+        'done'    => '✓',
+        'late'    => '⚠',
+        'pending' => '⏳',
+        'future'  => '–',
+        default   => '-'
+      };
+
+      $overview[] = [
+        'id'        => $inv['id'],
+        'item'      => $itemType['name'] ?? '-',
+        'area'      => $inv['specific_area'] ?? '-',
+        'frequency' => $frequency,
+        'status'    => $symbol,
+        'raw_status' => $status
+      ];
+    }
+
+    return $overview;
   }
 }

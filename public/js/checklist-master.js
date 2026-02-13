@@ -41,9 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!btn) return;
 
     document.getElementById("edit_question").value = btn.dataset.question;
-    document.getElementById("edit_frequency").value = btn.dataset.frequency;
-    document.getElementById("edit_require_photo").checked =
-      btn.dataset.require_photo == 1;
+
     document.getElementById("edit_active").checked = btn.dataset.active == 1;
 
     const formEdit = document.getElementById("formEdit");
@@ -107,4 +105,54 @@ document.addEventListener("DOMContentLoaded", function () {
           safeToast("Terjadi kesalahan server", "danger");
         });
     });
+});
+
+/* ===============================
+   DELETE CHECKLIST QUESTION
+================================ */
+/* ===============================
+   DELETE CHECKLIST QUESTION
+================================ */
+document.addEventListener("click", function (e) {
+  const btn = e.target.closest('[data-action="delete"]');
+  if (!btn) return;
+
+  Swal.fire({
+    title: "Yakin hapus?",
+    text: "Data yang dihapus tidak bisa dikembalikan!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#6c757d",
+    confirmButtonText: "Ya, hapus",
+    cancelButtonText: "Batal",
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    fetch(btn.dataset.url, {
+      method: "POST",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.status === "success") {
+          Swal.fire({
+            icon: "success",
+            title: "Berhasil",
+            text: "Pertanyaan berhasil dihapus",
+            timer: 1200,
+            showConfirmButton: false,
+          });
+
+          setTimeout(() => location.reload(), 1200);
+        } else {
+          Swal.fire("Gagal", "Tidak bisa menghapus data", "error");
+        }
+      })
+      .catch(() => {
+        Swal.fire("Error", "Terjadi kesalahan server", "error");
+      });
+  });
 });

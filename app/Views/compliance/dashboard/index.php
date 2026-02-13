@@ -284,69 +284,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  const ctx = document.getElementById('trendChart').getContext('2d');
-
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-      datasets: [{
-        label: 'Jumlah Checklist',
-        data: monthlyTrend
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
-  });
+  window.dashboardData = {
+    monthlyTrend: <?= json_encode(array_values($monthlyTrend)) ?>,
+    complianceTrend: <?= isset($complianceTrend) ? json_encode(array_values($complianceTrend)) : 'null' ?>,
+    statusData: [
+      <?= $kpi['sesuai'] ?>,
+      <?= $kpi['tidak_sesuai'] ?>,
+      <?= $kpi['tidak_berlaku'] ?>,
+      <?= $kpi['late'] ?>
+    ]
+  };
 </script>
 
-<script>
-  const statusData = [
-    <?= $kpi['sesuai'] ?>,
-    <?= $kpi['tidak_sesuai'] ?>,
-    <?= $kpi['tidak_berlaku'] ?>,
-    <?= $kpi['late'] ?>
-  ];
-</script>
-
-<script>
-  const ctxStatus = document.getElementById('statusChart').getContext('2d');
-
-  new Chart(ctxStatus, {
-    type: 'doughnut',
-    data: {
-      labels: ['✓ Sesuai', '✗ Tidak Sesuai', '– Tidak Berlaku', 'Late'],
-      datasets: [{
-        data: statusData
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false
-    }
-  });
-</script>
-
-<!-- Image Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body text-center">
-        <img id="modalImage" class="img-fluid">
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  function showImageModal(src) {
-    document.getElementById('modalImage').src = src;
-    new bootstrap.Modal(document.getElementById('imageModal')).show();
-  }
-</script>
-
+<script src="<?= base_url('js/dashboard.js') ?>"></script>
 
 
 <?= $this->endSection() ?>

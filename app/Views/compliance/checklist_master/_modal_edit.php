@@ -23,18 +23,6 @@
               rows="3"
               required></textarea>
           </div>
-
-          <!-- Require Photo -->
-          <div class="mb-3">
-            <label class="form-label">Wajib Foto?</label>
-            <select name="require_photo"
-              id="edit_require_photo"
-              class="form-select">
-              <option value="1">Ya</option>
-              <option value="0">Tidak</option>
-            </select>
-          </div>
-
           <!-- Status -->
           <div class="mb-3">
             <label class="form-label">Status</label>

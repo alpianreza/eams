@@ -134,6 +134,7 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
             'item-frequency/(:num)',
             'ComplianceChecklistMasterController::updateItemFrequency/$1'
         );
+        $routes->post('delete/(:num)', 'ChecklistMasterController::delete/$1');
     });
 
     // =========================
@@ -190,3 +191,5 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
     $routes->get('evidence/detail/(:num)', 'ComplianceEvidenceController::detail/$1');
     $routes->post('evidence/update-followup', 'ComplianceEvidenceController::updateFollowUp');
 });
+
+$routes->get('compliance/dashboard/data', 'ComplianceDashboardController::ajaxData', ['filter' => 'auth']);

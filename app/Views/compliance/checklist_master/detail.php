@@ -44,7 +44,6 @@
           <tr>
             <th>Pertanyaan</th>
             <th>Frekuensi</th>
-            <th>Foto</th>
             <th>Status</th>
             <th width="120">Aksi</th>
           </tr>
@@ -65,12 +64,8 @@
 
               <td>
                 <span class="badge bg-secondary">
-                  <?= esc(ucfirst($q['frequency'])) ?>
+                  <?= esc(ucfirst($item['checklist_frequency'])) ?>
                 </span>
-              </td>
-
-              <td>
-                <?= $q['require_photo'] ? 'Wajib' : 'Tidak' ?>
               </td>
 
               <td>
@@ -78,17 +73,25 @@
               </td>
 
               <td>
-                <button
-                  class="btn btn-warning btn-xs"
-                  data-action="edit"
-                  data-update-url="<?= site_url('compliance/checklist/master/update/' . $q['id']) ?>"
-                  data-question="<?= esc($q['question']) ?>"
-                  data-frequency="<?= $q['frequency'] ?>"
-                  data-require_photo="<?= $q['require_photo'] ?>"
-                  data-active="<?= $q['active'] ?>">
-                  Edit
-                </button>
+                <div class="d-flex gap-1">
+                  <button
+                    class="btn btn-warning btn-xs"
+                    data-action="edit"
+                    data-update-url="<?= site_url('compliance/checklist/master/update/' . $q['id']) ?>"
+                    data-question="<?= esc($q['question']) ?>"
+                    data-active="<?= $q['active'] ?>">
+                    Edit
+                  </button>
+
+                  <button
+                    class="btn btn-danger btn-xs"
+                    data-action="delete"
+                    data-url="<?= site_url('compliance/checklist/master/delete/' . $q['id']) ?>">
+                    Hapus
+                  </button>
+                </div>
               </td>
+
             </tr>
           <?php endforeach; ?>
 
@@ -119,25 +122,11 @@
           <label class="form-label">Pertanyaan</label>
           <textarea name="question" class="form-control" required></textarea>
         </div>
-
-        <div class="mb-3">
-          <label class="form-label">Frekuensi</label>
-          <select name="frequency" class="form-select" required>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-        </div>
-
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" name="require_photo" value="1">
-          <label class="form-check-label">Wajib Foto</label>
-        </div>
-      </div>
+      </div> <!-- PENTING: ini jangan hilang -->
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-        <button class="btn btn-primary">Simpan</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
       </div>
 
     </form>
@@ -162,20 +151,6 @@
         <div class="mb-3">
           <label class="form-label">Pertanyaan</label>
           <textarea name="question" id="edit_question" class="form-control" required></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Frekuensi</label>
-          <select name="frequency" id="edit_frequency" class="form-select" required>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-        </div>
-
-        <div class="form-check mb-2">
-          <input class="form-check-input" type="checkbox" id="edit_require_photo" name="require_photo" value="1">
-          <label class="form-check-label">Wajib Foto</label>
         </div>
 
         <div class="form-check">

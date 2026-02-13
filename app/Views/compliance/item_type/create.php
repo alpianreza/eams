@@ -33,7 +33,6 @@
           <input type="text"
             name="name"
             class="form-control"
-            placeholder="Contoh: APAR, Hydrant, CCTV"
             required>
         </div>
 
@@ -42,21 +41,7 @@
           <label class="form-label">Kode (Opsional)</label>
           <input type="text"
             name="code"
-            class="form-control"
-            placeholder="Contoh: APAR-FS">
-        </div>
-
-        <!-- FREQUENCY -->
-        <div class="mb-3">
-          <label class="form-label">Frekuensi Checklist</label>
-          <select name="checklist_frequency" class="form-select" required>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly" selected>Monthly</option>
-          </select>
-          <small class="text-muted">
-            Semua pertanyaan checklist item ini akan mengikuti frekuensi ini
-          </small>
+            class="form-control">
         </div>
 
       </div>
