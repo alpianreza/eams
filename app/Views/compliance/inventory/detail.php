@@ -29,25 +29,27 @@ $backUrl = base_url('compliance/inventory');
         <?php endif; ?>
 
         <!-- FORM UPLOAD (FORM BIASA, TOAST JALAN) -->
-        <form
-          action="<?= base_url('compliance/inventory/update-photo/' . $inventory['id']) ?>"
-          method="post"
-          enctype="multipart/form-data">
+        <?php if (hasRole(['admin', 'compliance'])): ?>
+          <form
+            action="<?= base_url('compliance/inventory/update-photo/' . $inventory['id']) ?>"
+            method="post"
+            enctype="multipart/form-data">
 
-          <?= csrf_field() ?>
+            <?= csrf_field() ?>
 
-          <input
-            type="file"
-            name="photo"
-            class="form-control form-control-sm mb-2"
-            accept="image/*"
-            capture="environment"
-            required>
+            <input
+              type="file"
+              name="photo"
+              class="form-control form-control-sm mb-2"
+              accept="image/*"
+              capture="environment"
+              required>
 
-          <button class="btn btn-sm btn-primary w-100">
-            <i class="bi bi-camera"></i> Ganti Foto
-          </button>
-        </form>
+            <button class="btn btn-sm btn-primary w-100">
+              <i class="bi bi-camera"></i> Ganti Foto
+            </button>
+          </form>
+        <?php endif; ?>
 
       </div>
     </div>
@@ -104,11 +106,14 @@ $backUrl = base_url('compliance/inventory');
         </div>
 
         <div class="mt-3 d-flex justify-content-end gap-2">
-          <a href="<?= base_url('compliance/checklist/' . $inventory['id']) ?>" class="btn btn-success">
-            <i class="bi bi-clipboard-check"></i> Checklist
-          </a>
 
-          <?php if (session('role') === 'admin'): ?>
+          <?php if (hasRole(['admin', 'compliance', 'staff'])): ?>
+            <a href="<?= base_url('compliance/checklist/' . $inventory['id']) ?>" class="btn btn-success">
+              <i class="bi bi-clipboard-check"></i> Checklist
+            </a>
+          <?php endif; ?>
+
+          <?php if (hasRole(['admin', 'compliance',])): ?>
             <?php
             $initialPeriod = match ($inventory['checklist_frequency']) {
               'daily'   => $ym . '-01',
@@ -123,6 +128,7 @@ $backUrl = base_url('compliance/inventory');
               <i class="bi bi-file-earmark-pdf"></i> Export PDF
             </a>
           <?php endif; ?>
+
         </div>
 
       </div>
@@ -130,7 +136,10 @@ $backUrl = base_url('compliance/inventory');
   </div>
 </div>
 
-<?= $this->include('compliance/inventory/_detail_month') ?>
+<?php if (hasRole(['auditor', 'admin', 'compliance', 'staff'])): ?>
+  <?= $this->include('compliance/inventory/_detail_month') ?>
+<?php endif; ?>
+
 
 <!-- ================= MODAL ZOOM FOTO ================= -->
 <?= $this->include('compliance/inventory/_modal_zoom') ?>

@@ -10,7 +10,7 @@ $title = 'Compliance Inventory';
 
   <div class="d-flex justify-content-between align-items-start">
     <div>
-      <small class="text-muted">Compliance & Facility Assets</small>
+      <h5 class="text-muted">Compliance & Facility Assets</h5>
     </div>
 
     <?php if (hasRole(['admin', 'compliance'])): ?>

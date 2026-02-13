@@ -151,6 +151,9 @@ class ComplianceReportController extends BaseController
     // =====================================================
     // ======================= DAILY ========================
     // =====================================================
+    // =====================================================
+    // ======================= DAILY ========================
+    // =====================================================
     if ($frequency === 'daily' && $month) {
 
       $selectedPeriod = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT);
@@ -162,7 +165,6 @@ class ComplianceReportController extends BaseController
 
       foreach ($logsMonth as $log) {
 
-        // 🔥 PENTING: PAKAI period_key SEBAGAI KEY GRID
         $dailyGrid[$log['checklist_template_id']][$log['period_key']] = $log['status'];
 
         if (!empty($log['checked_by'])) {
@@ -177,12 +179,32 @@ class ComplianceReportController extends BaseController
         }
       }
 
-      // generate tanggal 1 bulan (YYYY-MM-DD)
+      // =========================
+      // GENERATE TANGGAL 1 BULAN
+      // =========================
+
       $daysInMonth = cal_days_in_month(CAL_GREGORIAN, (int)$month, (int)$year);
 
       for ($d = 1; $d <= $daysInMonth; $d++) {
         $dailyDays[] = sprintf('%04d-%02d-%02d', $year, $month, $d);
       }
+
+      // =========================
+      // LIBUR NASIONAL
+      // =========================
+
+      $holidayDates = [];
+
+      $ym = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT);
+
+      $holidayModel = new \App\Models\HolidayModel();
+
+      $holidays = $holidayModel
+        ->where('holiday_date >=', $ym . '-01')
+        ->where('holiday_date <=', $ym . '-31')
+        ->findAll();
+
+      $holidayDates = array_column($holidays, 'holiday_date');
     }
 
     // =====================================================
@@ -273,6 +295,7 @@ class ComplianceReportController extends BaseController
       'isFireExtinguisher' => $isFireExtinguisher,
       'frequency'   => $frequency,
       'role'        => session('role'),
+      'holidayDates' => $holidayDates ?? [],
     ]);
   }
 }
