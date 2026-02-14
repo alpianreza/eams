@@ -3,44 +3,48 @@
 
 <div class="container-fluid">
 
-  <!-- HEADER CONTROL -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Compliance Control Center</h4>
+  <!-- ================= HEADER ================= -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0 fw-bold">Compliance Control Center</h4>
 
     <form method="get" class="d-flex align-items-center gap-2">
       <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
-        <?php foreach ($availableYears as $year): ?>
-          <option value="<?= $year ?>" <?= $year == $selectedYear ? 'selected' : '' ?>>
-            <?= $year ?>
+        <?php foreach ($availableYears as $yearItem): ?>
+          <option value="<?= $yearItem ?>" <?= $yearItem == $selectedYear ? 'selected' : '' ?>>
+            <?= $yearItem ?>
           </option>
         <?php endforeach; ?>
       </select>
     </form>
   </div>
 
-  <!-- KPI ROW -->
-  <div class="row">
+
+  <!-- ================= KPI SECTION ================= -->
+  <h6 class="text-muted mb-3">Overview</h6>
+
+  <div class="row g-3 mb-4">
 
     <?php
     $cards = [
       ['label' => 'Total Item', 'value' => $kpi['total'], 'color' => 'secondary'],
-      ['label' => 'Sesuai', 'value' => $kpi['sesuai'], 'color' => 'success'],
-      ['label' => 'Tidak Sesuai', 'value' => $kpi['tidak_sesuai'], 'color' => 'danger'],
-      ['label' => 'Tidak Berlaku', 'value' => $kpi['tidak_berlaku'], 'color' => 'info'],
+      ['label' => '✓ Sesuai', 'value' => $kpi['sesuai'], 'color' => 'success'],
+      ['label' => '✗ Tidak Sesuai', 'value' => $kpi['tidak_sesuai'], 'color' => 'danger'],
+      ['label' => '– Tidak Berlaku', 'value' => $kpi['tidak_berlaku'], 'color' => 'info'],
       ['label' => 'Late', 'value' => $kpi['late'], 'color' => 'warning'],
     ];
     ?>
 
     <?php foreach ($cards as $card): ?>
-      <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
-        <div class="card text-center border-<?= $card['color'] ?>">
-          <div class="card-body">
-            <h5 class="card-title text-<?= $card['color'] ?>">
-              <?= $card['value'] ?>
-            </h5>
-            <p class="card-text small mb-0">
-              <?= $card['label'] ?>
-            </p>
+      <div class="col-md col-6">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-body py-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-muted small"><?= $card['label'] ?></div>
+                <div class="h4 fw-bold mb-0"><?= $card['value'] ?></div>
+              </div>
+              <div class="text-<?= $card['color'] ?> fs-5">●</div>
+            </div>
           </div>
         </div>
       </div>
@@ -48,30 +52,89 @@
 
   </div>
 
-  <!-- ROW 2: GRAFIK -->
-  <div class="row mt-4">
 
-    <div class="col-lg-8 mb-4">
-      <div class="card">
-        <div class="card-header">
-          <strong>Trend Checklist Bulanan</strong>
-        </div>
+  <!-- ================= TREND SECTION ================= -->
+  <h6 class="text-muted mb-3">Compliance Trend</h6>
+
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center border-0">
+
+      <div>
+        <button class="btn btn-sm btn-outline-primary tab-frequency active" data-type="monthly">Monthly</button>
+        <button class="btn btn-sm btn-outline-primary tab-frequency" data-type="weekly">Weekly</button>
+        <button class="btn btn-sm btn-outline-primary tab-frequency" data-type="daily">Daily</button>
+      </div>
+
+      <select id="monthFilter" class="form-select form-select-sm w-auto">
+        <?php for ($m = 1; $m <= 12; $m++): ?>
+          <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>"
+            <?= $m == date('m') ? 'selected' : '' ?>>
+            <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
+          </option>
+        <?php endfor; ?>
+      </select>
+
+    </div>
+
+    <div class="card-body">
+      <div style="height:380px;">
+        <canvas id="complianceChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= OPERATIONAL SECTION ================= -->
+  <h6 class="text-muted mb-3">Operational Monitoring</h6>
+
+  <div class="row g-3">
+
+    <!-- FILTER -->
+    <div class="col-12 d-flex gap-2">
+      <select id="progressType" class="form-select form-select-sm w-auto">
+        <option value="monthly">Monthly</option>
+        <option value="weekly">Weekly</option>
+        <option value="daily">Daily</option>
+      </select>
+
+      <select id="progressYear" class="form-select form-select-sm w-auto">
+        <?php for ($y = 2026; $y <= date('Y'); $y++): ?>
+          <option value="<?= $y ?>" <?= $y == date('Y') ? 'selected' : '' ?>>
+            <?= $y ?>
+          </option>
+        <?php endfor; ?>
+      </select>
+
+      <select id="progressMonth" class="form-select form-select-sm w-auto">
+        <?php for ($m = 1; $m <= 12; $m++): ?>
+          <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>"
+            <?= $m == date('m') ? 'selected' : '' ?>>
+            <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
+          </option>
+        <?php endfor; ?>
+      </select>
+    </div>
+
+
+    <!-- PROGRESS CHART -->
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
-          <div style="height:300px;">
-            <canvas id="trendChart"></canvas>
+          <h6 class="fw-semibold mb-3">Progress Checklist</h6>
+          <div style="height:350px;">
+            <canvas id="progressChart"></canvas>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-4 mb-4">
-      <div class="card">
-        <div class="card-header">
-          <strong>Distribusi Status</strong>
-        </div>
+    <!-- PIE -->
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
-          <div style="height:300px;">
-            <canvas id="statusChart"></canvas>
+          <h6 class="fw-semibold mb-3">Status Distribusi</h6>
+          <div style="height:350px;">
+            <canvas id="statusPieChart"></canvas>
           </div>
         </div>
       </div>
@@ -79,224 +142,106 @@
 
   </div>
 
-  <div class="row">
+  <!-- ================= RISK INSIGHT ================= -->
+  <h6 class="text-muted mt-5 mb-3">Risk Insight</h6>
 
-    <div class="col-md-3">
-      <div class="small-box bg-danger">
-        <div class="inner">
-          <h3><?= $followUpStats['open'] ?></h3>
-          <p>Temuan Open</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-exclamation-circle"></i>
-        </div>
-      </div>
-    </div>
+  <div class="row g-3">
 
-    <div class="col-md-3">
-      <div class="small-box bg-warning">
-        <div class="inner">
-          <h3><?= $followUpStats['monitoring'] ?></h3>
-          <p>Monitoring</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-search"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="small-box bg-success">
-        <div class="inner">
-          <h3><?= $followUpStats['closed_this_month'] ?></h3>
-          <p>Closed Bulan Ini</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-check-circle"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="small-box bg-dark">
-        <div class="inner">
-          <h3><?= $followUpStats['over_30_days'] ?></h3>
-          <p>Open &gt; 30 Hari ⚠</p>
-        </div>
-        <div class="icon">
-          <i class="fas fa-clock"></i>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-
-  <!-- ROW 3: NOTIFIKASI & FOTO -->
-  <div class="row">
-
-    <div class="col-lg-6 mb-4">
-      <div class="card">
-        <div class="card-header">
-          <strong>Notifikasi Aktif</strong>
-        </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
         <div class="card-body">
-          <ul class="list-group list-group-flush">
-
-            <?php if (!empty($notifications)): ?>
-              <?php foreach ($notifications as $notif): ?>
-
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-
-                  <a href="<?= base_url('compliance/inventory/detail/' . $notif['inventory_id']) ?>"
-                    class="text-decoration-none d-block">
-
-                    <?php if ($notif['type'] === 'late'): ?>
-                      <span class="text-warning">
-                        ⚠ <?= esc($notif['item']) ?> - <?= esc($notif['area']) ?> →
-                        <?= esc($notif['message']) ?>
-                      </span>
-                    <?php elseif ($notif['type'] === 'not_ok'): ?>
-                      <span class="text-danger">
-                        ✗ <?= esc($notif['item']) ?> - <?= esc($notif['area']) ?> →
-                        <?= esc($notif['message']) ?>
-                      </span>
-                    <?php endif; ?>
-
-                  </a>
-
-                </li>
-
-              <?php endforeach; ?>
-            <?php else: ?>
-
-              <li class="list-group-item text-muted">
-                Tidak ada notifikasi
-              </li>
-
-            <?php endif; ?>
-
+          <h6 class="fw-semibold mb-3">Top 5 Item Paling Sering ✗</h6>
+          <ul id="topItemRisk" class="list-group list-group-flush small">
+            <li class="text-muted">Loading...</li>
           </ul>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-6 mb-4">
-      <div class="card">
-        <div class="card-header">
-          <strong>Temuan Tidak Sesuai</strong>
-        </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
         <div class="card-body">
-          <div class="row">
-
-            <?php if (!empty($notOkPhotos)): ?>
-
-              <?php foreach ($notOkPhotos as $log): ?>
-                <div class="col-6 mb-3">
-
-                  <div class="card">
-                    <img
-                      src="<?= base_url('uploads/checklist/' . $log['photo']) ?>"
-                      class="card-img-top"
-                      style="height:150px; object-fit:cover; cursor:pointer;"
-                      onclick="showImageModal(this.src)">
-
-                    <div class="card-body p-2">
-                      <small class="text-danger">
-                        ✗ <?= esc($log['remark']) ?>
-                      </small>
-                    </div>
-                  </div>
-
-                </div>
-              <?php endforeach; ?>
-
-            <?php else: ?>
-
-              <div class="col-12 text-muted text-center">
-                Tidak ada temuan tidak sesuai
-              </div>
-
-            <?php endif; ?>
-
-          </div>
-
+          <h6 class="fw-semibold mb-3">Top 5 Area Paling Sering ✗</h6>
+          <ul id="topAreaRisk" class="list-group list-group-flush small">
+            <li class="text-muted">Loading...</li>
+          </ul>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- ROW 4: CHECKLIST PER ITEM -->
-  <div class="table-responsive">
-    <table class="table table-sm table-bordered align-middle">
-      <thead class="table-light">
+</div>
+
+<h6 class="text-muted mt-5 mb-3">🚨 Pending Checklist (Periode Aktif)</h6>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body">
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body d-flex flex-wrap gap-2 align-items-center">
+
+        <!-- Search -->
+        <input type="text"
+          id="pendingSearch"
+          class="form-control form-control-sm"
+          placeholder="Cari inventory / area / PIC..."
+          style="max-width:250px;">
+
+        <!-- Month -->
+        <select id="pendingMonth"
+          class="form-select form-select-sm w-auto">
+          <?php for ($m = 1; $m <= 12; $m++): ?>
+            <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>"
+              <?= $m == date('m') ? 'selected' : '' ?>>
+              <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
+            </option>
+          <?php endfor; ?>
+        </select>
+
+        <!-- Frequency -->
+        <select id="pendingFrequency"
+          class="form-select form-select-sm w-auto">
+          <option value="">Semua Frequency</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+
+      </div>
+    </div>
+
+    <table class="table table-sm align-middle mb-0">
+      <thead>
         <tr>
-          <th>Item</th>
+          <th>Inventory</th>
           <th>Area</th>
-          <th>Frekuensi</th>
-          <th>Status Periode Aktif</th>
-          <th>Aksi</th>
+          <th>PIC</th>
+          <th>Frequency</th>
+          <th>Unchecked</th>
         </tr>
       </thead>
-      <tbody>
 
-        <?php if (!empty($overview)): ?>
-          <?php foreach ($overview as $row): ?>
-            <tr class="<?= $row['raw_status'] === 'late' ? 'table-warning' : '' ?>">
-
-              <td><?= esc($row['item']) ?></td>
-              <td><?= esc($row['area']) ?></td>
-              <td><?= esc($row['frequency']) ?></td>
-
-              <td class="text-center">
-                <?= $row['status'] ?>
-              </td>
-
-              <td class="text-center">
-                <a href="<?= base_url('compliance/inventory/detail/' . $row['id']) ?>"
-                  class="btn btn-sm btn-outline-primary">
-                  Detail
-                </a>
-              </td>
-
-            </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <tr>
-            <td colspan="5" class="text-center text-muted">
-              Tidak ada data
-            </td>
-          </tr>
-        <?php endif; ?>
-
+      <tbody id="pendingTableBody">
+        <tr>
+          <td colspan="4" class="text-muted">Loading...</td>
+        </tr>
       </tbody>
     </table>
-  </div>
+    <div class="mt-3" id="pendingPagination"></div>
 
+  </div>
+</div>
 
 </div>
 
+
+
 <script>
-  const monthlyTrend = <?= json_encode(array_values($monthlyTrend)) ?>;
+  const baseUrl = "<?= rtrim(base_url(), '/') ?>";
+  const selectedYear = "<?= $selectedYear ?>";
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-  window.dashboardData = {
-    monthlyTrend: <?= json_encode(array_values($monthlyTrend)) ?>,
-    complianceTrend: <?= isset($complianceTrend) ? json_encode(array_values($complianceTrend)) : 'null' ?>,
-    statusData: [
-      <?= $kpi['sesuai'] ?>,
-      <?= $kpi['tidak_sesuai'] ?>,
-      <?= $kpi['tidak_berlaku'] ?>,
-      <?= $kpi['late'] ?>
-    ]
-  };
-</script>
-
-<script src="<?= base_url('js/dashboard.js') ?>"></script>
-
+<script src="<?= base_url('/js/dashboard.js') ?>"></script>
 
 <?= $this->endSection() ?>

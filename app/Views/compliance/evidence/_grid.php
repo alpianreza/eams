@@ -85,6 +85,6 @@
   <?php endforeach; ?>
 </div>
 
-<div class="mt-3">
-  <?= $pager->links() ?>
-</div>
+<ul class="pagination pagination-sm mb-0">
+  <?= $pager->links('default', 'eams') ?>
+</ul>

@@ -2,514 +2,561 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
-use App\Models\ComplianceInventoryModel;
 use App\Models\ChecklistLogModel;
 use App\Models\AssetItemTypeModel;
 
 class ComplianceDashboardController extends BaseController
 {
-  protected $inventoryModel;
-  protected $checklistLogModel;
+  protected $logModel;
   protected $itemTypeModel;
-
-  protected $startDate = '2026-01-01 00:00:00';
 
   public function __construct()
   {
-    $this->inventoryModel    = new ComplianceInventoryModel();
-    $this->checklistLogModel = new ChecklistLogModel();
-    $this->itemTypeModel     = new AssetItemTypeModel();
+    $this->logModel = new ChecklistLogModel();
+    $this->itemTypeModel = new AssetItemTypeModel();
   }
 
   public function index()
   {
+    // ===== AMBIL TAHUN TERSEDIA =====
+    $years = $this->logModel
+      ->select("LEFT(period_key,4) as year")
+      ->groupBy("LEFT(period_key,4)")
+      ->orderBy("year", "DESC")
+      ->findAll();
 
-    $selectedYear = $this->request->getGet('year') ?? date('Y');
-    $selectedMonth = $this->request->getGet('month');
+    $availableYears = array_column($years, 'year');
 
+    if (empty($availableYears)) {
+      $availableYears = [date('Y')];
+    }
 
-    $data = [
+    $selectedYear = $this->request->getGet('year') ?? $availableYears[0];
+
+    // ===== PERIODE AKTIF (MONTHLY DEFAULT) =====
+    $currentMonth = date('m');
+    $activePeriod = $selectedYear . '-' . $currentMonth;
+
+    // ===== TOTAL DISTINCT INVENTORY DI PERIODE =====
+    $total = $this->logModel
+      ->select('COUNT(DISTINCT inventory_id) as total')
+      ->like('period_key', $activePeriod, 'after')
+      ->first()['total'] ?? 0;
+
+    // ===== STATUS COUNT =====
+    $statusRows = $this->logModel
+      ->select('status, COUNT(DISTINCT inventory_id) as total')
+      ->like('period_key', $activePeriod, 'after')
+      ->groupBy('status')
+      ->findAll();
+
+    $kpi = [
+      'total' => $total,
+      'sesuai' => 0,
+      'tidak_sesuai' => 0,
+      'tidak_berlaku' => 0,
+      'late' => 0
+    ];
+
+    foreach ($statusRows as $row) {
+      if ($row['status'] === 'ok') {
+        $kpi['sesuai'] = $row['total'];
+      } elseif ($row['status'] === 'not_ok') {
+        $kpi['tidak_sesuai'] = $row['total'];
+      } elseif ($row['status'] === 'na') {
+        $kpi['tidak_berlaku'] = $row['total'];
+      }
+    }
+
+    // ===== HITUNG LATE (sementara sederhana dulu) =====
+    $allInventoryIds = $this->logModel
+      ->distinct()
+      ->select('inventory_id')
+      ->findAll();
+
+    $checkedIds = $this->logModel
+      ->distinct()
+      ->select('inventory_id')
+      ->like('period_key', $activePeriod, 'after')
+      ->findAll();
+
+    $allInventoryIds = array_column($allInventoryIds, 'inventory_id');
+    $checkedIds = array_column($checkedIds, 'inventory_id');
+
+    $kpi['late'] = count(array_diff($allInventoryIds, $checkedIds));
+
+    return view('compliance/dashboard/index', [
+      'availableYears' => $availableYears,
       'selectedYear'   => $selectedYear,
-      'availableYears' => $this->getAvailableYears(),
-      'kpi'            => $this->getKpiSummary($selectedYear),
-      'notifications'  => $this->getNotifications(),
-      'notOkPhotos'    => $this->getLatestNotOkWithPhoto($selectedYear),
-      'monthlyTrend' => $this->getMonthlyTrend($selectedYear),
-      'overview' => $this->getChecklistOverview(),
-      'followUpStats' => $this->getFollowUpStats(),
-      'complianceTrend' => $this->getMonthlyComplianceSnapshot($selectedYear),
-      'selectedMonth' => $selectedMonth,
-
-
-    ];
-
-    return view('compliance/dashboard/index', $data);
-  }
-
-
-  private function getAvailableYears()
-  {
-    $currentYear = date('Y');
-    $years = [];
-
-    for ($y = 2026; $y <= $currentYear; $y++) {
-      $years[] = $y;
-    }
-
-    return $years;
-  }
-
-  private function getCurrentPeriodKey(string $frequency): string
-  {
-    switch ($frequency) {
-
-      case 'daily':
-        return date('Y-m-d');
-
-      case 'weekly':
-        $week = ceil(date('d') / 7);
-        return date('Y-m') . '-W' . $week;
-
-      case 'monthly':
-        return date('Y-m');
-
-      default:
-        return date('Y-m');
-    }
-  }
-
-  private function getKpiSummary($year)
-  {
-    // Total inventory compliance aktif
-    $totalInventory = $this->inventoryModel
-      ->where('status', 1)
-      ->countAllResults();
-
-    // Ambil semua log tahun terpilih mulai 2026
-    $logs = $this->checklistLogModel
-      ->where('created_at >=', $this->startDate)
-      ->where('YEAR(created_at)', $year)
-      ->findAll();
-
-    $summary = [
-      'total'          => $totalInventory,
-      'sesuai'         => 0,
-      'tidak_sesuai'   => 0,
-      'tidak_berlaku'  => 0,
-      'late'           => 0,
-    ];
-
-    foreach ($logs as $log) {
-
-      switch ($log['status']) {
-        case 'ok':
-          $summary['sesuai']++;
-          break;
-
-        case 'not_ok':
-          $summary['tidak_sesuai']++;
-          break;
-
-        case 'na':
-          $summary['tidak_berlaku']++;
-          break;
-      }
-    }
-
-    // Hitung late per inventory
-    $inventories = $this->inventoryModel
-      ->where('status', 'active')
-      ->findAll();
-
-    foreach ($inventories as $inv) {
-
-      $itemType = $this->itemTypeModel
-        ->find($inv['item_type_id']);
-
-      if (!$itemType) continue;
-
-      $periodKey = $this->getCurrentPeriodKey(
-        $itemType['checklist_frequency']
-      );
-
-      $periodStatus = resolve_period_status(
-        $inv['id'],
-        $itemType['checklist_frequency'],
-        $periodKey
-      );
-
-      if ($periodStatus === 'late') {
-        $summary['late']++;
-      }
-    }
-
-    return $summary;
-  }
-
-  private function getNotifications()
-  {
-    $notifications = [];
-
-    // ===============================
-    // 1️⃣ CEK LATE
-    // ===============================
-    $inventories = $this->inventoryModel
-      ->where('status', 'active')
-      ->findAll();
-
-    foreach ($inventories as $inv) {
-
-      $itemType = $this->itemTypeModel
-        ->find($inv['item_type_id']);
-
-      if (!$itemType) continue;
-
-      $periodKey = $this->getCurrentPeriodKey(
-        $itemType['checklist_frequency']
-      );
-
-      $periodStatus = resolve_period_status(
-        $inv['id'],
-        $itemType['checklist_frequency'],
-        $periodKey
-      );
-
-      if ($periodStatus === 'late') {
-
-        $notifications[] = [
-          'type' => 'late',
-          'inventory_id' => $inv['id'],
-          'item' => $itemType['name'] ?? '-',
-          'area' => $inv['specific_area'] ?? '-',
-          'message' => 'Checklist belum dilakukan dan sudah melewati batas periode.'
-        ];
-      }
-    }
-
-    // ===============================
-    // 2️⃣ NOT_OK TERBARU (5 TERAKHIR)
-    // ===============================
-    $notOkLogs = $this->checklistLogModel
-      ->where('status', 'not_ok')
-      ->orderBy('created_at', 'DESC')
-      ->limit(5)
-      ->findAll();
-
-    foreach ($notOkLogs as $log) {
-
-      $inventory = $this->inventoryModel
-        ->find($log['inventory_id']);
-
-      if (!$inventory) continue;
-
-      $itemType = $this->itemTypeModel
-        ->find($inventory['item_type_id']);
-
-      if (!$itemType) continue;
-
-      $notifications[] = [
-        'type' => 'not_ok',
-        'inventory_id' => $inventory['id'],
-        'item' => $itemType['name'] ?? '-',
-        'area' => $inventory['specific_area'] ?? '-',
-        'message' => 'Terdapat temuan tidak sesuai.',
-        'photo' => $log['photo']
-      ];
-    }
-
-    return $notifications;
-  }
-
-  private function getLatestNotOkWithPhoto($year)
-  {
-    return $this->checklistLogModel
-      ->where('created_at >=', $this->startDate)
-      ->where('YEAR(created_at)', $year)
-      ->where('status', 'not_ok')
-      ->where('photo IS NOT NULL')
-      ->orderBy('created_at', 'DESC')
-      ->limit(10)
-      ->findAll();
-  }
-
-  private function getMonthlyTrend($year)
-  {
-    $result = array_fill(1, 12, 0);
-
-    $logs = $this->checklistLogModel
-      ->select("MONTH(created_at) as month, COUNT(*) as total")
-      ->where('created_at >=', $this->startDate)
-      ->where('YEAR(created_at)', $year)
-      ->groupBy("MONTH(created_at)")
-      ->findAll();
-
-    foreach ($logs as $row) {
-      $result[(int)$row['month']] = (int)$row['total'];
-    }
-
-    return $result;
-  }
-
-  private function getChecklistOverview()
-  {
-    $overview = [];
-
-    $inventories = $this->inventoryModel
-      ->where('active', 1)
-      ->findAll();
-
-    foreach ($inventories as $inv) {
-
-      $itemType = $this->itemTypeModel
-        ->find($inv['item_type_id']);
-
-      if (!$itemType) continue;
-
-      $overview[] = [
-        'id'        => $inv['id'],
-        'item'      => $itemType['name'],
-        'area'      => $inv['specific_area'],
-        'frequency' => $itemType['checklist_frequency'],
-        'status'    => '✓',
-        'raw_status' => 'done'
-      ];
-    }
-
-    return $overview;
-  }
-
-  private function getFollowUpStats(): array
-  {
-    // Semua temuan not_ok
-    $base = $this->checklistLogModel
-      ->where('status', 'not_ok');
-
-    // 🔴 Open
-    $open = clone $base;
-    $totalOpen = $open
-      ->where('follow_up_status', 'open')
-      ->countAllResults();
-
-    // 🟡 Monitoring
-    $monitoring = clone $base;
-    $totalMonitoring = $monitoring
-      ->where('follow_up_status', 'monitoring')
-      ->countAllResults();
-
-    // 🟢 Closed bulan ini
-    $closed = clone $base;
-    $totalClosed = $closed
-      ->where('follow_up_status', 'closed')
-      ->where('MONTH(follow_up_date)', date('m'))
-      ->where('YEAR(follow_up_date)', date('Y'))
-      ->countAllResults();
-
-    // ⚠ Open/Monitoring > 30 hari
-    $thirtyDaysAgo = date('Y-m-d', strtotime('-30 days'));
-
-    $over30 = $this->checklistLogModel
-      ->where('status', 'not_ok')
-      ->whereIn('follow_up_status', ['open', 'monitoring'])
-      ->where('check_date <', $thirtyDaysAgo)
-      ->countAllResults();
-
-    return [
-      'open'        => $totalOpen,
-      'monitoring'  => $totalMonitoring,
-      'closed_this_month' => $totalClosed,
-      'over_30_days' => $over30,
-    ];
-  }
-  private function getMonthlyComplianceSnapshot($year)
-  {
-    $result = [];
-
-    $inventories = $this->inventoryModel
-      ->where('active', 1)
-      ->findAll();
-
-    $totalAsset = count($inventories);
-
-    for ($month = 1; $month <= 12; $month++) {
-
-      $summary = [
-        'sesuai' => 0,
-        'late' => 0,
-        'pending' => 0,
-        'rate' => 0
-      ];
-
-      foreach ($inventories as $inv) {
-
-        $itemType = $this->itemTypeModel
-          ->find($inv['item_type_id']);
-
-        if (!$itemType) continue;
-
-        $frequency = $itemType['checklist_frequency'];
-
-        $periodKey = $this->generateMonthSnapshotKey($year, $month, $frequency);
-
-        $status = resolve_period_status(
-          $inv['id'],
-          $frequency,
-          $periodKey
-        );
-
-        if ($status === 'done') $summary['sesuai']++;
-        if ($status === 'late') $summary['late']++;
-        if ($status === 'pending') $summary['pending']++;
-      }
-
-      // Compliance Rate %
-      if ($totalAsset > 0) {
-        $summary['rate'] = round(($summary['sesuai'] / $totalAsset) * 100);
-      }
-
-      $result[$month] = $summary;
-    }
-
-    return $result;
-  }
-
-  private function generateMonthSnapshotKey($year, $month, $frequency)
-  {
-    $month = str_pad($month, 2, '0', STR_PAD_LEFT);
-
-    switch ($frequency) {
-
-      case 'monthly':
-        return $year . '-' . $month;
-
-      case 'weekly':
-        return $year . '-' . $month . '-W4';
-
-      case 'daily':
-        $lastDay = date("t", strtotime("$year-$month-01"));
-        return $year . '-' . $month . '-' . $lastDay;
-
-      default:
-        return $year . '-' . $month;
-    }
-  }
-
-  public function ajaxData()
-  {
-    $year  = $this->request->getGet('year');
-    $month = $this->request->getGet('month');
-
-    return $this->response->setJSON([
-      'kpi'           => $this->getKpiSummaryByMonth($year, $month),
-      'notifications' => $this->getNotificationsByMonth($year, $month),
-      'notOkPhotos'   => $this->getNotOkPhotosByMonth($year, $month),
-      'overview'      => $this->getChecklistOverviewByMonth($year, $month),
+      'kpi'            => $kpi
     ]);
   }
 
-  private function getKpiSummaryByMonth($year, $month)
+
+
+  public function getTrendAjax()
   {
-    return $this->checklistLogModel
-      ->where('YEAR(created_at)', $year)
-      ->where('MONTH(created_at)', $month)
-      ->select("
-            SUM(status='ok') as sesuai,
-            SUM(status='not_ok') as tidak_sesuai,
-            SUM(status='na') as tidak_berlaku
-        ")
-      ->first();
-  }
+    $type  = $this->request->getGet('type');
+    $year  = $this->request->getGet('year');
+    $month = $this->request->getGet('month');
 
-  private function getNotificationsByMonth($year, $month)
-  {
-    $notifications = [];
+    try {
 
-    // 1️⃣ NOT_OK dalam bulan itu
-    $notOkLogs = $this->checklistLogModel
-      ->where('status', 'not_ok')
-      ->where('YEAR(created_at)', $year)
-      ->where('MONTH(created_at)', $month)
-      ->orderBy('created_at', 'DESC')
-      ->limit(5)
-      ->findAll();
+      $builder = $this->logModel->builder();
 
-    foreach ($notOkLogs as $log) {
+      $builder->select('period_key, status');
+      $builder->select('COUNT(DISTINCT inventory_id) as total', false);
+      $builder->join('asset_item_types', 'asset_item_types.id = checklist_logs.item_type_id');
+      $builder->where('asset_item_types.checklist_frequency', $type);
 
-      $inventory = $this->inventoryModel->find($log['inventory_id']);
-      if (!$inventory) continue;
+      if ($type === 'monthly') {
 
-      $itemType = $this->itemTypeModel->find($inventory['item_type_id']);
-      if (!$itemType) continue;
+        $builder->like('period_key', $year . '-', 'after');
+      } elseif ($type === 'weekly') {
 
-      $notifications[] = [
-        'type' => 'not_ok',
-        'inventory_id' => $inventory['id'],
-        'item' => $itemType['name'] ?? '-',
-        'area' => $inventory['specific_area'] ?? '-',
-        'message' => 'Terdapat temuan tidak sesuai.'
-      ];
+        $builder->like('period_key', $year . '-' . $month . '-W', 'after');
+      } elseif ($type === 'daily') {
+
+        $builder->like('period_key', $year . '-' . $month . '-', 'after');
+      }
+
+      $builder->groupBy(['period_key', 'status']);
+      $builder->orderBy('period_key', 'ASC');
+
+      $data = $builder->get()->getResultArray();
+
+      return $this->response->setJSON($data);
+    } catch (\Throwable $e) {
+
+      return $this->response->setJSON([
+        'error' => $e->getMessage()
+      ]);
     }
+  }
 
-    return $notifications;
+  public function getProgressAjax()
+  {
+    $type  = $this->request->getGet('type');
+    $year  = $this->request->getGet('year');
+    $month = $this->request->getGet('month');
+    $week  = $this->request->getGet('week');
+    $day   = $this->request->getGet('day');
+
+    $period = $this->buildPeriod($type, $year, $month, $week, $day);
+
+    try {
+
+      // Total inventory berdasarkan frequency
+      $inventoryModel = new \App\Models\ComplianceInventoryModel();
+
+      $total = $inventoryModel
+        ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+        ->where('asset_item_types.checklist_frequency', $type)
+        ->countAllResults();
+
+      // Sudah checklist (distinct inventory)
+      $checked = $this->logModel->builder()
+        ->select('COUNT(DISTINCT inventory_id) as total', false)
+        ->join('asset_item_types', 'asset_item_types.id = checklist_logs.item_type_id')
+        ->where('asset_item_types.checklist_frequency', $type)
+        ->where('period_key', $period)
+        ->get()
+        ->getRowArray()['total'] ?? 0;
+
+      return $this->response->setJSON([
+        'sudah' => (int)$checked,
+        'belum' => (int)($total - $checked)
+      ]);
+    } catch (\Throwable $e) {
+      return $this->response->setJSON(['error' => $e->getMessage()]);
+    }
   }
 
 
-  private function getNotOkPhotosByMonth($year, $month)
+  public function getStatusPieAjax()
   {
-    return $this->checklistLogModel
-      ->where('status', 'not_ok')
-      ->where('photo IS NOT NULL')
-      ->where('YEAR(created_at)', $year)
-      ->where('MONTH(created_at)', $month)
-      ->orderBy('created_at', 'DESC')
-      ->limit(10)
-      ->findAll();
-  }
+    $type  = $this->request->getGet('type');   // tetap dikirim
+    $year  = $this->request->getGet('year');
+    $month = $this->request->getGet('month');
 
-  private function getChecklistOverviewByMonth($year, $month)
-  {
-    $overview = [];
+    try {
 
-    $inventories = $this->inventoryModel
-      ->where('active', 1)
-      ->findAll();
+      $builder = $this->logModel->builder();
 
-    foreach ($inventories as $inv) {
-
-      $itemType = $this->itemTypeModel
-        ->find($inv['item_type_id']);
-
-      if (!$itemType) continue;
-
-      $frequency = $itemType['checklist_frequency'];
-
-      $periodKey = $this->generateMonthSnapshotKey($year, $month, $frequency);
-
-      $status = resolve_period_status(
-        $inv['id'],
-        $frequency,
-        $periodKey
+      $builder->select('status, COUNT(*) as total', false);
+      $builder->join(
+        'asset_item_types',
+        'asset_item_types.id = checklist_logs.item_type_id'
       );
 
-      // Mapping simbol
-      $symbol = match ($status) {
-        'done'    => '✓',
-        'late'    => '⚠',
-        'pending' => '⏳',
-        'future'  => '–',
-        default   => '-'
-      };
+      // tetap ikut frequency aktif
+      $builder->where('asset_item_types.checklist_frequency', $type);
 
-      $overview[] = [
-        'id'        => $inv['id'],
-        'item'      => $itemType['name'] ?? '-',
-        'area'      => $inv['specific_area'] ?? '-',
-        'frequency' => $frequency,
-        'status'    => $symbol,
-        'raw_status' => $status
+      // 🔥 KUNCI: selalu agregat per bulan
+      $builder->like('period_key', $year . '-' . $month, 'after');
+
+      $builder->where('status !=', '');
+      $builder->groupBy('status');
+
+      $rows = $builder->get()->getResultArray();
+
+      $data = [
+        'ok'     => 0,
+        'not_ok' => 0
       ];
+
+      foreach ($rows as $row) {
+        if ($row['status'] === 'ok') {
+          $data['ok'] = (int)$row['total'];
+        }
+        if ($row['status'] === 'not_ok') {
+          $data['not_ok'] = (int)$row['total'];
+        }
+      }
+
+      return $this->response->setJSON($data);
+    } catch (\Throwable $e) {
+      return $this->response->setJSON(['error' => $e->getMessage()]);
+    }
+  }
+
+  private function buildPeriod($type, $year, $month = null, $week = null, $day = null)
+  {
+    if ($type === 'monthly') {
+      return $year . '-' . $month;
     }
 
-    return $overview;
+    if ($type === 'weekly') {
+      return $year . '-' . $month . '-W' . $week;
+    }
+
+    if ($type === 'daily') {
+      return $year . '-' . $month . '-' . $day;
+    }
+
+    return null;
+  }
+
+  public function getProgressTrendAjax()
+  {
+    $type  = $this->request->getGet('type');
+    $year  = $this->request->getGet('year');
+    $month = $this->request->getGet('month');
+
+    try {
+
+      $builder = $this->logModel->builder();
+      $builder->select('period_key');
+      $builder->select('COUNT(DISTINCT inventory_id) as total', false);
+      $builder->join('asset_item_types', 'asset_item_types.id = checklist_logs.item_type_id');
+      $builder->where('asset_item_types.checklist_frequency', $type);
+
+      if ($type === 'monthly') {
+
+        // hanya sampai bulan aktif
+        $builder->where("LEFT(period_key,4)", $year);
+        $builder->like('period_key', $year . '-', 'after');
+      }
+
+      if ($type === 'weekly') {
+
+        $builder->like('period_key', $year . '-' . $month . '-W', 'after');
+      }
+
+      if ($type === 'daily') {
+
+        $builder->like('period_key', $year . '-' . $month . '-', 'after');
+      }
+
+      $builder->groupBy('period_key');
+      $builder->orderBy('period_key', 'ASC');
+
+      $rows = $builder->get()->getResultArray();
+
+      return $this->response->setJSON($rows);
+    } catch (\Throwable $e) {
+      return $this->response->setJSON(['error' => $e->getMessage()]);
+    }
+  }
+
+  public function getTotalInventoryByType()
+  {
+    $type = $this->request->getGet('type');
+
+    $inventoryModel = new \App\Models\ComplianceInventoryModel();
+
+    $total = $inventoryModel
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('asset_item_types.checklist_frequency', $type)
+      ->countAllResults();
+
+    return $this->response->setJSON([
+      'total' => (int)$total
+    ]);
+  }
+
+  public function getRiskInsightAjax()
+  {
+    try {
+
+      $year  = $this->request->getGet('year');
+      $month = $this->request->getGet('month');
+
+      // ======================
+      // TOP ITEM BULAN INI
+      // ======================
+
+      $builder = $this->logModel->builder();
+
+      $builder->select('asset_item_types.id as item_type_id, asset_item_types.name as item_name, COUNT(*) as total', false);
+      $builder->join('asset_item_types', 'asset_item_types.id = checklist_logs.item_type_id');
+      $builder->where('checklist_logs.status', 'not_ok');
+      $builder->like('checklist_logs.period_key', $year . '-' . $month, 'after');
+      $builder->groupBy('asset_item_types.id');
+      $builder->orderBy('total', 'DESC');
+      $builder->limit(5);
+
+      $topItems = $builder->get()->getResultArray();
+
+
+      // ======================
+      // TAMBAH TREND 1 TAHUN PER ITEM
+      // ======================
+
+      foreach ($topItems as &$item) {
+
+        $trendBuilder = $this->logModel->builder();
+
+        $trendBuilder->select("LEFT(checklist_logs.period_key,7) as ym, COUNT(*) as total", false);
+        $trendBuilder->where('checklist_logs.status', 'not_ok');
+        $trendBuilder->where('checklist_logs.item_type_id', $item['item_type_id']);
+        $trendBuilder->like('checklist_logs.period_key', $year . '-', 'after');
+        $trendBuilder->groupBy("LEFT(checklist_logs.period_key,7)");
+        $trendBuilder->orderBy("ym", "ASC");
+
+        $trendRows = $trendBuilder->get()->getResultArray();
+
+        $trend = [];
+
+        foreach ($trendRows as $row) {
+          $trend[] = (int)$row['total'];
+        }
+
+        $item['trend'] = $trend;
+      }
+
+
+      // ======================
+      // TOP AREA BULAN INI
+      // ======================
+
+      $builder = $this->logModel->builder();
+
+      $builder->select('compliance_inventory.specific_area, compliance_inventory.id as inventory_id, COUNT(*) as total', false);
+      $builder->join('compliance_inventory', 'compliance_inventory.id = checklist_logs.inventory_id');
+      $builder->where('checklist_logs.status', 'not_ok');
+      $builder->like('checklist_logs.period_key', $year . '-' . $month, 'after');
+      $builder->groupBy('compliance_inventory.specific_area');
+      $builder->orderBy('total', 'DESC');
+      $builder->limit(5);
+
+      $topAreas = $builder->get()->getResultArray();
+
+
+      // ======================
+      // TAMBAH TREND 1 TAHUN PER AREA
+      // ======================
+
+      foreach ($topAreas as &$area) {
+
+        $trendBuilder = $this->logModel->builder();
+
+        $trendBuilder->select("LEFT(checklist_logs.period_key,7) as ym, COUNT(*) as total", false);
+        $trendBuilder->join('compliance_inventory', 'compliance_inventory.id = checklist_logs.inventory_id');
+        $trendBuilder->where('checklist_logs.status', 'not_ok');
+        $trendBuilder->where('compliance_inventory.specific_area', $area['specific_area']);
+        $trendBuilder->like('checklist_logs.period_key', $year . '-', 'after');
+        $trendBuilder->groupBy("LEFT(checklist_logs.period_key,7)");
+        $trendBuilder->orderBy("ym", "ASC");
+
+        $trendRows = $trendBuilder->get()->getResultArray();
+
+
+        $trendMap = [];
+
+        foreach ($trendRows as $row) {
+          $trendMap[$row['ym']] = (int)$row['total'];
+        }
+
+        // pad Jan–Dec
+        $trend = [];
+
+        for ($m = 1; $m <= 12; $m++) {
+          $key = $year . '-' . str_pad($m, 2, '0', STR_PAD_LEFT);
+          $trend[] = $trendMap[$key] ?? 0;
+        }
+
+        $area['trend'] = $trend;
+      }
+
+
+      return $this->response->setJSON([
+        'items' => $topItems,
+        'areas' => $topAreas
+      ]);
+    } catch (\Throwable $e) {
+      return $this->response->setJSON([
+        'error' => $e->getMessage()
+      ]);
+    }
+  }
+
+  public function getPendingChecklistAjax()
+  {
+    try {
+
+      $today = new \DateTime();
+      $year  = $today->format('Y');
+      $month = $today->format('m');
+      $ym    = $today->format('Y-m');
+      $todayStr = $today->format('Y-m-d');
+
+      // === 1) Ambil semua inventory aktif + frequency
+      $inventoryModel = new \App\Models\ComplianceInventoryModel();
+
+      $inventories = $inventoryModel
+        ->select('
+        compliance_inventory.id,
+        compliance_inventory.specific_area,
+        compliance_inventory.pic,
+        asset_item_types.name as item_name,
+        asset_item_types.checklist_frequency
+    ')
+        ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+        ->findAll();
+
+
+      // === 2) Ambil holiday bulan ini
+      $holidayModel = new \App\Models\HolidayModel();
+      $holidays = $holidayModel
+        ->where('holiday_date >=', $ym . '-01')
+        ->where('holiday_date <=', $ym . '-31')
+        ->findAll();
+
+      $holidayDates = array_column($holidays, 'holiday_date');
+
+      // === 3) Build daftar tanggal kerja bulan ini (Daily)
+      $workDates = [];
+      $start = new \DateTime($ym . '-01');
+
+      while ($start <= $today) {
+
+        $dateStr = $start->format('Y-m-d');
+        $dayOfWeek = $start->format('w'); // 0 = Sunday
+
+        if ($dayOfWeek != 0 && !in_array($dateStr, $holidayDates)) {
+          $workDates[] = $dateStr;
+        }
+
+        $start->modify('+1 day');
+      }
+
+      $logModel = new \App\Models\ChecklistLogModel();
+
+      $result = [];
+
+      foreach ($inventories as $inv) {
+
+        $frequency = $inv['checklist_frequency'];
+        $missing   = [];
+        $status    = 'OK';
+
+        // ======================
+        // DAILY
+        // ======================
+        if ($frequency === 'daily') {
+
+          foreach ($workDates as $date) {
+
+            $exists = $logModel
+              ->where('inventory_id', $inv['id'])
+              ->where('period_key', $date)
+              ->countAllResults();
+
+            if (!$exists) {
+              $missing[] = $date;
+            }
+          }
+
+          if (count($missing) > 0) {
+            $status = count($missing) . ' Hari Belum';
+          } elseif (!in_array($todayStr, $workDates)) {
+            $status = 'Libur';
+          } else {
+            $status = 'Due Today';
+          }
+        }
+
+        // ======================
+        // WEEKLY
+        // ======================
+        if ($frequency === 'weekly') {
+
+          $currentWeek = ceil($today->format('d') / 7);
+          if ($currentWeek > 4) $currentWeek = 4;
+
+          for ($w = 1; $w <= $currentWeek; $w++) {
+
+            $periodKey = $ym . '-W' . $w;
+
+            $exists = $logModel
+              ->where('inventory_id', $inv['id'])
+              ->where('period_key', $periodKey)
+              ->countAllResults();
+
+            if (!$exists) {
+              $missing[] = $periodKey;
+            }
+          }
+
+          if (count($missing) > 0) {
+            $status = count($missing) . ' Minggu Belum';
+          }
+        }
+
+        // ======================
+        // MONTHLY
+        // ======================
+        if ($frequency === 'monthly') {
+
+          $exists = $logModel
+            ->where('inventory_id', $inv['id'])
+            ->where('period_key', $ym)
+            ->countAllResults();
+
+          if (!$exists) {
+            $missing[] = $ym;
+            $status = 'Belum Bulan Ini';
+          }
+        }
+
+        if (count($missing) > 0) {
+
+          $result[] = [
+            'inventory_id' => $inv['id'],
+            'specific_area' => $inv['specific_area'],
+            'item_name' => $inv['item_name'],
+            'pic' => $inv['pic'],
+            'frequency' => ucfirst($frequency),
+            'missing' => $missing,
+            'status' => $status
+          ];
+        }
+      }
+
+      return $this->response->setJSON($result);
+    } catch (\Throwable $e) {
+      return $this->response->setJSON(['error' => $e->getMessage()]);
+    }
   }
 }

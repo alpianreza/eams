@@ -77,6 +77,30 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
     // DASHBOARD
     // =========================
     $routes->get('dashboard', 'ComplianceDashboardController::index');
+    $routes->get('dashboard/trend', 'ComplianceDashboardController::getTrendAjax');
+    $routes->get('dashboard/progress-trend', 'ComplianceDashboardController::getProgressTrendAjax');
+    $routes->get('dashboard/status-pie', 'ComplianceDashboardController::getStatusPieAjax');
+    $routes->get(
+        'dashboard/total-inventory',
+        'ComplianceDashboardController::getTotalInventoryByType'
+    );
+
+    $routes->get(
+        'dashboard/risk-insight',
+        'ComplianceDashboardController::getRiskInsightAjax'
+    );
+    $routes->get(
+        'dashboard/risk-trend',
+        'ComplianceDashboardController::getRiskTrendAjax'
+    );
+    $routes->get(
+        'dashboard/pending-checklist',
+        'ComplianceDashboardController::getPendingChecklistAjax'
+    );
+
+
+
+
 
     // =========================
     // INVENTORY

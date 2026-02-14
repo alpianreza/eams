@@ -98,6 +98,7 @@ $seg2 = $segments[1] ?? '';
 
 <script src="<?= base_url('js/evidence.js') ?>"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
 
 
 
