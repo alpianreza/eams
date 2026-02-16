@@ -47,9 +47,25 @@ class AuthController extends BaseController
             'permission' => $user['permission']
         ]);
 
+        // PRIORITAS 1: Kalau sebelumnya diarahkan filter
         $redirect = session()->get('redirect_after_login');
         session()->remove('redirect_after_login');
-        return redirect()->to($redirect ?? '/');
+
+        if ($redirect) {
+            return redirect()->to($redirect);
+        }
+
+        // PRIORITAS 2: Redirect berdasarkan role
+        if (in_array($user['role'], ['staff', 'compliance'])) {
+            return redirect()->to('/home');
+        }
+
+        if (in_array($user['role'], ['admin', 'auditor'])) {
+            return redirect()->to('/compliance/dashboard');
+        }
+
+        // fallback
+        return redirect()->to('/');
     }
 
     // logout
