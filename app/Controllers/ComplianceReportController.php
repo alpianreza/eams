@@ -74,9 +74,18 @@ class ComplianceReportController extends BaseController
 
     if (!$inventoryId || !$year) return '';
 
-    $inventory = $this->inventoryModel->find($inventoryId);
-    if (!$inventory) return '';
+    $data = $this->buildReportData($inventoryId, $year, $month);
 
+    return view('compliance/report/_table', $data);
+  }
+
+  public function buildReportData($inventoryId, $year, $month)
+  {
+
+    if (!$inventoryId || !$year) return [];
+
+    $inventory = $this->inventoryModel->find($inventoryId);
+    if (!$inventory) return [];
     // ==============================
     // ITEM TYPE
     // ==============================
@@ -107,6 +116,7 @@ class ComplianceReportController extends BaseController
     $findings = [];
     $findingsByMonth = [];
     $dailyDays = [];
+    $holidayDates = [];
 
     // =====================================================
     // ===================== MONTHLY ========================
@@ -148,9 +158,6 @@ class ComplianceReportController extends BaseController
       unset($logsInMonth, $log);
     }
 
-    // =====================================================
-    // ======================= DAILY ========================
-    // =====================================================
     // =====================================================
     // ======================= DAILY ========================
     // =====================================================
@@ -272,7 +279,8 @@ class ComplianceReportController extends BaseController
     $next = $nextData['id'] ?? null;
 
 
-    return view('compliance/report/_table', [
+
+    return [
       'inventory'   => $inventory,
       'masters'     => $masters,
       'monthlyGrid' => $monthlyGrid,
@@ -295,7 +303,7 @@ class ComplianceReportController extends BaseController
       'isFireExtinguisher' => $isFireExtinguisher,
       'frequency'   => $frequency,
       'role'        => session('role'),
-      'holidayDates' => $holidayDates ?? [],
-    ]);
+      'holidayDates' => $holidayDates,
+    ];
   }
 }

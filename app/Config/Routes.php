@@ -100,8 +100,6 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
 
 
 
-
-
     // =========================
     // INVENTORY
     // =========================
@@ -170,28 +168,6 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
     });
 });
 
-$routes->group('pdf/checklist', [
-    'filter' => ['auth', 'pdfAccess']
-], function ($routes) {
-
-    // print satuan + lampiran
-    $routes->get(
-        'single/(:num)/(:segment)',
-        'ChecklistPdfController::singleItemWithAttachment/$1/$2'
-    );
-
-    // rekap periode (harian/mingguan/bulanan)
-    $routes->get(
-        'recap/(:segment)/(:num)/(:num)',
-        'ChecklistPdfController::recapMonthly/$1/$2/$3'
-    );
-
-    // rekap tahunan per item (APAR Jan–Des)
-    $routes->get(
-        'item-yearly/(:num)/(:num)',
-        'ChecklistPdfController::recapItemYearly/$1/$2'
-    );
-});
 
 $routes->group('holidays', ['filter' => 'auth'], function ($routes) {
 
@@ -217,3 +193,16 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
 });
 
 $routes->get('compliance/dashboard/data', 'ComplianceDashboardController::ajaxData', ['filter' => 'auth']);
+
+$routes->get(
+    'export/pdf/single/(:num)/(:any)',
+    'ExportPdfController::single/$1/$2',
+    ['filter' => 'auth']
+);
+$routes->get(
+    'export/pdf/recap/(:num)/(:num)/(:num)',
+    'ExportPdfController::recap/$1/$2/$3',
+    ['filter' => 'auth']
+);
+
+$routes->get('/home', 'HomeController::index', ['filter' => 'auth']);

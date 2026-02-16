@@ -113,21 +113,22 @@ $backUrl = base_url('compliance/inventory');
             </a>
           <?php endif; ?>
 
-          <?php if (hasRole(['admin', 'compliance',])): ?>
+          <?php if (hasRole(['admin', 'compliance'])): ?>
+
             <?php
-            $initialPeriod = match ($inventory['checklist_frequency']) {
-              'daily'   => $ym . '-01',
-              'weekly'  => $ym . '-W1',
-              default   => $ym,
-            };
+            $ym = date('Y-m');
+            [$year, $month] = explode('-', $ym);
             ?>
+
             <a
               class="btn btn-danger"
               target="_blank"
-              href="<?= site_url('pdf/checklist/single/' . $inventory['id'] . '/' . $initialPeriod) ?>">
+              href="<?= site_url('export/pdf/recap/' . $inventory['id'] . '/' . $year . '/' . $month) ?>">
               <i class="bi bi-file-earmark-pdf"></i> Export PDF
             </a>
+
           <?php endif; ?>
+
 
         </div>
 
