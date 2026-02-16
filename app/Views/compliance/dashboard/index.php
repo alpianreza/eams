@@ -177,59 +177,97 @@
 
 <div class="card shadow-sm border-0">
   <div class="card-body">
-    <div class="card mb-3 shadow-sm">
-      <div class="card-body d-flex flex-wrap gap-2 align-items-center">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
 
-        <!-- Search -->
+      <!-- KIRI -->
+      <div class="d-flex gap-2 flex-wrap align-items-center">
+
         <input type="text"
           id="pendingSearch"
           class="form-control form-control-sm"
-          placeholder="Cari inventory / area / PIC..."
-          style="max-width:250px;">
+          placeholder="Search..."
+          style="width:200px;">
 
-        <!-- Month -->
         <select id="pendingMonth"
           class="form-select form-select-sm w-auto">
           <?php for ($m = 1; $m <= 12; $m++): ?>
             <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>"
               <?= $m == date('m') ? 'selected' : '' ?>>
-              <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
+              <?= date('M', mktime(0, 0, 0, $m, 1)) ?>
             </option>
           <?php endfor; ?>
         </select>
 
-        <!-- Frequency -->
         <select id="pendingFrequency"
           class="form-select form-select-sm w-auto">
-          <option value="">Semua Frequency</option>
+          <option value="">All</option>
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
           <option value="monthly">Monthly</option>
         </select>
 
+        <select id="pendingSort"
+          class="form-select form-select-sm w-auto">
+          <option value="name">Sort: Inventory</option>
+          <option value="area">Sort: Area</option>
+          <option value="frequency">Sort: Frequency</option>
+          <option value="status">Sort: Unchecked</option>
+        </select>
+
       </div>
+
+      <!-- KANAN -->
+      <small class="text-muted">
+        <span id="pendingCount">0</span> results
+      </small>
+
+    </div>
+    <div class="d-flex flex-wrap gap-3 mb-3">
+
+      <div class="px-3 py-2 rounded bg-danger text-white">
+        <small>Daily</small><br>
+        <strong id="summaryDaily">0</strong>
+      </div>
+
+      <div class="px-3 py-2 rounded bg-warning text-dark">
+        <small>Weekly</small><br>
+        <strong id="summaryWeekly">0</strong>
+      </div>
+
+      <div class="px-3 py-2 rounded bg-dark text-white">
+        <small>Monthly</small><br>
+        <strong id="summaryMonthly">0</strong>
+      </div>
+
+      <div class="px-3 py-2 rounded bg-secondary text-white">
+        <small>Total</small><br>
+        <strong id="summaryTotal">0</strong>
+      </div>
+
     </div>
 
-    <table class="table table-sm align-middle mb-0">
-      <thead>
-        <tr>
-          <th>Inventory</th>
-          <th>Area</th>
-          <th>PIC</th>
-          <th>Frequency</th>
-          <th>Unchecked</th>
-        </tr>
-      </thead>
-
-      <tbody id="pendingTableBody">
-        <tr>
-          <td colspan="4" class="text-muted">Loading...</td>
-        </tr>
-      </tbody>
-    </table>
-    <div class="mt-3" id="pendingPagination"></div>
-
   </div>
+
+  <table class="table table-sm align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Inventory</th>
+        <th>Area</th>
+        <th>PIC</th>
+        <th>Frequency</th>
+        <th>Unchecked</th>
+      </tr>
+    </thead>
+
+    <tbody id="pendingTableBody">
+      <tr>
+        <td colspan="4" class="text-muted">Loading...</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="mt-3" id="pendingPagination"></div>
+
+</div>
 </div>
 
 </div>

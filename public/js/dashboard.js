@@ -54,6 +54,25 @@ document.addEventListener("DOMContentLoaded", function () {
         loadRiskTrend();
       }),
     );
+
+  // =========================
+  // PENDING FILTERS
+  // =========================
+  document
+    .getElementById("pendingSearch")
+    ?.addEventListener("keyup", applySearchAndRender);
+
+  document
+    .getElementById("pendingSort")
+    ?.addEventListener("change", applySearchAndRender);
+
+  document
+    .getElementById("pendingMonth")
+    ?.addEventListener("change", loadPendingChecklist);
+
+  document
+    .getElementById("pendingFrequency")
+    ?.addEventListener("change", loadPendingChecklist);
 });
 
 // ======================================================
@@ -469,16 +488,28 @@ function loadRiskInsight() {
 }
 
 let pendingData = [];
+let filteredData = [];
 let currentPage = 1;
 const perPage = 10;
 
 function loadPendingChecklist() {
-  fetch(baseUrl + "/compliance/dashboard/pending-checklist")
+  const month = document.getElementById("pendingMonth")?.value || "";
+  const frequency = document.getElementById("pendingFrequency")?.value || "";
+
+  const params = new URLSearchParams({
+    month: month,
+    frequency: frequency,
+  });
+
+  fetch(
+    baseUrl + "/compliance/dashboard/pending-checklist?" + params.toString(),
+  )
     .then((res) => res.json())
     .then((data) => {
       pendingData = data;
+      filteredData = data;
       currentPage = 1;
-      renderPendingTable();
+      applySearchAndRender(); // 🔥 penting
     });
 }
 
@@ -489,108 +520,98 @@ function renderPendingTable() {
   tbody.innerHTML = "";
   pagination.innerHTML = "";
 
-  if (!pendingData.length) {
-    tbody.innerHTML = `<tr><td colspan="4" class="text-success">Semua sudah checklist 👍</td></tr>`;
+  const dataSource = filteredData.length ? filteredData : pendingData;
+
+  if (!dataSource.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-success">
+          Tidak ada data 👍
+        </td>
+      </tr>
+    `;
     return;
   }
 
   const start = (currentPage - 1) * perPage;
   const end = start + perPage;
 
-  const pageData = pendingData.slice(start, end);
+  const pageData = dataSource.slice(start, end);
 
   pageData.forEach((row) => {
     const missingJson = JSON.stringify(row.missing).replace(/"/g, "&quot;");
 
+    const badgeClass = getRiskBadgeClass(row);
+
     tbody.innerHTML += `
-      <tr>
-        <td>${row.item_name}</td>
-        <td>${row.specific_area}</td>
-        <td>
+  <tr>
+    <td>${row.item_name}</td>
+    <td>${row.specific_area}</td>
+    <td>
       <span class="badge bg-secondary">
         ${row.pic ?? "-"}
       </span>
     </td>
-        <td>${row.frequency}</td>
-        <td>
-          <span class="badge bg-warning text-dark pending-badge"
-                data-missing="${missingJson}">
-            ${row.status}
-          </span>
-        </td>
-      </tr>
-    `;
+    <td>${row.frequency}</td>
+    <td>
+      <span class="badge ${badgeClass} pending-badge"
+            style="cursor:pointer"
+            data-missing="${missingJson}">
+        ${row.status}
+      </span>
+    </td>
+  </tr>
+`;
   });
 
-  renderPagination();
+  renderPagination(dataSource.length);
 }
 
-function renderPagination() {
+function renderPagination(totalData) {
   const pagination = document.getElementById("pendingPagination");
   pagination.innerHTML = "";
 
-  const totalPages = Math.ceil(pendingData.length / perPage);
+  const totalPages = Math.ceil(totalData / perPage);
   if (totalPages <= 1) return;
 
-  const maxVisible = 5; // jumlah tombol tengah
   let start = Math.max(1, currentPage - 2);
   let end = Math.min(totalPages, currentPage + 2);
 
-  // tombol pertama
   if (currentPage > 1) {
     pagination.innerHTML += `
       <button class="btn btn-sm btn-outline-primary me-1"
-              onclick="goToPage(${currentPage - 1})">
-        «
-      </button>
+              onclick="goToPage(${currentPage - 1})">«</button>
     `;
   }
 
-  // kalau start > 1 tampilkan 1 + ...
   if (start > 1) {
     pagination.innerHTML += `
       <button class="btn btn-sm btn-outline-primary me-1"
-              onclick="goToPage(1)">
-        1
-      </button>
+              onclick="goToPage(1)">1</button>
     `;
-
-    if (start > 2) {
-      pagination.innerHTML += `<span class="me-2">...</span>`;
-    }
+    if (start > 2) pagination.innerHTML += `<span class="me-2">...</span>`;
   }
 
-  // tombol tengah
   for (let i = start; i <= end; i++) {
     pagination.innerHTML += `
       <button class="btn btn-sm ${i === currentPage ? "btn-primary" : "btn-outline-primary"} me-1"
-              onclick="goToPage(${i})">
-        ${i}
-      </button>
+              onclick="goToPage(${i})">${i}</button>
     `;
   }
 
-  // kalau end < totalPages tampilkan ... + last
   if (end < totalPages) {
-    if (end < totalPages - 1) {
+    if (end < totalPages - 1)
       pagination.innerHTML += `<span class="me-2">...</span>`;
-    }
-
     pagination.innerHTML += `
       <button class="btn btn-sm btn-outline-primary me-1"
-              onclick="goToPage(${totalPages})">
-        ${totalPages}
-      </button>
+              onclick="goToPage(${totalPages})">${totalPages}</button>
     `;
   }
 
-  // tombol next
   if (currentPage < totalPages) {
     pagination.innerHTML += `
       <button class="btn btn-sm btn-outline-primary"
-              onclick="goToPage(${currentPage + 1})">
-        »
-      </button>
+              onclick="goToPage(${currentPage + 1})">»</button>
     `;
   }
 }
@@ -641,3 +662,95 @@ document.addEventListener("click", function (e) {
     }
   }
 });
+
+function applySearchAndRender() {
+  const keyword =
+    document.getElementById("pendingSearch")?.value.toLowerCase().trim() || "";
+
+  const sortType = document.getElementById("pendingSort")?.value;
+
+  // ================= SEARCH =================
+  filteredData = pendingData.filter((row) => {
+    const inventory = (row.item_name || "").toLowerCase();
+    const area = (row.specific_area || "").toLowerCase();
+    const pic = (row.pic || "").toLowerCase();
+
+    return (
+      inventory.includes(keyword) ||
+      area.includes(keyword) ||
+      pic.includes(keyword)
+    );
+  });
+
+  // ================= SORT =================
+  if (sortType === "name") {
+    filteredData.sort((a, b) =>
+      (a.item_name || "").localeCompare(b.item_name || ""),
+    );
+  }
+
+  if (sortType === "area") {
+    filteredData.sort((a, b) =>
+      (a.specific_area || "").localeCompare(b.specific_area || ""),
+    );
+  }
+
+  if (sortType === "frequency") {
+    filteredData.sort((a, b) =>
+      (a.frequency || "").localeCompare(b.frequency || ""),
+    );
+  }
+
+  if (sortType === "status") {
+    filteredData.sort(
+      (a, b) => (b.missing?.length || 0) - (a.missing?.length || 0),
+    );
+  }
+
+  document.getElementById("pendingCount").innerText = filteredData.length;
+
+  currentPage = 1;
+  renderPendingTable();
+  renderPendingSummary();
+}
+
+function getRiskBadgeClass(row) {
+  const freq = (row.frequency || "").toLowerCase();
+  const missingCount = row.missing?.length || 0;
+
+  if (freq === "daily") {
+    if (missingCount >= 5) return "bg-danger";
+    if (missingCount >= 2) return "bg-warning text-dark";
+    if (missingCount >= 1) return "bg-success";
+  }
+
+  if (freq === "weekly") {
+    if (missingCount >= 2) return "bg-danger";
+    if (missingCount === 1) return "bg-warning text-dark";
+  }
+
+  if (freq === "monthly") {
+    if (missingCount >= 1) return "bg-danger";
+  }
+
+  return "bg-secondary";
+}
+
+function renderPendingSummary() {
+  let daily = 0;
+  let weekly = 0;
+  let monthly = 0;
+
+  filteredData.forEach((row) => {
+    const freq = row.frequency.toLowerCase();
+
+    if (freq === "daily") daily++;
+    if (freq === "weekly") weekly++;
+    if (freq === "monthly") monthly++;
+  });
+
+  document.getElementById("summaryDaily").innerText = daily;
+  document.getElementById("summaryWeekly").innerText = weekly;
+  document.getElementById("summaryMonthly").innerText = monthly;
+  document.getElementById("summaryTotal").innerText = filteredData.length;
+}

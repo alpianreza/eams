@@ -415,13 +415,41 @@ class ComplianceDashboardController extends BaseController
   {
     try {
 
-      $today = new \DateTime();
-      $year  = $today->format('Y');
-      $month = $today->format('m');
-      $ym    = $today->format('Y-m');
-      $todayStr = $today->format('Y-m-d');
+      // ============================
+      // PARAMETER FILTER
+      // ============================
 
-      // === 1) Ambil semua inventory aktif + frequency
+      $year  = date('Y');
+      $month = $this->request->getGet('month') ?? date('m');
+      $filterFrequency = $this->request->getGet('frequency');
+
+      $currentMonth = date('m');
+      $currentDay   = date('d');
+
+      // ============================
+      // TENTUKAN RANGE PERIODE
+      // ============================
+
+      if ($month == $currentMonth) {
+        // Bulan aktif → sampai hari ini
+        $endDate = new \DateTime($year . '-' . $month . '-' . $currentDay);
+        $currentWeek = ceil($currentDay / 7);
+      } else {
+        // Bulan lama → full bulan
+        $endDate = new \DateTime($year . '-' . $month . '-01');
+        $endDate->modify('last day of this month');
+        $currentWeek = 4;
+      }
+
+      if ($currentWeek > 4) $currentWeek = 4;
+
+      $ym = $year . '-' . $month;
+      $todayStr = $endDate->format('Y-m-d');
+
+      // ============================
+      // AMBIL INVENTORY
+      // ============================
+
       $inventoryModel = new \App\Models\ComplianceInventoryModel();
 
       $inventories = $inventoryModel
@@ -449,7 +477,10 @@ class ComplianceDashboardController extends BaseController
       $workDates = [];
       $start = new \DateTime($ym . '-01');
 
-      while ($start <= $today) {
+      $start = new \DateTime($ym . '-01');
+
+      while ($start <= $endDate) {
+
 
         $dateStr = $start->format('Y-m-d');
         $dayOfWeek = $start->format('w'); // 0 = Sunday
@@ -468,6 +499,9 @@ class ComplianceDashboardController extends BaseController
       foreach ($inventories as $inv) {
 
         $frequency = $inv['checklist_frequency'];
+        if ($filterFrequency && $frequency !== $filterFrequency) {
+          continue;
+        }
         $missing   = [];
         $status    = 'OK';
 
@@ -502,8 +536,14 @@ class ComplianceDashboardController extends BaseController
         // ======================
         if ($frequency === 'weekly') {
 
-          $currentWeek = ceil($today->format('d') / 7);
+          if ($month == $currentMonth) {
+            $currentWeek = ceil($currentDay / 7);
+          } else {
+            $currentWeek = 4; // full 1 bulan
+          }
+
           if ($currentWeek > 4) $currentWeek = 4;
+
 
           for ($w = 1; $w <= $currentWeek; $w++) {
 

@@ -361,3 +361,11 @@
   color: #fff !important;
   border-radius: 4px !important;
 }
+
+.pending-badge {
+  transition: all 0.2s ease;
+}
+
+.pending-badge:hover {
+  transform: scale(1.05);
+}
