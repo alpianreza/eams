@@ -18,13 +18,35 @@ $seg2 = $segments[1] ?? '';
       <ul class="nav sidebar-menu flex-column" role="menu">
 
         <!-- DASHBOARD -->
-        <li class="nav-item">
-          <a href="<?= base_url('/') ?>"
-            class="nav-link <?= $seg1 === '' ? 'active' : '' ?>">
-            <i class="nav-icon bi bi-speedometer2"></i>
-            <p>Dashboard</p>
-          </a>
-        </li>
+        <?php if (in_array(session('role'), ['admin'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('/') ?>"
+              class="nav-link <?= $seg1 === '' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-speedometer2"></i>
+              <p>Dashboard</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
+        <?php if (in_array(session('role'), ['staff', 'compliance', 'admin'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('home') ?>" class="nav-link d-flex justify-content-between align-items-center">
+
+              <span>
+                <i class="bi bi-house me-2"></i>
+                Home
+              </span>
+
+              <?php if (!empty($notifCount) && $notifCount > 0): ?>
+                <span class="badge bg-danger">
+                  <?= $notifCount ?>
+                </span>
+              <?php endif; ?>
+
+            </a>
+
+          </li>
+        <?php endif; ?>
 
         <!-- ================= IT ASSET ================= -->
         <?php if (hasRole(['admin', 'compliance'])): ?>
@@ -47,6 +69,9 @@ $seg2 = $segments[1] ?? '';
           </li>
         <?php endif; ?>
 
+
+
+
         <!-- ================= COMPLIANCE ================= -->
         <?php if (hasRole(['admin', 'compliance', 'staff', 'auditor'])): ?>
           <li class="nav-header">COMPLIANCE</li>
@@ -62,6 +87,20 @@ $seg2 = $segments[1] ?? '';
             </a>
           </li>
         <?php endif; ?>
+
+        <?php if (in_array($role, ['admin', 'compliance'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('compliance/progress') ?>"
+              class="nav-link d-flex justify-content-between align-items-center
+       <?= service('uri')->getSegment(2) == 'progress' ? 'active' : '' ?>">
+              <span>
+                <i class="bi bi-graph-up me-2"></i>
+                Monitoring Progress
+              </span>
+            </a>
+          </li>
+        <?php endif; ?>
+
 
         <!-- CHECKLIST & INVENTORY -->
         <?php if (hasRole(['admin', 'compliance', 'staff'])): ?>

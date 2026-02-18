@@ -369,3 +369,25 @@
 .pending-badge:hover {
   transform: scale(1.05);
 }
+
+/* Home dashboard card border */
+
+.border-left-info {
+  border-left: 4px solid #17a2b8 !important;
+}
+
+.border-left-warning {
+  border-left: 4px solid #ffc107 !important;
+}
+
+.border-left-danger {
+  border-left: 4px solid #dc3545 !important;
+}
+
+.border-left-success {
+  border-left: 4px solid #28a745 !important;
+}
+
+.opacity-50 {
+  opacity: 0.4;
+}

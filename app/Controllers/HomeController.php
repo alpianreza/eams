@@ -20,27 +20,32 @@ class HomeController extends BaseController
   public function index()
   {
     helper('period');
-    $userName = preg_replace('/\s+/', ' ', trim(session('name')));
 
-    // ambil 2 kata pertama user
-    $nameParts = explode(' ', $userName);
+    $userName      = trim(session('name'));
+    $selectedMonth = $this->request->getGet('month') ?? date('Y-m');
 
-    $firstTwoWords = implode(' ', array_slice($nameParts, 0, 2));
-    $firstTwoWords = preg_quote($firstTwoWords, '/');
+    [$year, $month] = explode('-', $selectedMonth);
+    $month = str_pad($month, 2, '0', STR_PAD_LEFT);
 
-    $pattern = "(^| - ){$firstTwoWords}($| - )";
+    $ym = $year . '-' . $month;
 
+    // Ambil nama depan
+    $nameParts = explode(' ', trim($userName));
+    $firstName = trim($nameParts[0]);
+    $firstName = preg_quote($firstName, '/');
+
+    $pattern = "(^|[\n\- ]+)" . $firstName . "( |$)";
 
     $inventories = $this->inventoryModel
       ->select('
-    compliance_inventory.*,
-    asset_item_types.name as item_name,
-    asset_item_types.checklist_frequency
+        compliance_inventory.*,
+        asset_item_types.name as item_name,
+        asset_item_types.checklist_frequency
     ')
-
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
       ->where("compliance_inventory.pic REGEXP '{$pattern}'", null, false)
       ->findAll();
+
 
 
 
@@ -52,166 +57,185 @@ class HomeController extends BaseController
       'done'    => 0
     ];
 
-    $pendingList = [];
-
+    $pendingList   = [];
     $totalRequired = 0;
     $totalDone     = 0;
-
+    $totalMissing  = 0;
+    $totalNotOk    = 0;
 
     foreach ($inventories as $inv) {
 
       $summary['total']++;
 
-      // 🔥 pakai helper yang benar
-      $periodKey = generate_period_key($inv['checklist_frequency']);
+      $frequency        = $inv['checklist_frequency'];
+      $inv['remaining'] = 0;
 
-      $log = $this->logModel
-        ->where('inventory_id', $inv['id'])
-        ->where('period_key', $periodKey)
-        ->first();
+      // =========================
+      // Tentukan batas hari
+      // =========================
+      if ($selectedMonth == date('Y-m')) {
+        $currentDay = date('d');
+      } else {
+        $currentDay = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+      }
 
-      if (!$log) {
-        $summary['pending']++;
+      // =========================
+      // DAILY
+      // =========================
+      if ($frequency === 'daily') {
 
-        // cek apakah sudah lewat → LATE
-        if (is_period_late($inv['checklist_frequency'], $periodKey)) {
-          $summary['late']++;
-        }
+        $holidayModel = new \App\Models\HolidayModel();
 
-        $inv['remaining'] = 0;
+        $holidays = $holidayModel
+          ->where('holiday_date >=', $ym . '-01')
+          ->where('holiday_date <=', $ym . '-' . $currentDay)
+          ->findAll();
 
-        $frequency = $inv['checklist_frequency'];
+        $holidayDates = array_column($holidays, 'holiday_date');
 
-        if ($frequency === 'daily') {
+        for ($d = 1; $d <= $currentDay; $d++) {
 
-          $year  = date('Y');
-          $month = date('m');
-          $currentDay = date('d');
+          $date = $ym . '-' . str_pad($d, 2, '0', STR_PAD_LEFT);
+          $dayOfWeek = date('w', strtotime($date));
 
-          $ym = $year . '-' . $month;
+          // skip Minggu & libur
+          if ($dayOfWeek == 0) continue;
+          if (in_array($date, $holidayDates)) continue;
 
-          $endDate = new \DateTime($ym . '-' . $currentDay);
+          $totalRequired++;
 
-          $holidayModel = new \App\Models\HolidayModel();
-          $holidays = $holidayModel
-            ->where('holiday_date >=', $ym . '-01')
-            ->where('holiday_date <=', $ym . '-' . $currentDay)
-            ->findAll();
+          $exists = $this->logModel
+            ->where('inventory_id', $inv['id'])
+            ->where('period_key', $date)   // 🔥 FIX disini
+            ->countAllResults();
 
-          $holidayDates = array_column($holidays, 'holiday_date');
+          if ($exists > 0) {
 
-          $workDates = [];
-          $start = new \DateTime($ym . '-01');
+            $totalDone++;
 
-          while ($start <= $endDate) {
-
-            $dateStr = $start->format('Y-m-d');
-            $dayOfWeek = $start->format('w');
-
-            if ($dayOfWeek != 0 && !in_array($dateStr, $holidayDates)) {
-              $workDates[] = $dateStr;
-            }
-
-            $start->modify('+1 day');
-          }
-
-          $missing = [];
-
-          $totalRequired += count($workDates);
-
-          foreach ($workDates as $date) {
-
-            $exists = $this->logModel
+            $hasNotOk = $this->logModel
               ->where('inventory_id', $inv['id'])
-              ->where('period_key', $date)
+              ->where('period_key', $date)   // 🔥 FIX disini juga
+              ->where('status', 'not_ok')
               ->countAllResults();
 
-            if ($exists) {
-              $totalDone++;
-            } else {
-              $missing[] = $date;
+            if ($hasNotOk > 0) {
+              $totalNotOk++;
             }
+          } else {
+            $totalMissing++;
+            $inv['remaining']++;
           }
-
-
-          $inv['remaining'] = count($missing);
         }
-
-        if ($frequency === 'weekly') {
-
-          $year  = date('Y');
-          $month = date('m');
-          $currentDay = date('d');
-
-          $currentWeek = ceil($currentDay / 7);
-          if ($currentWeek > 4) $currentWeek = 4;
-
-          $ym = $year . '-' . $month;
-
-          $missing = [];
-
-          $totalRequired += $currentWeek;
+      }
 
 
-          for ($w = 1; $w <= $currentWeek; $w++) {
+      // =========================
+      // WEEKLY
+      // =========================
+      if ($frequency === 'weekly') {
 
-            $periodKey = $ym . '-W' . $w;
+        $currentWeek = ceil($currentDay / 7);
+        if ($currentWeek > 4) $currentWeek = 4;
 
-            $exists = $this->logModel
-              ->where('inventory_id', $inv['id'])
-              ->where('period_key', $periodKey)
-              ->countAllResults();
+        $totalRequired += $currentWeek;
 
-            if ($exists) {
-              $totalDone++;
-            } else {
-              $missing[] = $periodKey;
-            }
-          }
+        for ($w = 1; $w <= $currentWeek; $w++) {
 
-          $inv['remaining'] = count($missing);
-        }
-
-        if ($frequency === 'monthly') {
-
-          $ym = date('Y-m');
-
-          $totalRequired += 1;
+          $periodKey = $ym . '-W' . $w;
 
           $exists = $this->logModel
             ->where('inventory_id', $inv['id'])
             ->where('period_key', $ym)
             ->countAllResults();
 
-          if ($exists) {
+          if ($exists > 0) {
+
             $totalDone++;
+
+            $hasNotOk = $this->logModel
+              ->where('inventory_id', $inv['id'])
+              ->where('period_key', $ym)
+              ->where('status', 'not_ok')
+              ->countAllResults();
+
+            if ($hasNotOk > 0) {
+              $totalNotOk++; // 🔥 hanya +1 per periode
+            }
+          } else {
+            $totalMissing++;
+            $inv['remaining']++;
           }
-
-          $inv['remaining'] = $exists ? 0 : 1;
         }
+      }
 
-        $pendingList[] = $inv;
-        continue;
+      // =========================
+      // MONTHLY
+      // =========================
+      if ($frequency === 'monthly') {
+
+        $totalRequired += 1;
+
+        $exists = $this->logModel
+          ->where('inventory_id', $inv['id'])
+          ->where('period_key', $ym)
+          ->countAllResults();
+
+        if ($exists > 0) {
+
+          $totalDone++;
+
+          $hasNotOk = $this->logModel
+            ->where('inventory_id', $inv['id'])
+            ->where('period_key', $ym)
+            ->where('status', 'not_ok')
+            ->countAllResults();
+
+          if ($hasNotOk > 0) {
+            $totalNotOk++; // 🔥 hanya +1 per periode
+          }
+        } else {
+          $totalMissing++;
+          $inv['remaining']++;
+        }
       }
 
       $pendingList[] = $inv;
-
-      $summary['done']++;
-
-      if ($log['status'] === 'not_ok') {
-        $summary['not_ok']++;
-      }
     }
+
+    // =========================
+    // FINAL KPI
+    // =========================
+    $summary['pending'] = $totalMissing;
+    $summary['not_ok']  = $totalNotOk;
 
     $progress = $totalRequired > 0
       ? round(($totalDone / $totalRequired) * 100)
       : 0;
 
-
     return view('home/index', [
-      'summary'     => $summary,
-      'pendingList' => $pendingList,
-      'progress'    => $progress
+      'summary'       => $summary,
+      'pendingList'   => $pendingList,
+      'progress'      => $progress,
+      'selectedMonth' => $selectedMonth
     ]);
+
+    $notifCount = $summary['pending'] + $summary['late'];
+
+    $notifications = [];
+
+    if ($summary['pending'] > 0) {
+      $notifications[] = [
+        'icon' => 'fas fa-clock text-warning',
+        'text' => $summary['pending'] . ' periode belum checklist'
+      ];
+    }
+
+    if ($summary['late'] > 0) {
+      $notifications[] = [
+        'icon' => 'fas fa-exclamation-circle text-danger',
+        'text' => $summary['late'] . ' periode sudah melewati batas waktu'
+      ];
+    }
   }
 }

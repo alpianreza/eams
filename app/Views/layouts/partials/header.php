@@ -21,6 +21,7 @@
        </span>
      </div>
 
+
      <!-- RIGHT: User -->
      <?php
       $userPhoto = session()->get('photo');
@@ -29,7 +30,65 @@
         : 'https://ui-avatars.com/api/?name=' . urlencode(session()->get('name'));
       ?>
 
-     <ul class="navbar-nav ms-auto">
+     <?php
+      $notifCount = $notifCount ?? 0;
+      $notifications = $notifications ?? [];
+      ?>
+
+     <ul class="navbar-nav ms-auto align-items-center">
+
+       <!-- Notification Bell -->
+       <li class="nav-item dropdown me-3">
+         <a class="nav-link position-relative"
+           data-bs-toggle="dropdown"
+           href="#">
+
+           <i class="bi bi-bell fs-5"></i>
+
+           <?php if ($notifCount > 0): ?>
+             <span class="position-absolute badge bg-danger rounded-pill"
+               style="
+        top: 2px;
+        right: -4px;
+        font-size: 9px;
+        padding: 2px 5px;
+      ">
+               <?= $notifCount ?>
+             </span>
+
+           <?php endif; ?>
+
+         </a>
+
+         <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+
+           <li class="dropdown-header">
+             <?= $notifCount ?> Notifikasi
+           </li>
+
+           <li>
+             <hr class="dropdown-divider">
+           </li>
+
+           <?php if ($notifCount > 0): ?>
+             <li>
+               <a href="<?= base_url('home') ?>" class="dropdown-item small">
+                 <i class="bi bi-clock text-warning me-2"></i>
+                 <?= $notifCount ?> periode perlu perhatian
+               </a>
+             </li>
+           <?php else: ?>
+             <li>
+               <span class="dropdown-item text-muted small">
+                 Tidak ada notifikasi
+               </span>
+             </li>
+           <?php endif; ?>
+
+         </ul>
+
+       </li>
+
        <li class="nav-item dropdown">
          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
            data-bs-toggle="dropdown" href="#">

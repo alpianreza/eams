@@ -206,3 +206,9 @@ $routes->get(
 );
 
 $routes->get('/home', 'HomeController::index', ['filter' => 'auth']);
+
+$routes->get('compliance/progress', 'ProgressController::index', ['filter' => 'auth']);
+$routes->get('compliance/progress/ajax', 'ProgressController::getProgressAjax');
+
+$routes->get('compliance/progress/export', 'ProgressController::export');
+$routes->get('compliance/progress/detail', 'ProgressController::getUserDetailAjax');
