@@ -39,7 +39,6 @@ $seg2 = $segments[1] ?? '';
     <link rel="stylesheet" href="<?= base_url('assets/css/mobile.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/inventory-detail.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/inventory-mobile.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/login.css') ?>">
     <?= $this->renderSection('styles') ?>
 

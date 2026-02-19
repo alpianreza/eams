@@ -67,6 +67,8 @@ class HomeController extends BaseController
 
       $summary['total']++;
 
+      $missingPeriods = [];
+
       $frequency        = $inv['checklist_frequency'];
       $inv['remaining'] = 0;
 
@@ -125,8 +127,10 @@ class HomeController extends BaseController
           } else {
             $totalMissing++;
             $inv['remaining']++;
+            $missingPeriods[] = str_pad($d, 2, '0', STR_PAD_LEFT);
           }
         }
+        $inv['missing_periods'] = $missingPeriods;
       }
 
 
@@ -155,7 +159,7 @@ class HomeController extends BaseController
 
             $hasNotOk = $this->logModel
               ->where('inventory_id', $inv['id'])
-              ->where('period_key', $ym)
+              ->where('period_key', $periodKey)
               ->where('status', 'not_ok')
               ->countAllResults();
 
@@ -165,8 +169,11 @@ class HomeController extends BaseController
           } else {
             $totalMissing++;
             $inv['remaining']++;
+
+            $missingPeriods[] = str_pad($w, 2, '0', STR_PAD_LEFT);
           }
         }
+        $inv['missing_periods'] = $missingPeriods;
       }
 
       // =========================
@@ -197,9 +204,11 @@ class HomeController extends BaseController
         } else {
           $totalMissing++;
           $inv['remaining']++;
+
+          $missingPeriods[] = str_pad($month, 2, '0', STR_PAD_LEFT);
         }
       }
-
+      $inv['missing_periods'] = $missingPeriods;
       $pendingList[] = $inv;
     }
 

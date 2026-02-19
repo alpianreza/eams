@@ -107,6 +107,8 @@ $title = 'Compliance Inventory';
 
   <?= $this->include('compliance/inventory/_modal_edit') ?>
 
+  <link rel="stylesheet" href="<?= base_url('assets/css/inventory-mobile.css') ?>">
+
   <script>
     const BASE_URL = "<?= base_url() ?>";
   </script>

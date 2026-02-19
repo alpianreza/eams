@@ -26,7 +26,7 @@
     ?>
 
     <!-- Total Inventory -->
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-6 col-md-6 col-lg-3 mb-3">
       <div class="card shadow-sm h-100 border-left-info">
         <div class="card-body">
           <div class="d-flex justify-content-between">
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Pending -->
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-6 col-md-6 col-lg-3 mb-3">
       <div class="card shadow-sm h-100 border-left-warning">
         <div class="card-body">
           <div class="d-flex justify-content-between">
@@ -60,7 +60,7 @@
     </div>
 
     <!-- Not OK -->
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-6 col-md-6 col-lg-3 mb-3">
       <div class="card shadow-sm h-100 border-left-danger">
         <div class="card-body">
           <div class="d-flex justify-content-between">
@@ -77,7 +77,7 @@
     </div>
 
     <!-- Progress -->
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-6 col-md-6 col-lg-3 mb-3">
       <div class="card shadow-sm h-100 border-left-success">
         <div class="card-body">
           <div class="d-flex justify-content-between">
@@ -156,78 +156,204 @@
     </div>
 
     <div class="card-body p-0">
-      <table class="table table-hover table-striped mb-0">
-        <thead class="thead-light">
-          <tr>
-            <th width="5%">No</th>
-            <th>Nama Item</th>
-            <th>Lokasi</th>
-            <th width="12%">Frekuensi</th>
-            <th width="10%">Sisa</th>
-            <th width="12%">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-
-          <?php if (empty($pendingList)) : ?>
-
+      <div class="table-responsive">
+        <table class="table table-hover table-striped mb-0">
+          <thead class="thead-light">
             <tr>
-              <td colspan="6" class="text-center py-5">
-                <i class="fas fa-check-circle text-success fa-3x mb-3"></i><br>
-                <strong>Semua periode sudah selesai 🎉</strong><br>
-                <small class="text-muted">
-                  Pertahankan konsistensi kamu!
-                </small>
-              </td>
+              <th width="5%" class="text-center">#</th>
+              <th>Nama Item</th>
+              <th>Lokasi</th>
+              <th class="d-none d-md-table-cell" width="12%">Frekuensi</th>
+              <th width="10%">Sisa</th>
+              <th width="12%">Aksi</th>
             </tr>
+          </thead>
+          <tbody>
 
-          <?php else: ?>
-
-            <?php foreach ($pendingList as $i => $inv): ?>
-
-              <?php
-              if ($inv['remaining'] == 0) {
-                $badgeColor = 'bg-success';
-              } elseif ($inv['remaining'] <= 3) {
-                $badgeColor = 'bg-warning';
-              } else {
-                $badgeColor = 'bg-danger';
-              }
-              ?>
+            <?php if (empty($pendingList)) : ?>
 
               <tr>
-                <td><?= $i + 1 ?></td>
-                <td>
-                  <strong><?= $inv['item_name'] ?? '-' ?></strong>
-                </td>
-                <td><?= $inv['specific_area'] ?? '-' ?></td>
-                <td>
-                  <span class="badge badge-light">
-                    <?= ucfirst($inv['checklist_frequency']) ?>
-                  </span>
-                </td>
-                <td>
-                  <span class="badge <?= $badgeColor ?>">
-                    <?= $inv['remaining'] ?>
-                  </span>
-                </td>
-                <td>
-                  <a href="<?= base_url('compliance/inventory/detail/' . $inv['id']) ?>"
-                    class="btn btn-sm btn-primary">
-                    <i class="fas fa-check mr-1"></i> Checklist
-                  </a>
+                <td colspan="6" class="text-center py-5">
+                  <i class="fas fa-check-circle text-success fa-3x mb-3"></i><br>
+                  <strong>Semua periode sudah selesai 🎉</strong><br>
+                  <small class="text-muted">
+                    Pertahankan konsistensi kamu!
+                  </small>
                 </td>
               </tr>
 
-            <?php endforeach ?>
+            <?php else: ?>
 
-          <?php endif; ?>
+              <?php foreach ($pendingList as $i => $inv): ?>
 
-        </tbody>
-      </table>
+                <?php
+                if ($inv['remaining'] == 0) {
+                  $badgeColor = 'bg-success';
+                } elseif ($inv['remaining'] <= 3) {
+                  $badgeColor = 'bg-warning';
+                } else {
+                  $badgeColor = 'bg-danger';
+                }
+                ?>
+
+                <tr>
+                  <td class="text-center"><?= $i + 1 ?></td>
+                  <td>
+                    <strong><?= $inv['item_name'] ?? '-' ?></strong>
+                  </td>
+                  <td><?= $inv['specific_area'] ?? '-' ?></td>
+                  <td class="d-none d-md-table-cell">
+                    <span class="badge bg-light text-dark">
+                      <?= ucfirst($inv['checklist_frequency']) ?>
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      class="badge <?= $badgeColor ?> border-0 open-popover"
+                      data-id="<?= $inv['id'] ?>"
+                      data-frequency="<?= $inv['checklist_frequency'] ?>"
+                      data-missing='<?= json_encode($inv['missing_periods'] ?? []) ?>'>
+                      <?= $inv['remaining'] ?>
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-primary open-popover w-100 w-md-auto"
+                      data-id="<?= $inv['id'] ?>"
+                      data-frequency="<?= $inv['checklist_frequency'] ?>"
+                      data-missing='<?= json_encode($inv['missing_periods'] ?? []) ?>'>
+                      <i class="fas fa-check"></i>
+                      <span class="d-none d-md-inline">Checklist</span>
+                    </button>
+                  </td>
+                </tr>
+
+              <?php endforeach ?>
+
+            <?php endif; ?>
+
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
 </div>
+
+<style>
+  @media(max-width:768px) {
+
+    .w-md-auto {
+      width: auto !important;
+    }
+
+    item-name {
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* font tabel */
+    .table {
+      font-size: .60rem;
+    }
+
+    /* padding sel */
+    .table td,
+    .table th {
+      padding: .35rem .45rem;
+      line-height: 1.2;
+    }
+
+    /* header lebih kecil */
+    .table thead th {
+      font-size: .7rem;
+      font-weight: 600;
+    }
+
+    /* badge kecil */
+    .badge {
+      font-size: .65rem;
+      padding: .25em .45em;
+    }
+
+    /* tombol kecil */
+    .btn-sm {
+      font-size: .7rem;
+      padding: .25rem .4rem;
+    }
+
+    /* judul card */
+    .card-header h6 {
+      font-size: .85rem;
+    }
+
+    /* subtitle */
+    .card-header small {
+      font-size: .7rem;
+    }
+
+  }
+</style>
+
+
+<!-- ================= POPOVER JS ================= -->
+<script>
+  document.addEventListener("click", function(e) {
+
+    const btn = e.target.closest(".open-popover");
+    if (!btn) return;
+
+    const id = btn.dataset.id;
+    const freq = btn.dataset.frequency;
+    const missing = JSON.parse(btn.dataset.missing || "[]");
+
+    let html = "";
+
+    if (missing.length === 0) {
+      html = `<span class="text-success">Semua selesai</span>`;
+    } else {
+
+      html += `<div class="d-flex flex-wrap gap-1">`;
+
+      missing.forEach(p => {
+
+        let periodKey;
+
+        if (freq === 'daily') {
+          periodKey = "<?= $selectedMonth ?>-" + p;
+        } else if (freq === 'weekly') {
+          periodKey = "<?= $selectedMonth ?>-W" + p;
+        } else {
+          periodKey = "<?= $selectedMonth ?>";
+        }
+
+        html += `
+      <a href="<?= base_url('compliance/checklist') ?>/${id}?period_key=${periodKey}"
+         class="badge bg-warning text-decoration-none">
+         ${p}
+      </a>`;
+      });
+
+      html += "</div>";
+    }
+
+    // destroy popover lama
+    if (btn._popover) {
+      btn._popover.dispose();
+    }
+
+    btn._popover = new bootstrap.Popover(btn, {
+      html: true,
+      content: html,
+      trigger: 'focus',
+      placement: window.innerWidth < 768 ? 'bottom' : 'left'
+    });
+
+    btn._popover.show();
+
+  });
+</script>
 
 <?= $this->endSection() ?>

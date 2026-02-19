@@ -80,7 +80,13 @@ class ProgressController extends BaseController
       $pattern = "(^|[\n\- ]+)" . $firstName . "( |$)";
 
       $inventories = $this->inventoryModel
-        ->select('compliance_inventory.id, asset_item_types.checklist_frequency')
+        ->select('
+          compliance_inventory.id,
+          compliance_inventory.specific_area,
+          asset_item_types.name as item_name,
+          asset_item_types.checklist_frequency
+        ')
+
         ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
         ->where("compliance_inventory.pic REGEXP '{$pattern}'", null, false)
         ->findAll();
@@ -90,9 +96,12 @@ class ProgressController extends BaseController
       $pending       = 0;
       $late          = 0;
 
+      $detailMissing = [];
+
       foreach ($inventories as $inv) {
 
         $frequency = $inv['checklist_frequency'];
+        $missingPeriods = [];
 
         // ================= DAILY =================
         if ($frequency === 'daily') {
@@ -116,11 +125,22 @@ class ProgressController extends BaseController
               $totalDone++;
             } else {
               $pending++;
+              $missingPeriods[] = date('d', strtotime($date));
+
               if (is_period_late('daily', $date)) {
                 $late++;
               }
             }
           }
+
+          $detailMissing[] = [
+            'inventory' => ($inv['item_name'] ?? 'Item') .
+              ' — ' .
+              ($inv['specific_area'] ?? '-'),
+            'frequency' => ucfirst($frequency),
+            'missing'   => $missingPeriods
+          ];
+
 
           continue;
         }
@@ -150,11 +170,22 @@ class ProgressController extends BaseController
               $totalDone++;
             } else {
               $pending++;
+              $missingPeriods[] = "W{$w}";
+
               if (is_period_late('weekly', $periodKey)) {
                 $late++;
               }
             }
           }
+
+          $detailMissing[] = [
+            'inventory' => ($inv['item_name'] ?? 'Item') .
+              ' — ' .
+              ($inv['specific_area'] ?? '-'),
+            'frequency' => ucfirst($frequency),
+            'missing'   => $missingPeriods
+          ];
+
 
           continue;
         }
@@ -173,10 +204,20 @@ class ProgressController extends BaseController
             $totalDone++;
           } else {
             $pending++;
+            $missingPeriods[] = 'Belum';
+
             if (is_period_late('monthly', $ym)) {
               $late++;
             }
           }
+
+          $detailMissing[] = [
+            'inventory' => ($inv['item_name'] ?? 'Item') .
+              ' — ' .
+              ($inv['specific_area'] ?? '-'),
+            'frequency' => ucfirst($frequency),
+            'missing'   => $missingPeriods
+          ];
         }
       }
 
@@ -192,7 +233,8 @@ class ProgressController extends BaseController
         'pending'        => $pending,
         'late'           => $late,
         'progress'       => $progress,
-        'id'             => $user['id']
+        'id'             => $user['id'],
+        'detailMissing'  => $detailMissing
       ];
     }
 

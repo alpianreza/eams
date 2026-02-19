@@ -92,30 +92,27 @@
     const container = document.getElementById("progressTableContainer");
     const summaryDiv = document.getElementById("summaryCards");
     const monthSelect = document.getElementById("monthFilter");
+    const exportBtn = document.getElementById("exportBtn");
 
     let currentController = null;
+    let progressUsers = [];
 
-    function loadData() {
-
-      let month = monthSelect.value;
-
-      // 🔥 Abort request lama
-      if (currentController) {
-        currentController.abort();
-      }
-
-      currentController = new AbortController();
-
-      // 🔄 Loading Spinner
-      container.innerHTML = `
+    function showLoading(el) {
+      el.innerHTML = `
       <div class="text-center py-4">
         <div class="spinner-border spinner-border-sm text-primary"></div>
       </div>`;
+    }
 
-      summaryDiv.innerHTML = `
-      <div class="col-12 text-center py-2">
-        <div class="spinner-border spinner-border-sm text-secondary"></div>
-      </div>`;
+    function loadData() {
+
+      const month = monthSelect.value;
+
+      if (currentController) currentController.abort();
+      currentController = new AbortController();
+
+      showLoading(container);
+      showLoading(summaryDiv);
 
       fetch(`<?= base_url('compliance/progress/ajax') ?>?month=${month}`, {
           signal: currentController.signal
@@ -123,98 +120,96 @@
         .then(res => res.json())
         .then(data => {
 
+          progressUsers = data;
+
           // ===== SUMMARY =====
           const totalUser = data.length;
 
           const avgProgress = totalUser > 0 ?
-            Math.round(data.reduce((sum, u) => sum + u.progress, 0) / totalUser) :
+            Math.round(data.reduce((s, u) => s + u.progress, 0) / totalUser) :
             0;
 
-          const totalPending = data.reduce((sum, u) => sum + u.pending, 0);
-          const totalLate = data.reduce((sum, u) => sum + u.late, 0);
+          const totalPending = data.reduce((s, u) => s + u.pending, 0);
+          const totalLate = data.reduce((s, u) => s + u.late, 0);
 
           summaryDiv.innerHTML = `
-          <div class="col-md-3">
-            <div class="card shadow-sm text-center p-2">
-              <small>Total User</small>
-              <h5>${totalUser}</h5>
-            </div>
+        <div class="col-md-3">
+          <div class="card shadow-sm text-center p-2">
+            <small>Total User</small>
+            <h5>${totalUser}</h5>
           </div>
-          <div class="col-md-3">
-            <div class="card shadow-sm text-center p-2">
-              <small>Avg Progress</small>
-              <h5>${avgProgress}%</h5>
-            </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm text-center p-2">
+            <small>Avg Progress</small>
+            <h5>${avgProgress}%</h5>
           </div>
-          <div class="col-md-3">
-            <div class="card shadow-sm text-center p-2 text-warning">
-              <small>Total Pending</small>
-              <h5>${totalPending}</h5>
-            </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm text-center p-2 text-warning">
+            <small>Total Pending</small>
+            <h5>${totalPending}</h5>
           </div>
-          <div class="col-md-3">
-            <div class="card shadow-sm text-center p-2 text-danger">
-              <small>Total Late</small>
-              <h5>${totalLate}</h5>
-            </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm text-center p-2 text-danger">
+            <small>Total Late</small>
+            <h5>${totalLate}</h5>
           </div>
-        `;
+        </div>
+      `;
 
           // ===== TABLE =====
           let html = `
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>User</th>
-                <th>Total Periode</th>
-                <th>Done</th>
-                <th>Pending</th>
-                <th>Late</th>
-                <th width="20%">Progress</th>
-              </tr>
-            </thead>
-            <tbody>`;
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>User</th>
+              <th>Total Periode</th>
+              <th>Done</th>
+              <th>Pending</th>
+              <th>Late</th>
+              <th width="20%">Progress</th>
+            </tr>
+          </thead>
+          <tbody>`;
 
           if (data.length === 0) {
             html += `
-            <tr>
-              <td colspan="6" class="text-center py-4 text-muted">
-                Tidak ada data
-              </td>
-            </tr>`;
+          <tr>
+            <td colspan="6" class="text-center py-4 text-muted">
+              Tidak ada data
+            </td>
+          </tr>`;
           }
 
           data.forEach(u => {
 
             let color = 'bg-success';
-
-            if (u.progress < 50) {
-              color = 'bg-danger';
-            } else if (u.progress < 80) {
-              color = 'bg-warning';
-            }
+            if (u.progress < 50) color = 'bg-danger';
+            else if (u.progress < 80) color = 'bg-warning';
 
             html += `
-              <tr>
-                <td>
-                <a href="#" 
-                  class="user-detail text-decoration-none fw-semibold"
-                  data-id="${u.id}">
-                  ${u.name}
-                </a>
-              </td>
-              <td>${u.required}</td>
-              <td class="text-success">${u.done}</td>
-              <td class="text-warning">${u.pending}</td>
-              <td class="text-danger">${u.late}</td>
-              <td>
-                <div class="progress" style="height:14px;">
-                  <div class="progress-bar ${color}"
-                       style="width:${u.progress}%"></div>
-                </div>
-                <small>${u.progress}%</small>
-              </td>
-            </tr>`;
+          <tr>
+            <td>
+              <a href="#" class="user-detail fw-semibold" data-id="${u.id}">
+                ${u.name}
+              </a>
+            </td>
+            <td>${u.required}</td>
+            <td class="text-success">${u.done}</td>
+            <td class="text-warning">${u.pending}</td>
+            <td class="text-danger">${u.late}</td>
+            <td>
+              <div class="progress" style="height:14px;">
+                <div class="progress-bar ${color}" style="width:${u.progress}%"></div>
+              </div>
+              <small>${u.progress}%</small>
+            </td>
+          </tr>`;
           });
 
           html += "</tbody></table>";
@@ -223,84 +218,73 @@
         })
         .catch(err => {
           if (err.name === "AbortError") return;
+
           container.innerHTML = `
-          <div class="text-center py-4 text-danger">
-            Gagal memuat data
-          </div>`;
+        <div class="text-center py-4 text-danger">
+          Gagal memuat data
+        </div>`;
         });
     }
+
+    // ===== CLICK USER DETAIL =====
+    document.addEventListener("click", function(e) {
+
+      if (!e.target.classList.contains("user-detail")) return;
+
+      e.preventDefault();
+
+      const userId = e.target.dataset.id;
+      const user = progressUsers.find(u => u.id == userId);
+      if (!user) return;
+
+      const modal = new bootstrap.Modal(document.getElementById('userDetailModal'));
+      const modalBody = document.getElementById("modalContent");
+
+      let html = `
+      <h6 class="mb-3">${user.name}</h6>
+      <table class="table table-sm table-bordered">
+        <thead>
+          <tr>
+            <th>Inventory</th>
+            <th>Frekuensi</th>
+            <th>Missing</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+      user.detailMissing.forEach(row => {
+
+        let badges = '';
+
+        if (row.missing.length === 0) {
+          badges = `<span class="badge bg-success">Complete</span>`;
+        } else {
+          badges = row.missing.map(m => `<span class="badge bg-warning me-1">${m}</span>`).join('');
+        }
+
+        html += `
+        <tr>
+          <td>${row.inventory}</td>
+          <td>${row.frequency}</td>
+          <td>${badges}</td>
+        </tr>`;
+      });
+
+      html += "</tbody></table>";
+
+      modalBody.innerHTML = html;
+      modal.show();
+    });
+
+    // ===== EXPORT =====
+    exportBtn.addEventListener("click", () => {
+      window.location.href = "<?= base_url('compliance/progress/export') ?>?month=" + monthSelect.value;
+    });
 
     // INIT
     loadData();
     monthSelect.addEventListener("change", loadData);
 
-  });
-
-  const exportBtn = document.getElementById("exportBtn");
-
-  exportBtn.addEventListener("click", function() {
-
-    const month = document.getElementById("monthFilter").value;
-
-    window.location.href =
-      "<?= base_url('compliance/progress/export') ?>?month=" + month;
-
-  });
-
-  document.addEventListener("click", function(e) {
-
-    if (e.target.classList.contains("user-detail")) {
-
-      e.preventDefault();
-
-      const userId = e.target.dataset.id;
-      const month = document.getElementById("monthFilter").value;
-
-      const modal = new bootstrap.Modal(
-        document.getElementById('userDetailModal')
-      );
-
-      const modalBody = document.getElementById("modalContent");
-
-      modalBody.innerHTML = `
-      <div class="text-center py-4">
-        <div class="spinner-border spinner-border-sm"></div>
-      </div>`;
-
-      modal.show();
-
-      fetch(`<?= base_url('compliance/progress/detail') ?>?user_id=${userId}&month=${month}`)
-        .then(res => res.json())
-        .then(res => {
-
-          let html = `
-          <h6 class="mb-3">${res.name}</h6>
-          <table class="table table-sm table-bordered">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Lokasi</th>
-                <th>Frekuensi</th>
-                <th>Status</th>
-              </tr>
-            </thead><tbody>`;
-
-          res.data.forEach(row => {
-            html += `
-            <tr>
-              <td>${row.item}</td>
-              <td>${row.area}</td>
-              <td>${row.frequency}</td>
-              <td>${row.status}</td>
-            </tr>`;
-          });
-
-          html += "</tbody></table>";
-
-          modalBody.innerHTML = html;
-
-        });
-    }
   });
 </script>
 

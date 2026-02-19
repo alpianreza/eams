@@ -89,6 +89,10 @@ class EamsPdf
 
     $this->mpdf->WriteHTML($html);
 
+    while (ob_get_level()) {
+      ob_end_clean();
+    }
+
     return $this->mpdf->Output(
       $data['filename'] ?? 'laporan.pdf',
       'I'
