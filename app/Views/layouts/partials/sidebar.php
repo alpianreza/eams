@@ -1,9 +1,12 @@
 <?php
 $role = $role ?? session()->get('role') ?? 'viewer';
+
 $segments = service('uri')->getSegments();
 $seg1 = $segments[0] ?? '';
 $seg2 = $segments[1] ?? '';
 
+$isCompliance = $seg1 === 'compliance';
+$isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 ?>
 
 <aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
@@ -18,7 +21,7 @@ $seg2 = $segments[1] ?? '';
       <ul class="nav sidebar-menu flex-column" role="menu">
 
         <!-- DASHBOARD -->
-        <?php if (in_array(session('role'), ['admin'])): ?>
+        <?php if (hasRole(['admin'])): ?>
           <li class="nav-item">
             <a href="<?= base_url('/') ?>"
               class="nav-link <?= $seg1 === '' ? 'active' : '' ?>">
@@ -28,23 +31,18 @@ $seg2 = $segments[1] ?? '';
           </li>
         <?php endif; ?>
 
-        <?php if (in_array(session('role'), ['staff', 'compliance', 'admin'])): ?>
+        <!-- HOME -->
+        <?php if (hasRole(['staff', 'compliance', 'admin'])): ?>
           <li class="nav-item">
-            <a href="<?= base_url('home') ?>" class="nav-link d-flex justify-content-between align-items-center">
-
-              <span>
-                <i class="bi bi-house me-2"></i>
-                Home
-              </span>
+            <a href="<?= base_url('home') ?>"
+              class="nav-link <?= $seg1 === 'home' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-house"></i>
+              <p>Home</p>
 
               <?php if (!empty($notifCount) && $notifCount > 0): ?>
-                <span class="badge bg-danger">
-                  <?= $notifCount ?>
-                </span>
+                <span class="badge bg-danger"><?= $notifCount ?></span>
               <?php endif; ?>
-
             </a>
-
           </li>
         <?php endif; ?>
 
@@ -69,9 +67,6 @@ $seg2 = $segments[1] ?? '';
           </li>
         <?php endif; ?>
 
-
-
-
         <!-- ================= COMPLIANCE ================= -->
         <?php if (hasRole(['admin', 'compliance', 'staff', 'auditor'])): ?>
           <li class="nav-header">COMPLIANCE</li>
@@ -81,35 +76,32 @@ $seg2 = $segments[1] ?? '';
         <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/dashboard') ?>"
-              class="nav-link <?= $seg1 === 'compliance' && $seg2 === 'dashboard' ? 'active' : '' ?>">
+              class="nav-link <?= $isCompliance && $seg2 === 'dashboard' ? 'active' : '' ?>">
               <i class="nav-icon bi bi-clipboard-check"></i>
               <p>Dashboard Compliance</p>
             </a>
           </li>
         <?php endif; ?>
 
-        <?php if (in_array($role, ['admin', 'compliance'])): ?>
+        <!-- PROGRESS -->
+        <?php if (hasRole(['admin', 'compliance'])): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/progress') ?>"
-              class="nav-link d-flex justify-content-between align-items-center
-       <?= service('uri')->getSegment(2) == 'progress' ? 'active' : '' ?>">
-              <span>
-                <i class="bi bi-graph-up me-2"></i>
-                Monitoring Progress
-              </span>
+              class="nav-link <?= $isCompliance && $seg2 === 'progress' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-graph-up"></i>
+              <p>Monitoring Progress</p>
             </a>
           </li>
         <?php endif; ?>
 
-
-        <!-- CHECKLIST & INVENTORY -->
+        <!-- CHECKLIST MENU -->
         <?php if (hasRole(['admin', 'compliance', 'staff'])): ?>
           <li class="nav-item">
-            <a class="nav-link <?= $seg1 === 'compliance' && in_array($seg2, ['inventory', 'checklist']) ? 'active' : '' ?>"
+            <a class="nav-link <?= $isChecklistMenu ? 'active' : '' ?>"
               data-bs-toggle="collapse"
               href="#menuComplianceChecklist"
               role="button"
-              aria-expanded="<?= $seg1 === 'compliance' && in_array($seg2, ['inventory', 'checklist']) ? 'true' : 'false' ?>">
+              aria-expanded="<?= $isChecklistMenu ? 'true' : 'false' ?>">
               <i class="nav-icon bi bi-list-check"></i>
               <p>
                 Checklist
@@ -117,11 +109,9 @@ $seg2 = $segments[1] ?? '';
               </p>
             </a>
 
-            <ul class="collapse nav flex-column ms-4
-            <?= $seg1 === 'compliance' && in_array($seg2, ['inventory', 'checklist']) ? 'show' : '' ?>"
+            <ul class="collapse nav flex-column ms-4 <?= $isChecklistMenu ? 'show' : '' ?>"
               id="menuComplianceChecklist">
 
-              <!-- Inventory -->
               <li class="nav-item">
                 <a href="<?= base_url('compliance/inventory') ?>"
                   class="nav-link <?= $seg2 === 'inventory' ? 'active' : '' ?>">
@@ -130,7 +120,6 @@ $seg2 = $segments[1] ?? '';
                 </a>
               </li>
 
-              <!-- Checklist Master -->
               <?php if (hasRole(['admin', 'compliance'])): ?>
                 <li class="nav-item">
                   <a href="<?= site_url('compliance/checklist/master') ?>"
@@ -145,38 +134,38 @@ $seg2 = $segments[1] ?? '';
           </li>
         <?php endif; ?>
 
-        <!-- HARI LIBUR -->
+        <!-- HOLIDAYS -->
         <?php if (hasRole(['admin', 'compliance'])): ?>
           <li class="nav-item">
             <a href="<?= site_url('holidays') ?>"
-              class="nav-link <?= uri_string() === 'holidays' ? 'active' : '' ?>">
+              class="nav-link <?= $seg1 === 'holidays' ? 'active' : '' ?>">
               <i class="nav-icon bi bi-calendar-event"></i>
               <p>Hari Libur</p>
             </a>
           </li>
         <?php endif; ?>
 
-        <!-- LAPORAN -->
+        <!-- REPORT -->
         <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/report') ?>"
-              class="nav-link <?= $seg1 === 'report' ? 'active' : '' ?>">
+              class="nav-link <?= $isCompliance && $seg2 === 'report' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>Laporan</p>
             </a>
           </li>
         <?php endif; ?>
 
+        <!-- EVIDENCE -->
         <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/evidence') ?>"
-              class="nav-link <?= uri_string() == 'compliance/evidence' ? 'active' : '' ?>">
+              class="nav-link <?= $isCompliance && $seg2 === 'evidence' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-camera"></i>
               <p>Evidence Center</p>
             </a>
           </li>
         <?php endif; ?>
-
 
         <!-- ================= ADMIN ================= -->
         <?php if (hasRole(['admin'])): ?>
