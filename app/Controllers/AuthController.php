@@ -22,6 +22,7 @@ class AuthController extends BaseController
     // proses login
     public function doLogin()
     {
+
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 

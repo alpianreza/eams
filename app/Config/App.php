@@ -29,8 +29,11 @@ class App extends BaseConfig
      *
      * @var list<string>
      */
-    public array $allowedHostnames = [];
-
+    public array $allowedHostnames = [
+        'eams.ptyhs.com',
+        'localhost',
+        '127.0.0.1'
+    ];
     /**
      * --------------------------------------------------------------------------
      * Index File
@@ -180,7 +183,7 @@ class App extends BaseConfig
      *
      * @var array<string, string>
      */
-    public array $proxyIPs = [];
+    public array $proxyIPs = ['*' => 'X-Forwarded-For'];
 
     /**
      * --------------------------------------------------------------------------

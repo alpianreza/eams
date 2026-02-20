@@ -99,175 +99,192 @@ $bulanNama = date('F', strtotime($year . '-' . $month . '-01'));
 
 <!-- ================= HEADER ================= -->
 
-<div class="header-wrap">
+<?php
+$logoPath = FCPATH . 'assets/images/company/logo.png';
+?>
 
-  <!-- HEADER -->
-  <div style="text-align:center; margin-bottom:8px;">
-    <strong style="font-size:14px;">
-      PT. YOUNGHYUN STAR
-    </strong>
+
+<table style="width:100%; border:none; margin-bottom:6px;">
+  <tr>
+
+    <!-- LOGO -->
+    <td style="width:90px; border:none; padding-left:300px;">
+      <?php if (file_exists($logoPath)): ?>
+        <img src="<?= $logoPath ?>" style="width:60px;">
+      <?php endif; ?>
+    </td>
+
+    <!-- TEXT -->
+    <td style="border:none; text-align:center; padding-right:330px;">
+
+      <div style="font-size:14px; font-weight:bold;">
+        PT. YOUNGHYUN STAR
+      </div>
+
+      <div style="font-size:13px; font-weight:bold;">
+        CHECKLIST PENGECEKAN <?= strtoupper((string)$itemName) ?>
+      </div>
+
+    </td>
+
+  </tr>
+</table>
+
+
+<div style="width:100%; font-size:9px; margin-bottom:10px;">
+  <div style="width:40%; float:left;">
+    <strong>Bulan:</strong>
+    <?= $bulanNama ?> <?= $year ?>
   </div>
-  <div style="text-align:center; margin-bottom:8px;">
-    <strong style="font-size:14px;">
-      CHECKLIST PENGECEKAN <?= strtoupper($itemName) ?>
-    </strong>
+
+  <div style="width:25%; float:left;">
+    <strong>Area:</strong>
+    <?= esc($specificArea ?? '-') ?>
   </div>
 
-  <div style="width:100%; font-size:9px; margin-bottom:10px;">
-    <div style="width:40%; float:left;">
-      <strong>Bulan:</strong><br>
-      <?= $bulanNama ?> <?= $year ?>
-    </div>
-
-    <div style="width:33%; float:left;">
-      <strong>Area:</strong><br>
-      <?= esc($specificArea ?? '-') ?>
-    </div>
-
-    <div style="width:25%; float:left;">
-      <strong>No Inventaris:</strong><br>
-      <?= esc($inventory['asset_code']) ?>
-    </div>
-
-    <div style="clear:both;"></div>
+  <div style="width:20%; float:right;">
+    <strong>No Inventaris:</strong>
+    <?= esc($inventory['asset_code']) ?>
   </div>
 
+  <div style="clear:both;"></div>
+</div>
 
 
-  <!-- ================= GRID ================= -->
+<!-- ================= GRID ================= -->
 
-  <table>
-    <thead>
+<table>
+  <thead>
 
-      <tr>
-        <th rowspan="2" class="no-col">NO</th>
-        <th rowspan="2" class="item-col">ITEM PENGECEKAN</th>
-        <th colspan="<?= count($dailyDays) ?>" style="text-align:center;">
-          TANGGAL
+    <tr>
+      <th rowspan="2" class="no-col">NO</th>
+      <th rowspan="2" class="item-col">ITEM PENGECEKAN</th>
+      <th colspan="<?= count($dailyDays) ?>" style="text-align:center;">
+        TANGGAL
+      </th>
+    </tr>
+
+    <tr>
+      <?php foreach ($dailyDays as $date): ?>
+        <?php
+        $isSunday  = date('w', strtotime($date)) == 0;
+        $isHoliday = in_array($date, $holidayDates ?? []);
+        $isOffDay  = $isSunday || $isHoliday;
+        ?>
+        <th class="date-col <?= $isOffDay ? 'offday-header' : '' ?>">
+          <?= date('j', strtotime($date)) ?>
         </th>
-      </tr>
+      <?php endforeach; ?>
+    </tr>
 
+  </thead>
+
+  <tbody>
+
+    <?php $no = 1; ?>
+    <?php foreach ($masters as $q): ?>
       <tr>
+
+        <td class="no-col"><?= $no++ ?></td>
+        <td class="item-col"><?= esc($q['question']) ?></td>
+
         <?php foreach ($dailyDays as $date): ?>
+
           <?php
           $isSunday  = date('w', strtotime($date)) == 0;
           $isHoliday = in_array($date, $holidayDates ?? []);
           $isOffDay  = $isSunday || $isHoliday;
+
+          $status = $dailyGrid[$q['id']][$date] ?? null;
+
+          $symbol = match ($status) {
+            'ok' => '✓',
+            'not_ok' => '✗',
+            'na' => '–',
+            default => ''
+          };
           ?>
-          <th class="date-col <?= $isOffDay ? 'offday-header' : '' ?>">
-            <?= date('j', strtotime($date)) ?>
-          </th>
+
+          <td class="date-col <?= $isOffDay ? 'offday' : '' ?>">
+            <?= !$isOffDay ? $symbol : '' ?>
+          </td>
+
         <?php endforeach; ?>
+
       </tr>
+    <?php endforeach; ?>
 
-    </thead>
+  </tbody>
+</table>
 
-    <tbody>
+<p style="margin-top:5px; font-size:8px;">
+  Keterangan: ✓ = sesuai, ✗ = tidak sesuai, – = tidak berlaku
+</p>
 
-      <?php $no = 1; ?>
-      <?php foreach ($masters as $q): ?>
-        <tr>
+<!-- ================= TEMUAN ================= -->
+<?php if (!empty($findings)): ?>
 
-          <td class="no-col"><?= $no++ ?></td>
-          <td class="item-col"><?= esc($q['question']) ?></td>
+  <div style="page-break-before: always;"></div>
 
-          <?php foreach ($dailyDays as $date): ?>
+  <h4 style="margin-bottom:10px;">
+    DETAIL TEMUAN BULAN <?= strtoupper($bulanNama) ?> <?= $year ?>
+  </h4>
 
-            <?php
-            $isSunday  = date('w', strtotime($date)) == 0;
-            $isHoliday = in_array($date, $holidayDates ?? []);
-            $isOffDay  = $isSunday || $isHoliday;
-
-            $status = $dailyGrid[$q['id']][$date] ?? null;
-
-            $symbol = match ($status) {
-              'ok' => '✓',
-              'not_ok' => '✗',
-              'na' => '–',
-              default => ''
-            };
-            ?>
-
-            <td class="date-col <?= $isOffDay ? 'offday' : '' ?>">
-              <?= !$isOffDay ? $symbol : '' ?>
-            </td>
-
-          <?php endforeach; ?>
-
-        </tr>
-      <?php endforeach; ?>
-
-    </tbody>
-  </table>
-
-  <p style="margin-top:5px; font-size:8px;">
-    Keterangan: ✓ = sesuai, ✗ = tidak sesuai, – = tidak berlaku
-  </p>
-
-  <!-- ================= TEMUAN ================= -->
-  <?php if (!empty($findings)): ?>
-
-    <div style="page-break-before: always;"></div>
-
-    <h4 style="margin-bottom:10px;">
-      DETAIL TEMUAN BULAN <?= strtoupper($bulanNama) ?> <?= $year ?>
-    </h4>
-
-    <table style="width:100%;">
-      <tr>
-        <td style="width:50%; vertical-align:top;">
-
-          <?php
-          $total = count($findings);
-          $half  = ceil($total / 2);
-          ?>
-
-          <?php foreach ($findings as $i => $log): ?>
-
-            <?php if ($i == $half): ?>
-        </td>
-        <td style="width:50%; vertical-align:top;">
-        <?php endif; ?>
+  <table style="width:100%;">
+    <tr>
+      <td style="width:50%; vertical-align:top;">
 
         <?php
-            // Cari nama pertanyaan
-            $questionName = '';
-            foreach ($masters as $q) {
-              if ($q['id'] == $log['checklist_template_id']) {
-                $questionName = $q['question'];
-                break;
-              }
-            }
+        $total = count($findings);
+        $half  = ceil($total / 2);
         ?>
 
-        <div style="
+        <?php foreach ($findings as $i => $log): ?>
+
+          <?php if ($i == $half): ?>
+      </td>
+      <td style="width:50%; vertical-align:top;">
+      <?php endif; ?>
+
+      <?php
+          // Cari nama pertanyaan
+          $questionName = '';
+          foreach ($masters as $q) {
+            if ($q['id'] == $log['checklist_template_id']) {
+              $questionName = $q['question'];
+              break;
+            }
+          }
+      ?>
+
+      <div style="
         padding:6px 0;
         margin-bottom:6px;
         font-size:9px;
         border-bottom:1px solid #ddd;
     ">
 
-          <strong><?= $i + 1 ?>.</strong>
-          <span style="font-style:italic;">
-            <?= esc($log['display_period']) ?>
-          </span><br>
+        <strong><?= $i + 1 ?>.</strong>
+        <span style="font-style:italic;">
+          <?= esc($log['display_period']) ?>
+        </span><br>
 
-          <span style="margin-left:10px;">
-            <?= esc($questionName) ?>
-          </span><br>
+        <span style="margin-left:10px;">
+          <?= esc($questionName) ?>
+        </span><br>
 
-          <?php if (!empty($log['remark'])): ?>
-            <span style="color:#555; margin-left:10px;">
-              <?= esc($log['remark']) ?>
-            </span>
-          <?php endif; ?>
+        <?php if (!empty($log['remark'])): ?>
+          <span style="color:#555; margin-left:10px;">
+            <?= esc($log['remark']) ?>
+          </span>
+        <?php endif; ?>
 
-        </div>
+      </div>
 
-      <?php endforeach; ?>
+    <?php endforeach; ?>
 
-        </td>
-      </tr>
-    </table>
+      </td>
+    </tr>
+  </table>
 
-  <?php endif; ?>
+<?php endif; ?>
