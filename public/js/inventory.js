@@ -14,49 +14,48 @@ document.addEventListener("DOMContentLoaded", function () {
       ? bootstrap.Modal.getOrCreateInstance(qrModalEl)
       : null;
 
-    /* ---------- QR MODAL ---------- */
-    document.addEventListener("click", function (e) {
-      const btn = e.target.closest(".btn-qr");
-      if (!btn || !qrModal) return;
-
-      const img = document.getElementById("qrImage");
-      if (img) img.src = btn.dataset.qr;
-
-      qrModal.show();
-    });
-
     /* ---------- OPEN EDIT MODAL ---------- */
-    document.addEventListener("click", function (e) {
+    document.addEventListener("click", async function (e) {
       const btn = e.target.closest(".btn-edit");
       if (!btn) return;
 
-      currentRow = btn.closest("tr");
       const id = btn.dataset.id;
+      currentRow = btn.closest("tr");
+
+      const res = await fetch(`${BASE_URL}/compliance/inventory/get/${id}`);
+      const data = await res.json();
 
       editForm.action = `${BASE_URL}/compliance/inventory/update/${id}`;
 
-      editForm.querySelector("#edit_id").value = id;
-      editForm.querySelector("#edit_category_text").value = currentRow
-        .querySelector(".col-category")
-        .innerText.trim();
-      editForm.querySelector("#edit_area_text").value = currentRow
-        .querySelector(".col-area")
-        .innerText.trim();
-      editForm.querySelector("#edit_item_name").value = currentRow
-        .querySelector(".col-item")
-        .innerText.trim();
+      // isi modal dari server
+      editForm.querySelector("#edit_id").value = data.id;
 
-      editForm.querySelector("#edit_category_id").value =
-        btn.dataset.categoryId;
-      editForm.querySelector("#edit_area_id").value = btn.dataset.areaId;
-      editForm.querySelector("#edit_item_type_id").value =
-        btn.dataset.itemTypeId;
+      editForm.querySelector("#edit_category_text").value =
+        data.category_name || "";
+      editForm.querySelector("#edit_area_text").value = data.area_name || "";
+      editForm.querySelector("#edit_item_name").value = data.item_name || "";
 
-      editForm.querySelector("#edit_code").value = btn.dataset.code || "";
-      editForm.querySelector("#edit_type").value = btn.dataset.type || "";
-      editForm.querySelector("#edit_pic").value = btn.dataset.pic || "";
-      editForm.querySelector("#edit_status").value = btn.dataset.status || "";
-      editForm.querySelector("#edit_remark").value = btn.dataset.remark || "";
+      editForm.querySelector("#edit_category_id").value = data.category_id;
+      editForm.querySelector("#edit_area_id").value = data.area_id;
+      editForm.querySelector("#edit_item_type_id").value = data.item_type_id;
+
+      editForm.querySelector("#edit_code").value = data.asset_code || "";
+      editForm.querySelector("#edit_type").value = data.type_description || "";
+      editForm.querySelector("#edit_specific_area").value =
+        data.specific_area || "";
+      editForm.querySelector("#edit_pic").value = data.pic || "";
+      editForm.querySelector("#edit_status").value = data.status || "";
+      editForm.querySelector("#edit_remark").value = data.remark || "";
+      editForm.querySelector("#edit_expired").value = data.expired_date || "";
+
+      const qrImg = document.getElementById("edit_qr_preview");
+      if (data.qr_image) {
+        qrImg.src =
+          BASE_URL + "uploads/qr/" + data.qr_image + "?v=" + Date.now();
+        qrImg.classList.remove("d-none");
+      } else {
+        qrImg.classList.add("d-none");
+      }
 
       editModal.show();
     });
@@ -81,33 +80,42 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
           }
 
-          // UPDATE ROW
-          currentRow.querySelector("td:nth-of-type(5)").innerText =
-            editForm.querySelector("#edit_code").value || "-";
-
-          currentRow.querySelector("td:nth-of-type(6)").innerText =
-            editForm.querySelector("#edit_type").value || "-";
-
-          currentRow.querySelector("td:nth-of-type(8)").innerText =
-            editForm.querySelector("#edit_pic").value || "-";
-
+          // ==============================
+          // VALUE DARI FORM
+          // ==============================
+          const codeVal =
+            res.asset_code ?? editForm.querySelector("#edit_code").value;
+          const typeVal = editForm.querySelector("#edit_type").value;
+          const picVal = editForm.querySelector("#edit_pic").value;
+          const remarkVal = editForm.querySelector("#edit_remark").value;
           const status = editForm.querySelector("#edit_status").value;
-          const statusCell = currentRow.querySelector("td:nth-of-type(9)");
+          const specificVal = editForm.querySelector(
+            "#edit_specific_area",
+          ).value;
 
-          const statusMap = {
-            Good: '<span class="badge bg-success">Good</span>',
-            "Need Repair":
-              '<span class="badge bg-warning text-dark">Need Repair</span>',
-            "Not Active": '<span class="badge bg-secondary">Not Active</span>',
-          };
+          // ==============================
+          // UPDATE DATASET TOMBOL EDIT
+          // ==============================
+          const editBtn = currentRow.querySelector(".btn-edit");
 
-          statusCell.innerHTML = statusMap[status] ?? "-";
+          if (editBtn) {
+            editBtn.dataset.code = codeVal || "";
+            editBtn.dataset.type = typeVal || "";
+            editBtn.dataset.pic = picVal || "";
+            editBtn.dataset.status = status || "";
+            editBtn.dataset.remark = remarkVal || "";
+            editBtn.dataset.specific = specificVal || "";
+            if (res.qr_image) {
+              editBtn.dataset.qr = res.qr_image;
+            }
+          }
 
-          currentRow.querySelector("td:nth-of-type(10)").innerText =
-            editForm.querySelector("#edit_remark").value || "-";
-
+          // ==============================
+          // CLOSE MODAL
+          // ==============================
           editModal.hide();
-          cleanupModal();
+          setTimeout(() => cleanupModal(), 200);
+
           safeToast("Inventory berhasil diperbarui", "success");
         })
         .catch((err) => {
@@ -365,9 +373,10 @@ document.addEventListener("DOMContentLoaded", function () {
         "_QR.png";
 
       const img = document.getElementById("qrImage");
-      img.src = qrUrl;
-
-      new bootstrap.Modal(document.getElementById("modalQr")).show();
+      img.src = qrUrl + "?v=" + Date.now();
+      bootstrap.Modal.getOrCreateInstance(
+        document.getElementById("modalQr"),
+      ).show();
     }
 
     /* ===============================
@@ -398,6 +407,4 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
   });
-
-
 });

@@ -24,59 +24,54 @@ $title = 'Compliance Inventory';
   </div>
 
   <!-- FILTER BAR -->
-  <div class="row g-2 align-items-center mt-2">
+  <div class="row g-2 mt-2">
 
-    <!-- FILTER BAR -->
-    <div class="row g-2 mt-2">
-
-      <!-- KATEGORI -->
-      <div class="col-6 col-md-auto">
-        <select id="filterCategory"
-          class="form-select form-select-sm w-100">
-          <option value="">Semua Kategori</option>
-          <?php foreach ($categories as $cat): ?>
-            <option value="<?= $cat['id'] ?>" <?= $category == $cat['id'] ? 'selected' : '' ?>>
-              <?= esc($cat['name']) ?>
-            </option>
-          <?php endforeach ?>
-        </select>
-      </div>
-
-      <!-- AREA -->
-      <div class="col-6 col-md-auto">
-        <select id="filterArea"
-          class="form-select form-select-sm w-100">
-          <option value="">Semua Area</option>
-          <?php foreach ($areas as $a): ?>
-            <option value="<?= $a['id'] ?>" <?= $area == $a['id'] ? 'selected' : '' ?>>
-              <?= esc($a['name']) ?>
-            </option>
-          <?php endforeach ?>
-        </select>
-      </div>
-
-      <!-- SEARCH -->
-      <div class="col-12 col-md-auto">
-        <input type="text"
-          id="searchInput"
-          class="form-control form-control-sm"
-          placeholder="Cari inventory..."
-          value="<?= esc($keyword) ?>">
-      </div>
-
-      <!-- RESET -->
-      <div class="col-12 col-md-auto">
-        <button id="btnResetFilter"
-          class="btn btn-outline-danger btn-sm w-100 d-none">
-          Reset
-        </button>
-      </div>
-
+    <!-- KATEGORI -->
+    <div class="col-6 col-md-auto">
+      <select id="filterCategory"
+        class="form-select form-select-sm w-100">
+        <option value="">Semua Kategori</option>
+        <?php foreach ($categories as $cat): ?>
+          <option value="<?= $cat['id'] ?>" <?= $category == $cat['id'] ? 'selected' : '' ?>>
+            <?= esc($cat['name']) ?>
+          </option>
+        <?php endforeach ?>
+      </select>
     </div>
 
+    <!-- AREA -->
+    <div class="col-6 col-md-auto">
+      <select id="filterArea"
+        class="form-select form-select-sm w-100">
+        <option value="">Semua Area</option>
+        <?php foreach ($areas as $a): ?>
+          <option value="<?= $a['id'] ?>" <?= $area == $a['id'] ? 'selected' : '' ?>>
+            <?= esc($a['name']) ?>
+          </option>
+        <?php endforeach ?>
+      </select>
+    </div>
 
+    <!-- SEARCH -->
+    <div class="col-12 col-md-auto">
+      <input type="text"
+        id="searchInput"
+        class="form-control form-control-sm"
+        placeholder="Cari inventory..."
+        value="<?= esc($keyword) ?>">
+    </div>
+
+    <!-- RESET -->
+    <div class="col-12 col-md-auto">
+      <button id="btnResetFilter"
+        class="btn btn-outline-danger btn-sm w-100 d-none">
+        Reset
+      </button>
+    </div>
 
   </div>
+
+
 
   <div id="inventoryAjax">
 
@@ -115,7 +110,7 @@ $title = 'Compliance Inventory';
 
 
   <?= $this->section('scripts') ?>
-  <script src="<?= base_url('js/inventory.js') ?>"></script>
+  <script src="<?= base_url('js/inventory.js?v=' . filemtime(FCPATH . 'js/inventory.js')) ?>"></script>
   <?= $this->endSection() ?>
 
 

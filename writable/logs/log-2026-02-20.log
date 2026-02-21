@@ -962,3 +962,63 @@ WARNING - 2026-02-20 03:33:40 --> [DEPRECATED] preg_match(): Passing null to par
  8 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\eams\\public\\index.php')
 DEBUG - 2026-02-20 03:33:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-02-20 03:33:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-02-20 06:11:30 --> CodeIgniter\Exceptions\RuntimeException: View themes, no current section.
+[Method: GET, Route: compliance/inventory]
+in SYSTEMPATH\View\View.php on line 430.
+ 1 APPPATH\Views\compliance\inventory\index.php(161): CodeIgniter\View\View->endSection()
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/index', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(73): view('compliance/inventory/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\eams\\public\\index.php')
+CRITICAL - 2026-02-20 06:11:38 --> CodeIgniter\Exceptions\RuntimeException: View themes, no current section.
+[Method: GET, Route: compliance/inventory]
+in SYSTEMPATH\View\View.php on line 430.
+ 1 APPPATH\Views\compliance\inventory\index.php(161): CodeIgniter\View\View->endSection()
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/index', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(73): view('compliance/inventory/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\eams\\public\\index.php')
+CRITICAL - 2026-02-20 06:11:52 --> CodeIgniter\Exceptions\RuntimeException: View themes, no current section.
+[Method: GET, Route: compliance/inventory]
+in SYSTEMPATH\View\View.php on line 430.
+ 1 APPPATH\Views\compliance\inventory\index.php(155): CodeIgniter\View\View->endSection()
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/index', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(73): view('compliance/inventory/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\eams\\public\\index.php')
+CRITICAL - 2026-02-20 06:11:53 --> CodeIgniter\Exceptions\RuntimeException: View themes, no current section.
+[Method: GET, Route: compliance/inventory]
+in SYSTEMPATH\View\View.php on line 430.
+ 1 APPPATH\Views\compliance\inventory\index.php(155): CodeIgniter\View\View->endSection()
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\inventory\\index.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/inventory/index', [], true)
+ 5 APPPATH\Controllers\ComplianceInventoryController.php(73): view('compliance/inventory/index', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ComplianceInventoryController->index()
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ComplianceInventoryController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\eams\\public\\index.php')

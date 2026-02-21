@@ -44,7 +44,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label>Nama Item / Inventory</label>
-                  <select id="item_type_id" name="item_type_id" class="form-control">
+                  <select id="item_type_id" name="item_type_id" class="form-control" required>
                     <option value="">-- pilih item --</option>
                   </select>
                 </div>
@@ -55,7 +55,7 @@
                 <div class="form-group">
                   <label>No Inventaris</label>
                   <input type="text" name="asset_code" class="form-control"
-                    placeholder="Contoh: FS-APAR-001">
+                    placeholder="Kosong untuk generate otomatis">
                 </div>
               </div>
 

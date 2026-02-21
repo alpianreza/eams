@@ -212,3 +212,5 @@ $routes->get('compliance/progress/ajax', 'ProgressController::getProgressAjax');
 
 $routes->get('compliance/progress/export', 'ProgressController::export');
 $routes->get('compliance/progress/detail', 'ProgressController::getUserDetailAjax');
+
+$routes->get('compliance/inventory/get/(:num)', 'ComplianceInventoryController::get/$1');

@@ -2,25 +2,19 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content shadow">
 
-      <!-- ACTION DISET VIA JS -->
       <form id="formEditInventory" method="post">
         <?= csrf_field() ?>
 
-        <!-- HEADER -->
         <div class="modal-header">
-          <h5 class="modal-title fw-semibold">
-            Edit Inventory
-          </h5>
+          <h5 class="modal-title fw-semibold">Edit Inventory</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
-        <!-- BODY -->
         <div class="modal-body">
 
-          <!-- ID -->
           <input type="hidden" name="id" id="edit_id">
 
-          <!-- KATEGORI & AREA (LOCKED) -->
+          <!-- LOCKED -->
           <div class="row g-3 mb-3">
             <div class="col-md-6">
               <label class="form-label">Kategori</label>
@@ -39,29 +33,44 @@
 
           <div class="row g-3">
 
-            <!-- NAMA ITEM (LOCKED) -->
+            <!-- ITEM -->
             <div class="col-md-6">
               <label class="form-label">Nama Item</label>
               <input type="text" class="form-control" id="edit_item_name" disabled>
               <input type="hidden" name="item_type_id" id="edit_item_type_id">
             </div>
 
-            <!-- NO INVENTARIS -->
+            <!-- CODE -->
             <div class="col-md-6">
               <label class="form-label">No Inventaris</label>
               <input type="text" name="asset_code" id="edit_code" class="form-control">
+              <small class="text-warning">
+                Mengubah No Inventaris akan memperbarui QR Code
+              </small>
             </div>
 
-            <!-- TIPE -->
+            <!-- TYPE -->
             <div class="col-md-6">
               <label class="form-label">Tipe / Spesifikasi</label>
               <input type="text" name="type_description" id="edit_type" class="form-control">
+            </div>
+
+            <!-- SPECIFIC AREA -->
+            <div class="col-md-6">
+              <label class="form-label">Specific Area</label>
+              <input type="text" name="specific_area" id="edit_specific_area" class="form-control">
             </div>
 
             <!-- PIC -->
             <div class="col-md-6">
               <label class="form-label">PIC</label>
               <input type="text" name="pic" id="edit_pic" class="form-control">
+            </div>
+
+            <!-- EXPIRED -->
+            <div class="col-md-3">
+              <label class="form-label">Expired</label>
+              <input type="date" name="expired_date" id="edit_expired" class="form-control">
             </div>
 
             <!-- STATUS -->
@@ -77,25 +86,30 @@
             <!-- REMARK -->
             <div class="col-12">
               <label class="form-label">Remark</label>
-              <textarea name="remark" id="edit_remark"
-                class="form-control" rows="3"></textarea>
+              <textarea name="remark" id="edit_remark" class="form-control" rows="3"></textarea>
+            </div>
+
+            <!-- QR PREVIEW -->
+            <div class="col-12 text-center">
+              <img id="edit_qr_preview"
+                class="img-fluid rounded border d-none"
+                style="max-height:180px">
+              <small class="text-muted d-block mt-1">
+                QR otomatis diperbarui jika No Inventaris berubah
+              </small>
             </div>
 
           </div>
         </div>
 
-        <!-- FOOTER -->
-        <div class="modal-footer d-flex justify-content-between align-items-center">
+        <div class="modal-footer d-flex justify-content-between">
           <small class="text-muted">
             Kategori, Area, dan Item tidak dapat diubah
           </small>
+
           <div>
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-              Batal
-            </button>
-            <button type="submit" class="btn btn-primary px-4">
-              Update
-            </button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary px-4">Update</button>
           </div>
         </div>
 

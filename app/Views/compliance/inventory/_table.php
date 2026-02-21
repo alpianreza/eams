@@ -41,7 +41,9 @@
           </td>
           <td><?= esc($inv['asset_code']) ?></td>
           <td><?= esc($inv['type_description'] ?? '-') ?></td>
-          <td><?= esc($inv['specific_area']) ?></td>
+          <td class="col-specific">
+            <?= esc($inv['specific_area'] ?? '-') ?>
+          </td>
           <td><?= esc($inv['pic'] ?? '-') ?></td>
 
           <td>
@@ -65,15 +67,21 @@
                 <!-- EDIT -->
                 <button type="button"
                   class="btn btn-sm btn-outline-warning btn-edit"
+
                   data-id="<?= $inv['id'] ?>"
                   data-category-id="<?= $inv['category_id'] ?>"
                   data-item-type-id="<?= $inv['item_type_id'] ?>"
                   data-area-id="<?= $inv['area_id'] ?>"
+
                   data-code="<?= esc($inv['asset_code']) ?>"
                   data-type="<?= esc($inv['type_description']) ?>"
                   data-pic="<?= esc($inv['pic']) ?>"
                   data-status="<?= esc($inv['status']) ?>"
                   data-remark="<?= esc($inv['remark']) ?>"
+                  data-specific="<?= esc($inv['specific_area']) ?>"
+                  data-expired="<?= esc($inv['expired_date']) ?>"
+                  data-qr="<?= esc($inv['qr_image']) ?>"
+
                   title="Edit">
                   <i class="bi bi-pencil-square"></i>
                 </button>
@@ -95,6 +103,7 @@
                   <button
                     type="button"
                     class="btn btn-sm btn-secondary btn-show-qr"
+                    data-id="<?= $inv['id'] ?>"
                     data-qr="<?= base_url('uploads/qr/' . $inv['qr_image']) ?>"
                     data-item="<?= esc($inv['item_display_name']) ?>"
                     data-no="<?= esc($inv['asset_code']) ?>">

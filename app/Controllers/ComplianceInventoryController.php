@@ -86,23 +86,120 @@ class ComplianceInventoryController extends BaseController
 
   public function update($id)
   {
-    if (! hasRole(['admin', 'compliance'])) {
-      return redirect()->to('/unauthorized');
+    if (!hasRole(['admin', 'compliance'])) {
+      return $this->response->setJSON(['status' => 'error']);
     }
 
-    $this->inventoryModel->update($id, [
+    $inventory = $this->inventoryModel->find($id);
+
+    $newAssetCode = $this->request->getPost('asset_code');
+    $oldAssetCode = $inventory['asset_code'];
+
+    $newAssetCode = trim($this->request->getPost('asset_code'));
+
+    if (!$newAssetCode) {
+
+      $itemTypeId = $this->request->getPost('item_type_id');
+      $categoryId = $this->request->getPost('category_id');
+
+      $itemTypeModel = new \App\Models\AssetItemTypeModel();
+      $categoryModel = new \App\Models\InventoryCategoryModel();
+
+      $item     = $itemTypeModel->find($itemTypeId);
+      $category = $categoryModel->find($categoryId);
+
+      if ($item && $category) {
+
+        $prefix = strtoupper($category['code']) . '-' . strtoupper($item['code']);
+
+        $last = $this->inventoryModel
+          ->like('asset_code', $prefix, 'after')
+          ->orderBy('id', 'DESC')
+          ->first();
+
+        $next = 1;
+
+        if ($last) {
+          preg_match('/(\d+)$/', $last['asset_code'], $m);
+          if ($m) $next = intval($m[1]) + 1;
+        }
+
+        $newAssetCode = $prefix . '-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+      }
+    }
+
+    $data = [
       'category_id'      => $this->request->getPost('category_id'),
       'area_id'          => $this->request->getPost('area_id'),
       'item_type_id'     => $this->request->getPost('item_type_id'),
-      'asset_code'       => $this->request->getPost('asset_code'),
+      'asset_code'       => $newAssetCode,
       'type_description' => $this->request->getPost('type_description'),
+      'specific_area'    => $this->request->getPost('specific_area'),
       'pic'              => $this->request->getPost('pic'),
       'status'           => $this->request->getPost('status'),
-      'remark'           => $this->request->getPost('remark')
-    ]);
+      'remark'           => $this->request->getPost('remark'),
+      'expired_date'     => $this->request->getPost('expired_date')
+    ];
+
+    $this->inventoryModel->update($id, $data);
+
+    // =====================================
+    // QR REGENERATE JIKA CODE BERUBAH
+    // =====================================
+    if ($newAssetCode !== $oldAssetCode) {
+
+      $detailUrl = base_url('compliance/inventory/detail/' . $id);
+
+      $qrFile = 'qr_inv_' . $id . '.png';
+      $qrPath = FCPATH . 'uploads/qr/' . $qrFile;
+
+      $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='
+        . urlencode($detailUrl);
+
+      $qrContent = @file_get_contents($qrApiUrl);
+
+      if ($qrContent) {
+
+        file_put_contents($qrPath, $qrContent);
+
+        // tambah text lagi di tengah
+        $image = imagecreatefrompng($qrPath);
+
+        $black = imagecolorallocate($image, 0, 0, 0);
+        $white = imagecolorallocate($image, 255, 255, 255);
+
+        $font = 5;
+
+        $imgW = imagesx($image);
+        $imgH = imagesy($image);
+
+        $textW = imagefontwidth($font) * strlen($newAssetCode);
+        $textH = imagefontheight($font);
+
+        $x = ($imgW - $textW) / 2;
+        $y = ($imgH - $textH) / 2;
+
+        imagefilledrectangle($image, $x - 4, $y - 3, $x + $textW + 4, $y + $textH + 3, $white);
+        imagestring($image, $font, $x, $y, $newAssetCode, $black);
+
+        imagepng($image, $qrPath);
+        imagedestroy($image);
+
+        $this->inventoryModel->update($id, [
+          'qr_image' => $qrFile
+        ]);
+      }
+    }
 
     return $this->response->setJSON([
-      'status' => 'success'
+      'status' => 'success',
+      'asset_code' => $newAssetCode,
+      'qr_image' => $qrFile ?? $inventory['qr_image'],
+      'specific_area' => $data['specific_area'],
+      'type_description' => $data['type_description'],
+      'pic' => $data['pic'],
+      'remark' => $data['remark'],
+      'status_label' => $data['status']
     ]);
   }
 
@@ -118,42 +215,63 @@ class ComplianceInventoryController extends BaseController
 
   public function store()
   {
-
-    if (! hasRole(['admin', 'compliance'])) {
+    if (!hasRole(['admin', 'compliance'])) {
       return redirect()->to('/unauthorized');
     }
 
-    if (! $this->validate([
-      'category_id' => 'required|integer',
-      'area_id'     => 'required|integer',
-      'item_type_id' => 'required|integer',
-      'qty'         => 'required|is_natural_no_zero'
-    ])) {
-      return redirect()->back()->withInput();
+    $itemTypeId = $this->request->getPost('item_type_id');
+    $assetCode  = $this->request->getPost('asset_code');
+
+    // =====================================
+    // AUTO GENERATE NO INVENTARIS
+    // =====================================
+    if (!$assetCode && $itemTypeId) {
+
+      $itemTypeModel   = new \App\Models\AssetItemTypeModel();
+      $categoryModel   = new \App\Models\InventoryCategoryModel();
+
+      $item     = $itemTypeModel->find($itemTypeId);
+      $category = $categoryModel->find($this->request->getPost('category_id'));
+
+      if ($item && $item['code'] && $category && $category['code']) {
+
+        $prefix = strtoupper($category['code']) . '-' . strtoupper($item['code']);
+
+        // cari terakhir dengan prefix itu
+        $last = $this->inventoryModel
+          ->like('asset_code', $prefix, 'after')
+          ->orderBy('id', 'DESC')
+          ->first();
+
+        $next = 1;
+
+        if ($last) {
+          preg_match('/(\d+)$/', $last['asset_code'], $m);
+          if ($m) $next = intval($m[1]) + 1;
+        }
+
+        $assetCode = $prefix . '-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+      }
     }
 
-    $area = $this->areaModel->find($this->request->getPost('area_id'));
-
-    $expiredDate = null;
-    if ($area && strtolower($area['name']) === 'fire safety') {
-      $expiredDate = $this->request->getPost('expired_date') ?: null;
-    }
-
+    // =====================================
     // FOTO
+    // =====================================
+    $photoFile = $this->request->getFile('photo');
     $photoName = null;
-    $photo = $this->request->getFile('photo');
-    if ($photo && $photo->isValid() && ! $photo->hasMoved()) {
-      $photoName = $photo->getRandomName();
-      $photo->move(FCPATH . 'uploads/inventory', $photoName);
+
+    if ($photoFile && $photoFile->isValid()) {
+      $photoName = $photoFile->getRandomName();
+      $photoFile->move(FCPATH . 'uploads/inventory', $photoName);
     }
 
-    // ASSET CODE
-    $assetCode = $this->request->getPost('asset_code') ?: 'INV-' . time();
-
+    // =====================================
+    // INSERT DATA
+    // =====================================
     $data = [
       'category_id'      => $this->request->getPost('category_id'),
       'area_id'          => $this->request->getPost('area_id'),
-      'item_type_id'     => $this->request->getPost('item_type_id'),
+      'item_type_id'     => $itemTypeId,
       'asset_code'       => $assetCode,
       'type_description' => $this->request->getPost('type_description'),
       'specific_area'    => $this->request->getPost('specific_area'),
@@ -161,23 +279,71 @@ class ComplianceInventoryController extends BaseController
       'status'           => $this->request->getPost('status'),
       'qty'              => $this->request->getPost('qty'),
       'remark'           => $this->request->getPost('remark'),
-      'expired_date'     => $expiredDate,
+      'expired_date'     => $this->request->getPost('expired_date'),
       'photo'            => $photoName
     ];
 
     $this->inventoryModel->insert($data);
     $inventoryId = $this->inventoryModel->getInsertID();
 
-    // QR
+    // =====================================
+    // QR GENERATE
+    // =====================================
     $detailUrl = base_url('compliance/inventory/detail/' . $inventoryId);
+
     $qrFile = 'qr_inv_' . $inventoryId . '.png';
     $qrPath = FCPATH . 'uploads/qr/' . $qrFile;
 
     $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='
       . urlencode($detailUrl);
 
+    // download QR
     file_put_contents($qrPath, file_get_contents($qrApiUrl));
 
+
+    // =====================================
+    // TAMBAH TEXT NO INVENTARIS DI TENGAH
+    // =====================================
+    $assetCodeText = $assetCode;
+
+    // buka image
+    $image = imagecreatefrompng($qrPath);
+
+    // warna text
+    $black = imagecolorallocate($image, 0, 0, 0);
+    $white = imagecolorallocate($image, 255, 255, 255);
+
+    // font built-in
+    $font = 5;
+
+    // hitung posisi tengah
+    $imgW = imagesx($image);
+    $imgH = imagesy($image);
+
+    $textW = imagefontwidth($font) * strlen($assetCodeText);
+    $textH = imagefontheight($font);
+
+    $x = ($imgW - $textW) / 2;
+    $y = ($imgH - $textH) / 2;
+
+    // background putih biar kebaca
+    imagefilledrectangle(
+      $image,
+      $x - 6,
+      $y - 4,
+      $x + $textW + 6,
+      $y + $textH + 4,
+      $white
+    );
+
+    // tulis text
+    imagestring($image, $font, $x, $y, $assetCodeText, $black);
+
+    // simpan ulang
+    imagepng($image, $qrPath);
+    imagedestroy($image);
+
+    // simpan nama qr ke DB
     $this->inventoryModel->update($inventoryId, [
       'qr_image' => $qrFile
     ]);
@@ -966,5 +1132,22 @@ class ComplianceInventoryController extends BaseController
 
     // monthly
     return $periodKey === $ym;
+  }
+
+  public function get($id)
+  {
+    $inv = $this->inventoryModel
+      ->select('
+      compliance_inventory.*,
+      inventory_categories.name as category_name,
+      areas.name as area_name,
+      asset_item_types.name as item_name
+    ')
+      ->join('inventory_categories', 'inventory_categories.id = compliance_inventory.category_id', 'left')
+      ->join('areas', 'areas.id = compliance_inventory.area_id', 'left')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
+      ->find($id);
+
+    return $this->response->setJSON($inv);
   }
 }
