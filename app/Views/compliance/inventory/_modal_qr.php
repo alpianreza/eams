@@ -7,15 +7,43 @@
       </div>
 
       <div class="modal-body text-center">
-        <img id="qrImage" src="" class="img-fluid mb-3" alt="QR Code">
 
-        <button
-          type="button"
-          class="btn btn-success btn-sm w-100"
-          id="btnDownloadQr">
-          <i class="bi bi-download me-1"></i>
-          Download QR
-        </button>
+        <!-- QR IMAGE -->
+        <div class="mb-3">
+          <img
+            id="qrImage"
+            src=""
+            class="img-fluid rounded border"
+            style="max-height:260px"
+            alt="QR Code">
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="d-grid gap-2">
+
+          <button
+            type="button"
+            class="btn btn-success btn-sm"
+            id="btnDownloadQr">
+            <i class="bi bi-download me-1"></i>
+            Download QR
+          </button>
+
+          <button
+            type="button"
+            id="btnRegenQrModal"
+            class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-repeat me-1"></i>
+            Regenerate QR
+          </button>
+
+        </div>
+
+        <!-- INFO -->
+        <small class="text-muted d-block mt-2">
+          QR akan membuka halaman detail inventory
+        </small>
+
       </div>
     </div>
   </div>

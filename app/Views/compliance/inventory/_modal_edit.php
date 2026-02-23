@@ -74,7 +74,7 @@
             </div>
 
             <!-- STATUS -->
-            <div class="col-md-6">
+            <div class="col-md-3">
               <label class="form-label">Status</label>
               <select name="status" id="edit_status" class="form-select">
                 <option value="Good">Good</option>
@@ -98,7 +98,14 @@
                 QR otomatis diperbarui jika No Inventaris berubah
               </small>
             </div>
-
+            <div class="text-center mt-2">
+              <button type="button"
+                id="btnRegenQr"
+                class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-repeat"></i>
+                Regenerate QR
+              </button>
+            </div>
           </div>
         </div>
 

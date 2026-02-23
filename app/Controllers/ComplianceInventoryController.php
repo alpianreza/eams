@@ -1150,4 +1150,63 @@ class ComplianceInventoryController extends BaseController
 
     return $this->response->setJSON($inv);
   }
+
+  public function regenerateQr($id)
+  {
+    if (!hasRole(['admin', 'compliance'])) {
+      return $this->response->setJSON(['status' => 'error']);
+    }
+
+    $inventory = $this->inventoryModel->find($id);
+    if (!$inventory) {
+      return $this->response->setJSON(['status' => 'error']);
+    }
+
+    $detailUrl = base_url('compliance/inventory/detail/' . $id);
+
+    $qrFile = 'qr_inv_' . $id . '.png';
+    $qrPath = FCPATH . 'uploads/qr/' . $qrFile;
+
+    $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='
+      . urlencode($detailUrl);
+
+    $qrContent = @file_get_contents($qrApiUrl);
+
+    if (!$qrContent) {
+      return $this->response->setJSON(['status' => 'error']);
+    }
+
+    file_put_contents($qrPath, $qrContent);
+
+    // tambah text asset code
+    $image = imagecreatefrompng($qrPath);
+
+    $black = imagecolorallocate($image, 0, 0, 0);
+    $white = imagecolorallocate($image, 255, 255, 255);
+    $font = 5;
+
+    $code = $inventory['asset_code'];
+
+    $imgW = imagesx($image);
+    $imgH = imagesy($image);
+
+    $textW = imagefontwidth($font) * strlen($code);
+    $textH = imagefontheight($font);
+
+    $x = ($imgW - $textW) / 2;
+    $y = ($imgH - $textH) / 2;
+
+    imagefilledrectangle($image, $x - 4, $y - 3, $x + $textW + 4, $y + $textH + 3, $white);
+    imagestring($image, $font, $x, $y, $code, $black);
+
+    imagepng($image, $qrPath);
+    imagedestroy($image);
+
+    $this->inventoryModel->update($id, ['qr_image' => $qrFile]);
+
+    return $this->response->setJSON([
+      'status' => 'success',
+      'qr_image' => $qrFile
+    ]);
+  }
 }

@@ -116,7 +116,7 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
         $routes->get('detail/(:num)', 'ComplianceInventoryController::detail/$1');
         $routes->post('update-photo/(:num)', 'ComplianceInventoryController::updatePhoto/$1');
 
-        $routes->get('regenerate-qr/(:num)', 'ComplianceInventoryController::regenerateQr/$1');
+        $routes->post('regenerate-qr/(:num)', 'ComplianceInventoryController::regenerateQr/$1');
 
         $routes->get(
             'item-types/(:num)',

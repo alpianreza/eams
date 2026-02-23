@@ -1,12 +1,15 @@
+let editForm = null;
+let editModalEl = null;
+let currentRow = null;
+
 document.addEventListener("DOMContentLoaded", function () {
   /* =====================================================
      =============== EDIT INVENTORY ======================
   ===================================================== */
   const editModalEl = document.getElementById("modalEditInventory");
   const editForm = document.getElementById("formEditInventory");
-  const qrModalEl = document.getElementById("modalQr");
-
   let currentRow = null;
+  const qrModalEl = document.getElementById("modalQr");
 
   if (editModalEl && editForm) {
     const editModal = bootstrap.Modal.getOrCreateInstance(editModalEl);
@@ -364,6 +367,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const qrUrl = btn.dataset.qr;
       const itemName = btn.dataset.item;
       const inventoryNo = btn.dataset.no;
+      const id = btn.dataset.id;
+
+      const modalQr = document.getElementById("modalQr");
+      modalQr.dataset.inventoryId = id;
 
       CURRENT_QR_URL = qrUrl;
       CURRENT_QR_FILENAME =
@@ -406,5 +413,39 @@ document.addEventListener("DOMContentLoaded", function () {
           alert("Gagal download QR");
         });
     }
+  });
+
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest("#btnRegenQrModal");
+    if (!btn) return;
+
+    const modal = document.getElementById("modalQr");
+    const id = modal?.dataset.inventoryId;
+
+    if (!id) {
+      safeToast("ID tidak ditemukan", "error");
+      return;
+    }
+
+    fetch(`${BASE_URL}/compliance/inventory/regenerate-qr/${id}`, {
+      method: "POST",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.status === "success") {
+          const img = modal.querySelector("#qrImage");
+          img.src =
+            BASE_URL + "uploads/qr/" + res.qr_image + "?t=" + Date.now();
+
+          // update dataset tombol edit juga
+          const editBtn = document.querySelector(`.btn-edit[data-id="${id}"]`);
+          if (editBtn) editBtn.dataset.qr = res.qr_image;
+
+          safeToast("QR berhasil diperbarui", "success");
+        }
+      });
   });
 });
