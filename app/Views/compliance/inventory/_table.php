@@ -80,7 +80,6 @@
                   data-remark="<?= esc($inv['remark']) ?>"
                   data-specific="<?= esc($inv['specific_area']) ?>"
                   data-expired="<?= esc($inv['expired_date']) ?>"
-                  data-qr="<?= esc($inv['qr_image']) ?>"
 
                   title="Edit">
                   <i class="bi bi-pencil-square"></i>

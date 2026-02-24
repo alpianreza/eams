@@ -89,36 +89,16 @@
               <textarea name="remark" id="edit_remark" class="form-control" rows="3"></textarea>
             </div>
 
-            <!-- QR PREVIEW -->
-            <div class="col-12 text-center">
-              <img id="edit_qr_preview"
-                class="img-fluid rounded border d-none"
-                style="max-height:180px">
-              <small class="text-muted d-block mt-1">
-                QR otomatis diperbarui jika No Inventaris berubah
+            <div class="modal-footer d-flex justify-content-between">
+              <small class="text-muted">
+                Kategori, Area, dan Item tidak dapat diubah
               </small>
-            </div>
-            <div class="text-center mt-2">
-              <button type="button"
-                id="btnRegenQr"
-                class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-repeat"></i>
-                Regenerate QR
-              </button>
-            </div>
-          </div>
-        </div>
 
-        <div class="modal-footer d-flex justify-content-between">
-          <small class="text-muted">
-            Kategori, Area, dan Item tidak dapat diubah
-          </small>
-
-          <div>
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-            <button type="submit" class="btn btn-primary px-4">Update</button>
-          </div>
-        </div>
+              <div>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary px-4">Update</button>
+              </div>
+            </div>
 
       </form>
     </div>
