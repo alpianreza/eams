@@ -280,6 +280,6 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="<?= base_url('/js/dashboard.js') ?>"></script>
+<script src="<?= base_url('js/dashboard.js') ?>?v=<?= time() ?>"></script>
 
 <?= $this->endSection() ?>

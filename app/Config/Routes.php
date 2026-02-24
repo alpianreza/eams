@@ -225,3 +225,5 @@ $routes->get(
     'ComplianceInventoryController::qrAlbumPrint/$1',
     ['filter' => 'auth']
 );
+
+$routes->match(['get', 'post'], 'api/it/heartbeat', 'Api\ITController::heartbeat');

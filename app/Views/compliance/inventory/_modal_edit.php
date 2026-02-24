@@ -44,9 +44,6 @@
             <div class="col-md-6">
               <label class="form-label">No Inventaris</label>
               <input type="text" name="asset_code" id="edit_code" class="form-control">
-              <small class="text-warning">
-                Mengubah No Inventaris akan memperbarui QR Code
-              </small>
             </div>
 
             <!-- TYPE -->

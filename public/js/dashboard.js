@@ -87,8 +87,7 @@ function loadTrend(type) {
   const monthVal = document.getElementById("monthFilter")?.value || "";
 
   fetch(
-    baseUrl +
-      `/compliance/dashboard/trend?type=${type}&year=${selectedYear}&month=${monthVal}`,
+    `/compliance/dashboard/trend?type=${type}&year=${selectedYear}&month=${monthVal}`,
   )
     .then((res) => res.json())
     .then((res) => {
@@ -173,8 +172,7 @@ function loadProgressTrend() {
   const month = document.getElementById("progressMonth").value;
 
   fetch(
-    baseUrl +
-      `/compliance/dashboard/progress-trend?type=${type}&year=${year}&month=${month}`,
+    `/compliance/dashboard/progress-trend?type=${type}&year=${year}&month=${month}`,
   )
     .then((res) => res.json())
     .then((data) => {
@@ -193,7 +191,7 @@ function loadProgressTrend() {
       });
 
       // Ambil total inventory by frequency
-      fetch(baseUrl + `/compliance/dashboard/total-inventory?type=${type}`)
+      fetch(`/compliance/dashboard/total-inventory?type=${type}`)
         .then((res) => res.json())
         .then((totalRes) => {
           const total = totalRes.total;
@@ -255,7 +253,7 @@ function loadStatusPie() {
     month: month,
   });
 
-  fetch(baseUrl + `/compliance/dashboard/status-pie?` + params.toString())
+  fetch(`/compliance/dashboard/status-pie?` + params.toString())
     .then((res) => res.json())
     .then((data) => {
       if (data.error) {
@@ -333,9 +331,7 @@ function loadRiskInsight() {
   const year = document.getElementById("progressYear").value;
   const month = document.getElementById("progressMonth").value;
 
-  fetch(
-    baseUrl + `/compliance/dashboard/risk-insight?year=${year}&month=${month}`,
-  )
+  fetch(`/compliance/dashboard/risk-insight?year=${year}&month=${month}`)
     .then((res) => res.json())
     .then((data) => {
       const itemList = document.getElementById("topItemRisk");
@@ -501,9 +497,7 @@ function loadPendingChecklist() {
     frequency: frequency,
   });
 
-  fetch(
-    baseUrl + "/compliance/dashboard/pending-checklist?" + params.toString(),
-  )
+  fetch(`/compliance/dashboard/pending-checklist?` + params.toString())
     .then((res) => res.json())
     .then((data) => {
       pendingData = data;

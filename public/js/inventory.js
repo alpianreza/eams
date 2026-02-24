@@ -51,15 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
       editForm.querySelector("#edit_remark").value = data.remark || "";
       editForm.querySelector("#edit_expired").value = data.expired_date || "";
 
-      const qrImg = document.getElementById("edit_qr_preview");
-      if (data.qr_image) {
-        qrImg.src =
-          BASE_URL + "uploads/qr/" + data.qr_image + "?v=" + Date.now();
-        qrImg.classList.remove("d-none");
-      } else {
-        qrImg.classList.add("d-none");
-      }
-
       editModal.show();
     });
 

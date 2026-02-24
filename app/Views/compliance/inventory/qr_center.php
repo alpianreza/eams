@@ -96,7 +96,7 @@ SCRIPT AJAX NAVIGATION
 
         const name = card.dataset.name;
 
-        fetch('<?= base_url("compliance/inventory/qr-album") ?>/' + encodeURIComponent(name))
+        fetch(`/compliance/inventory/qr-album/${encodeURIComponent(name)}`)
           .then(r => r.text())
           .then(html => {
 
@@ -158,7 +158,7 @@ SCRIPT AJAX NAVIGATION
         didOpen: () => Swal.showLoading()
       });
 
-      fetch('<?= base_url("compliance/inventory/qr-album-regen") ?>/' + encodeURIComponent(name))
+      fetch(`/compliance/inventory/qr-album-regen/${encodeURIComponent(name)}`)
         .then(r => r.json())
         .then(res => {
 
@@ -173,7 +173,7 @@ SCRIPT AJAX NAVIGATION
             });
 
             // reload album
-            fetch('<?= base_url("compliance/inventory/qr-album") ?>/' + encodeURIComponent(name))
+            fetch(`/compliance/inventory/qr-album/${encodeURIComponent(name)}`)
               .then(r => r.text())
               .then(html => {
                 document.getElementById('albumAjax').innerHTML = html;

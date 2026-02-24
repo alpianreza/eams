@@ -114,7 +114,7 @@
       showLoading(container);
       showLoading(summaryDiv);
 
-      fetch(`<?= base_url('compliance/progress/ajax') ?>?month=${month}`, {
+      fetch(`/compliance/progress/ajax?month=${month}`, {
           signal: currentController.signal
         })
         .then(res => res.json())

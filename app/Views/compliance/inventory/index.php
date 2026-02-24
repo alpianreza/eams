@@ -127,15 +127,15 @@ $title = 'Compliance Inventory';
         return;
       }
 
-      fetch('<?= base_url('compliance/inventory/item-types') ?>/' + categoryId)
+      fetch('/compliance/inventory/item-types/' + categoryId)
         .then(res => res.json())
         .then(data => {
           itemSelect.innerHTML = '<option value="">-- pilih item --</option>';
           data.forEach(item => {
             itemSelect.innerHTML += `
-          <option value="${item.id}">
-            ${item.name}
-          </option>`;
+        <option value="${item.id}">
+          ${item.name}
+        </option>`;
           });
         });
     });

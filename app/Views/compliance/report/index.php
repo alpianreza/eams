@@ -124,7 +124,7 @@
 
   categorySelect.addEventListener('change', function() {
 
-    fetch(`<?= base_url('compliance/report/item-by-category') ?>?category_id=${this.value}`)
+    fetch(`/compliance/report/item-by-category?category_id=${this.value}`)
       .then(res => res.json())
       .then(data => {
         let options = '<option value="">-- Nama Item --</option>';
@@ -139,8 +139,7 @@
   });
 
   itemTypeSelect.addEventListener('change', function() {
-
-    fetch(`<?= base_url('compliance/report/inventory-by-type') ?>?item_type_id=${this.value}`)
+    fetch(`/compliance/report/inventory-by-type?item_type_id=${this.value}`)
       .then(res => res.json())
       .then(data => {
         let options = '<option value="">-- Kode --</option>';
@@ -167,7 +166,7 @@
 
   function loadReport(inventory, year, month) {
 
-    fetch(`<?= base_url('compliance/report/load') ?>?inventory_id=${inventory}&year=${year}&month=${month}`)
+    fetch(`/compliance/report/load?inventory_id=${inventory}&year=${year}&month=${month}`)
       .then(res => res.text())
       .then(html => {
         document.getElementById('reportContainer').innerHTML = html;
