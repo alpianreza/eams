@@ -427,7 +427,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetch(`${BASE_URL}/compliance/inventory/regenerate-qr/${id}`, {
+    fetch(`${BASE_URL}compliance/inventory/regenerate-qr/${id}`, {
       method: "POST",
       headers: {
         "X-Requested-With": "XMLHttpRequest",

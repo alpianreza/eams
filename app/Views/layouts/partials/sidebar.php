@@ -130,6 +130,19 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
                 </li>
               <?php endif; ?>
 
+              <?php if (hasRole(['admin', 'compliance'])): ?>
+
+                <li class="nav-item">
+                  <a href="<?= base_url('compliance/inventory/qr-center') ?>"
+                    class="nav-link <?= ($seg2 == 'qr-center') ? 'active' : '' ?>">
+
+                    <i class="nav-icon fas fa-qrcode"></i>
+                    <p>QR Gallery</p>
+                  </a>
+                </li>
+
+              <?php endif; ?>
+
             </ul>
           </li>
         <?php endif; ?>

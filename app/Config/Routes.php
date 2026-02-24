@@ -214,3 +214,14 @@ $routes->get('compliance/progress/export', 'ProgressController::export');
 $routes->get('compliance/progress/detail', 'ProgressController::getUserDetailAjax');
 
 $routes->get('compliance/inventory/get/(:num)', 'ComplianceInventoryController::get/$1');
+
+$routes->get('compliance/inventory/qr-center', 'ComplianceInventoryController::qrCenter', ['filter' => 'auth']);
+$routes->get('compliance/inventory/qr-batch', 'ComplianceInventoryController::qrBatch', ['filter' => 'auth']);
+$routes->get('compliance/inventory/qr-album/(:any)', 'ComplianceInventoryController::qrAlbumAjax/$1', ['filter' => 'auth']);
+$routes->get('compliance/inventory/qr-album-download/(:any)', 'ComplianceInventoryController::qrAlbumDownload/$1', ['filter' => 'auth']);
+$routes->get('compliance/inventory/qr-album-regen/(:any)', 'ComplianceInventoryController::qrAlbumRegen/$1', ['filter' => 'auth']);
+$routes->get(
+    'compliance/inventory/qr-album-print/(:any)',
+    'ComplianceInventoryController::qrAlbumPrint/$1',
+    ['filter' => 'auth']
+);

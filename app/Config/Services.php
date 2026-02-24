@@ -29,4 +29,11 @@ class Services extends BaseService
      *     return new \CodeIgniter\Example();
      * }
      */
+    public static function qr($getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('qr');
+        }
+        return new \App\Services\QrService();
+    }
 }

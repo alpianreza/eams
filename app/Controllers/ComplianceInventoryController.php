@@ -6,7 +6,6 @@ use App\Models\ComplianceInventoryModel;
 use App\Models\InventoryCategoryModel;
 use App\Models\AreaModel;
 use App\Models\ChecklistLogModel;
-use App\Models\ChecklistMasterModel;
 
 
 class ComplianceInventoryController extends BaseController
@@ -1117,23 +1116,6 @@ class ComplianceInventoryController extends BaseController
   }
 
 
-  private function isPeriodKeyValidForYM(
-    string $frequency,
-    string $periodKey,
-    string $ym
-  ): bool {
-    if ($frequency === 'daily') {
-      return str_starts_with($periodKey, $ym . '-');
-    }
-
-    if ($frequency === 'weekly') {
-      return str_starts_with($periodKey, $ym . '-W');
-    }
-
-    // monthly
-    return $periodKey === $ym;
-  }
-
   public function get($id)
   {
     $inv = $this->inventoryModel
@@ -1162,51 +1144,171 @@ class ComplianceInventoryController extends BaseController
       return $this->response->setJSON(['status' => 'error']);
     }
 
-    $detailUrl = base_url('compliance/inventory/detail/' . $id);
+    try {
 
-    $qrFile = 'qr_inv_' . $id . '.png';
-    $qrPath = FCPATH . 'uploads/qr/' . $qrFile;
+      $qrFile = service('qr')->generate($id, $inventory['asset_code']);
 
-    $qrApiUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='
-      . urlencode($detailUrl);
+      $this->inventoryModel->update($id, ['qr_image' => $qrFile]);
 
-    $qrContent = @file_get_contents($qrApiUrl);
+      return $this->response->setJSON([
+        'status' => 'success',
+        'qr_image' => $qrFile
+      ]);
+    } catch (\Throwable $e) {
 
-    if (!$qrContent) {
-      return $this->response->setJSON(['status' => 'error']);
+      log_message('error', $e->getMessage());
+
+      return $this->response->setJSON([
+        'status' => 'error',
+        'message' => $e->getMessage()
+      ]);
+    }
+  }
+
+  public function qrCenter()
+  {
+    $list = $this->inventoryModel
+      ->select('compliance_inventory.*, asset_item_types.name as item_name')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('asset_code IS NOT NULL')
+      ->where('qr_image IS NOT NULL')
+      ->orderBy('asset_item_types.name', 'ASC')
+      ->orderBy('asset_code', 'ASC')
+      ->findAll();
+
+    $albums = [];
+
+    foreach ($list as $row) {
+
+      $name = $row['item_name'];
+
+      if (!isset($albums[$name])) {
+        $albums[$name] = [
+          'cover' => $row['qr_image'],
+          'count' => 0,
+          'rows' => []
+        ];
+      }
+
+      $albums[$name]['rows'][] = $row;
+      $albums[$name]['count']++;
     }
 
-    file_put_contents($qrPath, $qrContent);
+    return view('compliance/inventory/qr_center', [
+      'albums' => $albums
+    ]);
+  }
 
-    // tambah text asset code
-    $image = imagecreatefrompng($qrPath);
+  public function qrBatch()
+  {
+    $ids = explode(',', $this->request->getGet('ids'));
 
-    $black = imagecolorallocate($image, 0, 0, 0);
-    $white = imagecolorallocate($image, 255, 255, 255);
-    $font = 5;
+    $items = $this->inventoryModel
+      ->whereIn('id', $ids)
+      ->findAll();
 
-    $code = $inventory['asset_code'];
+    $zip = new \ZipArchive();
+    $file = WRITEPATH . 'qr.zip';
 
-    $imgW = imagesx($image);
-    $imgH = imagesy($image);
+    $zip->open($file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
-    $textW = imagefontwidth($font) * strlen($code);
-    $textH = imagefontheight($font);
+    foreach ($items as $it) {
+      $path = FCPATH . 'uploads/qr/' . $it['qr_image'];
+      if (file_exists($path)) {
+        $zip->addFile($path, $it['asset_code'] . '.png');
+      }
+    }
 
-    $x = ($imgW - $textW) / 2;
-    $y = ($imgH - $textH) / 2;
+    $zip->close();
 
-    imagefilledrectangle($image, $x - 4, $y - 3, $x + $textW + 4, $y + $textH + 3, $white);
-    imagestring($image, $font, $x, $y, $code, $black);
+    return $this->response
+      ->download($file, null)
+      ->setFileName('qr-gallery.zip');
+  }
 
-    imagepng($image, $qrPath);
-    imagedestroy($image);
+  public function qrAlbumAjax($itemName)
+  {
+    $rows = $this->inventoryModel
+      ->select('compliance_inventory.*, asset_item_types.name as item_name')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('asset_item_types.name', $itemName)
+      ->where('qr_image IS NOT NULL')
+      ->orderBy('asset_code', 'ASC')
+      ->findAll();
 
-    $this->inventoryModel->update($id, ['qr_image' => $qrFile]);
+    return view('compliance/inventory/_qr_album_grid', [
+      'rows' => $rows
+    ]);
+  }
+
+  public function qrAlbumDownload($itemName)
+  {
+    $rows = $this->inventoryModel
+      ->select('*')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('asset_item_types.name', $itemName)
+      ->where('qr_image IS NOT NULL')
+      ->findAll();
+
+    $zip = new \ZipArchive();
+    $file = WRITEPATH . 'qr-' . $itemName . '.zip';
+
+    $zip->open($file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+    foreach ($rows as $r) {
+      $path = FCPATH . 'uploads/qr/' . $r['qr_image'];
+      if (file_exists($path)) {
+        $zip->addFile($path, $r['asset_code'] . '.png');
+      }
+    }
+
+    $zip->close();
+
+    return $this->response->download($file, null);
+  }
+
+  public function qrAlbumRegen($itemName)
+  {
+    set_time_limit(300);
+
+    if (!hasRole(['admin', 'compliance'])) {
+      return $this->response->setJSON(['status' => false]);
+    }
+
+    $rows = $this->inventoryModel
+      ->select('compliance_inventory.id,compliance_inventory.asset_code')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('asset_item_types.name', $itemName)
+      ->findAll();
+
+    foreach ($rows as $r) {
+
+      $qrFile = service('qr')->generate($r['id'], $r['asset_code']);
+
+      $this->inventoryModel->update($r['id'], [
+        'qr_image' => $qrFile
+      ]);
+    }
 
     return $this->response->setJSON([
-      'status' => 'success',
-      'qr_image' => $qrFile
+      'status' => true,
+      'message' => 'QR album berhasil diregenerate'
+    ]);
+  }
+
+  public function qrAlbumPrint($itemName)
+  {
+    $rows = $this->inventoryModel
+      ->select('compliance_inventory.asset_code,compliance_inventory.qr_image,compliance_inventory.specific_area')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('asset_item_types.name', $itemName)
+      ->where('qr_image IS NOT NULL')
+      ->orderBy('asset_code', 'ASC')
+      ->findAll();
+
+    return view('compliance/inventory/qr_print_album', [
+      'rows' => $rows,
+      'itemName' => $itemName
     ]);
   }
 }
