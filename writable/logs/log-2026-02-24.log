@@ -4478,3 +4478,4 @@ in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
 13 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 14 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
 ERROR - 2026-02-24 06:25:27 --> HEARTBEAT HIT: {"asset_id":12,"hostname":"SUPPORT-YHS","device_user":"REZA","os":"Windows","os_version":"10.0.26100","cpu":"Intel64 Family 6 Model 58 Stepping 9, GenuineIntel","ram_gb":16,"storage_gb":953,"ip":"192.168.1.14","mac":"10:78:d2:38:b1:0f","agent_version":"1.0","cpu_usage":31.7,"ram_usage":53.5,"storage_free":668.58}
+ERROR - 2026-02-24 06:30:27 --> HEARTBEAT HIT: {"asset_id":12,"hostname":"SUPPORT-YHS","device_user":"REZA","os":"Windows","os_version":"10.0.26100","cpu":"Intel64 Family 6 Model 58 Stepping 9, GenuineIntel","ram_gb":16,"storage_gb":953,"ip":"192.168.1.14","mac":"10:78:d2:38:b1:0f","agent_version":"1.0","cpu_usage":46,"ram_usage":50.5,"storage_free":668.57}
