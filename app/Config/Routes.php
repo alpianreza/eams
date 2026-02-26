@@ -227,3 +227,6 @@ $routes->get(
 );
 
 $routes->match(['get', 'post'], 'api/it/heartbeat', 'Api\ITController::heartbeat');
+
+$routes->get('it/devices', 'ITDeviceController::index', ['filter' => 'auth']);
+$routes->get('it/devices/ajax', 'ITDeviceController::ajax', ['filter' => 'auth']);

@@ -70,7 +70,7 @@
 
     <!-- FORM CHECKLIST -->
     <form id="checklistForm"
-      action="<?= base_url('compliance/checklist/submit') ?>"
+      action="<?= site_url('compliance/checklist/submit') ?>"
       method="post"
       enctype="multipart/form-data">
 
@@ -115,8 +115,7 @@
                       name="questions[<?= $q['id'] ?>]"
                       id="ok-<?= $q['id'] ?>"
                       value="ok"
-                      data-qid="<?= $q['id'] ?>"
-                      required>
+                      data-qid="<?= $q['id'] ?>">
 
                     <label class="btn btn-outline-success btn-sm d-flex align-items-center gap-1"
                       for="ok-<?= $q['id'] ?>">
@@ -129,8 +128,7 @@
                       name="questions[<?= $q['id'] ?>]"
                       id="ng-<?= $q['id'] ?>"
                       value="ng"
-                      data-qid="<?= $q['id'] ?>"
-                      required>
+                      data-qid="<?= $q['id'] ?>">
 
                     <label class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
                       for="ng-<?= $q['id'] ?>">
@@ -145,8 +143,7 @@
                         name="questions[<?= $q['id'] ?>]"
                         id="na-<?= $q['id'] ?>"
                         value="na"
-                        data-qid="<?= $q['id'] ?>"
-                        required>
+                        data-qid="<?= $q['id'] ?>">
 
                       <label class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1"
                         for="na-<?= $q['id'] ?>">

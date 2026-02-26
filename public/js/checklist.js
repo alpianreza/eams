@@ -5,6 +5,10 @@ function initChecklistUI() {
       const qid = this.dataset.qid;
       if (!qid) return;
 
+      // ✅ HAPUS MERAH BARIS SAAT SUDAH DIISI
+      const tr = this.closest("tr");
+      if (tr) tr.classList.remove("table-danger");
+
       const isNg = this.value === "ng";
       const rowEl = document.getElementById("ng-row-" + qid);
       if (!rowEl) return;
@@ -14,13 +18,9 @@ function initChecklistUI() {
 
       if (isNg) {
         rowEl.classList.remove("d-none");
-
-        if (remark) {
-          setTimeout(() => remark.focus(), 150);
-        }
+        if (remark) setTimeout(() => remark.focus(), 150);
       } else {
         rowEl.classList.add("d-none");
-
         if (remark) remark.value = "";
         if (photo) photo.value = "";
       }
@@ -29,58 +29,90 @@ function initChecklistUI() {
 
   /* ================= TANDAI SEMUA OK ================= */
   const btnOkAll = document.getElementById("btn-ok-all");
-
   if (btnOkAll) {
     btnOkAll.addEventListener("click", function () {
       document
         .querySelectorAll(".status-radio[value='ok']")
         .forEach((radio) => {
           radio.checked = true;
-
-          // trigger change biar ng-row ketutup
           radio.dispatchEvent(new Event("change", { bubbles: true }));
         });
     });
   }
-
-  /* ================= VALIDASI SUBMIT ================= */
+  /* ================= FORM + VALIDASI ================= */
   const form = document.getElementById("checklistForm");
 
   if (form) {
+    if (form.dataset.bound) return;
+    form.dataset.bound = "1";
+
+    // ✅ FIX MIXED CONTENT — pakai relative path
+    const raw = form.getAttribute("action");
+    if (raw) {
+      const url = new URL(raw, window.location.origin);
+      form.setAttribute("action", url.pathname + url.search);
+    }
+
     form.addEventListener("submit", function (e) {
       let valid = true;
 
-      document
+      const radios = form.querySelectorAll(".status-radio");
+      const groups = {};
+
+      radios.forEach((r) => (groups[r.name] = false));
+      radios.forEach((r) => {
+        if (r.checked) groups[r.name] = true;
+      });
+
+      const invalidGroups = Object.keys(groups).filter((n) => !groups[n]);
+
+      if (invalidGroups.length) {
+        valid = false;
+
+        invalidGroups.forEach((name) => {
+          const el = form.querySelector(`input[name="${name}"]`);
+          if (el) el.closest("tr").classList.add("table-danger");
+        });
+
+        const first = form.querySelector(`input[name="${invalidGroups[0]}"]`);
+        if (first) first.closest("tr").scrollIntoView({ behavior: "smooth" });
+      }
+
+      form
         .querySelectorAll(".status-radio[value='ng']:checked")
         .forEach((radio) => {
           const qid = radio.dataset.qid;
-          const rowEl = document.getElementById("ng-row-" + qid);
-          if (!rowEl) return;
+          const row = document.getElementById("ng-row-" + qid);
+          if (!row) return;
 
-          const remark = rowEl.querySelector("textarea");
-          const photo = rowEl.querySelector("input[type='file']");
+          const remark = row.querySelector("textarea");
+          const photo = row.querySelector("input[type='file']");
 
           const remarkValue = remark ? remark.value.trim() : "";
-          const hasPhoto = photo && photo.files.length > 0;
+          const hasPhoto = photo && photo.files.length;
 
-          if (remarkValue === "" && !hasPhoto) {
+          if (!remarkValue && !hasPhoto) {
             valid = false;
-
-            rowEl.classList.add("border", "border-danger", "rounded");
-
-            if (remark) {
-              remark.setCustomValidity("Isi catatan atau foto.");
-              remark.reportValidity();
-            }
+            row.classList.add("border", "border-danger", "rounded");
           } else {
-            rowEl.classList.remove("border", "border-danger", "rounded");
-
-            if (remark) remark.setCustomValidity("");
+            row.classList.remove("border", "border-danger", "rounded");
           }
         });
 
       if (!valid) {
         e.preventDefault();
+
+        // fokus ke baris error pertama
+        const firstError =
+          form.querySelector(".table-danger") ||
+          form.querySelector(".border-danger");
+
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+
+        // ✅ tampilkan toast
+        window.safeToast?.("Lengkapi checklist dulu", "warning");
       }
     });
   }
@@ -103,6 +135,7 @@ function initChecklistUI() {
 
             let w = img.width;
             let h = img.height;
+
             if (w > MAX_WIDTH) {
               h = Math.round(h * (MAX_WIDTH / w));
               w = MAX_WIDTH;
@@ -172,7 +205,8 @@ document.addEventListener("click", function (e) {
 
   e.preventDefault();
 
-  const url = link.getAttribute("href");
+  const u = new URL(link.getAttribute("href"), window.location.origin);
+  const url = u.pathname + u.search;
 
   fetch(url, {
     headers: {
@@ -186,15 +220,18 @@ document.addEventListener("click", function (e) {
 
       container.innerHTML = html;
 
-      // re-init UI setelah inject ulang
-      if (window.reInitChecklistUI) {
-        window.reInitChecklistUI();
-      }
+      // ✅ normalize form action → relative
+      container.querySelectorAll("form").forEach((form) => {
+        const raw = form.getAttribute("action");
+        if (!raw) return;
+        const fu = new URL(raw, window.location.origin);
+        form.setAttribute("action", fu.pathname + fu.search);
+      });
 
-      // update URL tanpa reload
+      // reinit UI
+      window.reInitChecklistUI?.();
+
       window.history.pushState({}, "", url);
     })
-    .catch((err) => {
-      console.error("AJAX error:", err);
-    });
+    .catch(console.error);
 });

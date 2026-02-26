@@ -205,11 +205,24 @@ class ComplianceInventoryController extends BaseController
   public function delete($id)
   {
     if (! hasRole(['admin', 'compliance'])) {
+
+      if ($this->request->isAJAX()) {
+        return $this->response->setJSON(['status' => 'error']);
+      }
+
       return redirect()->to('/unauthorized');
     }
 
     $this->inventoryModel->delete($id);
-    return redirect()->back();
+
+    // AJAX mode
+    if ($this->request->isAJAX()) {
+      return $this->response->setJSON([
+        'status' => 'success'
+      ]);
+    }
+
+    return redirect()->back()->with('success', 'Inventory dihapus');
   }
 
   public function store()
@@ -346,6 +359,17 @@ class ComplianceInventoryController extends BaseController
     $this->inventoryModel->update($inventoryId, [
       'qr_image' => $qrFile
     ]);
+
+    // =====================================
+    // RESPONSE
+    // =====================================
+    if ($this->request->isAJAX()) {
+      return $this->response->setJSON([
+        'status' => 'success',
+        'inventory_id' => $inventoryId,
+        'qr_image' => $qrFile
+      ]);
+    }
 
     return redirect()->to('/compliance/inventory')
       ->with('success', 'Inventory & QR Code berhasil ditambahkan');

@@ -1,3 +1,9 @@
+// ================= URL HELPER (ANTI MIXED CONTENT) =================
+function relUrl(raw) {
+  const u = new URL(raw, window.location.origin);
+  return u.pathname + u.search;
+}
+
 let editForm = null;
 let editModalEl = null;
 let currentRow = null;
@@ -25,10 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const id = btn.dataset.id;
       currentRow = btn.closest("tr");
 
-      const res = await fetch(`${BASE_URL}/compliance/inventory/get/${id}`);
+      const res = await fetch(relUrl(`/compliance/inventory/get/${id}`));
       const data = await res.json();
 
-      editForm.action = `${BASE_URL}/compliance/inventory/update/${id}`;
+      editForm.action = relUrl(`/compliance/inventory/update/${id}`);
 
       // isi modal dari server
       editForm.querySelector("#edit_id").value = data.id;
@@ -59,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       e.stopPropagation();
 
-      fetch(editForm.action, {
+      fetch(relUrl(editForm.action), {
         method: "POST",
         body: new FormData(editForm),
         headers: {
@@ -86,6 +92,15 @@ document.addEventListener("DOMContentLoaded", function () {
           const specificVal = editForm.querySelector(
             "#edit_specific_area",
           ).value;
+
+          const unanswered =
+            document.querySelectorAll(".status-group").length !==
+            document.querySelectorAll(".status-radio:checked").length;
+
+          if (unanswered) {
+            valid = false;
+            safeToast("Semua pertanyaan harus dipilih", "error");
+          }
 
           // ==============================
           // UPDATE DATASET TOMBOL EDIT
@@ -136,9 +151,17 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       e.stopPropagation();
 
-      fetch(addForm.action, {
+      // ✅ FIX MIXED CONTENT — pakai relative url
+      const raw = addForm.getAttribute("action");
+      const u = new URL(raw, window.location.origin);
+      const url = u.pathname + u.search;
+
+      fetch(url, {
         method: "POST",
         body: new FormData(addForm),
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
       })
         .then((res) => {
           if (!res.ok) throw new Error("Request failed");
@@ -156,7 +179,6 @@ document.addEventListener("DOMContentLoaded", function () {
           safeToast("Gagal menambahkan inventory", "error");
         });
     });
-
     addModalEl.addEventListener("hidden.bs.modal", function () {
       addForm.reset();
       const img = addModalEl.querySelector("#previewPhoto");
@@ -180,9 +202,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const skeleton = document.getElementById("inventorySkeleton");
 
-  // BASE URL aman
-  const BASE = BASE_URL.replace(/\/$/, "");
-
   let debounceTimer;
 
   /* =========================
@@ -202,27 +221,40 @@ document.addEventListener("DOMContentLoaded", function () {
     skeleton?.classList.remove("d-none");
     ajaxContainer.classList.add("is-loading");
 
-    fetch(url, {
+    const finalUrl = relUrl(url);
+
+    fetch(finalUrl, {
       headers: { "X-Requested-With": "XMLHttpRequest" },
     })
-      .then((res) => res.text())
+      .then((res) => {
+        if (!res.ok) throw new Error("Load inventory failed");
+        return res.text();
+      })
       .then((html) => {
         const doc = new DOMParser().parseFromString(html, "text/html");
         const newContent = doc.querySelector("#inventoryAjax");
         if (!newContent) return;
 
         ajaxContainer.innerHTML = newContent.innerHTML;
-        window.history.pushState({}, "", url);
 
-        bindPagination(); // ✅ hanya pagination
+        // update browser url
+        window.history.pushState({}, "", finalUrl);
+
+        // rebind pagination (WAJIB)
+        bindPagination();
+
+        // UX smooth
+        ajaxContainer.scrollIntoView({ behavior: "smooth", block: "start" });
       })
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err);
+        safeToast("Gagal memuat inventory", "error");
+      })
       .finally(() => {
         skeleton?.classList.add("d-none");
         ajaxContainer.classList.remove("is-loading");
       });
   }
-
   /* =========================
      APPLY FILTER (DEBOUNCE)
   ========================= */
@@ -234,14 +266,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (filters.category?.value)
         params.set("category", filters.category.value);
-
       if (filters.area?.value) params.set("area", filters.area.value);
-
       if (filters.search?.value.trim())
         params.set("q", filters.search.value.trim());
 
       const url =
-        BASE +
+        window.location.origin +
         "/compliance/inventory" +
         (params.toString() ? "?" + params.toString() : "");
 
@@ -277,7 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (filters.area) filters.area.value = "";
     if (filters.search) filters.search.value = "";
 
-    loadInventory(BASE + "/compliance/inventory");
+    loadInventory("/compliance/inventory");
     toggleReset();
   });
 
@@ -286,9 +316,17 @@ document.addEventListener("DOMContentLoaded", function () {
   ========================= */
   function bindPagination() {
     document.querySelectorAll(".pagination a").forEach((link) => {
+      const url = new URL(link.href);
+
+      // paksa origin ikut browser sekarang (https / lan)
+      url.protocol = window.location.protocol;
+      url.host = window.location.host;
+
+      link.href = url.toString();
+
       link.onclick = function (e) {
         e.preventDefault();
-        loadInventory(this.href);
+        loadInventory(link.href);
       };
     });
   }
@@ -321,7 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }).then((result) => {
       if (!result.isConfirmed) return;
 
-      fetch(form.action, {
+      fetch(relUrl(form.action), {
         method: "POST",
         body: new FormData(form),
         headers: {
@@ -418,7 +456,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    fetch(`${BASE_URL}compliance/inventory/regenerate-qr/${id}`, {
+    fetch(relUrl(`/compliance/inventory/regenerate-qr/${id}`), {
       method: "POST",
       headers: {
         "X-Requested-With": "XMLHttpRequest",
@@ -428,8 +466,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((res) => {
         if (res.status === "success") {
           const img = modal.querySelector("#qrImage");
-          img.src =
-            BASE_URL + "uploads/qr/" + res.qr_image + "?t=" + Date.now();
+          img.src = `/uploads/qr/${res.qr_image}?t=${Date.now()}`;
 
           // update dataset tombol edit juga
           const editBtn = document.querySelector(`.btn-edit[data-id="${id}"]`);

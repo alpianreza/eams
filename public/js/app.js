@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  /* =====================================================
-     SWEETALERT2 GLOBAL TOAST (KIRI ATAS)
-  ===================================================== */
   window.safeToast = function (message, type = "success") {
     Swal.fire({
       toast: true,
@@ -15,9 +12,12 @@ document.addEventListener("DOMContentLoaded", function () {
         popup: "colored-toast",
       },
       didOpen: (toast) => {
-        toast.style.marginTop = "60px"; // aman AdminLTE
+        toast.style.marginTop = "60px";
         toast.style.marginLeft = "15px";
       },
     });
   };
+
+  // ✅ ALIAS — biar semua module lama tetap jalan
+  window.appToast = window.safeToast;
 });

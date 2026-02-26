@@ -147,22 +147,29 @@ $backUrl = base_url('compliance/inventory');
 
 <script src="<?= base_url('js/inventory-detail.js') ?>"></script>
 
-
 <script>
   function openChecklistZoom(imageUrl) {
+    const img = document.getElementById("zoomChecklistImage");
+    const modalElement = document.getElementById("modalZoomChecklist");
 
-    const img = document.getElementById('zoomChecklistImage');
+    if (!img || !modalElement) return; // 🔑 anti error
+
     img.src = imageUrl;
 
-    const modalElement = document.getElementById('modalZoomChecklist');
-    const modal = new bootstrap.Modal(modalElement);
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
     modal.show();
   }
 
-  document.getElementById('modalZoomChecklist')
-    .addEventListener('hidden.bs.modal', function() {
-      document.getElementById('zoomChecklistImage').src = '';
+  document.addEventListener("DOMContentLoaded", function() {
+    const modalEl = document.getElementById("modalZoomChecklist");
+    const img = document.getElementById("zoomChecklistImage");
+
+    if (!modalEl || !img) return; // 🔑 penting
+
+    modalEl.addEventListener("hidden.bs.modal", function() {
+      img.src = "";
     });
+  });
 </script>
 
 <?= $this->endSection() ?>

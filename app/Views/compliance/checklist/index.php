@@ -20,7 +20,7 @@
 
 <?= $this->section('scripts') ?>
 
-<script src="<?= base_url('js/checklist.js') ?>"></script>
+<script src="<?= base_url('js/checklist.js') . '?v=' . filemtime(FCPATH . 'js/checklist.js') ?>"></script>
 
 <script>
   window.CHECKLIST_USER = "<?= esc(session('name')) ?>";
