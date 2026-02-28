@@ -226,7 +226,11 @@ $routes->get(
     ['filter' => 'auth']
 );
 
-$routes->match(['get', 'post'], 'api/it/heartbeat', 'Api\ITController::heartbeat');
-
-$routes->get('it/devices', 'ITDeviceController::index', ['filter' => 'auth']);
-$routes->get('it/devices/ajax', 'ITDeviceController::ajax', ['filter' => 'auth']);
+$routes->get('/it/devices', 'ITDeviceController::index', ['filter' => 'auth']);
+$routes->get('/it/devices/ajax', 'ITDeviceController::ajax', ['filter' => 'auth']);
+$routes->post('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
+$routes->get('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
+$routes->get('/it/devices/(:num)', 'ITDeviceController::detail/$1', ['filter' => 'auth']);
+$routes->post('/it/device/push-update', 'ITDeviceController::pushUpdate', ['filter' => 'auth']);
+$routes->post('/it/device/command', 'ITDeviceController::sendCommand', ['filter' => 'auth']);
+$routes->post('/it/device/remote', 'ITDeviceController::remoteAction', ['filter' => 'auth']);
