@@ -180,6 +180,16 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
           </li>
         <?php endif; ?>
 
+        <?php if (hasRole(['admin', 'compliance'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('boiler') ?>"
+              class="nav-link <?= uri_string() == 'boiler' ? 'active' : '' ?>">
+              <i class="nav-icon fas fa-fire"></i>
+              <p>Boiler Fuel Log</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
         <!-- ================= ADMIN ================= -->
         <?php if (hasRole(['admin'])): ?>
           <li class="nav-header">ADMIN</li>

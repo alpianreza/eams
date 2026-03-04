@@ -86,7 +86,7 @@
                   <button
                     class="btn btn-danger btn-xs"
                     data-action="delete"
-                    data-url="<?= site_url('compliance/checklist/master/delete/' . $q['id']) ?>">
+                    data-url="<?= 'https://' . $_SERVER['HTTP_HOST'] . '/compliance/checklist/master/delete/' . $q['id'] ?>">
                     Hapus
                   </button>
                 </div>

@@ -1,3 +1,8 @@
+function relUrl(raw) {
+  const u = new URL(raw, window.location.origin);
+  return u.pathname + u.search;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   /* ===============================
      ADD CHECKLIST QUESTION (AJAX)
@@ -7,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     formAdd.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      fetch(formAdd.action, {
+      fetch(relUrl(formAdd.action), {
         method: "POST",
         body: new FormData(formAdd),
         headers: {
@@ -55,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
     formEdit.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      fetch(formEdit.action, {
+      fetch(relUrl(formEdit.action), {
         method: "POST",
         body: new FormData(formEdit),
         headers: {
@@ -87,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("itemFrequency")
     ?.addEventListener("change", function () {
-      fetch(this.dataset.url, {
+      fetch(relUrl(this.dataset.url), {
         method: "POST",
         headers: { "X-Requested-With": "XMLHttpRequest" },
         body: new URLSearchParams({ frequency: this.value }),
@@ -129,7 +134,7 @@ document.addEventListener("click", function (e) {
   }).then((result) => {
     if (!result.isConfirmed) return;
 
-    fetch(btn.dataset.url, {
+    fetch(relUrl(btn.dataset.url), {
       method: "POST",
       headers: {
         "X-Requested-With": "XMLHttpRequest",

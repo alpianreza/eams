@@ -156,7 +156,7 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
             'item-frequency/(:num)',
             'ComplianceChecklistMasterController::updateItemFrequency/$1'
         );
-        $routes->post('delete/(:num)', 'ChecklistMasterController::delete/$1');
+        $routes->post('delete/(:num)', 'ComplianceChecklistMasterController::delete/$1');
     });
 
     // =========================
@@ -234,3 +234,14 @@ $routes->get('/it/devices/(:num)', 'ITDeviceController::detail/$1', ['filter' =>
 $routes->post('/it/device/push-update', 'ITDeviceController::pushUpdate', ['filter' => 'auth']);
 $routes->post('/it/device/command', 'ITDeviceController::sendCommand', ['filter' => 'auth']);
 $routes->post('/it/device/remote', 'ITDeviceController::remoteAction', ['filter' => 'auth']);
+
+$routes->group('boiler', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'BoilerFuelController::index');
+});
+
+$routes->group('boiler', ['filter' => 'auth'], function ($routes) {
+    $routes->get('detail/(:segment)', 'BoilerFuelController::detail/$1');
+    $routes->post('save', 'BoilerFuelController::save');
+    $routes->post('delete', 'BoilerFuelController::delete');
+});
+$routes->get('boiler/export', 'BoilerFuelController::export', ['filter' => 'auth']);
