@@ -180,13 +180,47 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
           </li>
         <?php endif; ?>
 
+        <?php
+        $isUtilityMenu = in_array($seg1, ['boiler', 'ipal']);
+        ?>
+
         <?php if (hasRole(['admin', 'compliance'])): ?>
           <li class="nav-item">
-            <a href="<?= base_url('boiler') ?>"
-              class="nav-link <?= uri_string() == 'boiler' ? 'active' : '' ?>">
-              <i class="nav-icon fas fa-fire"></i>
-              <p>Boiler Fuel Log</p>
+
+            <a class="nav-link <?= $isUtilityMenu ? 'active' : '' ?>"
+              data-bs-toggle="collapse"
+              href="#menuUtility"
+              role="button"
+              aria-expanded="<?= $isUtilityMenu ? 'true' : 'false' ?>">
+
+              <i class="nav-icon fas fa-industry"></i>
+              <p>
+                Boiler & Utility
+                <i class="bi bi-chevron-down float-end"></i>
+              </p>
             </a>
+
+            <ul class="collapse nav flex-column ms-4 <?= $isUtilityMenu ? 'show' : '' ?>"
+              id="menuUtility">
+
+              <li class="nav-item">
+                <a href="<?= base_url('boiler') ?>"
+                  class="nav-link <?= $seg1 === 'boiler' ? 'active' : '' ?>">
+                  <i class="fas fa-fire"></i>
+                  <p>Boiler Fuel</p>
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a href="<?= base_url('ipal') ?>"
+                  class="nav-link <?= $seg1 === 'ipal' ? 'active' : '' ?>">
+                  <i class="fas fa-water"></i>
+                  <p>IPAL Limbah</p>
+                </a>
+              </li>
+
+            </ul>
+
           </li>
         <?php endif; ?>
 
