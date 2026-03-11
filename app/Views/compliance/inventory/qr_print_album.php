@@ -214,7 +214,7 @@
               <div class="label">
 
                 <div class="qr-wrap">
-                  <img src="<?= base_url('uploads/qr/' . $r['qr_image']) ?>">
+                  <img src="/uploads/qr/<?= esc($r['qr_image']) ?>">
                 </div>
 
                 <div class="area"><?= esc($r['specific_area']) ?></div>

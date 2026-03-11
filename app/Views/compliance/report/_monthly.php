@@ -12,6 +12,7 @@
     CHECKLIST PENGECEKAN <?= strtoupper(esc($itemName)) ?>
   </h5>
   Tahun: <?= $year ?>
+  
 </div>
 
 <div class="row mb-3">
@@ -129,6 +130,7 @@
 
 </table>
 
+
 <?php if (!empty($findingsByMonth)): ?>
 
   <hr>
@@ -218,3 +220,4 @@
   <?php endfor; ?>
 
 <?php endif; ?>
+

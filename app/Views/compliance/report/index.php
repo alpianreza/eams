@@ -169,11 +169,17 @@
     fetch(`/compliance/report/load?inventory_id=${inventory}&year=${year}&month=${month}`)
       .then(res => res.text())
       .then(html => {
+
         document.getElementById('reportContainer').innerHTML = html;
+
+        const btn = document.getElementById('exportFloating');
+
+        btn.href = `/export/pdf/recap/${inventory}/${year}/${month}`;
+        btn.style.display = 'flex';
+
       });
 
   }
-
   document.addEventListener('click', function(e) {
 
     if (e.target.classList.contains('navInventory')) {

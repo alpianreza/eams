@@ -190,6 +190,15 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
           </li>
         <?php endif; ?>
 
+        <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('compliance/print') ?>" class="nav-link">
+              <i class="nav-icon fas fa-print"></i>
+              <p>Print Center</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
         <!-- ================= ADMIN ================= -->
         <?php if (hasRole(['admin'])): ?>
           <li class="nav-header">ADMIN</li>

@@ -37,7 +37,7 @@ $seg2 = $segments[1] ?? '';
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= base_url('adminlte4/css/adminlte.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/mobile.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=' . time()) ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/inventory-detail.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/login.css') ?>">
     <?= $this->renderSection('styles') ?>
@@ -78,6 +78,14 @@ $seg2 = $segments[1] ?? '';
         <?= $this->renderSection('content') ?>
 
     <?php endif; ?>
+
+    <a id="exportFloating"
+        class="btn btn-danger eams-export-float"
+        target="_blank">
+
+        <i class="fa-solid fa-file-pdf"></i>
+
+    </a>
 
 </body>
 

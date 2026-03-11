@@ -16,13 +16,32 @@ class AuthController extends BaseController
     // tampilkan form login
     public function login()
     {
+        // jika sudah login jangan boleh kembali ke halaman login
+        if (session()->get('logged_in')) {
+
+            $role = session()->get('role');
+
+            if (in_array($role, ['staff', 'compliance'])) {
+                return redirect()->to('/');
+            }
+
+            if (in_array($role, ['admin', 'auditor'])) {
+                return redirect()->to('/compliance/dashboard');
+            }
+
+            return redirect()->to('/');
+        }
+
+        // cegah browser cache halaman login
+        $response = service('response');
+        $response->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->setHeader('Pragma', 'no-cache');
+
         return view('auth/login');
     }
 
-    // proses login
     public function doLogin()
     {
-
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
@@ -31,11 +50,11 @@ class AuthController extends BaseController
             ->where('status', 'active')
             ->first();
 
-        if (! $user) {
+        if (!$user) {
             return redirect()->back()->with('error', 'Username tidak ditemukan');
         }
 
-        if (! password_verify($password, $user['password'])) {
+        if (!password_verify($password, $user['password'])) {
             return redirect()->back()->with('error', 'Password salah');
         }
 
@@ -48,7 +67,7 @@ class AuthController extends BaseController
             'permission' => $user['permission']
         ]);
 
-        // PRIORITAS 1: Kalau sebelumnya diarahkan filter
+        // cek redirect dari filter (misal scan QR)
         $redirect = session()->get('redirect_after_login');
         session()->remove('redirect_after_login');
 
@@ -56,19 +75,9 @@ class AuthController extends BaseController
             return redirect()->to($redirect);
         }
 
-        // PRIORITAS 2: Redirect berdasarkan role
-        if (in_array($user['role'], ['staff', 'compliance'])) {
-            return redirect()->to('/home');
-        }
-
-        if (in_array($user['role'], ['admin', 'auditor'])) {
-            return redirect()->to('/compliance/dashboard');
-        }
-
-        // fallback
-        return redirect()->to('/');
+        // default
+        return redirect()->to('/home');
     }
-
     // logout
     public function logout()
     {

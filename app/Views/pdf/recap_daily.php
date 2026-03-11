@@ -91,6 +91,11 @@
     width: 65%;
     margin-top: 5px;
   }
+
+  tfoot td {
+    border-top: 2px solid #000;
+    font-weight: 600;
+  }
 </style>
 
 <?php
@@ -215,6 +220,48 @@ $logoPath = FCPATH . 'assets/images/company/logo.png';
     <?php endforeach; ?>
 
   </tbody>
+  <tfoot style="font-size:8px; text-align:center;">
+    <tr>
+
+      <td colspan="2"><strong>Pengecekan oleh</strong></td>
+
+      <?php foreach ($dailyDays as $date): ?>
+
+        <?php
+        $data = $checkerByDate[$date] ?? null;
+
+        $initial = '';
+        $tooltip = '';
+
+        if ($data) {
+
+          $nameParts = explode(' ', trim($data['name']));
+          $firstName = $nameParts[0] ?? '';
+
+          $initial = strtoupper(substr($firstName, 0, 2));
+
+          $tooltip = 'Dicek oleh: ' . $data['name'];
+
+          if ($role !== 'auditor') {
+            $tooltip .= ' | Tanggal: ' . date('d M Y', strtotime($data['date']));
+          }
+        }
+        ?>
+
+        <td style="font-size:11px;color:#555;">
+
+          <?php if ($initial): ?>
+            <span title="<?= esc($tooltip) ?>" style="cursor:help;">
+              <?= $initial ?>
+            </span>
+          <?php endif; ?>
+
+        </td>
+
+      <?php endforeach; ?>
+
+    </tr>
+  </tfoot>
 </table>
 
 <p style="margin-top:5px; font-size:8px;">
@@ -226,28 +273,21 @@ $logoPath = FCPATH . 'assets/images/company/logo.png';
 
   <div style="page-break-before: always;"></div>
 
-  <h4 style="margin-bottom:10px;">
+  <h4 style="margin-bottom:10px;font-size:12px;">
     DETAIL TEMUAN BULAN <?= strtoupper($bulanNama) ?> <?= $year ?>
   </h4>
 
-  <table style="width:100%;">
-    <tr>
-      <td style="width:50%; vertical-align:top;">
+  <?php $rows = array_chunk($findings, 4); ?>
 
-        <?php
-        $total = count($findings);
-        $half  = ceil($total / 2);
-        ?>
+  <table style="width:100%; border-collapse:collapse;">
 
-        <?php foreach ($findings as $i => $log): ?>
+    <?php foreach ($rows as $index => $pair): ?>
 
-          <?php if ($i == $half): ?>
-      </td>
-      <td style="width:50%; vertical-align:top;">
-      <?php endif; ?>
+      <tr>
 
-      <?php
-          // Cari nama pertanyaan
+        <?php foreach ($pair as $i => $log): ?>
+
+          <?php
           $questionName = '';
           foreach ($masters as $q) {
             if ($q['id'] == $log['checklist_template_id']) {
@@ -255,36 +295,48 @@ $logoPath = FCPATH . 'assets/images/company/logo.png';
               break;
             }
           }
-      ?>
+          ?>
 
-      <div style="
-        padding:6px 0;
-        margin-bottom:6px;
-        font-size:9px;
-        border-bottom:1px solid #ddd;
-    ">
+          <td style="width:50%; vertical-align:top; padding:4px 8px;">
 
-        <strong><?= $i + 1 ?>.</strong>
-        <span style="font-style:italic;">
-          <?= esc($log['display_period']) ?>
-        </span><br>
+            <div style="
+font-size:9px;
+border-bottom:1px solid #ddd;
+padding-bottom:4px;
+margin-bottom:6px;
+">
 
-        <span style="margin-left:10px;">
-          <?= esc($questionName) ?>
-        </span><br>
+              <strong><?= ($index * 2) + $i + 1 ?>.</strong>
+              <span style="font-style:italic;">
+                <?= esc($log['display_period']) ?>
+              </span>
+              <br>
 
-        <?php if (!empty($log['remark'])): ?>
-          <span style="color:#555; margin-left:10px;">
-            <?= esc($log['remark']) ?>
-          </span>
+              <span style="margin-left:10px;">
+                <?= esc($questionName) ?>
+              </span>
+              <br>
+
+              <?php if (!empty($log['remark'])): ?>
+                <span style="margin-left:10px;color:#555;">
+                  <?= esc($log['remark']) ?>
+                </span>
+              <?php endif; ?>
+
+            </div>
+
+          </td>
+
+        <?php endforeach; ?>
+
+        <?php if (count($pair) == 1): ?>
+          <td style="width:50%"></td>
         <?php endif; ?>
 
-      </div>
+      </tr>
 
     <?php endforeach; ?>
 
-      </td>
-    </tr>
   </table>
 
 <?php endif; ?>

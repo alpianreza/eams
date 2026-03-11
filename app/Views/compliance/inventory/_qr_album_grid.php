@@ -31,7 +31,7 @@
     <div class="col-xl-2 col-lg-3 col-md-4 col-6">
       <div class="qr-card">
 
-        <img src="<?= base_url('uploads/qr/' . $inv['qr_image']) . '?v=' . time() ?>" class="img-fluid">
+        <img src="/uploads/qr/<?= esc($inv['qr_image']) ?>?v=<?= time() ?>" class="img-fluid">
 
         <div class="text-muted small text-center">
           <?= esc($inv['specific_area']) ?>

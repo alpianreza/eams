@@ -22,7 +22,7 @@
           <div class="qr-album"
             data-name="<?= esc($itemName) ?>">
 
-            <img src="<?= base_url('uploads/qr/' . $album['cover']) . '?v=' . time() ?>" class="img-fluid">
+            <img src="/uploads/qr/<?= esc($album['cover']) ?>?v=<?= time() ?>" class="img-fluid">
 
             <div class="album-meta">
               <div class="fw-bold small"><?= esc($itemName) ?></div>
@@ -134,7 +134,7 @@ SCRIPT AJAX NAVIGATION
     }).then(r => {
       if (!r.isConfirmed) return;
 
-      window.location = '<?= base_url("compliance/inventory/qr-album-download") ?>/' + encodeURIComponent(name);
+      window.location = '/compliance/inventory/qr-album-download/' + encodeURIComponent(name);
     });
 
   }
@@ -203,7 +203,7 @@ SCRIPT AJAX NAVIGATION
 
   function printAlbum(name) {
     window.open(
-      '<?= base_url("compliance/inventory/qr-album-print") ?>/' + encodeURIComponent(name),
+      '/compliance/inventory/qr-album-print/' + encodeURIComponent(name),
       '_blank'
     );
   }
