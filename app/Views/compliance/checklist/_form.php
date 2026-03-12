@@ -127,7 +127,7 @@
                       class="btn-check status-radio"
                       name="questions[<?= $q['id'] ?>]"
                       id="ng-<?= $q['id'] ?>"
-                      value="ng"
+                      value="not_ok"
                       data-qid="<?= $q['id'] ?>">
 
                     <label class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"

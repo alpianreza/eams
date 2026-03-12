@@ -4,10 +4,6 @@ function relUrl(raw) {
   return u.pathname + u.search;
 }
 
-let editForm = null;
-let editModalEl = null;
-let currentRow = null;
-
 document.addEventListener("DOMContentLoaded", function () {
   /* =====================================================
      =============== EDIT INVENTORY ======================
@@ -92,15 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
           const specificVal = editForm.querySelector(
             "#edit_specific_area",
           ).value;
-
-          const unanswered =
-            document.querySelectorAll(".status-group").length !==
-            document.querySelectorAll(".status-radio:checked").length;
-
-          if (unanswered) {
-            valid = false;
-            safeToast("Semua pertanyaan harus dipilih", "error");
-          }
 
           // ==============================
           // UPDATE DATASET TOMBOL EDIT

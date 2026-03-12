@@ -36,7 +36,6 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         'auth' => \App\Filters\AuthFilter::class,
         'admin' => \App\Filters\AdminFilter::class,
-        'admin' => \App\Filters\AdminFilter::class,
         'write' => \App\Filters\WriteFilter::class,
         'pdfAccess'   => \App\Filters\PdfAccessFilter::class,
 

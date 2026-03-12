@@ -984,6 +984,7 @@ class ComplianceInventoryController extends BaseController
       // 🔥 MAPPING STATUS
       $statusDb = match ($status) {
         'ok' => 'ok',
+        'not_ok' => 'not_ok',
         'ng' => 'not_ok',
         'na' => 'na',
         default => 'na'
@@ -992,7 +993,7 @@ class ComplianceInventoryController extends BaseController
       $remarkValue = trim($remarks[$templateId] ?? '');
       $hasPhoto = isset($photos[$templateId]) && $photos[$templateId]->isValid();
 
-      if ($status === 'ng' && $remarkValue === '' && ! $hasPhoto) {
+      if (in_array($status, ['not_ok', 'ng'], true) && $remarkValue === '' && ! $hasPhoto) {
         return redirect()->back()
           ->with('error', 'Checklist NOT OK wajib memiliki catatan atau foto.');
       }

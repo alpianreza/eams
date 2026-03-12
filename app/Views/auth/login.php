@@ -120,11 +120,6 @@
     <div class="login-logo mb-4 text-center">
 
         <img src="<?= base_url('assets/images/company/logo.png') ?>" alt="logo">
-
-        <div style="font-size:26px;font-weight:600;color:white;">
-            EAMS
-        </div>
-
         <div style="font-size:13px;color:#cbd5e1;">
             Enterprise Asset Management System
         </div>

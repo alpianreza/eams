@@ -79,13 +79,6 @@ $seg2 = $segments[1] ?? '';
 
     <?php endif; ?>
 
-    <a id="exportFloating"
-        class="btn btn-danger eams-export-float"
-        target="_blank">
-
-        <i class="fa-solid fa-file-pdf"></i>
-
-    </a>
 
 </body>
 

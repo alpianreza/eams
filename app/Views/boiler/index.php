@@ -11,13 +11,15 @@
 
     <div class="d-flex align-items-center gap-2">
 
-      <form method="get" class="mr-2">
+
+      <form method="get">
         <input type="month"
           name="monthpicker"
           value="<?= $year . '-' . $month ?>"
           class="form-control"
           onchange="this.form.submit()">
       </form>
+
 
       <a href="<?= base_url('boiler/export?year=' . $year . '&month=' . $month) ?>"
         class="btn btn-success btn-sm">

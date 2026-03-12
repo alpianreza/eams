@@ -10,6 +10,10 @@ class WriteFilter implements FilterInterface
 {
   public function before(RequestInterface $request, $arguments = null)
   {
+    if (! session()->get('logged_in')) {
+      return redirect()->to('/login');
+    }
+
     $role       = session()->get('role');
     $permission = session()->get('permission');
 

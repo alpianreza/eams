@@ -36,8 +36,6 @@ $routes->group('employees', ['filter' => 'auth'], function ($routes) {
     $routes->get('deactivate/(:num)', 'EmployeeController::deactivate/$1');
 });
 
-$routes->post('employees/unassign/(:num)/(:num)', 'EmployeeController::unassign/$1/$2');
-
 // routes khusus admin
 $routes->group('users', ['filter' => 'admin'], function ($routes) {
     $routes->get('/', 'UserController::index');
@@ -59,7 +57,7 @@ $routes->group('it-assets', ['filter' => 'write'], function ($routes) {
 $routes->post(
     'employees/unassign/(:num)/(:num)',
     'EmployeeController::unassign/$1/$2',
-    ['filter' => 'write']
+    ['filter' => ['auth', 'write']]
 );
 
 //Audit Log
@@ -210,14 +208,14 @@ $routes->get(
 $routes->get('/home', 'HomeController::index', ['filter' => 'auth']);
 
 $routes->get('compliance/progress', 'ProgressController::index', ['filter' => 'auth']);
-$routes->get('compliance/progress/ajax', 'ProgressController::getProgressAjax');
+$routes->get('compliance/progress/ajax', 'ProgressController::getProgressAjax', ['filter' => 'auth']);
 
-$routes->get('compliance/progress/export', 'ProgressController::export');
-$routes->get('compliance/progress/detail', 'ProgressController::getUserDetailAjax');
+$routes->get('compliance/progress/export', 'ProgressController::export', ['filter' => 'auth']);
+$routes->get('compliance/progress/detail', 'ProgressController::getUserDetailAjax', ['filter' => 'auth']);
 
-$routes->get('compliance/inventory/get/(:num)', 'ComplianceInventoryController::get/$1');
+$routes->get('compliance/inventory/get/(:num)', 'ComplianceInventoryController::get/$1', ['filter' => 'auth']);
 
-$routes->group('compliance/inventory', function ($routes) {
+$routes->group('compliance/inventory', ['filter' => 'auth'], function ($routes) {
 
     $routes->get('qr-center', 'ComplianceInventoryController::qrCenter');
 
@@ -235,7 +233,7 @@ $routes->get('/it/devices/ajax', 'ITDeviceController::ajax', ['filter' => 'auth'
 $routes->post('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
 $routes->get('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
 $routes->get('/it/devices/(:num)', 'ITDeviceController::detail/$1', ['filter' => 'auth']);
-$routes->post('/it/device/push-update', 'ITDeviceController::pushUpdate', ['filter' => 'auth']);
+$routes->post('/it/device/push-update', 'Api\\AgentController::pushUpdate', ['filter' => 'auth']);
 $routes->post('/it/device/command', 'ITDeviceController::sendCommand', ['filter' => 'auth']);
 $routes->post('/it/device/remote', 'ITDeviceController::remoteAction', ['filter' => 'auth']);
 
@@ -249,8 +247,6 @@ $routes->group('boiler', ['filter' => 'auth'], function ($routes) {
     $routes->post('delete', 'BoilerFuelController::delete');
 });
 $routes->get('boiler/export', 'BoilerFuelController::export', ['filter' => 'auth']);
-
-$routes->get('export/pdf/recap/(:num)/(:num)/(:num)', 'ExportPdfController::recap/$1/$2/$3');
 
 $routes->group('ipal', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'IpalController::index');

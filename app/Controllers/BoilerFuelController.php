@@ -24,8 +24,14 @@ class BoilerFuelController extends BaseController
 
   public function index()
   {
-    $year  = $this->request->getGet('year') ?? date('Y');
-    $month = $this->request->getGet('month') ?? date('m');
+    $monthpicker = $this->request->getGet('monthpicker');
+
+    if ($monthpicker) {
+      [$year, $month] = explode('-', $monthpicker);
+    } else {
+      $year  = date('Y');
+      $month = date('m');
+    }
 
     $startDate = "$year-$month-01";
     $endDate   = date("Y-m-t", strtotime($startDate));
@@ -59,6 +65,7 @@ class BoilerFuelController extends BaseController
       'holidayDates' => $holidayDates
     ]);
   }
+
   public function detail($date)
   {
     $logs = $this->model

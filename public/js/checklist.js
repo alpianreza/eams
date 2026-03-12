@@ -1,123 +1,127 @@
-function initChecklistUI() {
-  /* ================= TOGGLE OK / NG ================= */
+function normalizeFormAction(form) {
+  const raw = form.getAttribute("action");
+  if (!raw) return;
+
+  const url = new URL(raw, window.location.origin);
+  form.setAttribute("action", url.pathname + url.search);
+}
+
+function bindStatusRadios() {
   document.querySelectorAll(".status-radio").forEach((radio) => {
     radio.addEventListener("change", function () {
       const qid = this.dataset.qid;
       if (!qid) return;
 
-      // ✅ HAPUS MERAH BARIS SAAT SUDAH DIISI
-      const tr = this.closest("tr");
-      if (tr) tr.classList.remove("table-danger");
+      const row = this.closest("tr");
+      if (row) row.classList.remove("table-danger");
 
-      const isNg = this.value === "ng";
-      const rowEl = document.getElementById("ng-row-" + qid);
-      if (!rowEl) return;
+      const isNotOk = this.value === "not_ok";
+      const detailRow = document.getElementById("ng-row-" + qid);
+      if (!detailRow) return;
 
-      const remark = rowEl.querySelector("textarea");
-      const photo = rowEl.querySelector("input[type='file']");
+      const remark = detailRow.querySelector("textarea");
+      const photo = detailRow.querySelector("input[type='file']");
 
-      if (isNg) {
-        rowEl.classList.remove("d-none");
+      if (isNotOk) {
+        detailRow.classList.remove("d-none");
         if (remark) setTimeout(() => remark.focus(), 150);
-      } else {
-        rowEl.classList.add("d-none");
-        if (remark) remark.value = "";
-        if (photo) photo.value = "";
+        return;
       }
+
+      detailRow.classList.add("d-none");
+      if (remark) remark.value = "";
+      if (photo) photo.value = "";
     });
   });
+}
 
-  /* ================= TANDAI SEMUA OK ================= */
+function bindMarkAllOk() {
   const btnOkAll = document.getElementById("btn-ok-all");
-  if (btnOkAll) {
-    btnOkAll.addEventListener("click", function () {
-      document
-        .querySelectorAll(".status-radio[value='ok']")
-        .forEach((radio) => {
-          radio.checked = true;
-          radio.dispatchEvent(new Event("change", { bubbles: true }));
-        });
+  if (!btnOkAll) return;
+
+  btnOkAll.addEventListener("click", () => {
+    document.querySelectorAll(".status-radio[value='ok']").forEach((radio) => {
+      radio.checked = true;
+      radio.dispatchEvent(new Event("change", { bubbles: true }));
     });
+  });
+}
+
+function validateChecklistForm(form, e) {
+  let valid = true;
+
+  const radios = form.querySelectorAll(".status-radio");
+  const groups = {};
+
+  radios.forEach((radio) => {
+    groups[radio.name] = false;
+  });
+
+  radios.forEach((radio) => {
+    if (radio.checked) groups[radio.name] = true;
+  });
+
+  const invalidGroups = Object.keys(groups).filter((name) => !groups[name]);
+
+  if (invalidGroups.length) {
+    valid = false;
+
+    invalidGroups.forEach((name) => {
+      const el = form.querySelector(`input[name="${name}"]`);
+      if (el) el.closest("tr")?.classList.add("table-danger");
+    });
+
+    const first = form.querySelector(`input[name="${invalidGroups[0]}"]`);
+    first?.closest("tr")?.scrollIntoView({ behavior: "smooth" });
   }
-  /* ================= FORM + VALIDASI ================= */
-  const form = document.getElementById("checklistForm");
 
-  if (form) {
-    if (form.dataset.bound) return;
-    form.dataset.bound = "1";
+  form
+    .querySelectorAll(".status-radio[value='not_ok']:checked")
+    .forEach((radio) => {
+      const qid = radio.dataset.qid;
+      const row = document.getElementById("ng-row-" + qid);
+      if (!row) return;
 
-    // ✅ FIX MIXED CONTENT — pakai relative path
-    const raw = form.getAttribute("action");
-    if (raw) {
-      const url = new URL(raw, window.location.origin);
-      form.setAttribute("action", url.pathname + url.search);
-    }
+      const remark = row.querySelector("textarea");
+      const photo = row.querySelector("input[type='file']");
 
-    form.addEventListener("submit", function (e) {
-      let valid = true;
+      const remarkValue = remark ? remark.value.trim() : "";
+      const hasPhoto = !!(photo && photo.files.length);
 
-      const radios = form.querySelectorAll(".status-radio");
-      const groups = {};
-
-      radios.forEach((r) => (groups[r.name] = false));
-      radios.forEach((r) => {
-        if (r.checked) groups[r.name] = true;
-      });
-
-      const invalidGroups = Object.keys(groups).filter((n) => !groups[n]);
-
-      if (invalidGroups.length) {
+      if (!remarkValue && !hasPhoto) {
         valid = false;
-
-        invalidGroups.forEach((name) => {
-          const el = form.querySelector(`input[name="${name}"]`);
-          if (el) el.closest("tr").classList.add("table-danger");
-        });
-
-        const first = form.querySelector(`input[name="${invalidGroups[0]}"]`);
-        if (first) first.closest("tr").scrollIntoView({ behavior: "smooth" });
-      }
-
-      form
-        .querySelectorAll(".status-radio[value='ng']:checked")
-        .forEach((radio) => {
-          const qid = radio.dataset.qid;
-          const row = document.getElementById("ng-row-" + qid);
-          if (!row) return;
-
-          const remark = row.querySelector("textarea");
-          const photo = row.querySelector("input[type='file']");
-
-          const remarkValue = remark ? remark.value.trim() : "";
-          const hasPhoto = photo && photo.files.length;
-
-          if (!remarkValue && !hasPhoto) {
-            valid = false;
-            row.classList.add("border", "border-danger", "rounded");
-          } else {
-            row.classList.remove("border", "border-danger", "rounded");
-          }
-        });
-
-      if (!valid) {
-        e.preventDefault();
-
-        // fokus ke baris error pertama
-        const firstError =
-          form.querySelector(".table-danger") ||
-          form.querySelector(".border-danger");
-
-        if (firstError) {
-          firstError.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-
-        // ✅ tampilkan toast
-        window.safeToast?.("Lengkapi checklist dulu", "warning");
+        row.classList.add("border", "border-danger", "rounded");
+      } else {
+        row.classList.remove("border", "border-danger", "rounded");
       }
     });
-  }
 
-  /* ================= FOTO COMPRESS + WATERMARK ================= */
+  if (valid) return;
+
+  e.preventDefault();
+
+  const firstError =
+    form.querySelector(".table-danger") || form.querySelector(".border-danger");
+
+  firstError?.scrollIntoView({ behavior: "smooth", block: "center" });
+  window.safeToast?.("Lengkapi checklist dulu", "warning");
+}
+
+function bindChecklistForm() {
+  const form = document.getElementById("checklistForm");
+  if (!form) return;
+
+  if (form.dataset.bound) return;
+  form.dataset.bound = "1";
+
+  normalizeFormAction(form);
+
+  form.addEventListener("submit", function (e) {
+    validateChecklistForm(form, e);
+  });
+}
+
+function bindPhotoCompression() {
   document
     .querySelectorAll("input[type='file'][name^='photos']")
     .forEach((input) => {
@@ -126,33 +130,33 @@ function initChecklistUI() {
         if (!file || !file.type.startsWith("image/")) return;
 
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = function (event) {
           const img = new Image();
           img.onload = function () {
             const MAX_WIDTH = 1280;
             const QUALITY = 0.7;
             const CURRENT_USER = window.CHECKLIST_USER || "User";
 
-            let w = img.width;
-            let h = img.height;
+            let width = img.width;
+            let height = img.height;
 
-            if (w > MAX_WIDTH) {
-              h = Math.round(h * (MAX_WIDTH / w));
-              w = MAX_WIDTH;
+            if (width > MAX_WIDTH) {
+              height = Math.round(height * (MAX_WIDTH / width));
+              width = MAX_WIDTH;
             }
 
             const canvas = document.createElement("canvas");
-            canvas.width = w;
-            canvas.height = h;
+            canvas.width = width;
+            canvas.height = height;
 
             const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, w, h);
+            ctx.drawImage(img, 0, 0, width, height);
 
             ctx.fillStyle = "rgba(0,0,0,0.45)";
-            ctx.fillRect(w - 320, h - 60, 310, 50);
+            ctx.fillRect(width - 320, height - 60, 310, 50);
 
             ctx.fillStyle = "#fff";
-            ctx.font = `${Math.max(14, Math.round(w * 0.018))}px Arial`;
+            ctx.font = `${Math.max(14, Math.round(width * 0.018))}px Arial`;
 
             const now = new Date();
             const dateText =
@@ -166,47 +170,57 @@ function initChecklistUI() {
               ":" +
               String(now.getMinutes()).padStart(2, "0");
 
-            ctx.fillText(dateText, w - 300, h - 30);
-            ctx.fillText(CURRENT_USER, w - 300, h - 10);
+            ctx.fillText(dateText, width - 300, height - 30);
+            ctx.fillText(CURRENT_USER, width - 300, height - 10);
 
             canvas.toBlob(
               (blob) => {
                 if (!blob) return;
-                const f = new File([blob], "photo.jpg", { type: "image/jpeg" });
+
+                const converted = new File([blob], "photo.jpg", {
+                  type: "image/jpeg",
+                });
+
                 const dt = new DataTransfer();
-                dt.items.add(f);
+                dt.items.add(converted);
                 input.files = dt.files;
               },
               "image/jpeg",
               QUALITY,
             );
           };
-          img.src = e.target.result;
+
+          img.src = event.target.result;
         };
+
         reader.readAsDataURL(file);
       };
     });
 }
 
-/* ================= INIT ================= */
-document.addEventListener("DOMContentLoaded", function () {
+function initChecklistUI() {
+  bindStatusRadios();
+  bindMarkAllOk();
+  bindChecklistForm();
+  bindPhotoCompression();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
   initChecklistUI();
 });
 
-/* ================= AJAX RE-INIT ================= */
-// Panggil ini SETELAH checklistAjax.innerHTML diganti
 window.reInitChecklistUI = function () {
   initChecklistUI();
 };
 
-document.addEventListener("click", function (e) {
+document.addEventListener("click", (e) => {
   const link = e.target.closest(".calendar-grid a, .calendar-nav a");
   if (!link) return;
 
   e.preventDefault();
 
-  const u = new URL(link.getAttribute("href"), window.location.origin);
-  const url = u.pathname + u.search;
+  const urlObj = new URL(link.getAttribute("href"), window.location.origin);
+  const url = urlObj.pathname + urlObj.search;
 
   fetch(url, {
     headers: {
@@ -220,17 +234,11 @@ document.addEventListener("click", function (e) {
 
       container.innerHTML = html;
 
-      // ✅ normalize form action → relative
       container.querySelectorAll("form").forEach((form) => {
-        const raw = form.getAttribute("action");
-        if (!raw) return;
-        const fu = new URL(raw, window.location.origin);
-        form.setAttribute("action", fu.pathname + fu.search);
+        normalizeFormAction(form);
       });
 
-      // reinit UI
       window.reInitChecklistUI?.();
-
       window.history.pushState({}, "", url);
     })
     .catch(console.error);
