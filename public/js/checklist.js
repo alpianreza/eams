@@ -121,6 +121,22 @@ function bindChecklistForm() {
   });
 }
 
+function bindSlotRadios() {
+  const hidden = document.getElementById("time_slot_hidden");
+  if (!hidden) return;
+
+  document.querySelectorAll(".slot-radio").forEach((el) => {
+    // isi hidden jika radio sudah checked dari server
+    if (el.checked) {
+      hidden.value = el.value;
+    }
+
+    el.addEventListener("change", function () {
+      hidden.value = this.value;
+    });
+  });
+}
+
 function bindPhotoCompression() {
   document
     .querySelectorAll("input[type='file'][name^='photos']")
@@ -203,6 +219,7 @@ function initChecklistUI() {
   bindMarkAllOk();
   bindChecklistForm();
   bindPhotoCompression();
+  bindSlotRadios();
 }
 
 document.addEventListener("DOMContentLoaded", () => {

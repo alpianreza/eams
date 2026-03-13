@@ -469,6 +469,7 @@ class ComplianceInventoryController extends BaseController
     // =========================
     // GRID GENERATOR
     // =========================
+    $isToiletChecklist = ($inventory['item_type_id'] == 52);
     $dailyDays  = [];
     $dataGrid   = [];
     $weeklyGrid = [];
@@ -485,7 +486,21 @@ class ComplianceInventoryController extends BaseController
       }
 
       foreach ($logs as $log) {
-        $dataGrid[$log['checklist_template_id']][$log['period_key']] = $log['status'];
+
+        $qid  = $log['checklist_template_id'];
+        $date = $log['period_key'];
+
+        if ($isToiletChecklist) {
+
+          $slot = $log['time_slot'] ?? null;
+
+          if ($slot) {
+            $dataGrid[$qid][$date][$slot] = $log['status'];
+          }
+        } else {
+
+          $dataGrid[$qid][$date] = $log['status'];
+        }
       }
     }
 
@@ -685,6 +700,27 @@ class ComplianceInventoryController extends BaseController
 
     $frequency = $inventory['checklist_frequency'] ?? 'monthly';
 
+    /* ================= SLOT CHECKLIST ================= */
+    $isSlotChecklist = ($inventory['item_type_id'] == 52);
+    $selectedSlot = $this->request->getGet('slot');
+
+    $isLocked = false;
+    $lockReason = null;
+
+    if ($isSlotChecklist && empty($selectedSlot)) {
+      $isLocked = true;
+      $lockReason = 'slot';
+    }
+
+    $slots = null;
+
+    if ($isSlotChecklist) {
+      $slots = [
+        'PG' => 'Pagi',
+        'SI' => 'Siang',
+        'SO' => 'Sore'
+      ];
+    }
     // ================= MONTH NAV =================
     $ym = $this->request->getGet('ym');
     if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
@@ -838,13 +874,23 @@ class ComplianceInventoryController extends BaseController
     $logModel = new \App\Models\ChecklistLogModel();
     $holidayModel = new \App\Models\HolidayModel();
 
-    $exists = $logModel
-      ->where('inventory_id', $inventoryId)
-      ->where('period_key', $periodKey)
-      ->first();
+    $exists = false;
 
-    $isLocked = false;
-    $lockReason = null;
+    if (!$isSlotChecklist) {
+
+      $exists = $logModel
+        ->where('inventory_id', $inventoryId)
+        ->where('period_key', $periodKey)
+        ->first();
+    } elseif ($selectedSlot) {
+
+      $exists = $logModel
+        ->where('inventory_id', $inventoryId)
+        ->where('period_key', $periodKey)
+        ->where('time_slot', $selectedSlot)
+        ->first();
+    }
+
 
     /* ================= OFFDAY KHUSUS DAILY ================= */
     if ($frequency === 'daily') {
@@ -868,17 +914,16 @@ class ComplianceInventoryController extends BaseController
     }
 
     /* ================= FUTURE ================= */
-    if (!$isLocked && is_period_future($frequency, $periodKey)) {
+    if (!$isLocked && !$isSlotChecklist && is_period_future($frequency, $periodKey)) {
       $isLocked = true;
       $lockReason = 'future';
     }
 
     /* ================= EXPIRED ================= */
-    if (!$isLocked && ! is_period_editable($frequency, $periodKey)) {
+    if (!$isLocked && !$isSlotChecklist && ! is_period_editable($frequency, $periodKey)) {
       $isLocked = true;
       $lockReason = 'expired';
     }
-
 
     // ================= QUESTIONS =================
     $questions = (new \App\Models\ChecklistMasterModel())
@@ -910,6 +955,8 @@ class ComplianceInventoryController extends BaseController
           'period_label' => $periodLabel,
           'isLocked'     => $isLocked,
           'lockReason'   => $lockReason,
+          'slots'        => $slots,
+          'slot'         => $selectedSlot,
         ]);
     }
     // ================= FULL PAGE =================
@@ -927,6 +974,8 @@ class ComplianceInventoryController extends BaseController
       'nextYM'       => $nextYM,
       'canPrev'      => $canPrev,
       'canNext'      => $canNext,
+      'slots'        => $slots,
+      'slot'         => $selectedSlot,
     ]);
   }
 
@@ -939,6 +988,7 @@ class ComplianceInventoryController extends BaseController
 
     $inventoryId = $this->request->getPost('inventory_id');
     $periodKey   = $this->request->getPost('period_key');
+    $timeSlot    = $this->request->getPost('time_slot');
     $itemTypeId  = $this->request->getPost('item_type_id');
     $questions   = $this->request->getPost('questions');
     $remarks     = $this->request->getPost('remarks') ?? [];
@@ -953,9 +1003,10 @@ class ComplianceInventoryController extends BaseController
     // === AMBIL INVENTORY + ITEM FREQUENCY (AMAN) ===
     $inventory = $this->inventoryModel
       ->select('
-      compliance_inventory.id,
-      asset_item_types.checklist_frequency
-    ')
+    compliance_inventory.id,
+    compliance_inventory.item_type_id,
+    asset_item_types.checklist_frequency
+  ')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->where('compliance_inventory.id', $inventoryId)
       ->first();
@@ -966,17 +1017,30 @@ class ComplianceInventoryController extends BaseController
 
     $frequency = $inventory['checklist_frequency'] ?? 'monthly';
 
+    /* ================= SLOT CHECKLIST ================= */
+    $isSlotChecklist = ($inventory['item_type_id'] == 52);
+
     $logModel = new ChecklistLogModel();
 
     // === LOCK PER INVENTORY + PERIOD ===
-    $exists = $logModel
+    $existsQuery = $logModel
       ->where('inventory_id', $inventoryId)
-      ->where('period_key', $periodKey)
-      ->first();
+      ->where('period_key', $periodKey);
+
+    if ($isSlotChecklist && !empty($timeSlot)) {
+      $existsQuery->where('time_slot', $timeSlot);
+    }
+
+    $exists = $existsQuery->first();
 
     if ($exists) {
       return redirect()->back()
         ->with('error', 'Checklist untuk periode ini sudah diisi.');
+    }
+
+    if ($isSlotChecklist && empty($timeSlot)) {
+      return redirect()->back()
+        ->with('error', 'Slot waktu harus dipilih.');
     }
 
     foreach ($questions as $templateId => $status) {
@@ -1021,15 +1085,14 @@ class ComplianceInventoryController extends BaseController
         }
       }
 
-
-
       $logModel->insert([
         'inventory_id'          => $inventoryId,
         'item_type_id'          => $itemTypeId,
         'checklist_template_id' => $templateId,
         'check_date'            => date('Y-m-d'),
         'period_key'            => $periodKey,
-        'status'                => $statusDb, // 🔥 INI YANG DIGANTI
+        'time_slot'             => $isSlotChecklist ? $timeSlot : null,
+        'status'                => $statusDb,
         'remark'                => $remarkValue ?: null,
         'photo'                 => $photoName,
         'checked_by'            => $user,

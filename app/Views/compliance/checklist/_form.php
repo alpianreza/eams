@@ -30,6 +30,33 @@
 
   <hr class="mb-3">
 
+  <?php if (!empty($slots)): ?>
+    <div class="mb-3">
+
+      <label class="form-label small text-muted">Pilih Waktu</label>
+
+      <div class="btn-group" role="group">
+
+        <?php foreach ($slots as $key => $label): ?>
+
+          <a
+            class="btn btn-outline-primary btn-sm <?= ($slot ?? '') === $key ? 'active' : '' ?>"
+            href="<?= site_url('compliance/checklist/' . $inventory['id']) ?>
+              ?period_key=<?= $period_key ?>
+              &ym=<?= $navYM ?? date('Y-m') ?>
+              &slot=<?= $key ?>">
+
+            <?= $key ?> <span class="small text-muted">(<?= $label ?>)</span>
+
+          </a>
+
+        <?php endforeach ?>
+
+      </div>
+
+    </div>
+  <?php endif ?>
+
   <?php if (empty($period_key)): ?>
 
     <!-- BELUM PILIH PERIODE -->
@@ -63,6 +90,12 @@
         <i class="bi bi-calendar-x-fill"></i>
         Hari ini adalah hari libur. Checklist tidak dapat diisi.
       </div>
+
+    <?php elseif ($lockReason === 'slot'): ?>
+      <div class="alert alert-secondary d-flex align-items-center gap-2">
+        <i class="bi bi-clock"></i>
+        Silakan pilih waktu terlebih dahulu.
+      </div>
     <?php endif; ?>
 
   <?php elseif (! empty($questions)): ?>
@@ -80,6 +113,7 @@
       <input type="hidden" name="item_type_id" value="<?= $inventory['item_type_id'] ?>">
       <input type="hidden" name="period_key" value="<?= $period_key ?>">
       <input type="hidden" name="frequency" value="<?= $frequency ?>">
+      <input type="hidden" name="time_slot" id="time_slot_hidden" value="<?= esc($slot ?? '') ?>">
 
       <!-- ACTION BAR -->
       <div class="d-flex justify-content-end mt-3 mb-2">

@@ -15,6 +15,7 @@ class ChecklistLogModel extends Model
     'checklist_template_id',
     'check_date',
     'period_key',
+    'time_slot',
     'status',
     'remark',
     'photo',
