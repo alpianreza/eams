@@ -1,73 +1,131 @@
-/* ===================================================
-   CHECKLIST UX – RESPONSIVE & LAPANGAN FRIENDLY (FINAL)
-   =================================================== */
-
-/* ---------- PAGE WRAPPER ---------- */
+/* Checklist form UX */
 
 .checklist-page {
-  background-color: #f8f9fa;
+  padding-bottom: 2.5rem;
 }
 
-.checklist-page {
-  padding-bottom: 3rem;
+.checklist-page .no-lift:hover {
+  transform: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
 }
 
-/* ---------- CARD ---------- */
-
-.checklist-card {
-  border-radius: 12px;
-  box-shadow: 0 0.125rem 0.35rem rgba(52, 16, 16, 0.08);
-  margin-bottom: 1.5rem;
+.checklist-page .checklist-hero-card {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.11), rgba(14, 165, 233, 0.12), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(14, 116, 144, 0.16) !important;
 }
 
-.checklist-card .card-header {
-  font-weight: 600;
-  background-color: #f8f9fa;
+.checklist-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #0f766e;
+  background: rgba(15, 118, 110, 0.12);
 }
 
-.checklist-card .card-body {
-  padding: 1.5rem;
+.checklist-page .checklist-card {
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
 }
 
-/* ---------- TITLE ---------- */
-
-.checklist-title {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
+.checklist-page .checklist-content {
+  padding: 1rem;
 }
 
-.checklist-header {
-  margin-bottom: 1.5rem !important;
+.checklist-page .checklist-progress {
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: #f8fafc;
 }
 
-.checklist-content {
-  margin-top: 1rem;
+.checklist-page .checklist-progress .progress {
+  height: 10px;
+  background: #e2e8f0;
 }
 
-.checklist-content .alert {
-  margin-top: 0.75rem;
+.checklist-page .checklist-progress .progress-bar {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+}
+
+.checklist-page .checklist-action-bar {
+  padding: 0.5rem 0.65rem;
   border-radius: 10px;
+  background: #f8fafc;
+  border: 1px dashed rgba(148, 163, 184, 0.4);
 }
 
-.table-checklist {
-  margin-top: 1rem;
+.checklist-page .table-checklist thead th {
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  color: #334155;
 }
 
-.table-checklist td {
-  padding-top: 12px;
-  padding-bottom: 12px;
+.checklist-page .table-checklist td {
+  font-size: 0.88rem;
+  vertical-align: middle;
+}
+
+.checklist-page .status-group .btn {
+  min-width: 105px;
+}
+
+.checklist-page .not-ok-fields {
+  border-radius: 10px;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: 0.65rem;
+  background: rgba(255, 251, 235, 0.7);
+}
+
+.checklist-page .checklist-slot-links .btn {
+  min-width: 125px;
+}
+
+.checklist-page .checklist-ajax-shell {
+  position: relative;
+  transition: opacity 0.2s ease;
+}
+
+.checklist-page .checklist-ajax-shell.is-loading {
+  opacity: 0.52;
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {
-  .table-checklist tr {
-    margin-bottom: 14px;
+  .checklist-page .checklist-content {
+    padding: 0.8rem;
   }
 
-  .calendar-nav {
-    margin-bottom: 0.75rem;
+  .checklist-page .checklist-action-bar {
+    flex-direction: column;
+    align-items: stretch !important;
   }
 
-  .nav-current {
-    font-size: 14px;
+  .checklist-page .status-group .btn {
+    min-width: 0;
+    flex: 1 1 calc(50% - 0.4rem);
+    justify-content: center;
+  }
+
+  .checklist-page .checklist-slot-links .btn {
+    min-width: 0;
+    flex: 1 1 calc(50% - 0.35rem);
+  }
+}
+
+@media (max-width: 576px) {
+  .checklist-page .table-checklist td,
+  .checklist-page .table-checklist th {
+    font-size: 0.82rem;
+  }
+
+  .checklist-page .status-group {
+    gap: 0.35rem !important;
+  }
+
+  .checklist-page .status-group .btn {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.45rem;
   }
 }

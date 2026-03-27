@@ -1,70 +1,67 @@
-let complianceChart;
-let progressTrendChart;
-let statusPieChart;
+"use strict";
+
+let complianceChart = null;
+let progressTrendChart = null;
+let statusPieChart = null;
+
+const requestToken = {
+  trend: 0,
+  progress: 0,
+  pie: 0,
+  risk: 0,
+  pending: 0,
+};
+
+const pendingState = {
+  data: [],
+  filtered: [],
+  currentPage: 1,
+  perPage: 10,
+  activePopover: null,
+  abortController: null,
+  searchDebounce: null,
+};
 
 let currentType = "monthly";
 
-document.addEventListener("DOMContentLoaded", function () {
-  // INITIAL LOAD
-  loadTrend(currentType);
-  loadProgressTrend();
-  loadStatusPie();
-  loadRiskInsight();
-  loadPendingChecklist();
+document.addEventListener("DOMContentLoaded", () => {
+  bindDashboardEvents();
+  syncProgressTypeWithTab(currentType);
+  loadDashboard();
+});
 
-  // =========================
-  // TAB SWITCH (Trend + Pie ikut)
-  // =========================
-  document.querySelectorAll(".tab-frequency").forEach((btn) => {
-    btn.addEventListener("click", function () {
-      document
-        .querySelectorAll(".tab-frequency")
-        .forEach((b) => b.classList.remove("active"));
-
-      this.classList.add("active");
-      currentType = this.dataset.type;
-
+function bindDashboardEvents() {
+  document.querySelectorAll(".tab-frequency").forEach((button) => {
+    button.addEventListener("click", () => {
+      setActiveTrendTab(button.dataset.type);
       loadTrend(currentType);
       loadProgressTrend();
       loadStatusPie();
     });
   });
 
-  // =========================
-  // MONTH FILTER (Trend)
-  // =========================
-  const monthFilter = document.getElementById("monthFilter");
-  if (monthFilter) {
-    monthFilter.addEventListener("change", function () {
-      loadTrend(currentType, this.value);
+  document.getElementById("monthFilter")?.addEventListener("change", () => {
+    loadTrend(currentType);
+  });
+
+  ["progressType", "progressYear", "progressMonth"].forEach((id) => {
+    document.getElementById(id)?.addEventListener("change", () => {
+      loadProgressTrend();
       loadStatusPie();
+      loadRiskInsight();
     });
-  }
+  });
 
-  // =========================
-  // PROGRESS DROPDOWN
-  // =========================
-  document
-    .querySelectorAll("#progressType, #progressYear, #progressMonth")
-    .forEach((el) =>
-      el.addEventListener("change", function () {
-        loadProgressTrend();
-        loadStatusPie();
-        loadRiskInsight();
-        loadRiskTrend();
-      }),
-    );
-
-  // =========================
-  // PENDING FILTERS
-  // =========================
-  document
-    .getElementById("pendingSearch")
-    ?.addEventListener("keyup", applySearchAndRender);
+  document.getElementById("pendingSearch")?.addEventListener("input", () => {
+    clearTimeout(pendingState.searchDebounce);
+    pendingState.searchDebounce = setTimeout(() => {
+      applySearchAndRender(true);
+    }, 180);
+  });
 
   document
     .getElementById("pendingSort")
-    ?.addEventListener("change", applySearchAndRender);
+    ?.addEventListener("change", () => applySearchAndRender(true));
 
   document
     .getElementById("pendingMonth")
@@ -73,224 +70,423 @@ document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("pendingFrequency")
     ?.addEventListener("change", loadPendingChecklist);
-});
 
-// ======================================================
-// ===================== TREND ==========================
-// ======================================================
+  document
+    .getElementById("pendingPagination")
+    ?.addEventListener("click", handlePendingPaginationClick);
 
-// =========================
-// TREND SECTION CLEAN
-// =========================
+  document
+    .getElementById("pendingTableBody")
+    ?.addEventListener("click", handlePendingBadgeClick);
 
-function loadTrend(type) {
-  const monthVal = document.getElementById("monthFilter")?.value || "";
+  document.addEventListener("click", (event) => {
+    if (!pendingState.activePopover) {
+      return;
+    }
 
-  fetch(
-    `/compliance/dashboard/trend?type=${type}&year=${selectedYear}&month=${monthVal}`,
-  )
-    .then((res) => res.json())
-    .then((res) => {
-      if (res.error) {
-        window.safeToast?.("Gagal memuat data trend.", "error");
+    if (
+      event.target.closest(".pending-badge") ||
+      event.target.closest(".popover")
+    ) {
+      return;
+    }
+
+    closeActivePopover();
+  });
+}
+
+function loadDashboard() {
+  loadTrend(currentType);
+  loadProgressTrend();
+  loadStatusPie();
+  loadRiskInsight();
+  loadPendingChecklist();
+}
+
+function setActiveTrendTab(type) {
+  currentType = type;
+
+  document.querySelectorAll(".tab-frequency").forEach((button) => {
+    button.classList.toggle("active", button.dataset.type === type);
+  });
+
+  syncProgressTypeWithTab(type);
+}
+
+function syncProgressTypeWithTab(type) {
+  const progressType = document.getElementById("progressType");
+  if (progressType && progressType.value !== type) {
+    progressType.value = type;
+  }
+}
+
+async function loadTrend(type) {
+  const token = ++requestToken.trend;
+  setPanelLoading("trendPanel", true);
+
+  const month = document.getElementById("monthFilter")?.value || "";
+
+  try {
+    const data = await fetchJson(
+      buildUrl("/compliance/dashboard/trend", {
+        type,
+        year: selectedYear,
+        month,
+      }),
+    );
+
+    if (token !== requestToken.trend) {
+      return;
+    }
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    const grouped = {};
+
+    (Array.isArray(data) ? data : []).forEach((row) => {
+      const key = row.period_key;
+      const status = (row.status || "").toLowerCase();
+
+      if (!key) {
         return;
       }
 
-      let grouped = {};
+      if (!grouped[key]) {
+        grouped[key] = { ok: 0, not_ok: 0, na: 0 };
+      }
 
-      res.forEach((row) => {
-        if (!grouped[row.period_key]) {
-          grouped[row.period_key] = { ok: 0, not_ok: 0, na: 0 };
-        }
-        grouped[row.period_key][row.status] = parseInt(row.total);
+      if (["ok", "not_ok", "na"].includes(status)) {
+        grouped[key][status] = toNumber(row.total);
+      }
+    });
+
+    const labels = [];
+    const okData = [];
+    const notOkData = [];
+    const naData = [];
+
+    Object.keys(grouped)
+      .sort()
+      .forEach((key) => {
+        labels.push(formatLabel(key, type));
+        okData.push(grouped[key].ok || 0);
+        notOkData.push(grouped[key].not_ok || 0);
+        naData.push(grouped[key].na || 0);
       });
 
-      let labels = [];
-      let okData = [];
-      let notOkData = [];
-      let naData = [];
-
-      Object.keys(grouped)
-        .sort()
-        .forEach((key) => {
-          labels.push(formatLabel(key, type));
-          okData.push(grouped[key].ok || 0);
-          notOkData.push(grouped[key].not_ok || 0);
-          naData.push(grouped[key].na || 0);
-        });
-
-      renderTrendChart(labels, okData, notOkData, naData);
-    });
+    renderTrendChart(labels, okData, notOkData, naData);
+    toggleEmptyState(
+      "trendEmptyState",
+      labels.length === 0,
+      "Belum ada data tren untuk filter ini.",
+    );
+  } catch (error) {
+    if (token === requestToken.trend) {
+      toggleEmptyState(
+        "trendEmptyState",
+        true,
+        "Data tren belum tersedia.",
+      );
+      showError(error, "Gagal memuat data tren.");
+    }
+  } finally {
+    if (token === requestToken.trend) {
+      setPanelLoading("trendPanel", false);
+    }
+  }
 }
 
 function renderTrendChart(labels, okData, notOkData, naData) {
-  const ctx = document.getElementById("complianceChart");
+  const canvas = document.getElementById("complianceChart");
+  if (!canvas) {
+    return;
+  }
 
-  if (complianceChart) complianceChart.destroy();
+  if (complianceChart) {
+    complianceChart.destroy();
+  }
 
-  complianceChart = new Chart(ctx, {
+  complianceChart = new Chart(canvas, {
     type: "line",
     data: {
-      labels: labels,
+      labels,
       datasets: [
         {
-          label: "✓ Sesuai",
+          label: "Sesuai",
           data: okData,
-          tension: 0.3,
-          fill: false,
+          borderColor: "#16a34a",
+          backgroundColor: "rgba(22, 163, 74, 0.16)",
+          pointBackgroundColor: "#16a34a",
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          borderWidth: 2,
+          fill: true,
+          tension: 0.35,
         },
         {
-          label: "✗ Tidak Sesuai",
+          label: "Tidak Sesuai",
           data: notOkData,
-          tension: 0.3,
-          fill: false,
+          borderColor: "#dc2626",
+          backgroundColor: "rgba(220, 38, 38, 0.12)",
+          pointBackgroundColor: "#dc2626",
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          borderWidth: 2,
+          fill: true,
+          tension: 0.35,
         },
         {
-          label: "– Tidak Berlaku",
+          label: "Tidak Berlaku",
           data: naData,
-          tension: 0.3,
-          fill: false,
+          borderColor: "#0284c7",
+          backgroundColor: "rgba(2, 132, 199, 0.12)",
+          pointBackgroundColor: "#0284c7",
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          borderWidth: 2,
+          fill: true,
+          tension: 0.35,
         },
       ],
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: "index", intersect: false },
-      scales: { y: { beginAtZero: true } },
-    },
+    options: getLineChartOptions(),
   });
 }
 
-// ======================================================
-// =============== PROGRESS TREND =======================
-// ======================================================
+async function loadProgressTrend() {
+  const token = ++requestToken.progress;
+  setPanelLoading("progressPanel", true);
 
-function loadProgressTrend() {
-  const type = document.getElementById("progressType").value;
-  const year = document.getElementById("progressYear").value;
-  const month = document.getElementById("progressMonth").value;
+  const type = document.getElementById("progressType")?.value || "monthly";
+  const year = document.getElementById("progressYear")?.value || selectedYear;
+  const month =
+    document.getElementById("progressMonth")?.value ||
+    new Date().getMonth() + 1;
 
-  fetch(
-    `/compliance/dashboard/progress-trend?type=${type}&year=${year}&month=${month}`,
-  )
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.error) {
-        window.safeToast?.("Gagal memuat progress trend.", "error");
-        return;
-      }
+  try {
+    const [trendData, totalInventoryRes] = await Promise.all([
+      fetchJson(
+        buildUrl("/compliance/dashboard/progress-trend", {
+          type,
+          year,
+          month,
+        }),
+      ),
+      fetchJson(
+        buildUrl("/compliance/dashboard/total-inventory", {
+          type,
+        }),
+      ),
+    ]);
 
-      let labels = [];
-      let sudahData = [];
-      let belumData = [];
+    if (token !== requestToken.progress) {
+      return;
+    }
 
-      data.forEach((row) => {
-        labels.push(formatLabel(row.period_key, type));
-        sudahData.push(parseInt(row.total));
-      });
+    if (trendData.error) {
+      throw new Error(trendData.error);
+    }
 
-      // Ambil total inventory by frequency
-      fetch(`/compliance/dashboard/total-inventory?type=${type}`)
-        .then((res) => res.json())
-        .then((totalRes) => {
-          const total = totalRes.total;
+    if (totalInventoryRes.error) {
+      throw new Error(totalInventoryRes.error);
+    }
 
-          sudahData.forEach((val) => {
-            belumData.push(total - val);
-          });
+    const labels = [];
+    const checkedData = [];
 
-          renderProgressTrend(labels, sudahData, belumData);
-        });
+    (Array.isArray(trendData) ? trendData : []).forEach((row) => {
+      labels.push(formatLabel(row.period_key, type));
+      checkedData.push(toNumber(row.total));
     });
+
+    const totalInventory = toNumber(totalInventoryRes.total);
+    const uncheckedData = checkedData.map((checked) =>
+      Math.max(totalInventory - checked, 0),
+    );
+
+    renderProgressTrend(labels, checkedData, uncheckedData);
+    toggleEmptyState(
+      "progressEmptyState",
+      labels.length === 0,
+      "Belum ada data progress untuk filter ini.",
+    );
+
+    const meta = document.getElementById("progressMeta");
+    if (meta) {
+      meta.textContent = `Total item: ${totalInventory}`;
+    }
+  } catch (error) {
+    if (token === requestToken.progress) {
+      toggleEmptyState(
+        "progressEmptyState",
+        true,
+        "Data progress belum tersedia.",
+      );
+      showError(error, "Gagal memuat tren progres.");
+    }
+  } finally {
+    if (token === requestToken.progress) {
+      setPanelLoading("progressPanel", false);
+    }
+  }
 }
 
-function renderProgressTrend(labels, sudahData, belumData) {
-  const ctx = document.getElementById("progressChart");
+function renderProgressTrend(labels, checkedData, uncheckedData) {
+  const canvas = document.getElementById("progressChart");
+  if (!canvas) {
+    return;
+  }
 
-  if (progressTrendChart) progressTrendChart.destroy();
+  if (progressTrendChart) {
+    progressTrendChart.destroy();
+  }
 
-  progressTrendChart = new Chart(ctx, {
+  progressTrendChart = new Chart(canvas, {
     type: "line",
     data: {
-      labels: labels,
+      labels,
       datasets: [
         {
-          label: "Sudah Checklist",
-          data: sudahData,
-          tension: 0.4,
+          label: "Sudah Diceklis",
+          data: checkedData,
+          borderColor: "#2563eb",
+          backgroundColor: "rgba(37, 99, 235, 0.16)",
+          pointBackgroundColor: "#2563eb",
+          borderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 5,
           fill: true,
+          tension: 0.35,
         },
         {
-          label: "Belum Checklist",
-          data: belumData,
-          tension: 0.4,
+          label: "Belum Diceklis",
+          data: uncheckedData,
+          borderColor: "#f97316",
+          backgroundColor: "rgba(249, 115, 22, 0.16)",
+          pointBackgroundColor: "#f97316",
+          borderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 5,
           fill: true,
+          tension: 0.35,
         },
       ],
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: "index", intersect: false },
-      scales: { y: { beginAtZero: true } },
-    },
+    options: getLineChartOptions(),
   });
 }
 
-// ======================================================
-// ======================= PIE ==========================
-// ======================================================
+async function loadStatusPie() {
+  const token = ++requestToken.pie;
+  setPanelLoading("piePanel", true);
 
-function loadStatusPie() {
-  const type = document.getElementById("progressType").value;
-  const year = document.getElementById("progressYear").value;
-  const month = document.getElementById("progressMonth").value;
+  const type = document.getElementById("progressType")?.value || "monthly";
+  const year = document.getElementById("progressYear")?.value || selectedYear;
+  const month =
+    document.getElementById("progressMonth")?.value ||
+    new Date().getMonth() + 1;
 
-  const params = new URLSearchParams({
-    type: type,
-    year: year,
-    month: month,
-  });
+  try {
+    const data = await fetchJson(
+      buildUrl("/compliance/dashboard/status-pie", {
+        type,
+        year,
+        month,
+      }),
+    );
 
-  fetch(`/compliance/dashboard/status-pie?` + params.toString())
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.error) {
-        window.safeToast?.("Gagal memuat status pie.", "error");
-        return;
-      }
+    if (token !== requestToken.pie) {
+      return;
+    }
 
-      renderStatusPie(parseInt(data.ok || 0), parseInt(data.not_ok || 0));
-    });
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    const ok = toNumber(data.ok);
+    const notOk = toNumber(data.not_ok);
+
+    renderStatusPie(ok, notOk);
+
+    const total = ok + notOk;
+    toggleEmptyState(
+      "pieEmptyState",
+      total === 0,
+      "Belum ada data status untuk filter ini.",
+    );
+
+    const pieMeta = document.getElementById("statusPieMeta");
+    if (pieMeta) {
+      pieMeta.textContent = `Sesuai: ${ok} | Tidak Sesuai: ${notOk}`;
+    }
+  } catch (error) {
+    if (token === requestToken.pie) {
+      toggleEmptyState(
+        "pieEmptyState",
+        true,
+        "Data distribusi status belum tersedia.",
+      );
+      showError(error, "Gagal memuat distribusi status.");
+    }
+  } finally {
+    if (token === requestToken.pie) {
+      setPanelLoading("piePanel", false);
+    }
+  }
 }
 
 function renderStatusPie(ok, notOk) {
-  const ctx = document.getElementById("statusPieChart");
+  const canvas = document.getElementById("statusPieChart");
+  if (!canvas) {
+    return;
+  }
 
-  if (statusPieChart) statusPieChart.destroy();
+  if (statusPieChart) {
+    statusPieChart.destroy();
+  }
 
-  statusPieChart = new Chart(ctx, {
-    type: "pie",
+  const total = ok + notOk;
+  const hasData = total > 0;
+
+  statusPieChart = new Chart(canvas, {
+    type: "doughnut",
     data: {
-      labels: ["✓ Sesuai", "✗ Tidak Sesuai"],
+      labels: hasData ? ["Sesuai", "Tidak Sesuai"] : ["Belum Ada Data"],
       datasets: [
         {
-          data: [ok, notOk],
+          data: hasData ? [ok, notOk] : [1],
+          backgroundColor: hasData
+            ? ["#22c55e", "#ef4444"]
+            : ["rgba(148, 163, 184, 0.4)"],
+          borderWidth: 0,
+          hoverOffset: 6,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      cutout: "66%",
       plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+            boxWidth: 8,
+            color: "#334155",
+          },
+        },
         tooltip: {
           callbacks: {
-            label: function (context) {
-              const total = ok + notOk;
-              const value = context.raw;
-              const percent =
-                total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+            label(context) {
+              if (!hasData) {
+                return "Belum ada data";
+              }
+
+              const value = toNumber(context.raw);
+              const percent = total > 0 ? ((value / total) * 100).toFixed(1) : "0.0";
               return `${context.label}: ${value} (${percent}%)`;
             },
           },
@@ -300,371 +496,174 @@ function renderStatusPie(ok, notOk) {
   });
 }
 
-// ======================================================
-// ================= LABEL FORMAT =======================
-// ======================================================
+async function loadRiskInsight() {
+  const token = ++requestToken.risk;
+  setPanelLoading("riskItemPanel", true);
+  setPanelLoading("riskAreaPanel", true);
 
-function formatLabel(periodKey, type) {
-  if (type === "monthly") {
-    const month = periodKey.substring(5, 7);
-    const date = new Date(2000, parseInt(month) - 1, 1);
-    return date.toLocaleString("default", { month: "short" });
+  const year = document.getElementById("progressYear")?.value || selectedYear;
+  const month =
+    document.getElementById("progressMonth")?.value ||
+    new Date().getMonth() + 1;
+
+  try {
+    const data = await fetchJson(
+      buildUrl("/compliance/dashboard/risk-insight", {
+        year,
+        month,
+      }),
+    );
+
+    if (token !== requestToken.risk) {
+      return;
+    }
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    renderRiskList("topItemRisk", Array.isArray(data.items) ? data.items : [], "item_name");
+    renderRiskList(
+      "topAreaRisk",
+      Array.isArray(data.areas) ? data.areas : [],
+      "specific_area",
+    );
+  } catch (error) {
+    if (token === requestToken.risk) {
+      renderRiskFallback("topItemRisk", "Data risiko item belum tersedia.");
+      renderRiskFallback("topAreaRisk", "Data risiko area belum tersedia.");
+      showError(error, "Gagal memuat wawasan risiko.");
+    }
+  } finally {
+    if (token === requestToken.risk) {
+      setPanelLoading("riskItemPanel", false);
+      setPanelLoading("riskAreaPanel", false);
+    }
   }
-
-  if (type === "weekly") {
-    return periodKey.replace(/^\d{4}-\d{2}-/, "");
-  }
-
-  if (type === "daily") {
-    return periodKey.substring(8, 10);
-  }
-
-  return periodKey;
 }
 
-let riskTrendChart;
-
-// ==========================
-// LOAD RISK INSIGHT
-// ==========================
-function loadRiskInsight() {
-  const year = document.getElementById("progressYear").value;
-  const month = document.getElementById("progressMonth").value;
-
-  fetch(`/compliance/dashboard/risk-insight?year=${year}&month=${month}`)
-    .then((res) => res.json())
-    .then((data) => {
-      const itemList = document.getElementById("topItemRisk");
-      const areaList = document.getElementById("topAreaRisk");
-
-      itemList.innerHTML = "";
-      areaList.innerHTML = "";
-
-      // ======================
-      // ITEMS
-      // ======================
-      if (data.items && data.items.length > 0) {
-        data.items.forEach((row, index) => {
-          itemList.innerHTML += `
-            <li class="list-group-item d-flex align-items-center">
-
-              <div class="flex-grow-1">
-                <div class="fw-semibold">${row.item_name}</div>
-              </div>
-
-              <div class="me-3">
-                <span class="badge bg-danger rounded-pill">${row.total}</span>
-              </div>
-
-              <div style="width:120px;">
-                <span id="spark-item-${index}"></span>
-              </div>
-
-            </li>
-          `;
-        });
-
-        // Render sparkline item
-        data.items.forEach((row, index) => {
-          if (row.trend && row.trend.length > 0) {
-            $(`#spark-item-${index}`).sparkline(row.trend, {
-              type: "line",
-              width: "120",
-              height: "35",
-              lineColor: "#dc3545",
-              fillColor: false,
-              lineWidth: 2,
-              spotRadius: 3,
-              highlightSpotColor: "#000",
-              highlightLineColor: "#000",
-              chartRangeMin: 0,
-
-              tooltipFormatter: function (sparkline, options, fields) {
-                const months = [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
-                ];
-
-                return `
-      <div style="padding:4px 6px;">
-        <strong>${months[fields.x]}</strong><br>
-        ✗ ${fields.y}
-      </div>
-    `;
-              },
-            });
-          }
-        });
-      } else {
-        itemList.innerHTML = `<li class="text-muted">Tidak ada temuan</li>`;
-      }
-
-      // ======================
-      // AREAS
-      // ======================
-      if (data.areas && data.areas.length > 0) {
-        data.areas.forEach((row, index) => {
-          areaList.innerHTML += `
-            <li class="list-group-item d-flex align-items-center">
-
-              <div class="flex-grow-1">
-                <div class="fw-semibold">${row.specific_area}</div>
-              </div>
-
-              <div class="me-3">
-                <span class="badge bg-danger rounded-pill">${row.total}</span>
-              </div>
-
-              <div style="width:120px;">
-                <span id="spark-area-${index}"></span>
-              </div>
-
-            </li>
-          `;
-        });
-
-        // Render sparkline area
-        data.areas.forEach((row, index) => {
-          if (row.trend && row.trend.length > 0) {
-            $(`#spark-area-${index}`).sparkline(row.trend, {
-              type: "line",
-              width: "120",
-              height: "35",
-              lineColor: "#dc3545",
-              fillColor: false,
-              lineWidth: 2,
-              spotRadius: 3,
-              highlightSpotColor: "#000",
-              highlightLineColor: "#000",
-              chartRangeMin: 0,
-
-              tooltipFormatter: function (sparkline, options, fields) {
-                const months = [
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
-                ];
-
-                return `
-      <div style="padding:4px 6px;">
-        <strong>${months[fields.x]}</strong><br>
-        ✗ ${fields.y}
-      </div>
-    `;
-              },
-            });
-          }
-        });
-      } else {
-        areaList.innerHTML = `<li class="text-muted">Tidak ada temuan</li>`;
-      }
-    })
-    .catch(() => {
-      window.safeToast?.("Gagal memuat risk insight.", "error");
-    });
-}
-
-let pendingData = [];
-let filteredData = [];
-let currentPage = 1;
-const perPage = 10;
-
-function loadPendingChecklist() {
-  const month = document.getElementById("pendingMonth")?.value || "";
-  const frequency = document.getElementById("pendingFrequency")?.value || "";
-
-  const params = new URLSearchParams({
-    month: month,
-    frequency: frequency,
-  });
-
-  fetch(`/compliance/dashboard/pending-checklist?` + params.toString())
-    .then((res) => res.json())
-    .then((data) => {
-      pendingData = data;
-      filteredData = data;
-      currentPage = 1;
-      applySearchAndRender(); // 🔥 penting
-    });
-}
-
-function renderPendingTable() {
-  const tbody = document.getElementById("pendingTableBody");
-  const pagination = document.getElementById("pendingPagination");
-
-  tbody.innerHTML = "";
-  pagination.innerHTML = "";
-
-  const dataSource = filteredData.length ? filteredData : pendingData;
-
-  if (!dataSource.length) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" class="text-success">
-          Tidak ada data 👍
-        </td>
-      </tr>
-    `;
+function renderRiskList(elementId, rows, labelKey) {
+  const list = document.getElementById(elementId);
+  if (!list) {
     return;
   }
 
-  const start = (currentPage - 1) * perPage;
-  const end = start + perPage;
+  list.innerHTML = "";
 
-  const pageData = dataSource.slice(start, end);
+  if (!rows.length) {
+    list.innerHTML =
+      '<li class="list-group-item text-muted px-0">Belum ada temuan tidak sesuai untuk periode ini.</li>';
+    return;
+  }
 
-  pageData.forEach((row) => {
-    const missingJson = JSON.stringify(row.missing).replace(/"/g, "&quot;");
+  const maxTotal = Math.max(...rows.map((row) => toNumber(row.total)), 1);
 
-    const badgeClass = getRiskBadgeClass(row);
+  rows.forEach((row, index) => {
+    const title = escapeHtml(row[labelKey] || "-");
+    const total = toNumber(row.total);
+    const width = Math.max(8, Math.round((total / maxTotal) * 100));
 
-    tbody.innerHTML += `
-  <tr>
-    <td>${row.item_name}</td>
-    <td>${row.specific_area}</td>
-    <td>
-      <span class="badge bg-secondary">
-        ${row.pic ?? "-"}
-      </span>
-    </td>
-    <td>${row.frequency}</td>
-    <td>
-      <span class="badge ${badgeClass} pending-badge"
-            style="cursor:pointer"
-            data-missing="${missingJson}">
-        ${row.status}
-      </span>
-    </td>
-  </tr>
-`;
+    list.innerHTML += `
+      <li class="list-group-item px-0 py-2 border-0">
+        <div class="d-flex align-items-start justify-content-between gap-2">
+          <div class="d-flex align-items-center gap-2 min-w-0">
+            <span class="risk-rank">#${index + 1}</span>
+            <span class="risk-title text-truncate">${title}</span>
+          </div>
+          <span class="badge text-bg-danger rounded-pill">${total}</span>
+        </div>
+        <div class="progress risk-mini-progress mt-2">
+          <div class="progress-bar bg-danger" role="progressbar" style="width:${width}%"></div>
+        </div>
+      </li>
+    `;
   });
-
-  renderPagination(dataSource.length);
 }
 
-function renderPagination(totalData) {
-  const pagination = document.getElementById("pendingPagination");
-  pagination.innerHTML = "";
-
-  const totalPages = Math.ceil(totalData / perPage);
-  if (totalPages <= 1) return;
-
-  let start = Math.max(1, currentPage - 2);
-  let end = Math.min(totalPages, currentPage + 2);
-
-  if (currentPage > 1) {
-    pagination.innerHTML += `
-      <button class="btn btn-sm btn-outline-primary me-1"
-              onclick="goToPage(${currentPage - 1})">«</button>
-    `;
+function renderRiskFallback(elementId, message) {
+  const list = document.getElementById(elementId);
+  if (!list) {
+    return;
   }
 
-  if (start > 1) {
-    pagination.innerHTML += `
-      <button class="btn btn-sm btn-outline-primary me-1"
-              onclick="goToPage(1)">1</button>
-    `;
-    if (start > 2) pagination.innerHTML += `<span class="me-2">...</span>`;
-  }
-
-  for (let i = start; i <= end; i++) {
-    pagination.innerHTML += `
-      <button class="btn btn-sm ${i === currentPage ? "btn-primary" : "btn-outline-primary"} me-1"
-              onclick="goToPage(${i})">${i}</button>
-    `;
-  }
-
-  if (end < totalPages) {
-    if (end < totalPages - 1)
-      pagination.innerHTML += `<span class="me-2">...</span>`;
-    pagination.innerHTML += `
-      <button class="btn btn-sm btn-outline-primary me-1"
-              onclick="goToPage(${totalPages})">${totalPages}</button>
-    `;
-  }
-
-  if (currentPage < totalPages) {
-    pagination.innerHTML += `
-      <button class="btn btn-sm btn-outline-primary"
-              onclick="goToPage(${currentPage + 1})">»</button>
-    `;
-  }
+  list.innerHTML = `<li class="list-group-item text-muted px-0">${escapeHtml(message)}</li>`;
 }
 
-function goToPage(page) {
-  // Tutup popover kalau ada
-  if (activePopover) {
-    activePopover.dispose();
-    activePopover = null;
+async function loadPendingChecklist() {
+  const token = ++requestToken.pending;
+
+  const month = document.getElementById("pendingMonth")?.value || "";
+  const frequency = document.getElementById("pendingFrequency")?.value || "";
+
+  if (pendingState.abortController) {
+    pendingState.abortController.abort();
   }
 
-  currentPage = page;
-  renderPendingTable();
-}
+  const controller = new AbortController();
+  pendingState.abortController = controller;
 
-// Popover click
-let activePopover = null;
+  setPanelLoading("pendingPanel", true);
+  renderPendingLoadingRows();
 
-document.addEventListener("click", function (e) {
-  // Klik badge
-  if (e.target.classList.contains("pending-badge")) {
-    // Tutup popover lama kalau ada
-    if (activePopover) {
-      activePopover.dispose();
-      activePopover = null;
+  try {
+    const data = await fetchJson(
+      buildUrl("/compliance/dashboard/pending-checklist", {
+        month,
+        frequency,
+      }),
+      {
+        signal: controller.signal,
+      },
+    );
+
+    if (controller.signal.aborted || token !== requestToken.pending) {
+      return;
     }
 
-    const dates = JSON.parse(e.target.getAttribute("data-missing"));
+    if (data.error) {
+      throw new Error(data.error);
+    }
 
-    let content = '<ul class="mb-0 ps-3">';
-    dates.forEach((d) => (content += `<li>${d}</li>`));
-    content += "</ul>";
+    pendingState.data = Array.isArray(data) ? data : [];
+    applySearchAndRender(true);
+  } catch (error) {
+    if (error.name === "AbortError") {
+      return;
+    }
 
-    const popover = new bootstrap.Popover(e.target, {
-      content: content,
-      html: true,
-      placement: "left",
-      trigger: "manual",
-    });
-
-    popover.show();
-    activePopover = popover;
-  } else {
-    // Klik di luar → tutup popover
-    if (activePopover) {
-      activePopover.dispose();
-      activePopover = null;
+    if (token === requestToken.pending) {
+      pendingState.data = [];
+      pendingState.filtered = [];
+      renderPendingTable();
+      renderPendingSummary();
+      showError(error, "Gagal memuat ceklis tertunda.");
+    }
+  } finally {
+    if (token === requestToken.pending) {
+      setPanelLoading("pendingPanel", false);
     }
   }
-});
+}
 
-function applySearchAndRender() {
+function renderPendingLoadingRows() {
+  const tbody = document.getElementById("pendingTableBody");
+  if (!tbody) {
+    return;
+  }
+
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="5" class="text-muted">Memuat data ceklis tertunda...</td>
+    </tr>
+  `;
+}
+
+function applySearchAndRender(resetPage = false) {
   const keyword =
     document.getElementById("pendingSearch")?.value.toLowerCase().trim() || "";
+  const sortType = document.getElementById("pendingSort")?.value || "name";
 
-  const sortType = document.getElementById("pendingSort")?.value;
-
-  // ================= SEARCH =================
-  filteredData = pendingData.filter((row) => {
+  pendingState.filtered = pendingState.data.filter((row) => {
     const inventory = (row.item_name || "").toLowerCase();
     const area = (row.specific_area || "").toLowerCase();
     const pic = (row.pic || "").toLowerCase();
@@ -676,58 +675,224 @@ function applySearchAndRender() {
     );
   });
 
-  // ================= SORT =================
   if (sortType === "name") {
-    filteredData.sort((a, b) =>
+    pendingState.filtered.sort((a, b) =>
       (a.item_name || "").localeCompare(b.item_name || ""),
     );
   }
 
   if (sortType === "area") {
-    filteredData.sort((a, b) =>
+    pendingState.filtered.sort((a, b) =>
       (a.specific_area || "").localeCompare(b.specific_area || ""),
     );
   }
 
   if (sortType === "frequency") {
-    filteredData.sort((a, b) =>
+    pendingState.filtered.sort((a, b) =>
       (a.frequency || "").localeCompare(b.frequency || ""),
     );
   }
 
   if (sortType === "status") {
-    filteredData.sort(
-      (a, b) => (b.missing?.length || 0) - (a.missing?.length || 0),
+    pendingState.filtered.sort(
+      (a, b) =>
+        ((b.missing && b.missing.length) || 0) -
+        ((a.missing && a.missing.length) || 0),
     );
   }
 
-  document.getElementById("pendingCount").innerText = filteredData.length;
+  if (resetPage) {
+    pendingState.currentPage = 1;
+  }
 
-  currentPage = 1;
-  renderPendingTable();
+  const countElement = document.getElementById("pendingCount");
+  if (countElement) {
+    countElement.textContent = String(pendingState.filtered.length);
+  }
+
   renderPendingSummary();
+  renderPendingTable();
 }
 
-function getRiskBadgeClass(row) {
-  const freq = (row.frequency || "").toLowerCase();
-  const missingCount = row.missing?.length || 0;
-
-  if (freq === "daily") {
-    if (missingCount >= 5) return "bg-danger";
-    if (missingCount >= 2) return "bg-warning text-dark";
-    if (missingCount >= 1) return "bg-success";
+function renderPendingTable() {
+  const tbody = document.getElementById("pendingTableBody");
+  if (!tbody) {
+    return;
   }
 
-  if (freq === "weekly") {
-    if (missingCount >= 2) return "bg-danger";
-    if (missingCount === 1) return "bg-warning text-dark";
+  closeActivePopover();
+  tbody.innerHTML = "";
+
+  const dataSource = pendingState.filtered;
+
+  if (!dataSource.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-muted text-center py-3">Tidak ada ceklis tertunda untuk filter ini.</td>
+      </tr>
+    `;
+    renderPendingPagination(0);
+    return;
   }
 
-  if (freq === "monthly") {
-    if (missingCount >= 1) return "bg-danger";
+  const start = (pendingState.currentPage - 1) * pendingState.perPage;
+  const end = start + pendingState.perPage;
+  const pageData = dataSource.slice(start, end);
+
+  pageData.forEach((row) => {
+    const missing = Array.isArray(row.missing) ? row.missing : [];
+    const missingJson = encodeURIComponent(JSON.stringify(missing));
+
+    const frequencyBadgeClass = getFrequencyBadgeClass(row.frequency || "");
+    const riskBadgeClass = getRiskBadgeClass(row);
+
+    tbody.innerHTML += `
+      <tr>
+        <td class="fw-semibold">${escapeHtml(row.item_name || "-")}</td>
+        <td>${escapeHtml(row.specific_area || "-")}</td>
+        <td>
+          <span class="badge text-bg-secondary">${escapeHtml(row.pic || "-")}</span>
+        </td>
+        <td>
+          <span class="badge ${frequencyBadgeClass}">${escapeHtml(
+            getFrequencyDisplayLabel(row.frequency || "-"),
+          )}</span>
+        </td>
+        <td>
+          <button
+            type="button"
+            class="badge border-0 pending-badge ${riskBadgeClass}"
+            data-missing="${missingJson}">
+            ${escapeHtml(row.status || "Lihat Detail")}
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  renderPendingPagination(dataSource.length);
+}
+
+function renderPendingPagination(totalData) {
+  const container = document.getElementById("pendingPagination");
+  if (!container) {
+    return;
   }
 
-  return "bg-secondary";
+  container.innerHTML = "";
+
+  const totalPages = Math.ceil(totalData / pendingState.perPage);
+  if (totalPages <= 1) {
+    return;
+  }
+
+  const pages = getPaginationPages(totalPages, pendingState.currentPage);
+
+  pages.forEach((page) => {
+    if (page === "...") {
+      const ellipsis = document.createElement("span");
+      ellipsis.className = "px-2 py-1 text-muted small";
+      ellipsis.textContent = "...";
+      container.appendChild(ellipsis);
+      return;
+    }
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className =
+      page === pendingState.currentPage
+        ? "btn btn-sm btn-primary"
+        : "btn btn-sm btn-outline-primary";
+    button.dataset.page = String(page);
+    button.textContent = String(page);
+    container.appendChild(button);
+  });
+}
+
+function getPaginationPages(totalPages, currentPage) {
+  const pages = [1];
+
+  const start = Math.max(2, currentPage - 1);
+  const end = Math.min(totalPages - 1, currentPage + 1);
+
+  if (start > 2) {
+    pages.push("...");
+  }
+
+  for (let i = start; i <= end; i += 1) {
+    pages.push(i);
+  }
+
+  if (end < totalPages - 1) {
+    pages.push("...");
+  }
+
+  if (totalPages > 1) {
+    pages.push(totalPages);
+  }
+
+  return pages;
+}
+
+function handlePendingPaginationClick(event) {
+  const button = event.target.closest("button[data-page]");
+  if (!button) {
+    return;
+  }
+
+  const nextPage = toNumber(button.dataset.page);
+  if (nextPage < 1) {
+    return;
+  }
+
+  pendingState.currentPage = nextPage;
+  renderPendingTable();
+}
+
+function handlePendingBadgeClick(event) {
+  const badge = event.target.closest(".pending-badge");
+  if (!badge) {
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  showMissingPopover(badge);
+}
+
+function showMissingPopover(target) {
+  closeActivePopover();
+
+  let missingDates = [];
+  try {
+    missingDates = JSON.parse(decodeURIComponent(target.dataset.missing || "[]"));
+  } catch (error) {
+    missingDates = [];
+  }
+
+  const content = missingDates.length
+    ? `<ul class="mb-0 ps-3">${missingDates
+        .map((date) => `<li>${escapeHtml(String(date))}</li>`)
+        .join("")}</ul>`
+    : "<span class=\"text-muted\">Tidak ada detail tertunda.</span>";
+
+  pendingState.activePopover = new bootstrap.Popover(target, {
+    content,
+    html: true,
+    placement: "left",
+    trigger: "manual",
+    sanitize: false,
+  });
+
+  pendingState.activePopover.show();
+}
+
+function closeActivePopover() {
+  if (pendingState.activePopover) {
+    pendingState.activePopover.dispose();
+    pendingState.activePopover = null;
+  }
 }
 
 function renderPendingSummary() {
@@ -735,16 +900,273 @@ function renderPendingSummary() {
   let weekly = 0;
   let monthly = 0;
 
-  filteredData.forEach((row) => {
-    const freq = row.frequency.toLowerCase();
+  pendingState.filtered.forEach((row) => {
+    const frequency = (row.frequency || "").toLowerCase();
 
-    if (freq === "daily") daily++;
-    if (freq === "weekly") weekly++;
-    if (freq === "monthly") monthly++;
+    if (frequency === "daily") {
+      daily += 1;
+    }
+
+    if (frequency === "weekly") {
+      weekly += 1;
+    }
+
+    if (frequency === "monthly") {
+      monthly += 1;
+    }
   });
 
-  document.getElementById("summaryDaily").innerText = daily;
-  document.getElementById("summaryWeekly").innerText = weekly;
-  document.getElementById("summaryMonthly").innerText = monthly;
-  document.getElementById("summaryTotal").innerText = filteredData.length;
+  setText("summaryDaily", String(daily));
+  setText("summaryWeekly", String(weekly));
+  setText("summaryMonthly", String(monthly));
+  setText("summaryTotal", String(pendingState.filtered.length));
+}
+
+function getRiskBadgeClass(row) {
+  const frequency = (row.frequency || "").toLowerCase();
+  const missingCount = (row.missing && row.missing.length) || 0;
+
+  if (frequency === "daily") {
+    if (missingCount >= 5) {
+      return "text-bg-danger";
+    }
+
+    if (missingCount >= 2) {
+      return "text-bg-warning";
+    }
+
+    if (missingCount >= 1) {
+      return "text-bg-success";
+    }
+  }
+
+  if (frequency === "weekly") {
+    if (missingCount >= 2) {
+      return "text-bg-danger";
+    }
+
+    if (missingCount === 1) {
+      return "text-bg-warning";
+    }
+  }
+
+  if (frequency === "monthly" && missingCount >= 1) {
+    return "text-bg-danger";
+  }
+
+  return "text-bg-secondary";
+}
+
+function getFrequencyBadgeClass(frequencyValue) {
+  const frequency = frequencyValue.toLowerCase();
+
+  if (frequency === "daily") {
+    return "text-bg-danger";
+  }
+
+  if (frequency === "weekly") {
+    return "text-bg-warning";
+  }
+
+  if (frequency === "monthly") {
+    return "text-bg-dark";
+  }
+
+  return "text-bg-secondary";
+}
+
+function formatLabel(periodKey, type) {
+  const key = String(periodKey || "");
+
+  if (type === "monthly") {
+    const month = key.substring(5, 7);
+    const date = new Date(2000, toNumber(month) - 1, 1);
+    if (!Number.isNaN(date.getTime())) {
+      return date.toLocaleString("id-ID", { month: "short" });
+    }
+  }
+
+  if (type === "weekly") {
+    const weeklyPart = key.match(/W\d+$/);
+    return weeklyPart ? weeklyPart[0] : key;
+  }
+
+  if (type === "daily") {
+    return key.substring(8, 10) || key;
+  }
+
+  return key;
+}
+
+function buildUrl(path, params = {}) {
+  const cleanPath = `/${String(path || "").replace(/^\/+/, "")}`;
+  const rawBase = String(baseUrl || "").trim();
+
+  let basePath = "";
+
+  if (rawBase) {
+    try {
+      if (/^https?:\/\//i.test(rawBase)) {
+        basePath = new URL(rawBase).pathname || "";
+      } else if (rawBase.startsWith("/")) {
+        basePath = rawBase;
+      } else {
+        basePath = `/${rawBase}`;
+      }
+    } catch (error) {
+      basePath = "";
+    }
+  }
+
+  basePath = basePath.replace(/\/+$/, "");
+
+  const normalizedBase = basePath.replace(/^\/+/, "");
+  const normalizedPath = cleanPath.replace(/^\/+/, "");
+  const mergedPath = [normalizedBase, normalizedPath]
+    .filter((part) => part !== "")
+    .join("/");
+
+  const finalUrl = `${window.location.origin}/${mergedPath}`;
+
+  const query = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === null || value === undefined || value === "") {
+      return;
+    }
+
+    query.set(key, String(value));
+  });
+
+  const queryString = query.toString();
+  return queryString ? `${finalUrl}?${queryString}` : finalUrl;
+}
+
+async function fetchJson(url, options = {}) {
+  const response = await fetch(url, options);
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
+
+function setPanelLoading(panelId, isLoading) {
+  const panel = document.getElementById(panelId);
+  if (!panel) {
+    return;
+  }
+
+  panel.classList.toggle("is-loading", isLoading);
+}
+
+function toggleEmptyState(id, isVisible, message) {
+  const element = document.getElementById(id);
+  if (!element) {
+    return;
+  }
+
+  if (message) {
+    element.textContent = message;
+  }
+
+  element.classList.toggle("d-none", !isVisible);
+}
+
+function getLineChartOptions() {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      mode: "index",
+      intersect: false,
+    },
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          usePointStyle: true,
+          boxWidth: 8,
+          color: "#334155",
+        },
+      },
+      tooltip: {
+        backgroundColor: "rgba(15, 23, 42, 0.92)",
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          color: "#64748b",
+        },
+      },
+      y: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0,
+          color: "#64748b",
+        },
+        grid: {
+          color: "rgba(148, 163, 184, 0.22)",
+        },
+      },
+    },
+  };
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function showError(error, fallbackMessage) {
+  const rawMessage = String(error?.message || "").toLowerCase();
+  const isFetchFailure =
+    rawMessage.includes("failed to fetch") ||
+    rawMessage.includes("fetch failed") ||
+    rawMessage.includes("networkerror") ||
+    rawMessage.includes("load failed");
+
+  const message = isFetchFailure
+    ? "Gagal terhubung ke server. Silakan muat ulang halaman."
+    : fallbackMessage;
+
+  window.safeToast?.(message, "error");
+}
+
+function setText(id, value) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.textContent = value;
+  }
+}
+
+function toNumber(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+}
+
+function getFrequencyDisplayLabel(value) {
+  const frequency = String(value || "").toLowerCase();
+
+  if (frequency === "daily") {
+    return "Harian";
+  }
+
+  if (frequency === "weekly") {
+    return "Mingguan";
+  }
+
+  if (frequency === "monthly") {
+    return "Bulanan";
+  }
+
+  return String(value || "-");
 }

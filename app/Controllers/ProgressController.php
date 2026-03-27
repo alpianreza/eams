@@ -2,16 +2,16 @@
 
 namespace App\Controllers;
 
-use App\Models\UserModel;
-use App\Models\ComplianceInventoryModel;
 use App\Models\ChecklistLogModel;
+use App\Models\ComplianceInventoryModel;
 use App\Models\HolidayModel;
+use App\Models\UserModel;
 
 class ProgressController extends BaseController
 {
-  protected $userModel;
-  protected $inventoryModel;
-  protected $logModel;
+  protected UserModel $userModel;
+  protected ComplianceInventoryModel $inventoryModel;
+  protected ChecklistLogModel $logModel;
 
   public function __construct()
   {
@@ -22,7 +22,6 @@ class ProgressController extends BaseController
 
   public function index()
   {
-    // 🔒 hanya admin & compliance
     if (!in_array($this->role, ['admin', 'compliance'])) {
       return redirect()->to('/');
     }
@@ -39,29 +38,60 @@ class ProgressController extends BaseController
   {
     helper('period');
 
-    $selectedMonth = $this->request->getGet('month') ?? date('Y-m');
+    $selectedMonth = (string) ($this->request->getGet('month') ?? date('Y-m'));
+    if (!preg_match('/^\d{4}-\d{2}$/', $selectedMonth)) {
+      $selectedMonth = date('Y-m');
+    }
+
     [$year, $month] = explode('-', $selectedMonth);
     $month = str_pad($month, 2, '0', STR_PAD_LEFT);
     $ym = $year . '-' . $month;
 
     $currentMonth = date('Y-m');
-    $currentDay   = date('d');
+    $currentDay   = (int) date('d');
 
-    // Ambil holiday sekali saja
-    $holidayModel = new HolidayModel();
+    $maxDay = $selectedMonth === $currentMonth
+      ? $currentDay
+      : (int) cal_days_in_month(CAL_GREGORIAN, (int) $month, (int) $year);
 
-    if ($selectedMonth == $currentMonth) {
-      $maxDay = $currentDay;
-    } else {
-      $maxDay = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+    // Ambil holiday sekali
+    $holidayDates = array_column(
+      (new HolidayModel())
+        ->where('holiday_date >=', $ym . '-01')
+        ->where('holiday_date <=', $ym . '-' . str_pad((string) $maxDay, 2, '0', STR_PAD_LEFT))
+        ->findAll(),
+      'holiday_date'
+    );
+
+    // Precompute daily periods aktif
+    $dailyPeriods = [];
+    for ($d = 1; $d <= $maxDay; $d++) {
+      $date = $ym . '-' . str_pad((string) $d, 2, '0', STR_PAD_LEFT);
+      $dayOfWeek = date('w', strtotime($date));
+
+      if ($dayOfWeek == 0) continue; // skip Minggu
+      if (in_array($date, $holidayDates, true)) continue; // skip libur
+
+      $dailyPeriods[] = [
+        'key' => $date,
+        'label' => str_pad((string) $d, 2, '0', STR_PAD_LEFT),
+      ];
     }
 
-    $holidays = $holidayModel
-      ->where('holiday_date >=', $ym . '-01')
-      ->where('holiday_date <=', $ym . '-' . $maxDay)
-      ->findAll();
+    // Precompute weekly periods aktif
+    $currentWeek = $selectedMonth === $currentMonth
+      ? (int) ceil($currentDay / 7)
+      : 4;
+    if ($currentWeek > 4) $currentWeek = 4;
+    if ($currentWeek < 1) $currentWeek = 1;
 
-    $holidayDates = array_column($holidays, 'holiday_date');
+    $weeklyPeriods = [];
+    for ($w = 1; $w <= $currentWeek; $w++) {
+      $weeklyPeriods[] = [
+        'key' => $ym . '-W' . $w,
+        'label' => "W{$w}",
+      ];
+    }
 
     $users = $this->userModel
       ->where('status', 'active')
@@ -69,138 +99,118 @@ class ProgressController extends BaseController
       ->where('username !=', 'admin')
       ->findAll();
 
-    $result = [];
+    // Cache inventory per first name
+    $firstNameByUserId = [];
+    $uniqueFirstNames = [];
 
     foreach ($users as $user) {
+      $nameParts = explode(' ', trim((string) $user['name']));
+      $firstName = trim((string) ($nameParts[0] ?? ''));
 
-      $nameParts = explode(' ', trim($user['name']));
-      $firstName = trim($nameParts[0]);
-      $firstName = preg_quote($firstName, '/');
+      $firstNameByUserId[$user['id']] = $firstName;
+      if ($firstName !== '') {
+        $uniqueFirstNames[$firstName] = true;
+      }
+    }
 
-      $pattern = "(^|[\n\- ]+)" . $firstName . "( |$)";
+    $inventoryByFirstName = [];
+    $allInventoryIds = [];
 
-      $inventories = $this->inventoryModel
+    foreach (array_keys($uniqueFirstNames) as $firstName) {
+      $safeFirstName = preg_quote($firstName, '/');
+      $pattern = "(^|[\n\- ]+)" . $safeFirstName . "( |$)";
+
+      $rows = $this->inventoryModel
         ->select('
           compliance_inventory.id,
           compliance_inventory.specific_area,
           asset_item_types.name as item_name,
           asset_item_types.checklist_frequency
         ')
-
         ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+        ->where('compliance_inventory.active', 1)
         ->where("compliance_inventory.pic REGEXP '{$pattern}'", null, false)
         ->findAll();
+
+      $inventoryByFirstName[$firstName] = $rows;
+
+      foreach ($rows as $row) {
+        $allInventoryIds[(int) $row['id']] = true;
+      }
+    }
+
+    // Ambil log sekali untuk semua inventory di bulan terpilih
+    $logLookup = [];
+    if (!empty($allInventoryIds)) {
+      $logRows = $this->logModel
+        ->select('inventory_id, period_key')
+        ->whereIn('inventory_id', array_keys($allInventoryIds))
+        ->like('period_key', $ym, 'after')
+        ->groupBy(['inventory_id', 'period_key'])
+        ->findAll();
+
+      foreach ($logRows as $row) {
+        $inventoryId = (int) $row['inventory_id'];
+        $periodKey = (string) $row['period_key'];
+        $logLookup[$inventoryId][$periodKey] = true;
+      }
+    }
+
+    $result = [];
+
+    foreach ($users as $user) {
+      $firstName = $firstNameByUserId[$user['id']] ?? '';
+      $inventories = $inventoryByFirstName[$firstName] ?? [];
 
       $totalRequired = 0;
       $totalDone     = 0;
       $pending       = 0;
       $late          = 0;
-
       $detailMissing = [];
 
       foreach ($inventories as $inv) {
-
-        $frequency = $inv['checklist_frequency'];
+        $inventoryId = (int) $inv['id'];
+        $frequency = strtolower((string) ($inv['checklist_frequency'] ?? ''));
         $missingPeriods = [];
 
-        // ================= DAILY =================
         if ($frequency === 'daily') {
+          $totalRequired += count($dailyPeriods);
 
-          for ($d = 1; $d <= $maxDay; $d++) {
+          foreach ($dailyPeriods as $period) {
+            $periodKey = $period['key'];
 
-            $date = $ym . '-' . str_pad($d, 2, '0', STR_PAD_LEFT);
-            $dayOfWeek = date('w', strtotime($date));
-
-            if ($dayOfWeek == 0) continue;
-            if (in_array($date, $holidayDates)) continue;
-
-            $totalRequired++;
-
-            $exists = $this->logModel
-              ->where('inventory_id', $inv['id'])
-              ->where('period_key', $date)
-              ->countAllResults();
-
-            if ($exists > 0) {
+            if (!empty($logLookup[$inventoryId][$periodKey])) {
               $totalDone++;
             } else {
               $pending++;
-              $missingPeriods[] = date('d', strtotime($date));
+              $missingPeriods[] = $period['label'];
 
-              if (is_period_late('daily', $date)) {
+              if (is_period_late('daily', $periodKey)) {
                 $late++;
               }
             }
           }
+        } elseif ($frequency === 'weekly') {
+          $totalRequired += count($weeklyPeriods);
 
-          $detailMissing[] = [
-            'inventory' => ($inv['item_name'] ?? 'Item') .
-              ' — ' .
-              ($inv['specific_area'] ?? '-'),
-            'frequency' => ucfirst($frequency),
-            'missing'   => $missingPeriods
-          ];
+          foreach ($weeklyPeriods as $period) {
+            $periodKey = $period['key'];
 
-
-          continue;
-        }
-
-        // ================= WEEKLY =================
-        if ($frequency === 'weekly') {
-
-          if ($selectedMonth == $currentMonth) {
-            $currentWeek = ceil($currentDay / 7);
-          } else {
-            $currentWeek = 4;
-          }
-
-          if ($currentWeek > 4) $currentWeek = 4;
-
-          for ($w = 1; $w <= $currentWeek; $w++) {
-
-            $periodKey = $ym . '-W' . $w;
-            $totalRequired++;
-
-            $exists = $this->logModel
-              ->where('inventory_id', $inv['id'])
-              ->where('period_key', $periodKey)
-              ->countAllResults();
-
-            if ($exists > 0) {
+            if (!empty($logLookup[$inventoryId][$periodKey])) {
               $totalDone++;
             } else {
               $pending++;
-              $missingPeriods[] = "W{$w}";
+              $missingPeriods[] = $period['label'];
 
               if (is_period_late('weekly', $periodKey)) {
                 $late++;
               }
             }
           }
+        } elseif ($frequency === 'monthly') {
+          $totalRequired += 1;
 
-          $detailMissing[] = [
-            'inventory' => ($inv['item_name'] ?? 'Item') .
-              ' — ' .
-              ($inv['specific_area'] ?? '-'),
-            'frequency' => ucfirst($frequency),
-            'missing'   => $missingPeriods
-          ];
-
-
-          continue;
-        }
-
-        // ================= MONTHLY =================
-        if ($frequency === 'monthly') {
-
-          $totalRequired++;
-
-          $exists = $this->logModel
-            ->where('inventory_id', $inv['id'])
-            ->where('period_key', $ym)
-            ->countAllResults();
-
-          if ($exists > 0) {
+          if (!empty($logLookup[$inventoryId][$ym])) {
             $totalDone++;
           } else {
             $pending++;
@@ -210,11 +220,12 @@ class ProgressController extends BaseController
               $late++;
             }
           }
+        }
 
+        // Kirim ke modal hanya item yang benar-benar missing
+        if (!empty($missingPeriods)) {
           $detailMissing[] = [
-            'inventory' => ($inv['item_name'] ?? 'Item') .
-              ' — ' .
-              ($inv['specific_area'] ?? '-'),
+            'inventory' => ($inv['item_name'] ?? 'Item') . ' - ' . ($inv['specific_area'] ?? '-'),
             'frequency' => ucfirst($frequency),
             'missing'   => $missingPeriods
           ];
@@ -222,7 +233,7 @@ class ProgressController extends BaseController
       }
 
       $progress = $totalRequired > 0
-        ? round(($totalDone / $totalRequired) * 100)
+        ? (int) round(($totalDone / $totalRequired) * 100)
         : 0;
 
       $result[] = [
@@ -275,8 +286,11 @@ class ProgressController extends BaseController
   {
     helper('period');
 
-    $userId = $this->request->getGet('user_id');
-    $selectedMonth = $this->request->getGet('month') ?? date('Y-m');
+    $userId = (int) $this->request->getGet('user_id');
+    $selectedMonth = (string) ($this->request->getGet('month') ?? date('Y-m'));
+    if (!preg_match('/^\d{4}-\d{2}$/', $selectedMonth)) {
+      $selectedMonth = date('Y-m');
+    }
 
     [$year, $month] = explode('-', $selectedMonth);
     $month = str_pad($month, 2, '0', STR_PAD_LEFT);
@@ -287,13 +301,15 @@ class ProgressController extends BaseController
       return $this->response->setJSON([]);
     }
 
-    $firstName = explode(' ', trim($user['name']))[0];
+    $firstName = explode(' ', trim((string) $user['name']))[0] ?? '';
 
     $inventories = $this->inventoryModel
-      ->select('compliance_inventory.id,
-                  compliance_inventory.specific_area,
-                  asset_item_types.name as item_name,
-                  asset_item_types.checklist_frequency')
+      ->select('
+        compliance_inventory.id,
+        compliance_inventory.specific_area,
+        asset_item_types.name as item_name,
+        asset_item_types.checklist_frequency
+      ')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
       ->like('compliance_inventory.pic', $firstName)
       ->findAll();
@@ -301,9 +317,22 @@ class ProgressController extends BaseController
     $result = [];
 
     foreach ($inventories as $inv) {
+      $frequency = strtolower((string) ($inv['checklist_frequency'] ?? 'monthly'));
 
-      $frequency = $inv['checklist_frequency'];
-      $periodKey = generate_period_key($frequency);
+      if ($frequency === 'daily') {
+        $day = $selectedMonth === date('Y-m')
+          ? date('d')
+          : cal_days_in_month(CAL_GREGORIAN, (int) $month, (int) $year);
+        $periodKey = $ym . '-' . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+      } elseif ($frequency === 'weekly') {
+        $week = $selectedMonth === date('Y-m')
+          ? (int) ceil(((int) date('d')) / 7)
+          : 4;
+        if ($week > 4) $week = 4;
+        $periodKey = $ym . '-W' . $week;
+      } else {
+        $periodKey = $ym;
+      }
 
       $exists = $this->logModel
         ->where('inventory_id', $inv['id'])
@@ -314,7 +343,7 @@ class ProgressController extends BaseController
         'item'      => $inv['item_name'],
         'area'      => $inv['specific_area'],
         'frequency' => ucfirst($frequency),
-        'status'    => $exists > 0 ? '✓ Sudah' : 'Belum'
+        'status'    => $exists > 0 ? 'Sudah' : 'Belum'
       ];
     }
 

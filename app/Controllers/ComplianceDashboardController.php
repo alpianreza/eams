@@ -88,7 +88,8 @@ class ComplianceDashboardController extends BaseController
     return view('compliance/dashboard/index', [
       'availableYears' => $availableYears,
       'selectedYear'   => $selectedYear,
-      'kpi'            => $kpi
+      'kpi'            => $kpi,
+      'title'          => 'Compliance Dashboard'
     ]);
   }
 
@@ -132,7 +133,7 @@ class ComplianceDashboardController extends BaseController
       ]);
 
       return $this->response->setJSON([
-        'error' => 'Gagal memuat data trend.'
+        'error' => 'Gagal memuat data tren.'
       ]);
     }
   }
@@ -201,7 +202,7 @@ class ComplianceDashboardController extends BaseController
       // tetap ikut frequency aktif
       $builder->where('asset_item_types.checklist_frequency', $type);
 
-      // 🔥 KUNCI: selalu agregat per bulan
+      // KUNCI: selalu agregat per bulan
       $builder->like('period_key', $year . '-' . $month, 'after');
 
       $builder->where('status !=', '');
@@ -295,7 +296,7 @@ class ComplianceDashboardController extends BaseController
       ]);
 
       return $this->response->setJSON([
-        'error' => 'Gagal memuat trend progress.'
+        'error' => 'Gagal memuat tren progres.'
       ]);
     }
   }
@@ -409,7 +410,7 @@ class ComplianceDashboardController extends BaseController
           $trendMap[$row['ym']] = (int)$row['total'];
         }
 
-        // pad Jan–Dec
+        // pad Jan-Dec
         $trend = [];
 
         for ($m = 1; $m <= 12; $m++) {
@@ -431,7 +432,7 @@ class ComplianceDashboardController extends BaseController
       ]);
 
       return $this->response->setJSON([
-        'error' => 'Gagal memuat risk insight.'
+        'error' => 'Gagal memuat wawasan risiko.'
       ]);
     }
   }
@@ -446,33 +447,39 @@ class ComplianceDashboardController extends BaseController
 
       $year  = date('Y');
       $month = $this->request->getGet('month') ?? date('m');
-      $filterFrequency = $this->request->getGet('frequency');
+      $filterFrequency = strtolower((string) $this->request->getGet('frequency'));
+      $allowedFrequency = ['daily', 'weekly', 'monthly'];
 
       if (! preg_match('/^(0[1-9]|1[0-2])$/', (string) $month)) {
         $month = date('m');
       }
 
+      if (!in_array($filterFrequency, $allowedFrequency, true)) {
+        $filterFrequency = null;
+      }
+
       $currentMonth = date('m');
       $currentDay   = date('d');
+
+      $ym = $year . '-' . $month;
+      $monthStartDate = new \DateTime($ym . '-01');
+      $monthEndDate = (clone $monthStartDate)->modify('last day of this month');
 
       // ============================
       // TENTUKAN RANGE PERIODE
       // ============================
 
       if ($month == $currentMonth) {
-        // Bulan aktif → sampai hari ini
+        // Bulan aktif -> sampai hari ini
         $endDate = new \DateTime($year . '-' . $month . '-' . $currentDay);
-        $currentWeek = ceil($currentDay / 7);
       } else {
-        // Bulan lama → full bulan
-        $endDate = new \DateTime($year . '-' . $month . '-01');
-        $endDate->modify('last day of this month');
-        $currentWeek = 4;
+        // Bulan lampau -> full bulan
+        $endDate = clone $monthEndDate;
       }
 
+      $currentWeek = (int) ceil((int) $endDate->format('d') / 7);
       if ($currentWeek > 4) $currentWeek = 4;
 
-      $ym = $year . '-' . $month;
       $todayStr = $endDate->format('Y-m-d');
 
       // ============================
@@ -481,7 +488,7 @@ class ComplianceDashboardController extends BaseController
 
       $inventoryModel = new \App\Models\ComplianceInventoryModel();
 
-      $inventories = $inventoryModel
+      $inventoryQuery = $inventoryModel
         ->select('
         compliance_inventory.id,
         compliance_inventory.specific_area,
@@ -489,30 +496,33 @@ class ComplianceDashboardController extends BaseController
         asset_item_types.name as item_name,
         asset_item_types.checklist_frequency
     ')
-        ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
-        ->findAll();
+        ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id');
 
+      if ($filterFrequency) {
+        $inventoryQuery->where('asset_item_types.checklist_frequency', $filterFrequency);
+      }
 
-      // === 2) Ambil holiday bulan ini
+      $inventories = $inventoryQuery->findAll();
+
+      // === Ambil holiday bulan ini
       $holidayModel = new \App\Models\HolidayModel();
       $holidays = $holidayModel
         ->where('holiday_date >=', $ym . '-01')
-        ->where('holiday_date <=', $ym . '-31')
+        ->where('holiday_date <=', $monthEndDate->format('Y-m-d'))
         ->findAll();
 
-      $holidayDates = array_column($holidays, 'holiday_date');
+      $holidayLookup = array_flip(array_column($holidays, 'holiday_date'));
 
-      // === 3) Build daftar tanggal kerja bulan ini (Daily)
+      // === Build daftar tanggal kerja bulan ini (Daily)
       $workDates = [];
-      $start = new \DateTime($ym . '-01');
+      $start = clone $monthStartDate;
 
       while ($start <= $endDate) {
-
 
         $dateStr = $start->format('Y-m-d');
         $dayOfWeek = $start->format('w'); // 0 = Sunday
 
-        if ($dayOfWeek != 0 && !in_array($dateStr, $holidayDates)) {
+        if ($dayOfWeek != 0 && !isset($holidayLookup[$dateStr])) {
           $workDates[] = $dateStr;
         }
 
@@ -521,16 +531,36 @@ class ComplianceDashboardController extends BaseController
 
       $logModel = new \App\Models\ChecklistLogModel();
 
+      $logRows = $logModel
+        ->select('inventory_id, period_key')
+        ->like('period_key', $ym, 'after')
+        ->findAll();
+
+      $logMap = [];
+      foreach ($logRows as $logRow) {
+        $inventoryId = (int) ($logRow['inventory_id'] ?? 0);
+        $periodKey = (string) ($logRow['period_key'] ?? '');
+
+        if ($inventoryId <= 0 || $periodKey === '') {
+          continue;
+        }
+
+        $logMap[$inventoryId][$periodKey] = true;
+      }
+
       $result = [];
 
       foreach ($inventories as $inv) {
 
-        $frequency = $inv['checklist_frequency'];
-        if ($filterFrequency && $frequency !== $filterFrequency) {
+        $inventoryId = (int) $inv['id'];
+        $frequency = strtolower((string) ($inv['checklist_frequency'] ?? ''));
+
+        if ($frequency === '') {
           continue;
         }
-        $missing   = [];
-        $status    = 'OK';
+
+        $missing = [];
+        $status  = 'OK';
 
         // ======================
         // DAILY
@@ -538,23 +568,17 @@ class ComplianceDashboardController extends BaseController
         if ($frequency === 'daily') {
 
           foreach ($workDates as $date) {
-
-            $exists = $logModel
-              ->where('inventory_id', $inv['id'])
-              ->where('period_key', $date)
-              ->countAllResults();
-
-            if (!$exists) {
+            if (!isset($logMap[$inventoryId][$date])) {
               $missing[] = $date;
             }
           }
 
           if (count($missing) > 0) {
             $status = count($missing) . ' Hari Belum';
-          } elseif (!in_array($todayStr, $workDates)) {
+          } elseif (!in_array($todayStr, $workDates, true)) {
             $status = 'Libur';
           } else {
-            $status = 'Due Today';
+            $status = 'Jatuh Tempo Hari Ini';
           }
         }
 
@@ -563,25 +587,10 @@ class ComplianceDashboardController extends BaseController
         // ======================
         if ($frequency === 'weekly') {
 
-          if ($month == $currentMonth) {
-            $currentWeek = ceil($currentDay / 7);
-          } else {
-            $currentWeek = 4; // full 1 bulan
-          }
-
-          if ($currentWeek > 4) $currentWeek = 4;
-
-
           for ($w = 1; $w <= $currentWeek; $w++) {
-
             $periodKey = $ym . '-W' . $w;
 
-            $exists = $logModel
-              ->where('inventory_id', $inv['id'])
-              ->where('period_key', $periodKey)
-              ->countAllResults();
-
-            if (!$exists) {
+            if (!isset($logMap[$inventoryId][$periodKey])) {
               $missing[] = $periodKey;
             }
           }
@@ -595,13 +604,7 @@ class ComplianceDashboardController extends BaseController
         // MONTHLY
         // ======================
         if ($frequency === 'monthly') {
-
-          $exists = $logModel
-            ->where('inventory_id', $inv['id'])
-            ->where('period_key', $ym)
-            ->countAllResults();
-
-          if (!$exists) {
+          if (!isset($logMap[$inventoryId][$ym])) {
             $missing[] = $ym;
             $status = 'Belum Bulan Ini';
           }
@@ -610,7 +613,7 @@ class ComplianceDashboardController extends BaseController
         if (count($missing) > 0) {
 
           $result[] = [
-            'inventory_id' => $inv['id'],
+            'inventory_id' => $inventoryId,
             'specific_area' => $inv['specific_area'],
             'item_name' => $inv['item_name'],
             'pic' => $inv['pic'],
@@ -628,7 +631,7 @@ class ComplianceDashboardController extends BaseController
       ]);
 
       return $this->response->setJSON([
-        'error' => 'Gagal memuat pending checklist.'
+        'error' => 'Gagal memuat ceklis tertunda.'
       ]);
     }
   }

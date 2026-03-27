@@ -1,163 +1,222 @@
-<!-- ================= DESKTOP INVENTORY ================= -->
+<?php
+$totalRows = is_array($inventories) ? count($inventories) : 0;
+$runningNo = 1;
+?>
+
 <div class="inventory-desktop">
+  <div class="card border-0 shadow-sm inventory-table-card no-lift">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table id="inventoryTable" class="table table-striped align-middle mb-0 inventory-table">
+          <thead class="table-light">
+            <tr>
+              <th width="60">No</th>
+              <th class="d-none">Kategori</th>
+              <th class="d-none">Area</th>
+              <th>Nama Item</th>
+              <th>No Inventaris</th>
+              <th>Tipe</th>
+              <th>Area Spesifik</th>
+              <th>PIC</th>
+              <th>Status</th>
+              <th>Catatan</th>
+              <?php if (hasRole(['admin', 'compliance'])): ?>
+                <th width="140" class="text-center">Aksi</th>
+              <?php endif; ?>
+            </tr>
+          </thead>
 
-  <table id="inventoryTable" class="table table-striped align-middle">
-    <thead class="table-light">
-      <tr>
-        <th>No</th>
-        <th class="d-none">Kategori</th>
-        <th class="d-none">Area</th>
-        <th>Nama Item</th>
-        <th>No Inventaris</th>
-        <th>Tipe</th>
-        <th>Area</th>
-        <th>PIC</th>
-        <th>Status</th>
-        <th>Remark</th>
-        <?php if (hasRole(['admin', 'compliance'])): ?>
-          <th width="120" class="text-center">Aksi</th>
-        <?php endif; ?>
-
-      </tr>
-    </thead>
-
-    <tbody>
-      <?php $no = 1;
-      foreach ($inventories as $inv): ?>
-        <tr class="
-        <?= $inv['status'] === 'Need Repair' ? 'table-warning' : '' ?>
-        <?= $inv['status'] === 'Not Active' ? 'table-secondary' : '' ?>
-      ">
-          <td><?= $no++ ?></td>
-
-          <!-- hidden (untuk JS) -->
-          <td class="d-none col-category"><?= esc($inv['category_name']) ?></td>
-          <td class="d-none col-area"><?= esc($inv['area_name']) ?></td>
-          <td class="col-item">
-            <a href="<?= base_url('compliance/inventory/detail/' . $inv['id']) ?>"
-              class="fw-semibold text-dark text-decoration-none">
-              <?= esc($inv['item_display_name']) ?>
-            </a>
-          </td>
-          <td><?= esc($inv['asset_code']) ?></td>
-          <td><?= esc($inv['type_description'] ?? '-') ?></td>
-          <td class="col-specific">
-            <?= esc($inv['specific_area'] ?? '-') ?>
-          </td>
-          <td><?= esc($inv['pic'] ?? '-') ?></td>
-
-          <td>
-            <?php if ($inv['status'] === 'Good'): ?>
-              <span class="badge bg-success">Good</span>
-            <?php elseif ($inv['status'] === 'Need Repair'): ?>
-              <span class="badge bg-warning text-dark">Need Repair</span>
-            <?php elseif ($inv['status'] === 'Not Active'): ?>
-              <span class="badge bg-secondary">Not Active</span>
-            <?php else: ?>
-              <span class="badge bg-light text-dark">-</span>
+          <tbody>
+            <?php if (empty($inventories)): ?>
+              <tr>
+                <td colspan="<?= hasRole(['admin', 'compliance']) ? '11' : '10' ?>" class="text-center py-4 text-muted">
+                  Belum ada data inventory untuk filter ini.
+                </td>
+              </tr>
             <?php endif; ?>
-          </td>
 
-          <td><?= esc($inv['remark'] ?? '-') ?></td>
+            <?php foreach ($inventories as $inv): ?>
+              <?php
+              $status = (string)($inv['status'] ?? '');
+              $statusClass = 'bg-light text-dark';
+              $statusText = '-';
 
-          <?php if (hasRole(['admin', 'compliance'])): ?>
-            <td class="text-center">
-              <div class="d-flex justify-content-center gap-1">
+              if ($status === 'Good') {
+                $statusClass = 'bg-success';
+                $statusText = 'Baik';
+              } elseif ($status === 'Need Repair') {
+                $statusClass = 'bg-warning text-dark';
+                $statusText = 'Perlu Perbaikan';
+              } elseif ($status === 'Not Active') {
+                $statusClass = 'bg-secondary';
+                $statusText = 'Tidak Aktif';
+              }
 
-                <!-- EDIT -->
-                <button type="button"
-                  class="btn btn-sm btn-outline-warning btn-edit"
+              $rowClass = '';
+              if ($status === 'Need Repair') {
+                $rowClass = 'table-warning';
+              }
+              if ($status === 'Not Active') {
+                $rowClass = 'table-secondary';
+              }
+              ?>
 
-                  data-id="<?= $inv['id'] ?>"
-                  data-category-id="<?= $inv['category_id'] ?>"
-                  data-item-type-id="<?= $inv['item_type_id'] ?>"
-                  data-area-id="<?= $inv['area_id'] ?>"
+              <tr class="<?= $rowClass ?>" data-inventory-id="<?= $inv['id'] ?>">
+                <td><?= $runningNo++ ?></td>
 
-                  data-code="<?= esc($inv['asset_code']) ?>"
-                  data-type="<?= esc($inv['type_description']) ?>"
-                  data-pic="<?= esc($inv['pic']) ?>"
-                  data-status="<?= esc($inv['status']) ?>"
-                  data-remark="<?= esc($inv['remark']) ?>"
-                  data-specific="<?= esc($inv['specific_area']) ?>"
-                  data-expired="<?= esc($inv['expired_date']) ?>"
+                <td class="d-none col-category"><?= esc($inv['category_name']) ?></td>
+                <td class="d-none col-area"><?= esc($inv['area_name']) ?></td>
 
-                  title="Edit">
-                  <i class="bi bi-pencil-square"></i>
-                </button>
+                <td class="col-item">
+                  <a href="<?= base_url('compliance/inventory/detail/' . $inv['id']) ?>" class="fw-semibold text-decoration-none text-dark">
+                    <?= esc($inv['item_display_name']) ?>
+                  </a>
+                </td>
 
-                <!-- DELETE -->
-                <form action="<?= base_url('compliance/inventory/delete/' . $inv['id']) ?>"
-                  method="post"
-                  class="d-inline form-delete">
-                  <?= csrf_field() ?>
-                  <button type="button"
-                    class="btn btn-sm btn-outline-danger btn-delete"
-                    title="Delete">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </form>
+                <td class="fw-semibold"><?= esc($inv['asset_code']) ?></td>
+                <td><?= esc($inv['type_description'] ?? '-') ?></td>
+                <td class="col-specific"><?= esc($inv['specific_area'] ?? '-') ?></td>
+                <td><?= esc($inv['pic'] ?? '-') ?></td>
 
-                <!-- QR -->
-                <?php if (! empty($inv['qr_image'])): ?>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-secondary btn-show-qr"
-                    data-id="<?= $inv['id'] ?>"
-                    data-qr="<?= base_url('uploads/qr/' . $inv['qr_image']) ?>"
-                    data-item="<?= esc($inv['item_display_name']) ?>"
-                    data-no="<?= esc($inv['asset_code']) ?>">
-                    <i class="bi bi-qr-code"></i>
-                  </button>
+                <td>
+                  <span class="badge <?= $statusClass ?>"><?= esc($statusText) ?></span>
+                </td>
+
+                <td><?= esc($inv['remark'] ?? '-') ?></td>
+
+                <?php if (hasRole(['admin', 'compliance'])): ?>
+                  <td class="text-center">
+                    <div class="d-inline-flex align-items-center gap-1 inventory-row-actions">
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-outline-warning btn-edit"
+                        data-id="<?= $inv['id'] ?>"
+                        data-category-id="<?= $inv['category_id'] ?>"
+                        data-item-type-id="<?= $inv['item_type_id'] ?>"
+                        data-area-id="<?= $inv['area_id'] ?>"
+                        data-code="<?= esc($inv['asset_code']) ?>"
+                        data-type="<?= esc($inv['type_description']) ?>"
+                        data-pic="<?= esc($inv['pic']) ?>"
+                        data-status="<?= esc($inv['status']) ?>"
+                        data-remark="<?= esc($inv['remark']) ?>"
+                        data-specific="<?= esc($inv['specific_area']) ?>"
+                        data-expired="<?= esc($inv['expired_date']) ?>"
+                        title="Edit">
+                        <i class="bi bi-pencil-square"></i>
+                      </button>
+
+                      <form action="<?= base_url('compliance/inventory/delete/' . $inv['id']) ?>" method="post" class="d-inline form-delete">
+                        <?= csrf_field() ?>
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-delete" title="Hapus">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </form>
+
+                      <?php if (!empty($inv['qr_image'])): ?>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-secondary btn-show-qr"
+                          data-id="<?= $inv['id'] ?>"
+                          data-qr="<?= base_url('uploads/qr/' . $inv['qr_image']) ?>"
+                          data-item="<?= esc($inv['item_display_name']) ?>"
+                          data-no="<?= esc($inv['asset_code']) ?>"
+                          title="Lihat QR">
+                          <i class="bi bi-qr-code"></i>
+                        </button>
+                      <?php endif; ?>
+                    </div>
+                  </td>
                 <?php endif; ?>
-
-              </div>
-            </td>
-          <?php endif; ?>
-
-
-        </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ================= MOBILE INVENTORY ================= -->
 <div class="inventory-mobile">
+  <?php if (empty($inventories)): ?>
+    <div class="card shadow-sm border-0 inventory-card no-lift">
+      <div class="card-body text-center text-muted py-4">
+        Belum ada data inventory untuk filter ini.
+      </div>
+    </div>
+  <?php endif; ?>
 
   <?php foreach ($inventories as $inv): ?>
-    <div class="card mb-3 shadow-sm inventory-card"
-      onclick="window.location.href='<?= base_url('compliance/inventory/detail/' . $inv['id']) ?>'">
+    <?php
+    $status = (string)($inv['status'] ?? '');
+    $mobileStatusClass = 'bg-secondary';
+    $mobileStatusText = 'Tidak Aktif';
 
+    if ($status === 'Good') {
+      $mobileStatusClass = 'bg-success';
+      $mobileStatusText = 'Baik';
+    } elseif ($status === 'Need Repair') {
+      $mobileStatusClass = 'bg-warning text-dark';
+      $mobileStatusText = 'Perlu Perbaikan';
+    }
+    ?>
+
+    <div class="card mb-3 shadow-sm inventory-card no-lift" data-inventory-id="<?= $inv['id'] ?>">
       <div class="card-body">
-
-        <div class="fw-semibold mb-1">
-          <?= esc($inv['item_display_name']) ?>
-        </div>
-
-        <div class="text-muted small mb-2">
-          <?= esc($inv['asset_code']) ?>
-        </div>
-
-        <div class="small"><b>Tipe:</b> <?= esc($inv['type_description'] ?? '-') ?></div>
-        <div class="small"><b>Area:</b> <?= esc($inv['specific_area']) ?></div>
-        <div class="small"><b>PIC:</b> <?= esc($inv['pic'] ?? '-') ?></div>
-
-        <div class="mt-2 d-flex justify-content-between align-items-center">
+        <div class="d-flex justify-content-between align-items-start gap-2">
           <div>
-            <?php if ($inv['status'] === 'Good'): ?>
-              <span class="badge bg-success">Good</span>
-            <?php elseif ($inv['status'] === 'Need Repair'): ?>
-              <span class="badge bg-warning text-dark">Need Repair</span>
-            <?php else: ?>
-              <span class="badge bg-secondary">Not Active</span>
-            <?php endif; ?>
+            <div class="fw-semibold mb-1"><?= esc($inv['item_display_name']) ?></div>
+            <div class="text-muted small mb-1"><?= esc($inv['asset_code']) ?></div>
           </div>
-
-          <i class="bi bi-chevron-right text-muted"></i>
+          <span class="badge <?= $mobileStatusClass ?>"><?= esc($mobileStatusText) ?></span>
         </div>
 
+        <div class="small text-muted inventory-mobile-meta mt-2">
+          <div><strong>Tipe:</strong> <?= esc($inv['type_description'] ?? '-') ?></div>
+          <div><strong>Area:</strong> <?= esc($inv['specific_area'] ?? '-') ?></div>
+          <div><strong>PIC:</strong> <?= esc($inv['pic'] ?? '-') ?></div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center gap-2 mt-3">
+          <a href="<?= base_url('compliance/inventory/detail/' . $inv['id']) ?>" class="btn btn-outline-primary btn-sm">
+            Lihat Detail
+          </a>
+
+          <?php if (hasRole(['admin', 'compliance'])): ?>
+            <div class="d-flex gap-1 align-items-center">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-warning btn-edit"
+                data-id="<?= $inv['id'] ?>"
+                data-category-id="<?= $inv['category_id'] ?>"
+                data-item-type-id="<?= $inv['item_type_id'] ?>"
+                data-area-id="<?= $inv['area_id'] ?>"
+                data-code="<?= esc($inv['asset_code']) ?>"
+                data-type="<?= esc($inv['type_description']) ?>"
+                data-pic="<?= esc($inv['pic']) ?>"
+                data-status="<?= esc($inv['status']) ?>"
+                data-remark="<?= esc($inv['remark']) ?>"
+                data-specific="<?= esc($inv['specific_area']) ?>"
+                data-expired="<?= esc($inv['expired_date']) ?>"
+                title="Edit">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+
+              <?php if (!empty($inv['qr_image'])): ?>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary btn-show-qr"
+                  data-id="<?= $inv['id'] ?>"
+                  data-qr="<?= base_url('uploads/qr/' . $inv['qr_image']) ?>"
+                  data-item="<?= esc($inv['item_display_name']) ?>"
+                  data-no="<?= esc($inv['asset_code']) ?>"
+                  title="Lihat QR">
+                  <i class="bi bi-qr-code"></i>
+                </button>
+              <?php endif; ?>
+            </div>
+          <?php endif; ?>
+        </div>
       </div>
     </div>
   <?php endforeach; ?>
-
 </div>

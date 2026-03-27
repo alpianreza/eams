@@ -1,78 +1,69 @@
 <div class="modal fade" id="modalEditInventory" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content shadow">
-
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content compliance-modal-content">
       <form id="formEditInventory" method="post">
         <?= csrf_field() ?>
 
-        <div class="modal-header">
-          <h5 class="modal-title fw-semibold">Edit Inventory</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-header compliance-modal-header">
+          <div>
+            <h5 class="modal-title fw-semibold mb-0 d-inline-flex align-items-center gap-2">
+              <i class="bi bi-pencil-square"></i>
+              Edit Compliance Inventory
+            </h5>
+            <div class="small text-muted mt-1">Perbarui informasi aset tanpa mengubah kategori, area, dan item.</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
         </div>
 
-        <div class="modal-body">
-
+        <div class="modal-body compliance-modal-body">
           <input type="hidden" name="id" id="edit_id">
 
-          <!-- LOCKED -->
-          <div class="row g-3 mb-3">
+          <div class="row g-3 mb-1">
             <div class="col-md-6">
-              <label class="form-label">Kategori</label>
+              <label for="edit_category_text" class="form-label">Kategori</label>
               <input type="text" class="form-control" id="edit_category_text" disabled>
               <input type="hidden" name="category_id" id="edit_category_id">
             </div>
 
             <div class="col-md-6">
-              <label class="form-label">Area</label>
+              <label for="edit_area_text" class="form-label">Area</label>
               <input type="text" class="form-control" id="edit_area_text" disabled>
               <input type="hidden" name="area_id" id="edit_area_id">
             </div>
-          </div>
 
-          <hr class="my-3">
-
-          <div class="row g-3">
-
-            <!-- ITEM -->
             <div class="col-md-6">
-              <label class="form-label">Nama Item</label>
+              <label for="edit_item_name" class="form-label">Nama Item</label>
               <input type="text" class="form-control" id="edit_item_name" disabled>
               <input type="hidden" name="item_type_id" id="edit_item_type_id">
             </div>
 
-            <!-- CODE -->
             <div class="col-md-6">
-              <label class="form-label">No Inventaris</label>
+              <label for="edit_code" class="form-label">No Inventaris</label>
               <input type="text" name="asset_code" id="edit_code" class="form-control">
             </div>
 
-            <!-- TYPE -->
             <div class="col-md-6">
-              <label class="form-label">Tipe / Spesifikasi</label>
+              <label for="edit_type" class="form-label">Tipe / Spesifikasi</label>
               <input type="text" name="type_description" id="edit_type" class="form-control">
             </div>
 
-            <!-- SPECIFIC AREA -->
             <div class="col-md-6">
-              <label class="form-label">Specific Area</label>
+              <label for="edit_specific_area" class="form-label">Specific Area</label>
               <input type="text" name="specific_area" id="edit_specific_area" class="form-control">
             </div>
 
-            <!-- PIC -->
             <div class="col-md-6">
-              <label class="form-label">PIC</label>
+              <label for="edit_pic" class="form-label">PIC</label>
               <input type="text" name="pic" id="edit_pic" class="form-control">
             </div>
 
-            <!-- EXPIRED -->
             <div class="col-md-3">
-              <label class="form-label">Expired</label>
+              <label for="edit_expired" class="form-label">Expired</label>
               <input type="date" name="expired_date" id="edit_expired" class="form-control">
             </div>
 
-            <!-- STATUS -->
             <div class="col-md-3">
-              <label class="form-label">Status</label>
+              <label for="edit_status" class="form-label">Status</label>
               <select name="status" id="edit_status" class="form-select">
                 <option value="Good">Good</option>
                 <option value="Need Repair">Need Repair</option>
@@ -80,23 +71,23 @@
               </select>
             </div>
 
-            <!-- REMARK -->
             <div class="col-12">
-              <label class="form-label">Remark</label>
+              <label for="edit_remark" class="form-label">Remark</label>
               <textarea name="remark" id="edit_remark" class="form-control" rows="3"></textarea>
             </div>
+          </div>
+        </div>
 
-            <div class="modal-footer d-flex justify-content-between">
-              <small class="text-muted">
-                Kategori, Area, dan Item tidak dapat diubah
-              </small>
-
-              <div>
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" class="btn btn-primary px-4">Update</button>
-              </div>
-            </div>
-
+        <div class="modal-footer compliance-modal-footer d-flex justify-content-between">
+          <small class="text-muted">Kategori, area, dan item tidak dapat diubah.</small>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-1">
+              <i class="bi bi-check2-circle"></i>
+              Simpan Perubahan
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   </div>

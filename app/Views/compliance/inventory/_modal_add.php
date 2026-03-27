@@ -1,7 +1,6 @@
 <div class="modal fade" id="modalAddInventory" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content compliance-modal-content">
       <form
         action="<?= base_url('compliance/inventory/store') ?>"
         method="post"
@@ -11,162 +10,136 @@
 
         <?= csrf_field() ?>
 
-        <!-- HEADER -->
-        <div class="modal-header">
-          <h5 class="modal-title fw-bold">
-            <i class="fas fa-plus-circle me-1"></i>
-            Tambah Inventory Compliance
-          </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-header compliance-modal-header">
+          <div>
+            <h5 class="modal-title fw-bold mb-0 d-inline-flex align-items-center gap-2">
+              <i class="bi bi-plus-circle"></i>
+              Tambah Compliance Inventory
+            </h5>
+            <div class="small text-muted mt-1">Lengkapi data aset agar siap dipakai untuk checklist.</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
         </div>
 
-        <!-- BODY -->
-        <div class="modal-body">
-          <div class="container-fluid">
-            <div class="row">
+        <div class="modal-body compliance-modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="category_id" class="form-label">Kategori Compliance</label>
+              <select name="category_id" id="category_id" class="form-select" required>
+                <option value="">-- pilih kategori --</option>
+                <?php foreach ($categories as $cat): ?>
+                  <option value="<?= $cat['id'] ?>"><?= esc($cat['name']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
 
-              <!-- KATEGORI -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Kategori Compliance</label>
-                  <select name="category_id" id="category_id" class="form-control" required>
-                    <option value="">-- pilih kategori --</option>
-                    <?php foreach ($categories as $cat): ?>
-                      <option value="<?= $cat['id'] ?>">
-                        <?= esc($cat['name']) ?>
-                      </option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="item_type_id" class="form-label">Nama Item / Inventory</label>
+              <select id="item_type_id" name="item_type_id" class="form-select" required>
+                <option value="">-- pilih item --</option>
+              </select>
+            </div>
 
-              <!-- NAMA ITEM -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Nama Item / Inventory</label>
-                  <select id="item_type_id" name="item_type_id" class="form-control" required>
-                    <option value="">-- pilih item --</option>
-                  </select>
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="add_asset_code" class="form-label">No Inventaris</label>
+              <input
+                id="add_asset_code"
+                type="text"
+                name="asset_code"
+                class="form-control"
+                placeholder="Kosongkan untuk generate otomatis">
+            </div>
 
-              <!-- NO INVENTARIS -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>No Inventaris</label>
-                  <input type="text" name="asset_code" class="form-control"
-                    placeholder="Kosong untuk generate otomatis">
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="add_type_description" class="form-label">Tipe / Spesifikasi</label>
+              <input
+                id="add_type_description"
+                type="text"
+                name="type_description"
+                class="form-control"
+                placeholder="3,5 Kg / CO2 / Thermatic">
+            </div>
 
-              <!-- TIPE -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Tipe / Spesifikasi</label>
-                  <input type="text" name="type_description" class="form-control"
-                    placeholder="3,5 Kg / CO2 / Thermatic">
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="add_area_id" class="form-label">Area</label>
+              <select id="add_area_id" name="area_id" class="form-select" required>
+                <option value="">-- pilih area --</option>
+                <?php foreach ($areas as $area): ?>
+                  <option value="<?= $area['id'] ?>"><?= esc($area['name']) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </div>
 
-              <!-- AREA -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Area</label>
-                  <select name="area_id" class="form-control" required>
-                    <option value="">-- pilih --</option>
-                    <?php foreach ($areas as $area): ?>
-                      <option value="<?= $area['id'] ?>">
-                        <?= esc($area['name']) ?>
-                      </option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="add_specific_area" class="form-label">Specific Area</label>
+              <input
+                id="add_specific_area"
+                type="text"
+                name="specific_area"
+                class="form-control"
+                placeholder="Office Lt. 1 / Line A">
+            </div>
 
-              <!-- SPECIFIC AREA -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Specific Area</label>
-                  <input type="text" name="specific_area" class="form-control"
-                    placeholder="Office Lt. 1 / Line A">
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="add_pic" class="form-label">PIC</label>
+              <input
+                id="add_pic"
+                type="text"
+                name="pic"
+                class="form-control"
+                placeholder="Nama penanggung jawab">
+            </div>
 
-              <!-- PIC -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>PIC</label>
-                  <input type="text" name="pic" class="form-control"
-                    placeholder="Nama penanggung jawab">
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="add_status" class="form-label">Status</label>
+              <select id="add_status" name="status" class="form-select">
+                <option value="">-- pilih status --</option>
+                <option value="Good">Good</option>
+                <option value="Need Repair">Need Repair</option>
+                <option value="Not Active">Not Active</option>
+              </select>
+            </div>
 
-              <!-- STATUS -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Status</label>
-                  <select name="status" class="form-control">
-                    <option value="">-- pilih --</option>
-                    <option value="Good">Good</option>
-                    <option value="Need Repair">Need Repair</option>
-                    <option value="Not Active">Not Active</option>
-                  </select>
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="add_qty" class="form-label">Qty</label>
+              <input id="add_qty" type="number" name="qty" class="form-control" min="1" value="1">
+            </div>
 
-              <!-- QTY -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Qty</label>
-                  <input type="number" name="qty" class="form-control" min="1" value="1">
-                </div>
-              </div>
+            <div class="col-md-6">
+              <label for="add_expired_date" class="form-label">Expired Date</label>
+              <input id="add_expired_date" type="date" name="expired_date" class="form-control">
+            </div>
 
-              <!-- EXPIRED -->
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Expired Date</label>
-                  <input type="date" name="expired_date" class="form-control">
-                </div>
-              </div>
+            <div class="col-12">
+              <label for="add_remark" class="form-label">Remark</label>
+              <textarea
+                id="add_remark"
+                name="remark"
+                rows="2"
+                class="form-control"
+                placeholder="Catatan tambahan"></textarea>
+            </div>
 
-              <!-- REMARK -->
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label>Remark</label>
-                  <textarea name="remark" rows="2" class="form-control"
-                    placeholder="Catatan tambahan"></textarea>
-                </div>
-              </div>
+            <div class="col-12">
+              <label for="add_photo" class="form-label">Foto Inventory</label>
+              <input id="add_photo" type="file" name="photo" class="form-control" accept="image/*">
+            </div>
 
-              <!-- FOTO -->
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label>Foto Inventory</label>
-                  <input type="file" name="photo" class="form-control" accept="image/*">
-                </div>
-              </div>
-
-              <!-- PREVIEW -->
-              <div class="col-md-12 text-center">
-                <img id="previewPhoto"
-                  class="img-fluid rounded d-none mt-2 inventory-add-preview">
-              </div>
-
+            <div class="col-12 text-center">
+              <img id="previewPhoto" class="img-fluid rounded d-none mt-2 inventory-add-preview" alt="Preview foto">
             </div>
           </div>
         </div>
 
-        <!-- FOOTER -->
-        <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-default" data-bs-dismiss="modal">
-            <i class="fas fa-times"></i> Batal
+        <div class="modal-footer compliance-modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Batal
           </button>
-          <button type="submit" class="btn btn-primary">
-            <i class="fas fa-save"></i> Simpan
+          <button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-1">
+            <i class="bi bi-save"></i>
+            Simpan Inventory
           </button>
         </div>
-
       </form>
     </div>
   </div>

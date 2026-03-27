@@ -1,55 +1,69 @@
+"use strict";
+
 document.addEventListener("DOMContentLoaded", function () {
-  document.addEventListener("click", function (e) {
-    const btn = e.target.closest(".btn-month-nav");
-    if (!btn) return;
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest(".btn-month-nav");
+    if (!button) {
+      return;
+    }
 
-    e.preventDefault();
+    event.preventDefault();
 
-    const ym = btn.dataset.ym;
-    if (!ym) return;
+    const ym = button.dataset.ym;
+    if (!ym) {
+      return;
+    }
 
     const container = document.getElementById("detailMonthContainer");
-    if (!container) return;
+    if (!container) {
+      return;
+    }
 
     const url = new URL(window.location.href);
     url.searchParams.set("ym", ym);
 
-    container.style.opacity = "0.5";
+    container.classList.add("is-loading");
 
-    fetch(url.toString(), {
+    fetch(url.pathname + url.search, {
       headers: { "X-Requested-With": "XMLHttpRequest" },
     })
-      .then((res) => res.text())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Gagal memuat data bulan");
+        }
+
+        return response.text();
+      })
       .then((html) => {
         container.innerHTML = html;
-        container.style.opacity = "1";
-        history.pushState(null, "", url.toString());
+        history.pushState(null, "", url.pathname + url.search);
         updateExportPdfLink(ym);
       })
       .catch(() => {
-        container.style.opacity = "1";
-        alert("Gagal memuat data bulan");
+        window.safeToast?.("Gagal memuat data bulan.", "error");
+      })
+      .finally(() => {
+        container.classList.remove("is-loading");
       });
   });
 
   function updateExportPdfLink(ym) {
-    const btn = document.getElementById("btnExportPdf");
-    if (!btn) return;
-
-    const baseUrl = btn.dataset.baseUrl;
-    const frequency = btn.dataset.frequency;
-
-    let periodKey;
-    if (frequency === "daily") {
-      periodKey = ym + "-01";
-    } else if (frequency === "weekly") {
-      periodKey = ym + "-W1";
-    } else {
-      periodKey = ym;
+    const button = document.getElementById("btnExportPdf");
+    if (!button) {
+      return;
     }
 
-    btn.href = `${baseUrl}/${periodKey}`;
-  }
+    const baseUrl = button.dataset.baseUrl;
+    const frequency = (button.dataset.frequency || "").toLowerCase();
 
-  
+    let periodKey = ym;
+    if (frequency === "daily") {
+      periodKey = `${ym}-01`;
+    }
+    if (frequency === "weekly") {
+      periodKey = `${ym}-W1`;
+    }
+
+    button.href = `${baseUrl}/${periodKey}`;
+  }
 });

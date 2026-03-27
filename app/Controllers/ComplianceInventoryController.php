@@ -377,7 +377,7 @@ class ComplianceInventoryController extends BaseController
 
   public function detail($id)
   {
-    page('Detail Inventory', 'compliance/inventory');
+    page('Detail Compliance Inventory', 'compliance/inventory');
 
     $inventory = $this->inventoryModel
       ->select('
@@ -677,7 +677,7 @@ class ComplianceInventoryController extends BaseController
   public function checklist($inventoryId)
   {
     page(
-      'Checklist',
+      'Ceklis',
       'compliance/inventory/detail/' . $inventoryId
     );
     helper('checklist');

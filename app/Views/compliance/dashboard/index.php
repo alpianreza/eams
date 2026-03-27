@@ -1,283 +1,315 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
+<div class="container-fluid compliance-dashboard">
 
-  <!-- ================= HEADER ================= -->
-  <div class="d-flex justify-content-between align-items-center mb-4 dashboard-topbar">
-    <h4 class="mb-0 fw-bold">Compliance Control Center</h4>
+  <section class="card shadow-sm border-0 mb-4 compliance-hero-card no-lift">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <p class="compliance-kicker mb-1">Dashboard Kepatuhan</p>
+        <h4 class="mb-1 fw-bold">Pusat Kendali Kepatuhan</h4>
+        <p class="text-muted mb-0">Pantau performa ceklis, risiko <strong>tidak sesuai</strong>, dan daftar tertunda dalam satu layar.</p>
+      </div>
 
-    <form method="get" class="d-flex align-items-center gap-2 dashboard-year-filter">
-      <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
-        <?php foreach ($availableYears as $yearItem): ?>
-          <option value="<?= $yearItem ?>" <?= $yearItem == $selectedYear ? 'selected' : '' ?>>
-            <?= $yearItem ?>
-          </option>
-        <?php endforeach; ?>
-      </select>
-    </form>
-  </div>
+      <form method="get" class="dashboard-year-filter">
+        <label for="dashboardYear" class="form-label form-label-sm mb-1">Tahun</label>
+        <select
+          id="dashboardYear"
+          name="year"
+          class="form-select form-select-sm"
+          onchange="this.form.submit()">
+          <?php foreach ($availableYears as $yearItem): ?>
+            <option value="<?= esc($yearItem) ?>" <?= $yearItem == $selectedYear ? 'selected' : '' ?>>
+              <?= esc($yearItem) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </form>
+    </div>
+  </section>
 
-
-  <!-- ================= KPI SECTION ================= -->
-  <h6 class="text-muted mb-3">Overview</h6>
-
-  <div class="row g-3 mb-4">
+  <section class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="text-muted mb-0">Ringkasan Cepat</h6>
+      <small class="text-muted">Periode tahun <?= esc($selectedYear) ?></small>
+    </div>
 
     <?php
     $cards = [
-      ['label' => 'Total Item', 'value' => $kpi['total'], 'color' => 'secondary'],
-      ['label' => '✓ Sesuai', 'value' => $kpi['sesuai'], 'color' => 'success'],
-      ['label' => '✗ Tidak Sesuai', 'value' => $kpi['tidak_sesuai'], 'color' => 'danger'],
-      ['label' => '– Tidak Berlaku', 'value' => $kpi['tidak_berlaku'], 'color' => 'info'],
-      ['label' => 'Late', 'value' => $kpi['late'], 'color' => 'warning'],
+      ['label' => 'Total Item', 'value' => $kpi['total'], 'tone' => 'slate', 'icon' => 'bi-grid-3x3-gap'],
+      ['label' => 'Sesuai', 'value' => $kpi['sesuai'], 'tone' => 'success', 'icon' => 'bi-check-circle'],
+      ['label' => 'Tidak Sesuai', 'value' => $kpi['tidak_sesuai'], 'tone' => 'danger', 'icon' => 'bi-exclamation-octagon'],
+      ['label' => 'Tidak Berlaku', 'value' => $kpi['tidak_berlaku'], 'tone' => 'info', 'icon' => 'bi-dash-circle'],
+      ['label' => 'Belum Diceklis', 'value' => $kpi['late'], 'tone' => 'warning', 'icon' => 'bi-clock-history'],
     ];
     ?>
 
-    <?php foreach ($cards as $card): ?>
-      <div class="col-md col-6">
-        <div class="card shadow-sm border-0 h-100">
-          <div class="card-body py-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <div>
-                <div class="text-muted small"><?= $card['label'] ?></div>
-                <div class="h4 fw-bold mb-0"><?= $card['value'] ?></div>
+    <div class="row g-3">
+      <?php foreach ($cards as $card): ?>
+        <div class="col-6 col-lg-4 col-xl">
+          <article class="card shadow-sm border-0 h-100 compliance-kpi-card no-lift kpi-tone-<?= esc($card['tone']) ?>">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <div>
+                  <p class="compliance-kpi-label mb-1"><?= esc($card['label']) ?></p>
+                  <h5 class="mb-0 fw-bold"><?= esc((string)$card['value']) ?></h5>
+                </div>
+                <span class="compliance-kpi-icon">
+                  <i class="bi <?= esc($card['icon']) ?>"></i>
+                </span>
               </div>
-              <div class="text-<?= $card['color'] ?> fs-5">●</div>
             </div>
+          </article>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <h6 class="text-muted mb-2">Tren Kepatuhan</h6>
+    <article class="card shadow-sm border-0 compliance-panel no-lift" id="trendPanel">
+      <div class="dashboard-loading-overlay">
+        <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+        <span>Memuat tren...</span>
+      </div>
+      <div class="card-header bg-white border-0 pb-0">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div>
+            <h6 class="fw-semibold mb-1">Pergerakan Status</h6>
+            <p class="text-muted small mb-0">Bandingkan status sesuai, tidak sesuai, dan tidak berlaku per periode.</p>
+          </div>
+
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <div class="btn-group btn-group-sm frequency-tabs" role="group" aria-label="Pilihan frekuensi tren">
+              <button type="button" class="btn btn-outline-primary tab-frequency active" data-type="monthly">Bulanan</button>
+              <button type="button" class="btn btn-outline-primary tab-frequency" data-type="weekly">Mingguan</button>
+              <button type="button" class="btn btn-outline-primary tab-frequency" data-type="daily">Harian</button>
+            </div>
+
+            <select id="monthFilter" class="form-select form-select-sm w-auto">
+              <?php for ($m = 1; $m <= 12; $m++): ?>
+                <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>" <?= $m == date('m') ? 'selected' : '' ?>>
+                  <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
+                </option>
+              <?php endfor; ?>
+            </select>
           </div>
         </div>
       </div>
-    <?php endforeach; ?>
 
-  </div>
-
-
-  <!-- ================= TREND SECTION ================= -->
-  <h6 class="text-muted mb-3">Compliance Trend</h6>
-
-  <div class="card shadow-sm border-0 mb-4">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center border-0 dashboard-trend-header">
-
-      <div>
-        <button class="btn btn-sm btn-outline-primary tab-frequency active" data-type="monthly">Monthly</button>
-        <button class="btn btn-sm btn-outline-primary tab-frequency" data-type="weekly">Weekly</button>
-        <button class="btn btn-sm btn-outline-primary tab-frequency" data-type="daily">Daily</button>
-      </div>
-
-      <select id="monthFilter" class="form-select form-select-sm w-auto">
-        <?php for ($m = 1; $m <= 12; $m++): ?>
-          <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>"
-            <?= $m == date('m') ? 'selected' : '' ?>>
-            <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
-          </option>
-        <?php endfor; ?>
-      </select>
-
-    </div>
-
-    <div class="card-body">
-      <div class="dashboard-chart-main">
-        <canvas id="complianceChart"></canvas>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- ================= OPERATIONAL SECTION ================= -->
-  <h6 class="text-muted mb-3">Operational Monitoring</h6>
-
-  <div class="row g-3">
-
-    <!-- FILTER -->
-    <div class="col-12 d-flex gap-2 dashboard-progress-filters">
-      <select id="progressType" class="form-select form-select-sm w-auto">
-        <option value="monthly">Monthly</option>
-        <option value="weekly">Weekly</option>
-        <option value="daily">Daily</option>
-      </select>
-
-      <select id="progressYear" class="form-select form-select-sm w-auto">
-        <?php for ($y = 2026; $y <= date('Y'); $y++): ?>
-          <option value="<?= $y ?>" <?= $y == date('Y') ? 'selected' : '' ?>>
-            <?= $y ?>
-          </option>
-        <?php endfor; ?>
-      </select>
-
-      <select id="progressMonth" class="form-select form-select-sm w-auto">
-        <?php for ($m = 1; $m <= 12; $m++): ?>
-          <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>"
-            <?= $m == date('m') ? 'selected' : '' ?>>
-            <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
-          </option>
-        <?php endfor; ?>
-      </select>
-    </div>
-
-
-    <!-- PROGRESS CHART -->
-    <div class="col-md-8">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body">
-          <h6 class="fw-semibold mb-3">Progress Checklist</h6>
-          <div class="dashboard-chart-progress">
-            <canvas id="progressChart"></canvas>
-          </div>
+      <div class="card-body pt-3">
+        <div class="dashboard-chart-main compliance-chart-wrap">
+          <canvas id="complianceChart"></canvas>
+          <div class="chart-empty-state d-none" id="trendEmptyState">Belum ada data tren untuk filter ini.</div>
         </div>
       </div>
-    </div>
+    </article>
+  </section>
 
-    <!-- PIE -->
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-body">
-          <h6 class="fw-semibold mb-3">Status Distribusi</h6>
-          <div class="dashboard-chart-pie">
-            <canvas id="statusPieChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
+  <section class="mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
+      <h6 class="text-muted mb-0">Pemantauan Operasional</h6>
+      <div class="d-flex flex-wrap gap-2 dashboard-progress-filters">
+        <select id="progressType" class="form-select form-select-sm w-auto">
+          <option value="monthly">Bulanan</option>
+          <option value="weekly">Mingguan</option>
+          <option value="daily">Harian</option>
+        </select>
 
-  </div>
+        <select id="progressYear" class="form-select form-select-sm w-auto">
+          <?php foreach ($availableYears as $yearItem): ?>
+            <option value="<?= esc($yearItem) ?>" <?= $yearItem == $selectedYear ? 'selected' : '' ?>>
+              <?= esc($yearItem) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
 
-  <!-- ================= RISK INSIGHT ================= -->
-  <h6 class="text-muted mt-5 mb-3">Risk Insight</h6>
-
-  <div class="row g-3">
-
-    <div class="col-md-6">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="fw-semibold mb-3">Top 5 Item Paling Sering ✗</h6>
-          <ul id="topItemRisk" class="list-group list-group-flush small">
-            <li class="text-muted">Loading...</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="card shadow-sm border-0">
-        <div class="card-body">
-          <h6 class="fw-semibold mb-3">Top 5 Area Paling Sering ✗</h6>
-          <ul id="topAreaRisk" class="list-group list-group-flush small">
-            <li class="text-muted">Loading...</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-<h6 class="text-muted mt-5 mb-3">🚨 Pending Checklist (Periode Aktif)</h6>
-
-<div class="card shadow-sm border-0">
-  <div class="card-body">
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pending-controls">
-
-      <!-- KIRI -->
-      <div class="d-flex gap-2 flex-wrap align-items-center pending-controls-left">
-
-        <input type="text"
-          id="pendingSearch"
-          class="form-control form-control-sm pending-search"
-          placeholder="Search...">
-
-        <select id="pendingMonth"
-          class="form-select form-select-sm w-auto">
+        <select id="progressMonth" class="form-select form-select-sm w-auto">
           <?php for ($m = 1; $m <= 12; $m++): ?>
-            <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>"
-              <?= $m == date('m') ? 'selected' : '' ?>>
-              <?= date('M', mktime(0, 0, 0, $m, 1)) ?>
+            <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>" <?= $m == date('m') ? 'selected' : '' ?>>
+              <?= date('F', mktime(0, 0, 0, $m, 1)) ?>
             </option>
           <?php endfor; ?>
         </select>
-
-        <select id="pendingFrequency"
-          class="form-select form-select-sm w-auto">
-          <option value="">All</option>
-          <option value="daily">Daily</option>
-          <option value="weekly">Weekly</option>
-          <option value="monthly">Monthly</option>
-        </select>
-
-        <select id="pendingSort"
-          class="form-select form-select-sm w-auto">
-          <option value="name">Sort: Inventory</option>
-          <option value="area">Sort: Area</option>
-          <option value="frequency">Sort: Frequency</option>
-          <option value="status">Sort: Unchecked</option>
-        </select>
-
       </div>
-
-      <!-- KANAN -->
-      <small class="text-muted">
-        <span id="pendingCount">0</span> results
-      </small>
-
-    </div>
-    <div class="d-flex flex-wrap gap-3 mb-3">
-
-      <div class="px-3 py-2 rounded bg-danger text-white">
-        <small>Daily</small><br>
-        <strong id="summaryDaily">0</strong>
-      </div>
-
-      <div class="px-3 py-2 rounded bg-warning text-dark">
-        <small>Weekly</small><br>
-        <strong id="summaryWeekly">0</strong>
-      </div>
-
-      <div class="px-3 py-2 rounded bg-dark text-white">
-        <small>Monthly</small><br>
-        <strong id="summaryMonthly">0</strong>
-      </div>
-
-      <div class="px-3 py-2 rounded bg-secondary text-white">
-        <small>Total</small><br>
-        <strong id="summaryTotal">0</strong>
-      </div>
-
     </div>
 
-  </div>
+    <div class="row g-3">
+      <div class="col-lg-8">
+        <article class="card shadow-sm border-0 h-100 compliance-panel no-lift" id="progressPanel">
+          <div class="dashboard-loading-overlay">
+            <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+            <span>Memuat progress...</span>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <div>
+                <h6 class="fw-semibold mb-1">Progres Ceklis</h6>
+                <p class="text-muted small mb-0">Periode aktif berdasarkan frekuensi yang dipilih.</p>
+              </div>
+              <small id="progressMeta" class="text-muted"></small>
+            </div>
 
-  <div class="table-responsive">
-    <table class="table table-sm align-middle mb-0">
-      <thead>
-        <tr>
-          <th>Inventory</th>
-          <th>Area</th>
-          <th>PIC</th>
-          <th>Frequency</th>
-          <th>Unchecked</th>
-        </tr>
-      </thead>
+            <div class="dashboard-chart-progress compliance-chart-wrap">
+              <canvas id="progressChart"></canvas>
+              <div class="chart-empty-state d-none" id="progressEmptyState">Belum ada data progress untuk filter ini.</div>
+            </div>
+          </div>
+        </article>
+      </div>
 
-      <tbody id="pendingTableBody">
-        <tr>
-          <td colspan="5" class="text-muted">Loading...</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="mt-3" id="pendingPagination"></div>
+      <div class="col-lg-4">
+        <article class="card shadow-sm border-0 h-100 compliance-panel no-lift" id="piePanel">
+          <div class="dashboard-loading-overlay">
+            <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+            <span>Memuat distribusi...</span>
+          </div>
+          <div class="card-body">
+            <h6 class="fw-semibold mb-1">Distribusi Status</h6>
+            <p class="text-muted small mb-2">Proporsi item sesuai vs tidak sesuai pada bulan dipilih.</p>
+            <small id="statusPieMeta" class="text-muted d-block mb-2"></small>
 
+            <div class="dashboard-chart-pie compliance-chart-wrap">
+              <canvas id="statusPieChart"></canvas>
+              <div class="chart-empty-state d-none" id="pieEmptyState">Belum ada data status untuk filter ini.</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-4">
+    <h6 class="text-muted mb-2">Wawasan Risiko</h6>
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <article class="card shadow-sm border-0 h-100 compliance-panel no-lift" id="riskItemPanel">
+          <div class="dashboard-loading-overlay">
+            <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+            <span>Memuat risiko item...</span>
+          </div>
+          <div class="card-body">
+            <h6 class="fw-semibold mb-2">5 Item Teratas Paling Sering Tidak Sesuai</h6>
+            <ul id="topItemRisk" class="list-group list-group-flush small compliance-risk-list">
+              <li class="list-group-item text-muted">Memuat data...</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-lg-6">
+        <article class="card shadow-sm border-0 h-100 compliance-panel no-lift" id="riskAreaPanel">
+          <div class="dashboard-loading-overlay">
+            <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+            <span>Memuat risiko area...</span>
+          </div>
+          <div class="card-body">
+            <h6 class="fw-semibold mb-2">5 Area Teratas Paling Sering Tidak Sesuai</h6>
+            <ul id="topAreaRisk" class="list-group list-group-flush small compliance-risk-list">
+              <li class="list-group-item text-muted">Memuat data...</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h6 class="text-muted mb-2">Ceklis Tertunda (Periode Aktif)</h6>
+    <article class="card shadow-sm border-0 compliance-panel no-lift" id="pendingPanel">
+      <div class="dashboard-loading-overlay">
+        <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
+        <span>Memuat ceklis tertunda...</span>
+      </div>
+      <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pending-controls">
+          <div class="d-flex gap-2 flex-wrap align-items-center pending-controls-left">
+            <input
+              type="text"
+              id="pendingSearch"
+              class="form-control form-control-sm pending-search"
+              placeholder="Cari item, area, atau PIC...">
+
+            <select id="pendingMonth" class="form-select form-select-sm w-auto">
+              <?php for ($m = 1; $m <= 12; $m++): ?>
+                <option value="<?= str_pad($m, 2, '0', STR_PAD_LEFT) ?>" <?= $m == date('m') ? 'selected' : '' ?>>
+                  <?= date('M', mktime(0, 0, 0, $m, 1)) ?>
+                </option>
+              <?php endfor; ?>
+            </select>
+
+            <select id="pendingFrequency" class="form-select form-select-sm w-auto">
+              <option value="">Semua Frekuensi</option>
+              <option value="daily">Harian</option>
+              <option value="weekly">Mingguan</option>
+              <option value="monthly">Bulanan</option>
+            </select>
+
+            <select id="pendingSort" class="form-select form-select-sm w-auto">
+              <option value="name">Urutkan: Item</option>
+              <option value="area">Urutkan: Area</option>
+              <option value="frequency">Urutkan: Frekuensi</option>
+              <option value="status">Urutkan: Belum Diceklis Terbanyak</option>
+            </select>
+          </div>
+
+          <small class="text-muted">
+            <span id="pendingCount">0</span> hasil
+          </small>
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-3 compliance-summary-cards">
+          <div class="summary-pill summary-pill-daily">
+            <small>Harian</small>
+            <strong id="summaryDaily">0</strong>
+          </div>
+
+          <div class="summary-pill summary-pill-weekly">
+            <small>Mingguan</small>
+            <strong id="summaryWeekly">0</strong>
+          </div>
+
+          <div class="summary-pill summary-pill-monthly">
+            <small>Bulanan</small>
+            <strong id="summaryMonthly">0</strong>
+          </div>
+
+          <div class="summary-pill summary-pill-total">
+            <small>Total</small>
+            <strong id="summaryTotal">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0 pending-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Area</th>
+              <th>PIC</th>
+              <th>Frekuensi</th>
+              <th>Belum Diceklis</th>
+            </tr>
+          </thead>
+          <tbody id="pendingTableBody">
+            <tr>
+              <td colspan="5" class="text-muted">Memuat data ceklis tertunda...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-body pt-3">
+        <div id="pendingPagination" class="pending-pagination d-flex flex-wrap gap-1"></div>
+      </div>
+    </article>
+  </section>
 </div>
-</div>
-
-</div>
-
-
 
 <script>
   const baseUrl = "<?= rtrim(base_url(), '/') ?>";
-  const selectedYear = "<?= $selectedYear ?>";
+  const selectedYear = "<?= esc($selectedYear) ?>";
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

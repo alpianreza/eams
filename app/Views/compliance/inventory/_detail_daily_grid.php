@@ -1,48 +1,41 @@
-<div class="table-responsive">
-  <table class="table table-bordered text-center">
-    <thead>
+<div class="table-responsive inventory-grid-table-wrap">
+  <table class="table table-bordered text-center mb-0 inventory-grid-table">
+    <thead class="table-light">
       <tr>
-        <th>Item Pengecekan</th>
+        <th class="text-start sticky-left">Item Pengecekan</th>
         <?php foreach ($dailyDays as $date): ?>
           <th><?= date('j', strtotime($date)) ?></th>
         <?php endforeach; ?>
       </tr>
     </thead>
-    <tbody>
 
+    <tbody>
       <?php foreach ($questions as $q): ?>
         <tr>
-          <td class="text-start"><?= esc($q['question']) ?></td>
+          <td class="text-start sticky-left"><?= esc($q['question']) ?></td>
+
           <?php foreach ($dailyDays as $date): ?>
-
             <?php
-            $isSunday  = date('w', strtotime($date)) == 0;
-            $isHoliday = in_array($date, $holidayDates ?? []);
-
+            $isSunday = date('w', strtotime($date)) == 0;
+            $isHoliday = in_array($date, $holidayDates ?? [], true);
             $isOffDay = $isSunday || $isHoliday;
+            $status = $dataGrid[$q['id']][$date] ?? null;
             ?>
 
             <td class="<?= $isOffDay ? 'bg-offday text-muted' : '' ?>">
-
               <?php if ($isOffDay): ?>
-
+                &nbsp;
+              <?php elseif ($status === 'ok'): ?>
+                <i class="bi bi-check-circle-fill text-success" title="Sesuai"></i>
+              <?php elseif ($status === 'not_ok'): ?>
+                <i class="bi bi-x-circle-fill text-danger" title="Tidak sesuai"></i>
               <?php else: ?>
-                <?php
-                $status = $dataGrid[$q['id']][$date] ?? null;
-
-                if ($status === 'ok') echo '✓';
-                elseif ($status === 'not_ok') echo '✗';
-                else echo '';
-                ?>
+                <span class="text-muted">-</span>
               <?php endif; ?>
-
             </td>
-
           <?php endforeach; ?>
-
         </tr>
       <?php endforeach; ?>
-
     </tbody>
   </table>
 </div>
