@@ -4,13 +4,18 @@ function relUrl(raw) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  /* ===============================
-     ADD CHECKLIST QUESTION (AJAX)
-     =============================== */
-  const formAdd = document.querySelector("#modalAdd form");
+  const modalAddEl = document.getElementById("modalAdd");
+  const modalEditEl = document.getElementById("modalEdit");
+  const formAdd = document.getElementById("formAdd");
+  const formEdit = document.getElementById("formEdit");
+  const frequencySelect = document.getElementById("itemFrequency");
+
+  const addModal = modalAddEl ? bootstrap.Modal.getOrCreateInstance(modalAddEl) : null;
+  const editModal = modalEditEl ? bootstrap.Modal.getOrCreateInstance(modalEditEl) : null;
+
   if (formAdd) {
-    formAdd.addEventListener("submit", function (e) {
-      e.preventDefault();
+    formAdd.addEventListener("submit", function (event) {
+      event.preventDefault();
 
       fetch(relUrl(formAdd.action), {
         method: "POST",
@@ -22,43 +27,78 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((res) => res.json())
         .then((res) => {
           if (res.status === "success") {
-            safeToast("Pertanyaan berhasil ditambahkan", "success");
-            bootstrap.Modal.getInstance(
-              document.getElementById("modalAdd"),
-            ).hide();
-
-            setTimeout(() => location.reload(), 500);
-          } else {
-            safeToast("Gagal menyimpan data", "danger");
+            safeToast("Pertanyaan berhasil ditambahkan.", "success");
+            addModal?.hide();
+            setTimeout(() => window.location.reload(), 400);
+            return;
           }
+
+          safeToast(res.message || "Gagal menyimpan data.", "error");
         })
         .catch(() => {
-          safeToast("Terjadi kesalahan server", "danger");
+          safeToast("Terjadi kesalahan server.", "error");
         });
     });
   }
 
-  /* ===============================
-     EDIT BUTTON CLICK (OPEN MODAL)
-     =============================== */
-  document.addEventListener("click", function (e) {
-    const btn = e.target.closest('[data-action="edit"]');
-    if (!btn) return;
+  document.addEventListener("click", function (event) {
+    const editButton = event.target.closest('[data-action="edit"]');
+    if (editButton && formEdit) {
+      const questionField = formEdit.querySelector("#edit_question");
+      const activeField = formEdit.querySelector("#edit_active");
+      const requirePhotoField = formEdit.querySelector("#edit_require_photo");
 
-    document.getElementById("edit_question").value = btn.dataset.question;
+      if (questionField) questionField.value = editButton.dataset.question || "";
+      if (activeField) activeField.value = editButton.dataset.active || "1";
+      if (requirePhotoField) requirePhotoField.value = editButton.dataset.requirePhoto || "0";
 
-    document.getElementById("edit_active").checked = btn.dataset.active == 1;
+      formEdit.action = editButton.dataset.updateUrl || "";
+      editModal?.show();
+      return;
+    }
 
-    const formEdit = document.getElementById("formEdit");
-    formEdit.action = btn.dataset.updateUrl;
+    const deleteButton = event.target.closest('[data-action="delete"]');
+    if (!deleteButton) {
+      return;
+    }
 
-    new bootstrap.Modal(document.getElementById("modalEdit")).show();
+    Swal.fire({
+      title: "Yakin hapus?",
+      text: "Pertanyaan yang dihapus tidak bisa dikembalikan.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Ya, hapus",
+      cancelButtonText: "Batal",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      fetch(relUrl(deleteButton.dataset.url), {
+        method: "POST",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.status === "success") {
+            safeToast("Pertanyaan berhasil dihapus.", "success");
+            setTimeout(() => window.location.reload(), 300);
+            return;
+          }
+
+          safeToast("Tidak bisa menghapus data.", "error");
+        })
+        .catch(() => {
+          safeToast("Terjadi kesalahan server.", "error");
+        });
+    });
   });
 
-  const formEdit = document.getElementById("formEdit");
   if (formEdit) {
-    formEdit.addEventListener("submit", function (e) {
-      e.preventDefault();
+    formEdit.addEventListener("submit", function (event) {
+      event.preventDefault();
 
       fetch(relUrl(formEdit.action), {
         method: "POST",
@@ -70,94 +110,42 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((res) => res.json())
         .then((res) => {
           if (res.status === "success") {
-            safeToast("Pertanyaan berhasil diupdate", "success");
-            bootstrap.Modal.getInstance(
-              document.getElementById("modalEdit"),
-            ).hide();
-
-            setTimeout(() => location.reload(), 500);
-          } else {
-            safeToast("Gagal update data", "danger");
+            safeToast("Pertanyaan berhasil diperbarui.", "success");
+            editModal?.hide();
+            setTimeout(() => window.location.reload(), 300);
+            return;
           }
+
+          safeToast(res.message || "Gagal update data.", "error");
         })
         .catch(() => {
-          safeToast("Terjadi kesalahan server", "danger");
+          safeToast("Terjadi kesalahan server.", "error");
         });
     });
   }
 
-  /* ===============================
-   UPDATE ITEM FREQUENCY
-   =============================== */
-  document
-    .getElementById("itemFrequency")
-    ?.addEventListener("change", function () {
-      fetch(relUrl(this.dataset.url), {
-        method: "POST",
-        headers: { "X-Requested-With": "XMLHttpRequest" },
-        body: new URLSearchParams({ frequency: this.value }),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.status === "success") {
-            safeToast("Frekuensi item berhasil diubah", "success");
-            setTimeout(() => location.reload(), 300);
-          } else {
-            safeToast(res.message || "Gagal mengubah frekuensi", "danger");
-          }
-        })
-        .catch(() => {
-          safeToast("Terjadi kesalahan server", "danger");
-        });
-    });
-});
-
-/* ===============================
-   DELETE CHECKLIST QUESTION
-================================ */
-/* ===============================
-   DELETE CHECKLIST QUESTION
-================================ */
-document.addEventListener("click", function (e) {
-  const btn = e.target.closest('[data-action="delete"]');
-  if (!btn) return;
-
-  Swal.fire({
-    title: "Yakin hapus?",
-    text: "Data yang dihapus tidak bisa dikembalikan!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#6c757d",
-    confirmButtonText: "Ya, hapus",
-    cancelButtonText: "Batal",
-  }).then((result) => {
-    if (!result.isConfirmed) return;
-
-    fetch(relUrl(btn.dataset.url), {
+  frequencySelect?.addEventListener("change", function () {
+    fetch(relUrl(this.dataset.url), {
       method: "POST",
       headers: {
         "X-Requested-With": "XMLHttpRequest",
       },
+      body: new URLSearchParams({
+        frequency: this.value,
+      }),
     })
       .then((res) => res.json())
       .then((res) => {
         if (res.status === "success") {
-          Swal.fire({
-            icon: "success",
-            title: "Berhasil",
-            text: "Pertanyaan berhasil dihapus",
-            timer: 1200,
-            showConfirmButton: false,
-          });
-
-          setTimeout(() => location.reload(), 1200);
-        } else {
-          Swal.fire("Gagal", "Tidak bisa menghapus data", "error");
+          safeToast("Frekuensi item berhasil diubah.", "success");
+          setTimeout(() => window.location.reload(), 250);
+          return;
         }
+
+        safeToast(res.message || "Gagal mengubah frekuensi.", "error");
       })
       .catch(() => {
-        Swal.fire("Error", "Terjadi kesalahan server", "error");
+        safeToast("Terjadi kesalahan server.", "error");
       });
   });
 });

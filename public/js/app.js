@@ -64,4 +64,39 @@ document.addEventListener("DOMContentLoaded", function () {
     childList: true,
     subtree: true,
   });
+
+  const mobileMedia = window.matchMedia("(max-width: 992px)");
+  const closeSidebar = () => {
+    document.body.classList.remove("sidebar-open");
+  };
+
+  document.addEventListener("click", (event) => {
+    if (!mobileMedia.matches) return;
+
+    const sidebar = document.querySelector(".app-sidebar");
+    if (!sidebar) return;
+
+    const navLink = event.target.closest(".app-sidebar .nav-link[href]");
+    const isCollapseTrigger = navLink?.getAttribute("data-bs-toggle") === "collapse";
+
+    if (navLink && !isCollapseTrigger) {
+      closeSidebar();
+      return;
+    }
+
+    const isSidebarToggle = event.target.closest('[data-lte-toggle="sidebar"]');
+    if (isSidebarToggle) return;
+
+    const clickInsideSidebar = event.target.closest(".app-sidebar");
+    if (document.body.classList.contains("sidebar-open") && !clickInsideSidebar) {
+      closeSidebar();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (!mobileMedia.matches) return;
+    if (event.key === "Escape") {
+      closeSidebar();
+    }
+  });
 });

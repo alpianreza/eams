@@ -1,0 +1,93 @@
+/* Home dashboard UX */
+
+.home-dashboard-page .no-lift:hover {
+  transform: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+}
+
+.home-dashboard-page .home-hero-card {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(99, 102, 241, 0.1), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(59, 130, 246, 0.16) !important;
+}
+
+.home-dashboard-page .home-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #1e3a8a;
+  background: rgba(37, 99, 235, 0.12);
+}
+
+.home-dashboard-page .home-month-form {
+  min-width: 180px;
+}
+
+.home-dashboard-page .home-month-select {
+  min-width: 180px;
+}
+
+.home-dashboard-page .home-stat-card {
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+
+.home-dashboard-page .home-stat-label {
+  color: #64748b;
+  font-size: 0.78rem;
+  margin-bottom: 0.3rem;
+}
+
+.home-dashboard-page .home-stat-value {
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.home-dashboard-page .home-stat-icon {
+  font-size: 1.45rem;
+  opacity: 0.72;
+}
+
+.home-dashboard-page .home-progress-wrap {
+  height: 0.8rem;
+  background: #e2e8f0;
+}
+
+.home-dashboard-page .home-pending-table thead th {
+  font-size: 0.78rem;
+  color: #334155;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.home-dashboard-page .home-pending-table td {
+  font-size: 0.88rem;
+}
+
+@media (max-width: 768px) {
+  .home-dashboard-page .home-hero-card .card-body {
+    padding: 0.85rem;
+  }
+
+  .home-dashboard-page .home-month-form,
+  .home-dashboard-page .home-month-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .home-dashboard-page .home-stat-value {
+    font-size: 1.3rem;
+  }
+
+  .home-dashboard-page .home-pending-table {
+    font-size: 0.8rem;
+  }
+
+  .home-dashboard-page .home-pending-table th,
+  .home-dashboard-page .home-pending-table td {
+    padding: 0.45rem 0.5rem;
+  }
+}

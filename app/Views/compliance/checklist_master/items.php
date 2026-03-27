@@ -1,89 +1,77 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
+<div class="checklist-master-page">
+  <section class="card checklist-master-hero no-lift mb-3">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <p class="checklist-master-kicker mb-1">Checklist Master</p>
+        <h5 class="mb-1 fw-bold"><?= esc($category['name']) ?></h5>
+        <p class="text-muted mb-0">Pilih item untuk mengelola pertanyaan checklist.</p>
+      </div>
 
-  <div class="mb-3">
-    <h4 class="mb-0"><?= esc($category['name']) ?></h4>
-    <small class="text-muted">Pilih item untuk kelola checklist</small>
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-12">
-      <a href="<?= site_url('compliance/checklist/master') ?>" class="btn btn-sm btn-secondary">
-        <i class="fa-solid fa-arrow-left me-1"></i>
+      <a href="<?= site_url('compliance/checklist/master') ?>" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1">
+        <i class="bi bi-arrow-left"></i>
         Kembali ke Kategori
       </a>
     </div>
-  </div>
+  </section>
 
-  <div class="row">
-
-    <?php if (empty($items)): ?>
-      <div class="col-12">
-        <div class="alert alert-warning">
-          Belum ada item pada kategori ini.
-        </div>
+  <?php if (empty($items)): ?>
+    <div class="card no-lift">
+      <div class="card-body py-5 text-center text-muted">
+        Belum ada item checklist pada kategori ini.
       </div>
-    <?php endif; ?>
-
+    </div>
+  <?php else: ?>
     <?php
-    // icon mapping (boleh ditambah)
     $itemIcons = [
       'Fire Extinguisher' => 'fa-solid fa-fire-extinguisher',
-      'CCTV'      => 'fa-solid fa-video',
-      'AC'        => 'fa-solid fa-snowflake',
-      'Kursi'     => 'fa-solid fa-chair',
-      'Meja'      => 'fa-solid fa-table',
-      'Laptop'    => 'fa-solid fa-laptop',
-      'Komputer'  => 'fa-solid fa-desktop',
+      'CCTV' => 'fa-solid fa-video',
+      'AC' => 'fa-solid fa-snowflake',
+      'Kursi' => 'fa-solid fa-chair',
+      'Meja' => 'fa-solid fa-table',
+      'Laptop' => 'fa-solid fa-laptop',
+      'Komputer' => 'fa-solid fa-desktop',
       'Emergency Exit Door' => 'fa-solid fa-door-open',
-      'Emergency Light'      => 'fa-solid fa-lightbulb',
-      'Exit Light Sign'    => 'fa-solid fa-signs-post',
-      'Smoke Detector'    => 'fa-solid fa-smog',
-      'Fire Alarm'    => 'fa-solid fa-bell',
-      'Hydrant'    => 'fa-solid fa-faucet',
-      'Heat Detector'    => 'fa-solid fa-temperature-high',
-      'intursion Alarm'    => 'fa-solid fa-bell-slash',
+      'Emergency Light' => 'fa-solid fa-lightbulb',
+      'Exit Light Sign' => 'fa-solid fa-signs-post',
+      'Smoke Detector' => 'fa-solid fa-smog',
+      'Fire Alarm' => 'fa-solid fa-bell',
+      'Hydrant' => 'fa-solid fa-faucet',
+      'Heat Detector' => 'fa-solid fa-temperature-high',
+      'intursion Alarm' => 'fa-solid fa-bell-slash',
     ];
 
-    // PALET WARNA (AMAN DI MATA)
-    $colors = ['primary', 'success', 'info', 'warning', 'secondary', 'dark', 'danger'];
+    $tones = ['primary', 'success', 'info', 'warning', 'secondary', 'danger'];
     ?>
 
-    <?php foreach ($items as $item): ?>
-      <?php
-      // RANDOM WARNA TAPI KONSISTEN
-      $color = $colors[$item['id'] % count($colors)];
+    <div class="row g-3">
+      <?php foreach ($items as $item): ?>
+        <?php
+        $itemName = (string) $item['name'];
+        $icon = $itemIcons[$itemName] ?? 'fa-solid fa-box';
+        $tone = $tones[$item['id'] % count($tones)];
+        ?>
 
-      $itemName = $item['name'];
-      $icon     = $itemIcons[$itemName] ?? 'fa-solid fa-box';
-      ?>
-
-      <div class="col-lg-3 col-md-4 col-sm-6 col-12">
-        <a href="<?= site_url('compliance/checklist/master/item/' . $item['id']) ?>"
-          class="small-box bg-<?= $color ?> checklist-box text-<?= in_array($color, ['warning', 'light']) ? 'dark' : 'white' ?>">
-
-          <div class="inner">
-            <h5 class="fw-bold mb-2"><?= esc($itemName) ?></h5>
-
-          </div>
-
-          <div class="icon">
-            <i class="<?= $icon ?>"></i>
-          </div>
-
-          <div class="small-box-footer">
-            Kelola Checklist <i class="fa-solid fa-arrow-circle-right"></i>
-          </div>
-
-        </a>
-      </div>
-
-    <?php endforeach; ?>
-
-  </div>
-
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+          <a href="<?= site_url('compliance/checklist/master/item/' . $item['id']) ?>" class="checklist-master-card tone-<?= esc($tone) ?>">
+            <div class="checklist-master-card-icon">
+              <i class="<?= esc($icon) ?>"></i>
+            </div>
+            <div class="checklist-master-card-body">
+              <h6 class="mb-1"><?= esc($itemName) ?></h6>
+              <span class="checklist-master-card-link">Kelola Pertanyaan <i class="bi bi-arrow-right-short"></i></span>
+            </div>
+          </a>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
 </div>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('styles') ?>
+<link rel="stylesheet" href="<?= base_url('assets/css/checklist-master.css?v=' . filemtime(FCPATH . 'assets/css/checklist-master.css')) ?>">
 <?= $this->endSection() ?>

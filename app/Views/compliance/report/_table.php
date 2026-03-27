@@ -1,33 +1,41 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
+<?php
+$frequencyLabel = match ($frequency) {
+  'daily' => 'Harian',
+  'weekly' => 'Mingguan',
+  default => 'Bulanan',
+};
+?>
 
-  <div>
-    <?php if ($prev): ?>
-      <button class="btn btn-light border navInventory report-nav-btn-circle"
-        data-id="<?= $prev ?>">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-    <?php endif; ?>
+<div class="report-result-head d-flex justify-content-between align-items-center gap-2 mb-3">
+  <button
+    type="button"
+    class="btn btn-outline-secondary btn-sm navInventory report-nav-btn-circle"
+    data-id="<?= esc((string) $prev) ?>"
+    <?= $prev ? '' : 'disabled' ?>
+    aria-label="Inventory sebelumnya">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+
+  <div class="text-center px-2">
+    <div class="fw-bold report-asset-code"><?= esc($inventory['asset_code']) ?></div>
+    <small class="text-muted"><?= esc($inventory['specific_area'] ?? '-') ?></small>
   </div>
 
-  <strong class="fs-5">
-    <?= esc($inventory['asset_code']) ?>
-  </strong>
-
-  <div>
-    <?php if ($next): ?>
-      <button class="btn btn-outline-secondary btn-sm navInventory"
-        data-id="<?= $next ?>"
-        title="Next">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
-    <?php endif; ?>
-  </div>
-
+  <button
+    type="button"
+    class="btn btn-outline-secondary btn-sm navInventory report-nav-btn-circle"
+    data-id="<?= esc((string) $next) ?>"
+    <?= $next ? '' : 'disabled' ?>
+    aria-label="Inventory berikutnya">
+    <i class="bi bi-chevron-right"></i>
+  </button>
 </div>
 
-<hr>
-<?php if ($frequency === 'monthly'): ?>
+<div class="report-frequency-chip mb-3">
+  <span class="badge bg-light text-dark border">Frekuensi: <?= esc($frequencyLabel) ?></span>
+</div>
 
+<?php if ($frequency === 'monthly'): ?>
   <?= view('compliance/report/_monthly', [
     'inventory'   => $inventory,
     'masters'     => $masters,
@@ -36,11 +44,15 @@
     'checkerByMonth' => $checkerByMonth,
     'year'        => $year,
     'month'       => $month,
-    'role'        => $role
+    'role'        => $role,
+    'itemName'    => $itemName,
+    'specificArea' => $specificArea,
+    'pic'         => $pic,
+    'expired'     => $expired,
+    'isFireExtinguisher' => $isFireExtinguisher,
+    'isToiletChecklist' => $isToiletChecklist ?? false
   ]) ?>
-
 <?php elseif ($frequency === 'daily'): ?>
-
   <?= view('compliance/report/_daily', [
     'inventory'   => $inventory,
     'masters'     => $masters,
@@ -51,11 +63,15 @@
     'year'        => $year,
     'month'       => $month,
     'holidayDates' => $holidayDates ?? [],
-    'role'        => $role
+    'role'        => $role,
+    'itemName'    => $itemName,
+    'specificArea' => $specificArea,
+    'pic'         => $pic,
+    'expired'     => $expired,
+    'isFireExtinguisher' => $isFireExtinguisher,
+    'isToiletChecklist' => $isToiletChecklist ?? false
   ]) ?>
-
 <?php elseif ($frequency === 'weekly'): ?>
-
   <?= view('compliance/report/_weekly', [
     'inventory'   => $inventory,
     'masters'     => $masters,
@@ -64,8 +80,11 @@
     'findings'    => $findings,
     'year'        => $year,
     'month'       => $month,
-    'role'        => $role
+    'role'        => $role,
+    'itemName'    => $itemName,
+    'specificArea' => $specificArea,
+    'pic'         => $pic,
+    'expired'     => $expired,
+    'isFireExtinguisher' => $isFireExtinguisher
   ]) ?>
-
 <?php endif; ?>
-

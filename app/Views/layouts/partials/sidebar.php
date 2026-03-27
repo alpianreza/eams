@@ -1,5 +1,6 @@
 <?php
 $role = $role ?? session()->get('role') ?? 'viewer';
+$userName = (string)(session()->get('name') ?? 'User');
 
 $segments = service('uri')->getSegments();
 $seg1 = $segments[0] ?? '';
@@ -7,12 +8,25 @@ $seg2 = $segments[1] ?? '';
 
 $isCompliance = $seg1 === 'compliance';
 $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
+
+$brandLogoPath = FCPATH . 'assets/images/company/logo.png';
+$brandLogoUrl = base_url('assets/images/company/logo.png');
+$hasBrandLogo = file_exists($brandLogoPath);
 ?>
 
 <aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
-  <div class="sidebar-brand">
-    <a href="<?= base_url('/') ?>" class="brand-link">
-      <span class="brand-text fw-bold">EAMS</span>
+  <div class="sidebar-brand eams-sidebar-brand">
+    <a href="<?= base_url('/') ?>" class="brand-link d-flex align-items-center gap-2">
+      <?php if ($hasBrandLogo): ?>
+        <img src="<?= esc($brandLogoUrl) ?>" class="sidebar-brand-icon" alt="EAMS">
+        <span class="brand-copy">
+          <span class="brand-text fw-bold">EAMS</span>
+        </span>
+      <?php else: ?>
+        <span class="brand-copy">
+          <span class="brand-text fw-bold">EAMS</span>
+        </span>
+      <?php endif; ?>
     </a>
   </div>
 
@@ -48,7 +62,7 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 
         <!-- ================= IT ASSET ================= -->
         <?php if (hasRole(['admin', 'compliance'])): ?>
-          <li class="nav-header">IT ASSET</li>
+          <li class="nav-header sidebar-section-title">IT ASSET</li>
 
           <li class="nav-item">
             <a href="<?= base_url('it-assets') ?>"
@@ -69,7 +83,7 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 
         <!-- ================= COMPLIANCE ================= -->
         <?php if (hasRole(['admin', 'compliance', 'staff', 'auditor'])): ?>
-          <li class="nav-header">COMPLIANCE</li>
+          <li class="nav-header sidebar-section-title">COMPLIANCE</li>
         <?php endif; ?>
 
         <!-- DASHBOARD COMPLIANCE -->
@@ -105,7 +119,7 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
               <i class="nav-icon bi bi-list-check"></i>
               <p>
                 Checklist
-                <i class="bi bi-chevron-down float-end"></i>
+                <i class="bi bi-chevron-down float-end sidebar-chevron"></i>
               </p>
             </a>
 
@@ -196,7 +210,7 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
               <i class="nav-icon fas fa-industry"></i>
               <p>
                 Boiler & Utility
-                <i class="bi bi-chevron-down float-end"></i>
+                <i class="bi bi-chevron-down float-end sidebar-chevron"></i>
               </p>
             </a>
 
@@ -226,7 +240,7 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 
         <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
           <li class="nav-item">
-            <a href="<?= base_url('compliance/print') ?>" class="nav-link">
+            <a href="<?= base_url('compliance/print') ?>" class="nav-link <?= $isCompliance && $seg2 === 'print' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-print"></i>
               <p>Print Center</p>
             </a>
@@ -235,7 +249,7 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 
         <!-- ================= ADMIN ================= -->
         <?php if (hasRole(['admin'])): ?>
-          <li class="nav-header">ADMIN</li>
+          <li class="nav-header sidebar-section-title">ADMIN</li>
 
           <li class="nav-item">
             <a href="<?= base_url('users') ?>"
@@ -256,5 +270,10 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 
       </ul>
     </nav>
+
+    <div class="sidebar-meta mt-auto">
+      <div class="sidebar-meta-label">Login sebagai</div>
+      <div class="sidebar-meta-value"><?= esc($userName) ?></div>
+    </div>
   </div>
 </aside>

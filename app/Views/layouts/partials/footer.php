@@ -1,11 +1,12 @@
-<footer class="app-footer text-sm">
-  <div class="float-end d-none d-sm-inline">
-    Version 1.0.0
+<footer class="app-footer eams-footer text-sm">
+  <div class="eams-footer-inner d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div class="eams-footer-copy">
+      <strong>&copy; <?= date('Y') ?> EAMS</strong>
+      <span class="text-muted ms-1">Enterprise Asset Management System - PT YoungHyun Star</span>
+    </div>
+
+    <div class="eams-footer-version">
+      <span class="footer-version-pill">Versi 2.0</span>
+    </div>
   </div>
-  <strong>
-    &copy; <?= date('Y') ?> EAMS - Enterprise Asset Management System
-  </strong>
-  <span class="ms-2 text-muted">
-    PT YoungHyun Star
-  </span>
 </footer>

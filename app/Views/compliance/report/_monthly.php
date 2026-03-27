@@ -1,224 +1,172 @@
 <?php
+$monthNames = [
+  1 => 'Januari',
+  2 => 'Februari',
+  3 => 'Maret',
+  4 => 'April',
+  5 => 'Mei',
+  6 => 'Juni',
+  7 => 'Juli',
+  8 => 'Agustus',
+  9 => 'September',
+  10 => 'Oktober',
+  11 => 'November',
+  12 => 'Desember',
+];
 
-/** @var string $itemName */
-/** @var string $specificArea */
-/** @var string $pic */
-/** @var string|null $expired */
-/** @var array $inventory */
+$monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+
+$questionMap = [];
+foreach ($masters as $master) {
+  $questionMap[$master['id']] = $master['question'];
+}
 ?>
 
-<div class="text-center mb-3">
-  <h5>
-    CHECKLIST PENGECEKAN <?= strtoupper(esc($itemName)) ?>
-  </h5>
-  Tahun: <?= $year ?>
-  
-</div>
-
-<div class="row mb-3">
-  <div class="col-md-3">
-    <strong>Lokasi:</strong><br>
-    <?= esc($specificArea ?? '-') ?>
+<div class="report-sheet">
+  <div class="text-center mb-3">
+    <h6 class="report-sheet-title mb-1">Checklist Pengecekan <?= strtoupper(esc($itemName)) ?></h6>
+    <div class="text-muted small">Tahun <?= esc((string) $year) ?></div>
   </div>
 
-  <div class="col-md-3">
-    <strong>PIC:</strong><br>
-    <?= esc($pic ?? '-') ?>
-  </div>
-
-  <div class="col-md-3">
-    <strong>No Inventaris:</strong><br>
-    <?= esc($inventory['asset_code']) ?>
-  </div>
-
-  <div class="col-md-3">
-    <?php if (!empty($isFireExtinguisher) && $isFireExtinguisher): ?>
-      <strong>Masa Berlaku:</strong><br>
-      <?= !empty($expired) ? date('d M Y', strtotime($expired)) : '-' ?>
-    <?php endif; ?>
-  </div>
-</div>
-
-
-<div class="table-responsive">
-  <table class="table table-bordered text-center">
-  <thead>
-    <tr>
-      <th>Pengecekan</th>
-      <?php
-      $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
-      foreach ($months as $m):
-      ?>
-        <th><?= $m ?></th>
-      <?php endforeach; ?>
-    </tr>
-  </thead>
-
-  <tbody>
-    <?php foreach ($masters as $q): ?>
-      <tr>
-        <td class="text-start">
-          <?= esc($q['question']) ?>
-        </td>
-
-        <?php for ($m = 1; $m <= 12; $m++): ?>
-
-          <?php
-          $data = $monthlyGrid[$q['id']][$m] ?? null;
-          $symbol = '';
-
-          if ($data) {
-            if ($data['status'] === 'ok') {
-              $symbol = '✓';
-            } elseif ($data['status'] === 'not_ok') {
-              $symbol = '✗';
-            } elseif ($data['status'] === 'na') {
-              $symbol = '–';
-            }
-          }
-          ?>
-
-          <td style="font-weight:600;">
-            <?= $symbol ?>
-          </td>
-
-        <?php endfor; ?>
-
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
-
-  <tfoot>
-    <tr>
-      <td class="text-muted">
-        <strong>Dicek oleh</strong>
-      </td>
-
-      <?php for ($m = 1; $m <= 12; $m++): ?>
-
-        <?php
-        $data = $checkerByMonth[$m] ?? null;
-        $firstName = '';
-        $tooltip = '';
-
-        if ($data) {
-
-          $parts = explode(' ', trim($data['name']));
-          $firstName = $parts[0] ?? '';
-
-          $tooltip = 'Dicek oleh: ' . $data['name'];
-
-          if ($role !== 'auditor') {
-            $tooltip .= ' | Tanggal: ' . date('d M Y', strtotime($data['date']));
-          }
-        }
-        ?>
-
-        <td style="font-size:11px; color:#555;">
-          <?php if ($firstName): ?>
-            <span title="<?= esc($tooltip) ?>" style="cursor:help;">
-              <?= esc($firstName) ?>
-            </span>
+  <div class="row g-2 mb-3 report-meta-grid">
+    <div class="col-md-3">
+      <div class="report-meta-item">
+        <div class="report-meta-label">Lokasi</div>
+        <div class="report-meta-value"><?= esc($specificArea ?? '-') ?></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="report-meta-item">
+        <div class="report-meta-label">PIC</div>
+        <div class="report-meta-value"><?= esc($pic ?? '-') ?></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="report-meta-item">
+        <div class="report-meta-label">No Inventaris</div>
+        <div class="report-meta-value"><?= esc($inventory['asset_code']) ?></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="report-meta-item">
+        <div class="report-meta-label">Masa Berlaku</div>
+        <div class="report-meta-value">
+          <?php if (!empty($isFireExtinguisher) && $isFireExtinguisher): ?>
+            <?= !empty($expired) ? esc(date('d M Y', strtotime($expired))) : '-' ?>
+          <?php else: ?>
+            -
           <?php endif; ?>
-        </td>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <?php endfor; ?>
+  <div class="table-responsive report-grid-wrap">
+    <table class="table table-bordered text-center align-middle mb-0 report-grid-table">
+      <thead class="table-light">
+        <tr>
+          <th class="text-start report-sticky-col">Item Pengecekan</th>
+          <?php foreach ($monthShort as $label): ?>
+            <th><?= esc($label) ?></th>
+          <?php endforeach; ?>
+        </tr>
+      </thead>
 
-    </tr>
-  </tfoot>
+      <tbody>
+        <?php foreach ($masters as $q): ?>
+          <tr>
+            <td class="text-start report-sticky-col"><?= esc($q['question']) ?></td>
+            <?php for ($m = 1; $m <= 12; $m++): ?>
+              <?php
+              $data = $monthlyGrid[$q['id']][$m] ?? null;
+              $status = $data['status'] ?? null;
+              ?>
+              <td>
+                <?php
+                if ($status === 'ok') {
+                  echo '&#10003;';
+                } elseif ($status === 'not_ok') {
+                  echo '&#10007;';
+                } elseif ($status === 'na') {
+                  echo '-';
+                } else {
+                  echo '';
+                }
+                ?>
+              </td>
+            <?php endfor; ?>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
 
-
-
-  </table>
+      <tfoot>
+        <tr>
+          <td class="fw-semibold report-sticky-col">Dicek Oleh</td>
+          <?php for ($m = 1; $m <= 12; $m++): ?>
+            <?php
+            $data = $checkerByMonth[$m] ?? null;
+            $displayName = '';
+            $tooltip = '';
+            if ($data) {
+              $parts = explode(' ', trim($data['name']));
+              $displayName = ucfirst(strtolower($parts[0] ?? ''));
+              $tooltip = 'Dicek oleh: ' . $data['name'];
+              if ($role !== 'auditor') {
+                $tooltip .= ' | Tanggal: ' . date('d M Y', strtotime($data['date']));
+              }
+            }
+            ?>
+            <td class="report-checker-cell">
+              <?php if ($displayName): ?>
+                <span title="<?= esc($tooltip) ?>"><?= esc($displayName) ?></span>
+              <?php endif; ?>
+            </td>
+          <?php endfor; ?>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 </div>
-
 
 <?php if (!empty($findingsByMonth)): ?>
-
   <hr>
-  <h5 class="mt-4">DETAIL TEMUAN TAHUN <?= $year ?></h5>
-
-  <?php
-  $months = [
-    1 => 'Januari',
-    2 => 'Februari',
-    3 => 'Maret',
-    4 => 'April',
-    5 => 'Mei',
-    6 => 'Juni',
-    7 => 'Juli',
-    8 => 'Agustus',
-    9 => 'September',
-    10 => 'Oktober',
-    11 => 'November',
-    12 => 'Desember'
-  ];
-  ?>
+  <h6 class="mt-4 mb-3">Detail Temuan Tahun <?= esc((string) $year) ?></h6>
 
   <?php for ($m = 1; $m <= 12; $m++): ?>
+    <?php $monthFindings = $findingsByMonth[$m] ?? []; ?>
+    <section class="mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0"><?= esc($monthNames[$m]) ?></h6>
+        <span class="badge bg-light text-dark border"><?= count($monthFindings) ?> temuan</span>
+      </div>
 
-    <div class="mt-4">
-      <h6>
-        <?= $months[$m] ?>
-        (<?= isset($findingsByMonth[$m]) ? count($findingsByMonth[$m]) : 0 ?> Temuan)
-      </h6>
-
-      <?php if (!empty($findingsByMonth[$m])): ?>
-
-        <div class="row">
-
-          <?php foreach ($findingsByMonth[$m] as $log): ?>
-
-            <div class="col-md-4 mb-3">
-              <div class="card h-100 shadow-sm">
-
+      <?php if (!empty($monthFindings)): ?>
+        <div class="row g-3">
+          <?php foreach ($monthFindings as $log): ?>
+            <div class="col-md-4">
+              <article class="card border-0 shadow-sm h-100 report-finding-card">
                 <?php if (!empty($log['photo'])): ?>
-                  <img src="<?= base_url('uploads/checklist/' . $log['photo']) ?>"
+                  <img
+                    src="<?= base_url('uploads/checklist/' . $log['photo']) ?>"
                     class="card-img-top img-preview report-finding-img"
-                    data-src="<?= base_url('uploads/checklist/' . $log['photo']) ?>">
+                    data-src="<?= base_url('uploads/checklist/' . $log['photo']) ?>"
+                    alt="Foto temuan">
                 <?php endif; ?>
 
                 <div class="card-body">
-
-                  <small class="text-muted">
-                    <?= esc($log['display_period']) ?>
-                  </small>
-
-                  <br>
-
-                  <?php
-                  foreach ($masters as $q) {
-                    if ($q['id'] == $log['checklist_template_id']) {
-                      echo '<strong>' . esc($q['question']) . '</strong>';
-                      break;
-                    }
-                  }
-                  ?>
-
+                  <small class="text-muted d-block mb-1"><?= esc($log['display_period']) ?></small>
+                  <div class="fw-semibold"><?= esc($questionMap[$log['checklist_template_id']] ?? '-') ?></div>
                   <?php if (!empty($log['remark'])): ?>
-                    <p class="mt-2 mb-0">
-                      <?= esc($log['remark']) ?>
-                    </p>
+                    <p class="mb-0 mt-2"><?= esc($log['remark']) ?></p>
                   <?php endif; ?>
-
                 </div>
-
-              </div>
+              </article>
             </div>
-
           <?php endforeach; ?>
-
         </div>
-
       <?php else: ?>
-
-        <p class="text-muted">Tidak ada temuan</p>
-
+        <div class="text-muted small">Tidak ada temuan.</div>
       <?php endif; ?>
-
-    </div>
-
+    </section>
   <?php endfor; ?>
-
 <?php endif; ?>
-

@@ -2,6 +2,12 @@
 
 <?php if ($pager->hasPrevious()): ?>
   <li class="page-item">
+    <a class="page-link rounded-pill px-3 d-inline-flex align-items-center justify-content-center" href="<?= $pager->getFirst() ?>" aria-label="Halaman pertama">
+      <i class="bi bi-chevron-double-left"></i>
+    </a>
+  </li>
+
+  <li class="page-item">
     <a class="page-link rounded-pill px-3 d-inline-flex align-items-center justify-content-center" href="<?= $pager->getPrevious() ?>" aria-label="Halaman sebelumnya">
       <i class="bi bi-chevron-left"></i>
     </a>
@@ -20,6 +26,12 @@
   <li class="page-item">
     <a class="page-link rounded-pill px-3 d-inline-flex align-items-center justify-content-center" href="<?= $pager->getNext() ?>" aria-label="Halaman berikutnya">
       <i class="bi bi-chevron-right"></i>
+    </a>
+  </li>
+
+  <li class="page-item">
+    <a class="page-link rounded-pill px-3 d-inline-flex align-items-center justify-content-center" href="<?= $pager->getLast() ?>" aria-label="Halaman terakhir">
+      <i class="bi bi-chevron-double-right"></i>
     </a>
   </li>
 <?php endif; ?>

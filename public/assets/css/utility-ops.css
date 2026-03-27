@@ -1,0 +1,127 @@
+.utility-shell .card {
+  border-radius: 14px;
+}
+
+.utility-shell .utility-hero-card {
+  border: 1px solid rgba(14, 116, 144, 0.16) !important;
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.12), rgba(30, 64, 175, 0.08), #ffffff);
+}
+
+.utility-shell .utility-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #0f766e;
+  background: rgba(20, 184, 166, 0.15);
+}
+
+.utility-shell .utility-month-form .form-control {
+  min-width: 170px;
+}
+
+.utility-shell .utility-stat-card {
+  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+}
+
+.utility-shell .utility-stat-label {
+  font-size: 0.76rem;
+  color: #64748b;
+  letter-spacing: 0.02em;
+}
+
+.utility-shell .utility-stat-value {
+  margin-top: 0.18rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.utility-shell .utility-table-card {
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+}
+
+.utility-shell .utility-table thead th {
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.utility-shell .utility-table tbody td {
+  font-size: 0.84rem;
+  vertical-align: middle;
+}
+
+.utility-shell .utility-table input.form-control {
+  border-color: #cbd5e1;
+}
+
+.utility-shell .utility-table input.form-control:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 0.16rem rgba(37, 99, 235, 0.15);
+}
+
+.utility-shell .utility-offday-row td {
+  background: #fee2e2 !important;
+}
+
+.utility-shell .utility-mobile-card {
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+}
+
+.utility-shell .utility-mobile-offday {
+  border-color: rgba(220, 38, 38, 0.35) !important;
+  background: rgba(254, 242, 242, 0.84);
+}
+
+.utility-shell .utility-mobile-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.84rem;
+  color: #475569;
+  margin-bottom: 0.15rem;
+}
+
+.utility-shell .utility-alert {
+  border-radius: 12px;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  background: rgba(254, 226, 226, 0.72);
+}
+
+.utility-shell .utility-inline-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 0.38rem;
+}
+
+.utility-shell .utility-inline-metric span {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.utility-shell .utility-inline-metric strong {
+  color: #0f172a;
+  font-size: 1.08rem;
+}
+
+@media (max-width: 768px) {
+  .utility-shell .utility-month-form .form-control {
+    min-width: 155px;
+  }
+
+  .utility-shell .utility-stat-value {
+    font-size: 0.98rem;
+  }
+
+  .utility-shell .utility-table thead th,
+  .utility-shell .utility-table tbody td {
+    font-size: 0.8rem;
+  }
+}

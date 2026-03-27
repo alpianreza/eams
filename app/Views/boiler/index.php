@@ -1,215 +1,208 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<div class="card">
+<?php
+$monthMap = [
+  '01' => 'Januari',
+  '02' => 'Februari',
+  '03' => 'Maret',
+  '04' => 'April',
+  '05' => 'Mei',
+  '06' => 'Juni',
+  '07' => 'Juli',
+  '08' => 'Agustus',
+  '09' => 'September',
+  '10' => 'Oktober',
+  '11' => 'November',
+  '12' => 'Desember',
+];
 
-  <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
+$dayMap = [
+  'Sunday' => 'Minggu',
+  'Monday' => 'Senin',
+  'Tuesday' => 'Selasa',
+  'Wednesday' => 'Rabu',
+  'Thursday' => 'Kamis',
+  'Friday' => 'Jumat',
+  'Saturday' => 'Sabtu'
+];
 
-    <h3 class="card-title mb-2 mb-md-0">
-      Laporan Pemakaian Bahan Bakar Boiler
-    </h3>
+$daysInMonth = (int) date('t', strtotime("$year-$month-01"));
+$monthLabel = ($monthMap[$month] ?? date('F', strtotime("$year-$month-01"))) . ' ' . $year;
 
-    <div class="d-flex align-items-center gap-2">
+$totalPoly = 0;
+$totalKg = 0.0;
+$filledDays = 0;
 
+for ($d = 1; $d <= $daysInMonth; $d++) {
+  $date = "$year-$month-" . sprintf('%02d', $d);
+  $row = $logs[$date] ?? null;
+  if ($row) {
+    $filledDays++;
+    $totalPoly += (float)($row['total_polybag'] ?? 0);
+    $totalKg += (float)($row['total_kg'] ?? 0);
+  }
+}
+?>
 
-      <form method="get">
-        <input type="month"
-          name="monthpicker"
-          value="<?= $year . '-' . $month ?>"
-          class="form-control"
-          onchange="this.form.submit()">
-      </form>
-
-
-      <a href="<?= base_url('boiler/export?year=' . $year . '&month=' . $month) ?>"
-        class="btn btn-success btn-sm">
-        Export Excel
-      </a>
-
-    </div>
-
-  </div>
-
-  <div class="card-body">
-
-    <?php
-    $totalPoly = 0;
-    $totalKg   = 0;
-    $daysInMonth = date('t', strtotime("$year-$month-01"));
-    ?>
-
-    <!-- ===================== -->
-    <!-- DESKTOP TABLE -->
-    <!-- ===================== -->
-    <div class="table-responsive d-none d-md-block">
-
-      <table class="table table-bordered table-sm mb-0">
-        <thead class="text-center bg-light">
-          <tr>
-            <th width="50">No</th>
-            <th width="120">Hari</th>
-            <th width="140">Tanggal</th>
-            <th width="120">Polybag</th>
-            <th width="150">KG</th>
-          </tr>
-        </thead>
-        <tbody>
-
-          <?php
-          $dayMap = [
-            'Sunday' => 'Minggu',
-            'Monday' => 'Senin',
-            'Tuesday' => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday' => 'Kamis',
-            'Friday' => 'Jumat',
-            'Saturday' => 'Sabtu'
-          ];
-
-          for ($d = 1; $d <= $daysInMonth; $d++):
-
-            $date = "$year-$month-" . sprintf('%02d', $d);
-            $dayName = $dayMap[date('l', strtotime($date))];
-            $isSunday = date('w', strtotime($date)) == 0;
-            $isHoliday = in_array($date, $holidayDates);
-            $isOff = ($isSunday || $isHoliday);
-
-            $row = $logs[$date] ?? null;
-            $poly = $row['total_polybag'] ?? '';
-            $kg   = $row['total_kg'] ?? '';
-
-            if ($row) {
-              $totalPoly += $row['total_polybag'];
-              $totalKg   += $row['total_kg'];
-            }
-          ?>
-
-            <tr>
-              <td class="text-center <?= $isOff ? 'offday-cell' : '' ?>">
-                <?= $d ?>
-              </td>
-              <td class="<?= $isOff ? 'offday-cell' : '' ?>">
-                <?= $dayName ?>
-              </td>
-              <td>
-                <a href="<?= base_url('boiler/detail/' . $date) ?>" class="text-reset">
-                  <?= date('d-M-y', strtotime($date)) ?>
-                </a>
-              </td>
-              <td class="text-center"><?= $poly ?></td>
-              <td class="text-center"><?= $kg ? number_format($kg, 2) : '' ?></td>
-            </tr>
-
-          <?php endfor; ?>
-
-          <tr class="font-weight-bold bg-light">
-            <td colspan="3" class="text-center">TOTAL BULAN</td>
-            <td class="text-center"><?= $totalPoly ?></td>
-            <td class="text-center"><?= number_format($totalKg, 2) ?></td>
-          </tr>
-
-        </tbody>
-      </table>
-
-    </div>
-
-
-    <!-- ===================== -->
-    <!-- MOBILE VERSION -->
-    <!-- ===================== -->
-    <div class="d-block d-md-none">
-
-      <?php
-      $totalPoly = 0;
-      $totalKg   = 0;
-
-      for ($d = 1; $d <= $daysInMonth; $d++):
-
-        $date = "$year-$month-" . sprintf('%02d', $d);
-        $dayName = $dayMap[date('l', strtotime($date))];
-        $isSunday = date('w', strtotime($date)) == 0;
-        $isHoliday = in_array($date, $holidayDates);
-        $isOff = ($isSunday || $isHoliday);
-
-        $row = $logs[$date] ?? null;
-        $poly = $row['total_polybag'] ?? 0;
-        $kg   = $row['total_kg'] ?? 0;
-
-        $totalPoly += $poly;
-        $totalKg   += $kg;
-      ?>
-
-        <div class="card mb-2 <?= $isOff ? 'offday-mobile' : '' ?>">
-          <div class="card-body p-2">
-
-            <div class="d-flex justify-content-between">
-              <strong class="<?= $isOff ? 'text-danger' : '' ?>">
-                <?= $d ?> - <?= $dayName ?>
-              </strong>
-
-              <?php if ($isOff): ?>
-                <span class="badge badge-danger">LIBUR</span>
-              <?php endif; ?>
-              <a href="<?= base_url('boiler/detail/' . $date) ?>"
-                class="btn btn-sm btn-outline-primary">
-                Detail
-              </a>
-            </div>
-
-            <div class="text-muted small mb-2">
-              <?= date('d M Y', strtotime($date)) ?>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <span>Polybag</span>
-              <strong><?= $poly ?></strong>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <span>KG</span>
-              <strong><?= number_format($kg, 2) ?></strong>
-            </div>
-
-          </div>
-        </div>
-
-      <?php endfor; ?>
-
-      <div class="card bg-light mt-3">
-        <div class="card-body p-2">
-          <strong>Total Bulan</strong>
-          <div class="d-flex justify-content-between">
-            <span>Polybag</span>
-            <strong><?= $totalPoly ?></strong>
-          </div>
-          <div class="d-flex justify-content-between">
-            <span>KG</span>
-            <strong><?= number_format($totalKg, 2) ?></strong>
-          </div>
-        </div>
+<div class="utility-shell utility-boiler-shell">
+  <section class="card utility-hero-card no-lift mb-3">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <p class="utility-kicker mb-1">Boiler Monitoring</p>
+        <h5 class="mb-1 fw-bold">Laporan Pemakaian Bahan Bakar Boiler</h5>
+        <p class="text-muted mb-0">Pantau pemakaian harian polybag dan kilogram dalam satu periode.</p>
       </div>
 
-    </div>
+      <div class="utility-actions d-flex flex-wrap align-items-center gap-2">
+        <form method="get" class="utility-month-form">
+          <input type="month"
+            name="monthpicker"
+            value="<?= $year . '-' . $month ?>"
+            class="form-control form-control-sm"
+            onchange="this.form.submit()">
+        </form>
 
-  </div>
+        <a href="<?= base_url('boiler/export?year=' . $year . '&month=' . $month) ?>"
+          class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+          <i class="bi bi-file-earmark-spreadsheet"></i>
+          Export Excel
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="row g-2 mb-3 utility-stat-grid">
+    <div class="col-12 col-md-4">
+      <div class="card utility-stat-card no-lift">
+        <div class="card-body">
+          <div class="utility-stat-label">Periode</div>
+          <div class="utility-stat-value"><?= esc($monthLabel) ?></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4">
+      <div class="card utility-stat-card no-lift">
+        <div class="card-body">
+          <div class="utility-stat-label">Total Polybag</div>
+          <div class="utility-stat-value"><?= number_format($totalPoly, 0, ',', '.') ?></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4">
+      <div class="card utility-stat-card no-lift">
+        <div class="card-body">
+          <div class="utility-stat-label">Total KG</div>
+          <div class="utility-stat-value"><?= number_format($totalKg, 2) ?></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card utility-table-card no-lift">
+    <div class="card-body p-0">
+      <div class="table-responsive d-none d-md-block utility-table-wrap">
+        <table class="table table-bordered align-middle mb-0 utility-table">
+          <thead>
+            <tr>
+              <th width="56" class="text-center">No</th>
+              <th width="130">Hari</th>
+              <th width="150">Tanggal</th>
+              <th width="120" class="text-end">Polybag</th>
+              <th width="120" class="text-end">KG</th>
+              <th width="110" class="text-center">Status</th>
+              <th width="110" class="text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php for ($d = 1; $d <= $daysInMonth; $d++): ?>
+              <?php
+              $date = "$year-$month-" . sprintf('%02d', $d);
+              $dayName = $dayMap[date('l', strtotime($date))] ?? date('l', strtotime($date));
+              $isSunday = date('w', strtotime($date)) == 0;
+              $isHoliday = in_array($date, $holidayDates, true);
+              $isOff = ($isSunday || $isHoliday);
+              $row = $logs[$date] ?? null;
+              $poly = (float)($row['total_polybag'] ?? 0);
+              $kg = (float)($row['total_kg'] ?? 0);
+              ?>
+              <tr class="<?= $isOff ? 'utility-offday-row' : '' ?>">
+                <td class="text-center fw-semibold"><?= $d ?></td>
+                <td><?= esc($dayName) ?></td>
+                <td><?= esc(date('d M Y', strtotime($date))) ?></td>
+                <td class="text-end"><?= $row ? number_format($poly, 0, ',', '.') : '-' ?></td>
+                <td class="text-end"><?= $row ? number_format($kg, 2) : '-' ?></td>
+                <td class="text-center">
+                  <?php if ($isOff): ?>
+                    <span class="badge text-bg-danger">Libur</span>
+                  <?php elseif ($row): ?>
+                    <span class="badge text-bg-success">Terisi</span>
+                  <?php else: ?>
+                    <span class="badge text-bg-secondary">Belum</span>
+                  <?php endif; ?>
+                </td>
+                <td class="text-center">
+                  <a href="<?= base_url('boiler/detail/' . $date) ?>" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-eye"></i>
+                    Detail
+                  </a>
+                </td>
+              </tr>
+            <?php endfor; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-block d-md-none p-2">
+        <?php for ($d = 1; $d <= $daysInMonth; $d++): ?>
+          <?php
+          $date = "$year-$month-" . sprintf('%02d', $d);
+          $dayName = $dayMap[date('l', strtotime($date))] ?? date('l', strtotime($date));
+          $isSunday = date('w', strtotime($date)) == 0;
+          $isHoliday = in_array($date, $holidayDates, true);
+          $isOff = ($isSunday || $isHoliday);
+          $row = $logs[$date] ?? null;
+          $poly = (float)($row['total_polybag'] ?? 0);
+          $kg = (float)($row['total_kg'] ?? 0);
+          ?>
+          <article class="card utility-mobile-card mb-2 <?= $isOff ? 'utility-mobile-offday' : '' ?>">
+            <div class="card-body p-3">
+              <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                <div>
+                  <div class="fw-semibold"><?= $d ?> - <?= esc($dayName) ?></div>
+                  <div class="text-muted small"><?= esc(date('d M Y', strtotime($date))) ?></div>
+                </div>
+                <?php if ($isOff): ?>
+                  <span class="badge text-bg-danger">Libur</span>
+                <?php elseif ($row): ?>
+                  <span class="badge text-bg-success">Terisi</span>
+                <?php else: ?>
+                  <span class="badge text-bg-secondary">Belum</span>
+                <?php endif; ?>
+              </div>
+
+              <div class="utility-mobile-metric">
+                <span>Polybag</span>
+                <strong><?= $row ? number_format($poly, 0, ',', '.') : '-' ?></strong>
+              </div>
+              <div class="utility-mobile-metric">
+                <span>KG</span>
+                <strong><?= $row ? number_format($kg, 2) : '-' ?></strong>
+              </div>
+
+              <a href="<?= base_url('boiler/detail/' . $date) ?>" class="btn btn-outline-primary btn-sm mt-2 w-100">
+                Lihat Detail
+              </a>
+            </div>
+          </article>
+        <?php endfor; ?>
+      </div>
+    </div>
+  </section>
 </div>
 
-<style>
-  .offday-cell {
-    background-color: #dc3545 !important;
-    color: #fff !important;
-    font-weight: 600;
-  }
+<?= $this->endSection() ?>
 
-  .table td,
-  .table th {
-    vertical-align: middle;
-  }
-
-  .offday-mobile {
-    background-color: #fdeaea !important;
-    border: 1px solid #dc3545 !important;
-  }
-</style>
-
+<?= $this->section('styles') ?>
+<link rel="stylesheet" href="<?= base_url('assets/css/utility-ops.css?v=' . filemtime(FCPATH . 'assets/css/utility-ops.css')) ?>">
 <?= $this->endSection() ?>

@@ -211,9 +211,9 @@ $bulanNama = date('F', strtotime($year . '-' . $month . '-01'));
           $status = $monthlyGrid[$q['id']][$monthNum]['status'] ?? null;
 
           $symbol = match ($status) {
-            'ok' => '✓',
-            'not_ok' => '✗',
-            'na' => '–',
+            'ok' => '&#10003;',
+            'not_ok' => '&#10007;',
+            'na' => '-',
             default => ''
           };
           ?>
@@ -266,5 +266,5 @@ $bulanNama = date('F', strtotime($year . '-' . $month . '-01'));
 </table>
 
 <p style="margin-top:6px;">
-  Keterangan: ✓ = sesuai, ✗ = tidak sesuai, – = tidak berlaku
+  Keterangan: &#10003; = sesuai, &#10007; = tidak sesuai, - = tidak berlaku
 </p>

@@ -75,7 +75,7 @@ class ExportPdfController extends BaseController
       'inventoryNo' => $inventory['asset_code'] ?? '-',
       'location'    => $inventory['specific_area'] ?? '-',
       'periodLabel' => function_exists('period_label')
-        ? period_label($periodKey, $inventory['checklist_frequency'])
+        ? period_label($inventory['checklist_frequency'], $periodKey)
         : $periodKey,
 
       'questions'   => $finalQuestions,
@@ -106,7 +106,7 @@ class ExportPdfController extends BaseController
     switch ($frequency) {
 
       case 'daily':
-        $type = 'daily';
+        $type = !empty($data['isToiletChecklist']) ? 'daily_toilet' : 'daily';
         break;
 
       case 'weekly':

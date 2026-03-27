@@ -3,7 +3,6 @@
 namespace App\Libraries;
 
 use Mpdf\Mpdf;
-use Config\Services;
 
 class EamsPdf
 {
@@ -34,9 +33,9 @@ class EamsPdf
     |--------------------------------------------------------------------------
     */
 
-    // Daily = Landscape
-    if ($type === 'daily') {
-      $this->mpdf = new \Mpdf\Mpdf([
+    // Daily report menggunakan landscape
+    if ($type === 'daily' || $type === 'daily_toilet') {
+      $this->mpdf = new Mpdf([
         'mode' => 'utf-8',
         'format' => 'A4-L',
         'margin_top' => 10,
@@ -46,7 +45,7 @@ class EamsPdf
       ]);
     } else {
       // Default portrait
-      $this->mpdf = new \Mpdf\Mpdf([
+      $this->mpdf = new Mpdf([
         'mode' => 'utf-8',
         'format' => 'A4',
         'margin_top' => 15,
@@ -65,19 +64,13 @@ class EamsPdf
     */
 
     $html = match ($type) {
-
       'single' => view('pdf/single_item', $this->prepareSingle($data)),
-
-      'daily'  => view('pdf/recap_daily', $data),
-
+      'daily' => view('pdf/recap_daily', $data),
+      'daily_toilet' => view('pdf/recap_daily_toilet', $data),
       'weekly' => view('pdf/recap_weekly', $data),
-
       'recap_period' => view('pdf/recap_periodic', $data),
-
       'recap_year_item' => view('pdf/recap_item_yearly', $data),
-
       'attachment' => view('pdf/attachment_ng', $data),
-
       default => throw new \Exception('Jenis laporan tidak dikenali.')
     };
 
@@ -99,17 +92,16 @@ class EamsPdf
     );
   }
 
-
   /**
    * Standarisasi simbol status
    */
   private function mapStatus(?string $status): string
   {
     return match ($status) {
-      'ok'     => '✓',
-      'not_ok' => '✗',
-      'na'     => '–',
-      default  => '–'
+      'ok' => '&#10003;',
+      'not_ok' => '&#10007;',
+      'na' => '-',
+      default => '-',
     };
   }
 

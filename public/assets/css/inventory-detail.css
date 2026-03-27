@@ -132,6 +132,17 @@
   box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
 }
 
+.modal-dialog-scrollable .compliance-modal-content {
+  max-height: calc(100vh - 2rem);
+}
+
+.modal-dialog-scrollable .compliance-modal-content form {
+  min-height: 0;
+  max-height: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
 .compliance-modal-header {
   background: linear-gradient(135deg, rgba(241, 245, 249, 0.92), rgba(255, 255, 255, 0.98));
   border-bottom: 1px solid #e2e8f0;
@@ -140,6 +151,9 @@
 
 .compliance-modal-body {
   padding: 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .compliance-modal-body .form-label {
@@ -216,6 +230,10 @@
 
   .inventory-add-preview {
     max-height: 150px;
+  }
+
+  .modal-dialog-scrollable .compliance-modal-content {
+    max-height: calc(100vh - 1.1rem);
   }
 
   .compliance-modal-header,

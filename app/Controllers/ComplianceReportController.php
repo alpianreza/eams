@@ -23,6 +23,8 @@ class ComplianceReportController extends BaseController
 
   public function index()
   {
+    page('Laporan Compliance');
+
     $categories = model(InventoryCategoryModel::class)
       ->orderBy('name', 'ASC')
       ->findAll();
@@ -95,6 +97,7 @@ class ComplianceReportController extends BaseController
     $frequency = $itemType['checklist_frequency'] ?? 'monthly';
     $itemName  = $itemType['name'] ?? '';
     $isFireExtinguisher = strtolower($itemName) === 'fire extinguisher';
+    $isToiletChecklist = ((int)($inventory['item_type_id'] ?? 0) === 52);
 
     // ==============================
     // MASTER PERTANYAAN
@@ -171,11 +174,20 @@ class ComplianceReportController extends BaseController
         ->findAll();
 
       foreach ($logsMonth as $log) {
+        $templateId = $log['checklist_template_id'];
+        $periodKey = $log['period_key'];
 
-        $dailyGrid[$log['checklist_template_id']][$log['period_key']] = $log['status'];
+        if ($isToiletChecklist) {
+          $slot = strtoupper((string)($log['time_slot'] ?? ''));
+          if (in_array($slot, ['PG', 'SI', 'SO'], true)) {
+            $dailyGrid[$templateId][$periodKey][$slot] = $log['status'];
+          }
+        } else {
+          $dailyGrid[$templateId][$periodKey] = $log['status'];
+        }
 
         if (!empty($log['checked_by'])) {
-          $checkerByDate[$log['period_key']] = [
+          $checkerByDate[$periodKey] = [
             'name' => $log['checked_by'],
             'date' => $log['check_date']
           ];
@@ -304,6 +316,7 @@ class ComplianceReportController extends BaseController
       'frequency'   => $frequency,
       'role'        => session('role'),
       'holidayDates' => $holidayDates,
+      'isToiletChecklist' => $isToiletChecklist,
     ];
   }
 }

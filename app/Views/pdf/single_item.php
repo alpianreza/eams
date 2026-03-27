@@ -74,5 +74,5 @@
 </table>
 
 <p style="margin-top:10px;">
-  Keterangan: ✓ = sesuai, ✗ = tidak sesuai, – = tidak berlaku
+  Keterangan: &#10003; = sesuai, &#10007; = tidak sesuai, - = tidak berlaku
 </p>

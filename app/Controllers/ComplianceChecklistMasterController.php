@@ -100,12 +100,24 @@ class ComplianceChecklistMasterController extends BaseController
    */
   public function store()
   {
+    $itemTypeId = (int) $this->request->getPost('item_type_id');
+    $question = trim((string) $this->request->getPost('question'));
+
+    if ($itemTypeId <= 0 || $question === '') {
+      if ($this->request->isAJAX()) {
+        return $this->response->setJSON([
+          'status' => 'error',
+          'message' => 'Data pertanyaan tidak valid.',
+        ]);
+      }
+      return redirect()->back()->with('error', 'Data pertanyaan tidak valid.');
+    }
 
     $this->checklistMasterModel->insert([
-      'item_type_id' => $this->request->getPost('item_type_id'),
-      'question'     => $this->request->getPost('question'),
+      'item_type_id' => $itemTypeId,
+      'question'     => $question,
       'require_photo' => $this->request->getPost('require_photo') ? 1 : 0,
-      'active'       => 1,
+      'active'       => $this->request->getPost('active') ? 1 : 0,
     ]);
 
     if ($this->request->isAJAX()) {
@@ -121,8 +133,19 @@ class ComplianceChecklistMasterController extends BaseController
    */
   public function update($id)
   {
+    $question = trim((string) $this->request->getPost('question'));
+    if ($question === '') {
+      if ($this->request->isAJAX()) {
+        return $this->response->setJSON([
+          'status' => 'error',
+          'message' => 'Pertanyaan tidak boleh kosong.',
+        ]);
+      }
+      return redirect()->back()->with('error', 'Pertanyaan tidak boleh kosong.');
+    }
+
     $this->checklistMasterModel->update($id, [
-      'question'      => $this->request->getPost('question'),
+      'question'      => $question,
       'require_photo' => $this->request->getPost('require_photo') ? 1 : 0,
       'active'        => $this->request->getPost('active') ? 1 : 0,
     ]);

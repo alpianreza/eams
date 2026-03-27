@@ -203,9 +203,9 @@ $logoPath = FCPATH . 'assets/images/company/logo.png';
           $status = $dailyGrid[$q['id']][$date] ?? null;
 
           $symbol = match ($status) {
-            'ok' => '✓',
-            'not_ok' => '✗',
-            'na' => '–',
+            'ok' => '&#10003;',
+            'not_ok' => '&#10007;',
+            'na' => '-',
             default => ''
           };
           ?>
@@ -265,7 +265,7 @@ $logoPath = FCPATH . 'assets/images/company/logo.png';
 </table>
 
 <p style="margin-top:5px; font-size:8px;">
-  Keterangan: ✓ = sesuai, ✗ = tidak sesuai, – = tidak berlaku
+  Keterangan: &#10003; = sesuai, &#10007; = tidak sesuai, - = tidak berlaku
 </p>
 
 <!-- ================= TEMUAN ================= -->
@@ -277,7 +277,7 @@ $logoPath = FCPATH . 'assets/images/company/logo.png';
     DETAIL TEMUAN BULAN <?= strtoupper($bulanNama) ?> <?= $year ?>
   </h4>
 
-  <?php $rows = array_chunk($findings, 4); ?>
+  <?php $rows = array_chunk($findings, 2); ?>
 
   <table style="width:100%; border-collapse:collapse;">
 

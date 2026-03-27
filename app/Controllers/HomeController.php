@@ -19,6 +19,8 @@ class HomeController extends BaseController
 
   public function index()
   {
+    page('Home Compliance');
+
     helper('period');
 
     $userName      = trim(session('name'));
@@ -150,7 +152,7 @@ class HomeController extends BaseController
 
           $exists = $this->logModel
             ->where('inventory_id', $inv['id'])
-            ->where('period_key', $ym)
+            ->where('period_key', $periodKey)
             ->countAllResults();
 
           if ($exists > 0) {
@@ -228,23 +230,5 @@ class HomeController extends BaseController
       'progress'      => $progress,
       'selectedMonth' => $selectedMonth
     ]);
-
-    $notifCount = $summary['pending'] + $summary['late'];
-
-    $notifications = [];
-
-    if ($summary['pending'] > 0) {
-      $notifications[] = [
-        'icon' => 'fas fa-clock text-warning',
-        'text' => $summary['pending'] . ' periode belum checklist'
-      ];
-    }
-
-    if ($summary['late'] > 0) {
-      $notifications[] = [
-        'icon' => 'fas fa-exclamation-circle text-danger',
-        'text' => $summary['late'] . ' periode sudah melewati batas waktu'
-      ];
-    }
   }
 }
