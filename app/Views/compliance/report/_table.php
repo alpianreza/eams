@@ -2,8 +2,7 @@
 
   <div>
     <?php if ($prev): ?>
-      <button class="btn btn-light border navInventory"
-        style="width:36px;height:36px;border-radius:50%;"
+      <button class="btn btn-light border navInventory report-nav-btn-circle"
         data-id="<?= $prev ?>">
         <i class="fa-solid fa-chevron-left"></i>
       </button>

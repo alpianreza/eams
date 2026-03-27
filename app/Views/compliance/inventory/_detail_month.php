@@ -21,7 +21,7 @@
           </div>
 
           <div class="col-6 col-md">
-            <div class="fw-bold fs-4 text-danger"><?= $rekap['ng'] ?></div>
+            <div class="fw-bold fs-4 text-danger"><?= $rekap['not_ok'] ?></div>
             <div class="text-muted">Tidak</div>
           </div>
 

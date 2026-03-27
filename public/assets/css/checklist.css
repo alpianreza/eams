@@ -4,7 +4,7 @@
 
 /* ---------- PAGE WRAPPER ---------- */
 
-body {
+.checklist-page {
   background-color: #f8f9fa;
 }
 
@@ -62,9 +62,7 @@ body {
   .table-checklist tr {
     margin-bottom: 14px;
   }
-}
 
-@media (max-width: 768px) {
   .calendar-nav {
     margin-bottom: 0.75rem;
   }

@@ -16,7 +16,7 @@ function bindStatusRadios() {
       if (row) row.classList.remove("table-danger");
 
       const isNotOk = this.value === "not_ok";
-      const detailRow = document.getElementById("ng-row-" + qid);
+      const detailRow = document.getElementById("not_ok-row-" + qid);
       if (!detailRow) return;
 
       const remark = detailRow.querySelector("textarea");
@@ -79,7 +79,7 @@ function validateChecklistForm(form, e) {
     .querySelectorAll(".status-radio[value='not_ok']:checked")
     .forEach((radio) => {
       const qid = radio.dataset.qid;
-      const row = document.getElementById("ng-row-" + qid);
+      const row = document.getElementById("not_ok-row-" + qid);
       if (!row) return;
 
       const remark = row.querySelector("textarea");
@@ -258,5 +258,7 @@ document.addEventListener("click", (e) => {
       window.reInitChecklistUI?.();
       window.history.pushState({}, "", url);
     })
-    .catch(console.error);
+    .catch(() => {
+      window.safeToast?.("Gagal memuat checklist.", "error");
+    });
 });

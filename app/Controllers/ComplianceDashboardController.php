@@ -127,9 +127,12 @@ class ComplianceDashboardController extends BaseController
 
       return $this->response->setJSON($data);
     } catch (\Throwable $e) {
+      log_message('error', 'ComplianceDashboardController::getTrendAjax failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
 
       return $this->response->setJSON([
-        'error' => $e->getMessage()
+        'error' => 'Gagal memuat data trend.'
       ]);
     }
   }
@@ -168,7 +171,13 @@ class ComplianceDashboardController extends BaseController
         'belum' => (int)($total - $checked)
       ]);
     } catch (\Throwable $e) {
-      return $this->response->setJSON(['error' => $e->getMessage()]);
+      log_message('error', 'ComplianceDashboardController::getProgressAjax failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
+
+      return $this->response->setJSON([
+        'error' => 'Gagal memuat data progress.'
+      ]);
     }
   }
 
@@ -216,7 +225,13 @@ class ComplianceDashboardController extends BaseController
 
       return $this->response->setJSON($data);
     } catch (\Throwable $e) {
-      return $this->response->setJSON(['error' => $e->getMessage()]);
+      log_message('error', 'ComplianceDashboardController::getStatusPieAjax failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
+
+      return $this->response->setJSON([
+        'error' => 'Gagal memuat data status.'
+      ]);
     }
   }
 
@@ -275,7 +290,13 @@ class ComplianceDashboardController extends BaseController
 
       return $this->response->setJSON($rows);
     } catch (\Throwable $e) {
-      return $this->response->setJSON(['error' => $e->getMessage()]);
+      log_message('error', 'ComplianceDashboardController::getProgressTrendAjax failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
+
+      return $this->response->setJSON([
+        'error' => 'Gagal memuat trend progress.'
+      ]);
     }
   }
 
@@ -405,8 +426,12 @@ class ComplianceDashboardController extends BaseController
         'areas' => $topAreas
       ]);
     } catch (\Throwable $e) {
+      log_message('error', 'ComplianceDashboardController::getRiskInsightAjax failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
+
       return $this->response->setJSON([
-        'error' => $e->getMessage()
+        'error' => 'Gagal memuat risk insight.'
       ]);
     }
   }
@@ -422,6 +447,10 @@ class ComplianceDashboardController extends BaseController
       $year  = date('Y');
       $month = $this->request->getGet('month') ?? date('m');
       $filterFrequency = $this->request->getGet('frequency');
+
+      if (! preg_match('/^(0[1-9]|1[0-2])$/', (string) $month)) {
+        $month = date('m');
+      }
 
       $currentMonth = date('m');
       $currentDay   = date('d');
@@ -475,8 +504,6 @@ class ComplianceDashboardController extends BaseController
 
       // === 3) Build daftar tanggal kerja bulan ini (Daily)
       $workDates = [];
-      $start = new \DateTime($ym . '-01');
-
       $start = new \DateTime($ym . '-01');
 
       while ($start <= $endDate) {
@@ -596,7 +623,13 @@ class ComplianceDashboardController extends BaseController
 
       return $this->response->setJSON($result);
     } catch (\Throwable $e) {
-      return $this->response->setJSON(['error' => $e->getMessage()]);
+      log_message('error', 'ComplianceDashboardController::getPendingChecklistAjax failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
+
+      return $this->response->setJSON([
+        'error' => 'Gagal memuat pending checklist.'
+      ]);
     }
   }
 }

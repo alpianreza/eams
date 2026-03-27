@@ -40,16 +40,18 @@ Events::on('pre_system', static function (): void {
      * --------------------------------------------------------------------
      * Debug Toolbar Listeners.
      * --------------------------------------------------------------------
-     * If you delete, they will no longer be collected.
+     * Keep toolbar disabled by default to prevent debug payload from leaking.
+     * Enable only when needed via `.env`: app.enableDebugToolbar = true
      */
-    if (CI_DEBUG && ! is_cli()) {
+    if (CI_DEBUG && ! is_cli() && env('app.enableDebugToolbar', false)) {
         Events::on('DBQuery', 'CodeIgniter\Debug\Toolbar\Collectors\Database::collect');
         service('toolbar')->respond();
-        // Hot Reload route - for framework use on the hot reloader.
-        if (ENVIRONMENT === 'development') {
-            service('routes')->get('__hot-reload', static function (): void {
-                (new HotReloader())->run();
-            });
-        }
+    }
+
+    // Hot Reload route - for framework use on the hot reloader.
+    if (ENVIRONMENT === 'development' && ! is_cli()) {
+        service('routes')->get('__hot-reload', static function (): void {
+            (new HotReloader())->run();
+        });
     }
 });

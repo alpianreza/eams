@@ -115,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
           safeToast("Inventory berhasil diperbarui", "success");
         })
         .catch((err) => {
-          console.error(err);
           safeToast("Terjadi kesalahan sistem", "error");
         });
     });
@@ -162,7 +161,6 @@ document.addEventListener("DOMContentLoaded", function () {
           }, 600);
         })
         .catch((err) => {
-          console.error(err);
           safeToast("Gagal menambahkan inventory", "error");
         });
     });
@@ -234,7 +232,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ajaxContainer.scrollIntoView({ behavior: "smooth", block: "start" });
       })
       .catch((err) => {
-        console.error(err);
         safeToast("Gagal memuat inventory", "error");
       })
       .finally(() => {
@@ -365,7 +362,6 @@ document.addEventListener("DOMContentLoaded", function () {
           safeToast("Inventory berhasil dihapus", "success");
         })
         .catch((err) => {
-          console.error(err);
           safeToast("Gagal menghapus inventory", "error");
         });
     });

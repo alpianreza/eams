@@ -7,6 +7,14 @@ $segments = service('uri')->getSegments();
 $seg1 = $segments[0] ?? '';
 $seg2 = $segments[1] ?? '';
 
+$pageTitle = trim((string)($title ?? ''));
+if ($pageTitle === '') {
+    $pageTitle = trim((string)($defaultTitle ?? 'Dashboard'));
+}
+if ($pageTitle === '') {
+    $pageTitle = 'Dashboard';
+}
+
 ?>
 
 
@@ -17,7 +25,7 @@ $seg2 = $segments[1] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><?= esc($title ?? 'EAMS') ?></title>
+    <title><?= esc($pageTitle . ' | EAMS') ?></title>
 
 
     <!-- Bootstrap -->
@@ -38,8 +46,6 @@ $seg2 = $segments[1] ?? '';
     <link rel="stylesheet" href="<?= base_url('adminlte4/css/adminlte.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/mobile.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=' . time()) ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/inventory-detail.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/login.css') ?>">
     <?= $this->renderSection('styles') ?>
 
 </head>
@@ -63,6 +69,13 @@ $seg2 = $segments[1] ?? '';
             <main class="app-main">
                 <div class="app-content">
                     <div class="container-fluid py-4">
+                        <?php if (!empty($backUrl)): ?>
+                            <div class="mb-3">
+                                <a href="<?= esc($backUrl) ?>" class="btn btn-outline-secondary btn-sm content-back-link">
+                                    <i class="fa-solid fa-left-long me-1"></i> Kembali
+                                </a>
+                            </div>
+                        <?php endif; ?>
                         <?= $this->renderSection('content') ?>
                     </div>
                 </div>

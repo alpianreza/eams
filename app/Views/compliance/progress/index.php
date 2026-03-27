@@ -4,17 +4,16 @@
 <div class="container-fluid">
 
   <!-- HEADER FILTER -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex justify-content-between align-items-center mb-3 progress-topbar">
 
     <h5 class="mb-0 fw-semibold">
       Monitoring Progress User
     </h5>
 
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 progress-topbar-actions">
 
       <select id="monthFilter"
-        class="form-select form-select-sm"
-        style="width:170px;">
+        class="form-select form-select-sm progress-month-filter">
 
         <?php
         $start = new DateTime('2026-01-01');
@@ -164,6 +163,7 @@
 
           // ===== TABLE =====
           let html = `
+        <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
@@ -204,7 +204,7 @@
             <td class="text-warning">${u.pending}</td>
             <td class="text-danger">${u.late}</td>
             <td>
-              <div class="progress" style="height:14px;">
+              <div class="progress progress-mini">
                 <div class="progress-bar ${color}" style="width:${u.progress}%"></div>
               </div>
               <small>${u.progress}%</small>
@@ -212,7 +212,7 @@
           </tr>`;
           });
 
-          html += "</tbody></table>";
+          html += "</tbody></table></div>";
           container.innerHTML = html;
 
         })
@@ -242,6 +242,7 @@
 
       let html = `
       <h6 class="mb-3">${user.name}</h6>
+      <div class="table-responsive">
       <table class="table table-sm table-bordered">
         <thead>
           <tr>
@@ -270,7 +271,7 @@
         </tr>`;
       });
 
-      html += "</tbody></table>";
+      html += "</tbody></table></div>";
 
       modalBody.innerHTML = html;
       modal.show();

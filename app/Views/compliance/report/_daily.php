@@ -156,8 +156,7 @@ $bulanNama = date('F', strtotime($year . '-' . $month . '-01'));
 
           <?php if (!empty($log['photo'])): ?>
             <img src="<?= base_url('uploads/checklist/' . $log['photo']) ?>"
-              class="card-img-top img-preview"
-              style="height:200px;object-fit:cover;cursor:pointer;"
+              class="card-img-top img-preview report-finding-img"
               data-src="<?= base_url('uploads/checklist/' . $log['photo']) ?>">
           <?php endif; ?>
 

@@ -40,7 +40,8 @@
 </div>
 
 
-<table class="table table-bordered text-center">
+<div class="table-responsive">
+  <table class="table table-bordered text-center">
   <thead>
     <tr>
       <th>Pengecekan</th>
@@ -128,7 +129,8 @@
 
 
 
-</table>
+  </table>
+</div>
 
 
 <?php if (!empty($findingsByMonth)): ?>
@@ -172,8 +174,7 @@
 
                 <?php if (!empty($log['photo'])): ?>
                   <img src="<?= base_url('uploads/checklist/' . $log['photo']) ?>"
-                    class="card-img-top img-preview"
-                    style="height:200px;object-fit:cover;cursor:pointer;"
+                    class="card-img-top img-preview report-finding-img"
                     data-src="<?= base_url('uploads/checklist/' . $log['photo']) ?>">
                 <?php endif; ?>
 

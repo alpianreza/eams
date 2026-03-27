@@ -4,7 +4,7 @@
   <div class="mb-3">
     <h5 class="fw-bold mb-1">
       <?= esc($inventory['item_display_name']) ?>
-      <span class="text-muted fw-normal">– <?= esc($inventory['asset_code']) ?></span>
+      <span class="text-muted fw-normal">- <?= esc($inventory['asset_code']) ?></span>
     </h5>
 
     <div class="d-flex flex-wrap gap-3 small text-muted">
@@ -160,12 +160,12 @@
                     <input type="radio"
                       class="btn-check status-radio"
                       name="questions[<?= $q['id'] ?>]"
-                      id="ng-<?= $q['id'] ?>"
+                      id="not_ok-<?= $q['id'] ?>"
                       value="not_ok"
                       data-qid="<?= $q['id'] ?>">
 
                     <label class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1"
-                      for="ng-<?= $q['id'] ?>">
+                      for="not_ok-<?= $q['id'] ?>">
                       <i class="bi bi-x-circle"></i>
                       NOT
                     </label>
@@ -191,13 +191,13 @@
                 </td>
               </tr>
 
-              <tr class="ng-row d-none" id="ng-row-<?= $q['id'] ?>">
+              <tr class="not-ok-row d-none" id="not_ok-row-<?= $q['id'] ?>">
                 <td colspan="3" class="p-2">
-                  <div class="ng-fields text-start">
+                  <div class="not-ok-fields text-start">
 
                     <div class="small text-warning fw-semibold mb-2">
                       <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                      TIDAK SESUAI – Isi catatan atau foto
+                      TIDAK SESUAI - Isi catatan atau foto
                     </div>
 
                     <textarea
@@ -239,3 +239,4 @@
   <?php endif ?>
 
 </div>
+

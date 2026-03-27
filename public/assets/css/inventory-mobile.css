@@ -13,16 +13,10 @@
 
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
-  html,
-  body {
-    overflow-x: hidden;
-  }
-
-  .container-fluid,
-  .app-content,
-  .app-main {
+  .inventory-page {
     padding-left: 8px !important;
     padding-right: 8px !important;
+    overflow-x: hidden;
   }
 
   .inventory-desktop {
@@ -43,59 +37,6 @@
 }
 
 /* =========================
-   MOBILE TABLE → CARD
-========================= */
-@media (max-width: 768px) {
-  #inventoryTable thead {
-    display: none;
-  }
-
-  #inventoryTable,
-  #inventoryTable tbody,
-  #inventoryTable tr,
-  #inventoryTable td {
-    display: block;
-    width: 100%;
-  }
-
-  #inventoryTable tr {
-    background: #fff;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    padding: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  }
-
-  #inventoryTable td {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border: none;
-    font-size: 14px;
-  }
-
-  #inventoryTable td::before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: #6c757d;
-  }
-
-  #inventoryTable td:last-child {
-    margin-top: 8px;
-    gap: 6px;
-  }
-
-  #inventoryTable td:last-child::before {
-    content: "Aksi";
-  }
-
-  #inventoryTable .btn {
-    font-size: 13px;
-    padding: 6px 8px;
-  }
-}
-
-/* =========================
    FILTER BAR (DESKTOP)
 ========================= */
 .inventory-filters {
@@ -112,18 +53,18 @@
 /* =========================
    PAGINATION (PILLS)
 ========================= */
-.pagination {
+.inventory-page .pagination {
   justify-content: center;
 }
 
-.pagination .page-link {
+.inventory-page .pagination .page-link {
   border-radius: 999px;
   margin: 0 4px;
   padding: 6px 12px;
   color: #495057;
 }
 
-.pagination .page-item.active .page-link {
+.inventory-page .pagination .page-item.active .page-link {
   background-color: #0d6efd;
   border-color: #0d6efd;
   color: #fff;
@@ -168,16 +109,16 @@
 }
 
 /* Modal header ala AdminLTE / Quick Example */
-.modal-content {
+.inventory-page .modal-content {
   border-radius: 6px;
   border-top: 3px solid #0d6efd; /* biru tipis */
 }
 
-.modal-header {
+.inventory-page .modal-header {
   border-bottom: 1px solid #dee2e6;
   padding: 14px 18px;
 }
 
-.modal-title {
+.inventory-page .modal-title {
   font-size: 16px;
 }

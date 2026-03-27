@@ -1,10 +1,10 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
+<div class="container-fluid home-page">
 
   <!-- Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 home-header">
     <div>
       <h4 class="mb-1">Halo, <?= session('name') ?> 👋</h4>
       <small class="text-muted">
@@ -109,7 +109,7 @@
         <strong><?= $progress ?>%</strong>
       </div>
 
-      <div class="progress" style="height: 14px;">
+      <div class="progress home-progress-bar">
         <div class="progress-bar <?= $progressColor ?>"
           role="progressbar"
           style="width: <?= $progress ?>%; transition: width .5s ease;">
@@ -120,7 +120,7 @@
 
   <!-- Pending List -->
   <div class="card mt-4 shadow-sm">
-    <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card-header d-flex justify-content-between align-items-center home-pending-header">
       <div>
         <h6 class="mb-0">Inventory Belum Checklist</h6>
         <small class="text-muted">
@@ -128,9 +128,9 @@
         </small>
       </div>
 
-      <form method="get" class="mb-0">
+      <form method="get" class="mb-0 home-month-form">
         <select name="month"
-          class="form-control form-control-sm"
+          class="form-control form-control-sm home-month-select"
           onchange="this.form.submit()">
 
           <?php
@@ -243,54 +243,62 @@
 <style>
   @media(max-width:768px) {
 
-    .w-md-auto {
+    .home-page .w-md-auto {
       width: auto !important;
     }
 
-    item-name {
-      max-width: 140px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    .home-page .home-header,
+    .home-page .home-pending-header {
+      align-items: flex-start !important;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .home-page .home-month-form {
+      width: 100%;
+    }
+
+    .home-page .home-month-select {
+      width: 100%;
     }
 
     /* font tabel */
-    .table {
-      font-size: .60rem;
+    .home-page .table {
+      font-size: .78rem;
     }
 
     /* padding sel */
-    .table td,
-    .table th {
+    .home-page .table td,
+    .home-page .table th {
       padding: .35rem .45rem;
       line-height: 1.2;
     }
 
     /* header lebih kecil */
-    .table thead th {
+    .home-page .table thead th {
       font-size: .7rem;
       font-weight: 600;
     }
 
     /* badge kecil */
-    .badge {
+    .home-page .badge {
       font-size: .65rem;
       padding: .25em .45em;
     }
 
     /* tombol kecil */
-    .btn-sm {
+    .home-page .btn-sm {
       font-size: .7rem;
       padding: .25rem .4rem;
     }
 
     /* judul card */
-    .card-header h6 {
+    .home-page .card-header h6 {
       font-size: .85rem;
     }
 
     /* subtitle */
-    .card-header small {
+    .home-page .card-header small {
       font-size: .7rem;
     }
 

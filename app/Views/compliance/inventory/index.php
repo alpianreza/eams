@@ -6,7 +6,8 @@ $title = 'Compliance Inventory';
 
 <?= $this->section('content') ?>
 
-<div class="inventory-header mb-3">
+<div class="inventory-page">
+  <div class="inventory-header mb-3">
 
   <div class="d-flex justify-content-between align-items-start">
     <div>
@@ -95,14 +96,14 @@ $title = 'Compliance Inventory';
 
   </div>
 
+  </div>
+
 
   <?= $this->include('compliance/inventory/_modal_add') ?>
 
   <?= $this->include('compliance/inventory/_modal_qr') ?>
 
   <?= $this->include('compliance/inventory/_modal_edit') ?>
-
-  <link rel="stylesheet" href="<?= base_url('assets/css/inventory-mobile.css') ?>">
 
   <script>
     const BASE_URL = "<?= base_url() ?>";
@@ -152,4 +153,11 @@ $title = 'Compliance Inventory';
   </script>
 
 
+  </div>
+
+  <?= $this->endSection() ?>
+
+  <?= $this->section('styles') ?>
+  <link rel="stylesheet" href="<?= base_url('assets/css/inventory-detail.css?v=' . filemtime(FCPATH . 'assets/css/inventory-detail.css')) ?>">
+  <link rel="stylesheet" href="<?= base_url('assets/css/inventory-mobile.css?v=' . filemtime(FCPATH . 'assets/css/inventory-mobile.css')) ?>">
   <?= $this->endSection() ?>

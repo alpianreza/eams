@@ -35,7 +35,7 @@
   .table td,
   .table th {
     padding: 0.5rem;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
   }
 
   /* Checklist khusus */
@@ -54,6 +54,11 @@
   }
 
   .app-content {
-    padding: 0.15rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .app-content > .container-fluid {
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
   }
 }

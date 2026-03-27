@@ -39,7 +39,7 @@
                 <?php if ($row['photo']): ?>
                   <img
                     src="<?= base_url('uploads/checklist/' . $row['photo']) ?>"
-                    style="max-height:40px; cursor:pointer;"
+                    class="inventory-thumb-small"
                     onclick="openChecklistZoom('<?= base_url('uploads/checklist/' . $row['photo']) ?>')">
                 <?php else: ?>
                   <span class="text-muted">-</span>
@@ -70,8 +70,7 @@
       <div class="modal-body text-center">
         <img id="zoomChecklistImage"
           src=""
-          class="img-fluid"
-          style="max-height:70vh; object-fit:contain;">
+          class="img-fluid inventory-zoom-checklist">
       </div>
 
     </div>

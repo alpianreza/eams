@@ -67,6 +67,15 @@
           placeholder="Kosongkan jika tidak ingin mengganti">
       </div>
 
+      <div class="mb-3">
+        <label class="form-label">No WhatsApp</label>
+        <input type="text"
+          name="wa_number"
+          class="form-control"
+          placeholder="081234567890"
+          value="<?= esc($user['wa_number'] ?? '') ?>">
+      </div>
+
       <div class="col-md-4 mb-3">
         <label class="form-label">Role</label>
         <select name="role" class="form-select">
@@ -113,7 +122,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <div style="width:100%; height:400px;">
+        <div class="user-crop-stage">
           <img id="cropImage" style="max-width:100%; display:block;">
         </div>
       </div>
@@ -159,6 +168,10 @@
       cropImage.src = event.target.result;
       cropModal.show();
 
+      if (cropper) {
+        cropper.destroy();
+      }
+
       cropper = new Cropper(cropImage, {
         aspectRatio: 1,
         viewMode: 1
@@ -168,6 +181,7 @@
   });
 
   document.getElementById('saveCrop').addEventListener('click', function() {
+    if (!cropper) return;
 
     const canvas = cropper.getCroppedCanvas({
       width: 300,
@@ -189,7 +203,14 @@
 
       cropModal.hide();
       cropper.destroy();
+      cropper = null;
     }, 'image/jpeg', 0.9);
+  });
+
+  document.getElementById('cropModal').addEventListener('hidden.bs.modal', function() {
+    if (!cropper) return;
+    cropper.destroy();
+    cropper = null;
   });
 </script>
 

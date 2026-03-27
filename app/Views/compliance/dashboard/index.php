@@ -4,10 +4,10 @@
 <div class="container-fluid">
 
   <!-- ================= HEADER ================= -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 dashboard-topbar">
     <h4 class="mb-0 fw-bold">Compliance Control Center</h4>
 
-    <form method="get" class="d-flex align-items-center gap-2">
+    <form method="get" class="d-flex align-items-center gap-2 dashboard-year-filter">
       <select name="year" class="form-select form-select-sm" onchange="this.form.submit()">
         <?php foreach ($availableYears as $yearItem): ?>
           <option value="<?= $yearItem ?>" <?= $yearItem == $selectedYear ? 'selected' : '' ?>>
@@ -57,7 +57,7 @@
   <h6 class="text-muted mb-3">Compliance Trend</h6>
 
   <div class="card shadow-sm border-0 mb-4">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center border-0">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center border-0 dashboard-trend-header">
 
       <div>
         <button class="btn btn-sm btn-outline-primary tab-frequency active" data-type="monthly">Monthly</button>
@@ -77,7 +77,7 @@
     </div>
 
     <div class="card-body">
-      <div style="height:380px;">
+      <div class="dashboard-chart-main">
         <canvas id="complianceChart"></canvas>
       </div>
     </div>
@@ -90,7 +90,7 @@
   <div class="row g-3">
 
     <!-- FILTER -->
-    <div class="col-12 d-flex gap-2">
+    <div class="col-12 d-flex gap-2 dashboard-progress-filters">
       <select id="progressType" class="form-select form-select-sm w-auto">
         <option value="monthly">Monthly</option>
         <option value="weekly">Weekly</option>
@@ -121,7 +121,7 @@
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
           <h6 class="fw-semibold mb-3">Progress Checklist</h6>
-          <div style="height:350px;">
+          <div class="dashboard-chart-progress">
             <canvas id="progressChart"></canvas>
           </div>
         </div>
@@ -133,7 +133,7 @@
       <div class="card shadow-sm border-0 h-100">
         <div class="card-body">
           <h6 class="fw-semibold mb-3">Status Distribusi</h6>
-          <div style="height:350px;">
+          <div class="dashboard-chart-pie">
             <canvas id="statusPieChart"></canvas>
           </div>
         </div>
@@ -177,16 +177,15 @@
 
 <div class="card shadow-sm border-0">
   <div class="card-body">
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 pending-controls">
 
       <!-- KIRI -->
-      <div class="d-flex gap-2 flex-wrap align-items-center">
+      <div class="d-flex gap-2 flex-wrap align-items-center pending-controls-left">
 
         <input type="text"
           id="pendingSearch"
-          class="form-control form-control-sm"
-          placeholder="Search..."
-          style="width:200px;">
+          class="form-control form-control-sm pending-search"
+          placeholder="Search...">
 
         <select id="pendingMonth"
           class="form-select form-select-sm w-auto">
@@ -248,23 +247,25 @@
 
   </div>
 
-  <table class="table table-sm align-middle mb-0">
-    <thead>
-      <tr>
-        <th>Inventory</th>
-        <th>Area</th>
-        <th>PIC</th>
-        <th>Frequency</th>
-        <th>Unchecked</th>
-      </tr>
-    </thead>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Inventory</th>
+          <th>Area</th>
+          <th>PIC</th>
+          <th>Frequency</th>
+          <th>Unchecked</th>
+        </tr>
+      </thead>
 
-    <tbody id="pendingTableBody">
-      <tr>
-        <td colspan="4" class="text-muted">Loading...</td>
-      </tr>
-    </tbody>
-  </table>
+      <tbody id="pendingTableBody">
+        <tr>
+          <td colspan="5" class="text-muted">Loading...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div class="mt-3" id="pendingPagination"></div>
 
 </div>

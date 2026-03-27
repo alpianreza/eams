@@ -18,6 +18,13 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 
+@media (hover: none) {
+  .card:hover {
+    transform: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+}
+
 .card-title,
 .card-label {
   font-size: 0.75rem;
@@ -36,6 +43,45 @@
 
 .card .icon {
   opacity: 0.15;
+}
+
+.dashboard-chart-main {
+  height: 380px;
+}
+
+.dashboard-chart-progress,
+.dashboard-chart-pie {
+  height: 350px;
+}
+
+.evidence-thumb,
+.report-finding-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.report-finding-img {
+  cursor: pointer;
+}
+
+.report-nav-btn-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-crop-stage {
+  width: 100%;
+  height: 400px;
+}
+
+.progress-mini,
+.home-progress-bar {
+  height: 14px;
 }
 
 .card-icon {
@@ -141,6 +187,93 @@
   background: #fff;
 }
 
+/* Header controls */
+.app-header .app-header-inner {
+  min-height: 58px;
+  gap: 0.5rem;
+}
+
+.app-header .header-left-controls {
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 0.45rem;
+  z-index: 2;
+}
+
+.app-header .header-right-controls {
+  flex: 0 0 auto;
+  gap: 0.35rem;
+  margin-left: 0.6rem;
+  z-index: 2;
+}
+
+.app-header .app-header-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+
+.app-header .header-title-text {
+  display: block;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-header .header-icon-btn,
+.app-header .header-notif-toggle,
+.app-header .header-profile-toggle {
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+}
+
+.app-header .header-icon-btn:hover,
+.app-header .header-notif-toggle:hover,
+.app-header .header-profile-toggle:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
+}
+
+.app-header .header-profile-avatar {
+  object-fit: cover;
+}
+
+.app-header .header-notif-item,
+.app-header .header-profile-item {
+  display: flex;
+  align-items: center;
+}
+
+.app-header .header-notif-badge {
+  top: 3px;
+  right: 1px;
+  font-size: 0.62rem;
+  line-height: 1;
+  padding: 2px 4px;
+}
+
+.app-header .header-notif-menu {
+  min-width: 260px;
+  max-width: 320px;
+}
+
+.app-header .header-profile-menu {
+  min-width: 220px;
+}
+
+.content-back-link {
+  display: inline-flex;
+  align-items: center;
+}
+
 /* Table and pagination */
 .table-group td {
   background: #f4f6fa !important;
@@ -160,12 +293,20 @@
   vertical-align: middle;
 }
 
+.device-cpu-cell {
+  max-width: 200px;
+}
+
 .table-warning {
   background-color: #fff8e1 !important;
 }
 
 .table-secondary {
   background-color: #f5f5f5 !important;
+}
+
+.bg-offday {
+  background-color: #f8d7da !important;
 }
 
 .input-group-text {
@@ -363,4 +504,137 @@
   font-size: 20px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
   z-index: 9999999;
+}
+
+/* Mobile global */
+@media (max-width: 768px) {
+  .app-main .container-fluid.py-4 {
+    padding-top: 0.9rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  .app-header .app-header-inner {
+    min-height: 54px;
+    gap: 0.35rem;
+  }
+
+  .app-header .header-left-controls {
+    gap: 0.35rem;
+  }
+
+  .app-header .app-header-title {
+    min-width: 0;
+  }
+
+  .app-header .header-title-text {
+    display: block;
+    font-size: 0.95rem !important;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .app-header .header-icon-btn,
+  .app-header .header-notif-toggle,
+  .app-header .header-profile-toggle {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .app-header .header-right-controls {
+    gap: 0.2rem;
+    margin-left: 0.35rem;
+  }
+
+  .app-header .header-notif-menu,
+  .app-header .header-profile-menu {
+    min-width: 220px;
+    max-width: 92vw;
+  }
+
+  .content-back-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dashboard-chart-main {
+    height: 300px;
+  }
+
+  .dashboard-chart-progress,
+  .dashboard-chart-pie {
+    height: 260px;
+  }
+
+  .evidence-thumb,
+  .report-finding-img {
+    height: 160px;
+  }
+
+  .user-crop-stage {
+    height: 280px;
+  }
+
+  .table-responsive-mobile {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive-mobile > .table {
+    margin-bottom: 0;
+    min-width: 620px;
+  }
+
+  .dashboard-topbar,
+  .dashboard-trend-header,
+  .dashboard-progress-filters,
+  .progress-topbar,
+  .progress-topbar-actions,
+  .pending-controls,
+  .pending-controls-left {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .dashboard-progress-filters .form-select,
+  .dashboard-progress-filters .form-control,
+  .progress-topbar-actions .form-select,
+  .progress-topbar-actions .form-control,
+  .pending-controls-left .form-select,
+  .pending-controls-left .form-control {
+    width: 100% !important;
+  }
+
+  .pending-search,
+  .progress-month-filter {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .eams-export-float {
+    bottom: 14px;
+    right: 14px;
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 576px) {
+  .app-header .header-title-text {
+    font-size: 0.85rem !important;
+  }
+
+  .app-header .header-sidebar-toggle,
+  .app-header .header-notif-toggle,
+  .app-header .header-profile-toggle {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  .app-header .header-right-controls {
+    gap: 0.15rem;
+    margin-left: 0.25rem;
+  }
 }

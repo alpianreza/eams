@@ -15,6 +15,8 @@ abstract class BaseController extends Controller
     protected bool $isWritable = false;
     protected string $role = 'viewer';
     protected int $notifCount = 0;
+    protected array $notifications = [];
+    protected string $defaultTitle = 'Dashboard';
 
     public function initController(
         RequestInterface $request,
@@ -78,18 +80,72 @@ abstract class BaseController extends Controller
             }
 
             $this->notifCount = $pending + $late;
+
+            if ($pending > 0) {
+                $this->notifications[] = [
+                    'icon' => 'bi bi-clock text-warning',
+                    'text' => $pending . ' periode belum checklist',
+                    'url'  => base_url('home'),
+                ];
+            }
+
+            if ($late > 0) {
+                $this->notifications[] = [
+                    'icon' => 'bi bi-exclamation-triangle text-danger',
+                    'text' => $late . ' periode sudah terlambat',
+                    'url'  => base_url('home'),
+                ];
+            }
         }
 
+        $this->defaultTitle = $this->resolveDefaultTitle();
+
         // Share ke semua view
+        service('renderer')->setVar('defaultTitle', $this->defaultTitle);
         service('renderer')->setVar('notifCount', $this->notifCount);
+        service('renderer')->setVar('notifications', $this->notifications);
     }
 
     protected function render(string $view, array $data = [])
     {
+        $data['defaultTitle'] = $data['defaultTitle'] ?? $this->defaultTitle;
         $data['isWritable'] = $this->isWritable;
         $data['role']       = $this->role;
         $data['notifCount'] = $this->notifCount;
+        $data['notifications'] = $this->notifications;
 
         return view($view, $data);
+    }
+
+    protected function resolveDefaultTitle(): string
+    {
+        $router = service('router');
+        $controller = $router->controllerName();
+        $method = $router->methodName();
+
+        if (!is_string($controller) || $controller === '') {
+            $controller = static::class;
+        }
+
+        $parts = explode('\\', $controller);
+        $short = end($parts) ?: '';
+        $short = preg_replace('/Controller$/', '', $short) ?? $short;
+        $short = str_replace(['_', '-'], ' ', $short);
+        $short = preg_replace('/(?<=[a-z])(?=[A-Z])/', ' ', $short) ?? $short;
+        $short = preg_replace('/(?<=[A-Za-z])(?=[0-9])|(?<=[0-9])(?=[A-Za-z])/', ' ', $short) ?? $short;
+        $short = trim(preg_replace('/\s+/', ' ', $short) ?? $short);
+
+        if ($short === '' || strtolower($short) === 'base') {
+            return 'Dashboard';
+        }
+
+        $methodText = '';
+        if (is_string($method) && $method !== '' && strtolower($method) !== 'index') {
+            $methodText = str_replace(['_', '-'], ' ', $method);
+            $methodText = preg_replace('/(?<=[a-z])(?=[A-Z])/', ' ', $methodText) ?? $methodText;
+            $methodText = trim(preg_replace('/\s+/', ' ', $methodText) ?? $methodText);
+        }
+
+        return trim($short . ' ' . $methodText);
     }
 }

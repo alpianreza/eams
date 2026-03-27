@@ -63,7 +63,7 @@
           <td class="d-none d-lg-table-cell"><?= esc($d['os'] ?? '-') ?></td>
 
           <!-- CPU -->
-          <td class="d-none d-xl-table-cell text-truncate" style="max-width:200px">
+          <td class="d-none d-xl-table-cell text-truncate device-cpu-cell">
             <?= esc($d['cpu_name'] ?? '-') ?>
           </td>
 

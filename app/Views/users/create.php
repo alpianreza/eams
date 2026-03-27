@@ -35,6 +35,15 @@
     </select>
   </div>
 
+  <div class="mb-3">
+    <label class="form-label">No WhatsApp</label>
+    <input type="text"
+      name="wa_number"
+      class="form-control"
+      placeholder="081234567890"
+      value="<?= esc($user['wa_number'] ?? '') ?>">
+  </div>
+
   <button class="btn btn-success">Simpan</button>
 
   <?= $this->endSection() ?>

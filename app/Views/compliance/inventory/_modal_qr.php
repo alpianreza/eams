@@ -13,8 +13,7 @@
           <img
             id="qrImage"
             src=""
-            class="img-fluid rounded border"
-            style="max-height:260px"
+            class="img-fluid rounded border inventory-qr-img"
             alt="QR Code">
         </div>
 

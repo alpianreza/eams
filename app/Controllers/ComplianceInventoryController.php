@@ -426,13 +426,13 @@ class ComplianceInventoryController extends BaseController
     $rekap = [
       'total' => count($periods),
       'ok'    => 0,
-      'ng'    => 0,
+      'not_ok' => 0,
       'late'  => 0,
     ];
 
     foreach ($logs as $log) {
       if ($log['status'] === 'ok') $rekap['ok']++;
-      if ($log['status'] === 'not_ok') $rekap['ng']++;
+      if ($log['status'] === 'not_ok') $rekap['not_ok']++;
     }
 
     foreach ($periods as $period) {
@@ -1248,7 +1248,7 @@ class ComplianceInventoryController extends BaseController
 
       return $this->response->setJSON([
         'status' => 'error',
-        'message' => $e->getMessage()
+        'message' => 'Gagal melakukan regenerate QR.'
       ]);
     }
   }

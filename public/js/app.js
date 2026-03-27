@@ -18,6 +18,50 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   };
 
-  // ✅ ALIAS — biar semua module lama tetap jalan
+  // Alias for legacy modules.
   window.appToast = window.safeToast;
+
+  const WRAP_CLASS = "table-responsive-mobile";
+
+  const wrapTable = (table) => {
+    if (!table) return;
+    if (table.closest(".table-responsive")) return;
+    if (table.dataset.noResponsiveWrap === "1") return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = `table-responsive ${WRAP_CLASS}`;
+
+    table.parentNode.insertBefore(wrapper, table);
+    wrapper.appendChild(table);
+  };
+
+  const wrapTablesIn = (root) => {
+    if (!root) return;
+
+    if (root.matches?.("table.table")) {
+      wrapTable(root);
+      return;
+    }
+
+    root.querySelectorAll?.("table.table").forEach((table) => wrapTable(table));
+  };
+
+  const appContent = document.querySelector(".app-content");
+  wrapTablesIn(appContent || document);
+
+  if (!appContent) return;
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return;
+        wrapTablesIn(node);
+      });
+    });
+  });
+
+  observer.observe(appContent, {
+    childList: true,
+    subtree: true,
+  });
 });

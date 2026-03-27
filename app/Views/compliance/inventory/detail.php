@@ -17,8 +17,7 @@ $backUrl = base_url('compliance/inventory');
           <img
             id="inventoryPhoto"
             src="<?= base_url('uploads/inventory/' . $inventory['photo']) ?>"
-            class="img-fluid rounded mb-3"
-            style="max-height:260px; cursor:zoom-in;"
+            class="img-fluid rounded mb-3 inventory-photo-preview"
             data-bs-toggle="modal"
             data-bs-target="#modalZoomPhoto">
         <?php else: ?>
@@ -172,4 +171,8 @@ $backUrl = base_url('compliance/inventory');
   });
 </script>
 
+<?= $this->endSection() ?>
+
+<?= $this->section('styles') ?>
+<link rel="stylesheet" href="<?= base_url('assets/css/inventory-detail.css?v=' . filemtime(FCPATH . 'assets/css/inventory-detail.css')) ?>">
 <?= $this->endSection() ?>

@@ -137,7 +137,7 @@ body {
 
 .col-question {
   width: 72%;
-  text-align: left; /* 🔥 INI KUNCI */
+  text-align: left; /* Important for readability */
 }
 
 .col-status {

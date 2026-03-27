@@ -23,9 +23,6 @@
 
   <?= $this->renderSection('content') ?>
 
-  <!-- Bootstrap 5 + AdminLTE -->
-  <script src="<?= base_url('adminlte4/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-  <script src="<?= base_url('adminlte4/js/adminlte.min.js') ?>"></script>
 </body>
 
 </html>

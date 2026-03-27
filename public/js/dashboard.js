@@ -92,7 +92,7 @@ function loadTrend(type) {
     .then((res) => res.json())
     .then((res) => {
       if (res.error) {
-        console.error(res.error);
+        window.safeToast?.("Gagal memuat data trend.", "error");
         return;
       }
 
@@ -177,7 +177,7 @@ function loadProgressTrend() {
     .then((res) => res.json())
     .then((data) => {
       if (data.error) {
-        console.error(data.error);
+        window.safeToast?.("Gagal memuat progress trend.", "error");
         return;
       }
 
@@ -257,7 +257,7 @@ function loadStatusPie() {
     .then((res) => res.json())
     .then((data) => {
       if (data.error) {
-        console.error(data.error);
+        window.safeToast?.("Gagal memuat status pie.", "error");
         return;
       }
 
@@ -478,8 +478,8 @@ function loadRiskInsight() {
         areaList.innerHTML = `<li class="text-muted">Tidak ada temuan</li>`;
       }
     })
-    .catch((err) => {
-      console.error("Risk Insight Error:", err);
+    .catch(() => {
+      window.safeToast?.("Gagal memuat risk insight.", "error");
     });
 }
 

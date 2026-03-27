@@ -55,7 +55,13 @@ class ComplianceEvidenceController extends BaseController
 
       return view('compliance/evidence/_detail', $data);
     } catch (\Throwable $e) {
-      return $e->getMessage(); // sementara debug
+      log_message('error', 'ComplianceEvidenceController::detail failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
+
+      return $this->response
+        ->setStatusCode(500)
+        ->setBody('Terjadi kesalahan saat memuat detail evidence.');
     }
   }
 
@@ -105,7 +111,13 @@ class ComplianceEvidenceController extends BaseController
 
       return view('compliance/evidence/_grid', $data);
     } catch (\Throwable $e) {
-      return $e->getMessage();
+      log_message('error', 'ComplianceEvidenceController::getEvidenceAjax failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
+
+      return $this->response
+        ->setStatusCode(500)
+        ->setBody('Terjadi kesalahan saat memuat evidence.');
     }
   }
 
@@ -139,10 +151,13 @@ class ComplianceEvidenceController extends BaseController
         'message' => 'Status berhasil diperbarui.'
       ]);
     } catch (\Throwable $e) {
+      log_message('error', 'ComplianceEvidenceController::updateFollowUp failed: {message}', [
+        'message' => $e->getMessage(),
+      ]);
 
       return $this->response->setJSON([
         'status'  => 'error',
-        'message' => $e->getMessage()
+        'message' => 'Terjadi kesalahan saat memperbarui status.'
       ]);
     }
   }

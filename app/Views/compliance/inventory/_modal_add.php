@@ -150,8 +150,7 @@
               <!-- PREVIEW -->
               <div class="col-md-12 text-center">
                 <img id="previewPhoto"
-                  class="img-fluid rounded d-none mt-2"
-                  style="max-height:180px">
+                  class="img-fluid rounded d-none mt-2 inventory-add-preview">
               </div>
 
             </div>

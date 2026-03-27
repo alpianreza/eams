@@ -254,3 +254,7 @@ $routes->group('ipal', ['filter' => 'auth'], function ($routes) {
 });
 
 $routes->get('ipal/export', 'IpalController::export', ['filter' => 'auth']);
+
+$routes->add('logstores/(:any)', function () {
+    return service('response')->setStatusCode(404);
+});

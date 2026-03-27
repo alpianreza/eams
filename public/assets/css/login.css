@@ -22,7 +22,7 @@
 /* Mobile: bikin lebar */
 @media (max-width: 576px) {
   .login-card {
-    max-width: 92vw; /* 🔥 INI KUNCI */
+    max-width: 92vw; /* Mobile width key */
   }
 
   .login-card .card-body {

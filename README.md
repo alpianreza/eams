@@ -58,3 +58,51 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 - json (enabled by default - don't turn it off)
 - [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
 - [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+
+## WhatsApp Weekly Checklist Reminder
+
+Project ini punya command untuk kirim reminder checklist mingguan via WhatsApp:
+
+```bash
+php spark notify:weekly-checklist
+```
+
+### Opsi command
+
+```bash
+php spark notify:weekly-checklist --dry-run
+php spark notify:weekly-checklist --username=reza
+php spark notify:weekly-checklist --date=2026-03-26 --max-items=10
+```
+
+### Konfigurasi `.env`
+
+Isi konfigurasi berikut:
+
+```dotenv
+whatsapp.enabled = true
+whatsapp.provider = fonnte
+whatsapp.fonnteEndpoint = https://api.fonnte.com/send
+whatsapp.fonnteToken = <TOKEN_API_FONNTE>
+whatsapp.timeout = 20
+```
+
+Jika tabel `users` belum punya kolom nomor WA, bisa pakai fallback mapping:
+
+```dotenv
+whatsapp.namePhoneMap = REZA ALPIAN:62812xxxxxxx,FITRI HANDAYANI:62813xxxxxxx
+```
+
+Command otomatis mencoba ambil nomor dari kolom berikut jika tersedia di tabel `users`:
+`wa_number`, `whatsapp_number`, `phone`, `phone_number`, `mobile`, `mobile_number`, `no_hp`, `no_telp`, `telp`.
+
+### Menjalankan seminggu sekali
+
+- Linux cron (contoh Senin jam 08:00):
+
+```cron
+0 8 * * 1 cd /path/to/eams && php spark notify:weekly-checklist
+```
+
+- Windows Task Scheduler:
+  jalankan `php C:\xampp\htdocs\eams\spark notify:weekly-checklist` dengan trigger mingguan.

@@ -34,8 +34,7 @@
         </span>
 
         <img src="<?= base_url('uploads/checklist/' . $ev['photo']) ?>"
-          class="card-img-top"
-          style="height:200px;object-fit:cover;">
+          class="card-img-top evidence-thumb">
 
         <div class="card-body p-2">
 
