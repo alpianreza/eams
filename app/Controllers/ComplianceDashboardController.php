@@ -440,6 +440,7 @@ class ComplianceDashboardController extends BaseController
   public function getPendingChecklistAjax()
   {
     try {
+      helper('checklist');
 
       // ============================
       // PARAMETER FILTER
@@ -505,13 +506,7 @@ class ComplianceDashboardController extends BaseController
       $inventories = $inventoryQuery->findAll();
 
       // === Ambil holiday bulan ini
-      $holidayModel = new \App\Models\HolidayModel();
-      $holidays = $holidayModel
-        ->where('holiday_date >=', $ym . '-01')
-        ->where('holiday_date <=', $monthEndDate->format('Y-m-d'))
-        ->findAll();
-
-      $holidayLookup = array_flip(array_column($holidays, 'holiday_date'));
+      $holidayDates = holiday_dates_between($ym . '-01', $monthEndDate->format('Y-m-d'));
 
       // === Build daftar tanggal kerja bulan ini (Daily)
       $workDates = [];
@@ -520,9 +515,8 @@ class ComplianceDashboardController extends BaseController
       while ($start <= $endDate) {
 
         $dateStr = $start->format('Y-m-d');
-        $dayOfWeek = $start->format('w'); // 0 = Sunday
 
-        if ($dayOfWeek != 0 && !isset($holidayLookup[$dateStr])) {
+        if (!is_date_offday($dateStr, $holidayDates)) {
           $workDates[] = $dateStr;
         }
 

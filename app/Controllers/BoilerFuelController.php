@@ -24,6 +24,8 @@ class BoilerFuelController extends BaseController
 
   public function index()
   {
+    helper('checklist');
+
     $monthpicker = $this->request->getGet('monthpicker');
 
     if ($monthpicker) {
@@ -68,18 +70,17 @@ class BoilerFuelController extends BaseController
 
   public function detail($date)
   {
+    helper('checklist');
+
     $logs = $this->model
       ->where('log_date', $date)
       ->orderBy('log_time', 'ASC')
       ->findAll();
 
     // cek holiday
-    $holiday = $this->holidayModel
-      ->where('holiday_date', $date)
-      ->first();
-
-    $isSunday = date('w', strtotime($date)) == 0;
-    $isHoliday = $holiday ? true : false;
+    $holidayDates = holiday_dates_between($date, $date);
+    $isSunday = is_weekend_offday($date);
+    $isHoliday = in_array($date, $holidayDates, true);
 
     return view('boiler/detail', [
       'date'      => $date,
@@ -132,6 +133,8 @@ class BoilerFuelController extends BaseController
 
   public function export()
   {
+    helper('checklist');
+
     $year  = $this->request->getGet('year');
     $month = $this->request->getGet('month');
 
@@ -150,6 +153,8 @@ class BoilerFuelController extends BaseController
     foreach ($results as $row) {
       $logs[$row['log_date']] = $row;
     }
+
+    $holidayDates = holiday_dates_between($startDate, $endDate);
 
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
@@ -219,8 +224,8 @@ class BoilerFuelController extends BaseController
       $sheet->setCellValue("D$rowNum", $poly);
       $sheet->setCellValue("E$rowNum", $kg);
 
-      // Blok merah Minggu
-      if (date('w', strtotime($date)) == 0) {
+      // Blok merah hari libur
+      if (is_date_offday($date, $holidayDates)) {
         $sheet->getStyle("A$rowNum:F$rowNum")->getFill()
           ->setFillType(Fill::FILL_SOLID)
           ->getStartColor()->setARGB('FFDD9999');

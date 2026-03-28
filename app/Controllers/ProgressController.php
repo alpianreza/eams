@@ -36,7 +36,7 @@ class ProgressController extends BaseController
 
   public function getProgressAjax()
   {
-    helper('period');
+    helper(['period', 'checklist']);
 
     $selectedMonth = (string) ($this->request->getGet('month') ?? date('Y-m'));
     if (!preg_match('/^\d{4}-\d{2}$/', $selectedMonth)) {
@@ -67,10 +67,7 @@ class ProgressController extends BaseController
     $dailyPeriods = [];
     for ($d = 1; $d <= $maxDay; $d++) {
       $date = $ym . '-' . str_pad((string) $d, 2, '0', STR_PAD_LEFT);
-      $dayOfWeek = date('w', strtotime($date));
-
-      if ($dayOfWeek == 0) continue; // skip Minggu
-      if (in_array($date, $holidayDates, true)) continue; // skip libur
+      if (is_date_offday($date, $holidayDates)) continue; // skip hari libur
 
       $dailyPeriods[] = [
         'key' => $date,
@@ -284,7 +281,7 @@ class ProgressController extends BaseController
 
   public function getUserDetailAjax()
   {
-    helper('period');
+    helper(['period', 'checklist']);
 
     $userId = (int) $this->request->getGet('user_id');
     $selectedMonth = (string) ($this->request->getGet('month') ?? date('Y-m'));
@@ -320,10 +317,27 @@ class ProgressController extends BaseController
       $frequency = strtolower((string) ($inv['checklist_frequency'] ?? 'monthly'));
 
       if ($frequency === 'daily') {
-        $day = $selectedMonth === date('Y-m')
+        $maxDay = $selectedMonth === date('Y-m')
           ? date('d')
           : cal_days_in_month(CAL_GREGORIAN, (int) $month, (int) $year);
-        $periodKey = $ym . '-' . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+
+        $holidayDates = holiday_dates_between(
+          $ym . '-01',
+          $ym . '-' . str_pad((string) $maxDay, 2, '0', STR_PAD_LEFT)
+        );
+
+        $periodKey = null;
+        for ($d = (int) $maxDay; $d >= 1; $d--) {
+          $candidate = $ym . '-' . str_pad((string) $d, 2, '0', STR_PAD_LEFT);
+          if (!is_date_offday($candidate, $holidayDates)) {
+            $periodKey = $candidate;
+            break;
+          }
+        }
+
+        if ($periodKey === null) {
+          $periodKey = $ym . '-01';
+        }
       } elseif ($frequency === 'weekly') {
         $week = $selectedMonth === date('Y-m')
           ? (int) ceil(((int) date('d')) / 7)

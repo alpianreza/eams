@@ -33,9 +33,7 @@ $dayMap = [
     <tbody>
       <?php foreach ($dailyDays as $date): ?>
         <?php
-        $isSunday = date('w', strtotime($date)) == 0;
-        $isHoliday = in_array($date, $holidayDates ?? [], true);
-        $isOffDay = $isSunday || $isHoliday;
+        $isOffDay = is_date_offday($date, $holidayDates ?? []);
 
         $dayEn = date('l', strtotime($date));
         $dayLabel = $dayMap[$dayEn] ?? $dayEn;

@@ -116,9 +116,7 @@ for ($d = 1; $d <= $days; $d++) {
               <?php
               $date = "$year-$month-" . sprintf('%02d', $d);
               $dayName = $dayMap[date('l', strtotime($date))] ?? date('l', strtotime($date));
-              $isSunday = date('w', strtotime($date)) == 0;
-              $isHoliday = in_array($date, $holidayDates, true);
-              $isOff = ($isSunday || $isHoliday);
+              $isOff = is_date_offday($date, $holidayDates ?? []);
               $row = $logs[$date] ?? null;
               ?>
               <tr class="<?= $isOff ? 'utility-offday-row' : '' ?>" data-date="<?= esc($date) ?>">
@@ -148,9 +146,7 @@ for ($d = 1; $d <= $days; $d++) {
           <?php
           $date = "$year-$month-" . sprintf('%02d', $d);
           $dayName = $dayMap[date('l', strtotime($date))] ?? date('l', strtotime($date));
-          $isSunday = date('w', strtotime($date)) == 0;
-          $isHoliday = in_array($date, $holidayDates, true);
-          $isOff = ($isSunday || $isHoliday);
+          $isOff = is_date_offday($date, $holidayDates ?? []);
           $row = $logs[$date] ?? null;
           ?>
           <article class="card utility-mobile-card mb-2 <?= $isOff ? 'utility-mobile-offday' : '' ?>" data-date="<?= esc($date) ?>">

@@ -378,6 +378,7 @@ class ComplianceInventoryController extends BaseController
   public function detail($id)
   {
     page('Detail Compliance Inventory', 'compliance/inventory');
+    helper('checklist');
 
     $inventory = $this->inventoryModel
       ->select('
@@ -741,8 +742,10 @@ class ComplianceInventoryController extends BaseController
     // DEFAULT PER FREQUENCY
     if ($frequency === 'daily') {
 
-      $holidayModel = new \App\Models\HolidayModel();
       $today = date('Y-m-d');
+      $monthStart = $ym . '-01';
+      $monthEnd = date('Y-m-t', strtotime($monthStart));
+      $holidayDates = holiday_dates_between($monthStart, $monthEnd);
 
       // ===============================
       // 1️⃣ Kalau buka bulan sekarang
@@ -753,14 +756,7 @@ class ComplianceInventoryController extends BaseController
 
         // Kalau hari ini libur → mundur cari hari kerja terakhir
         while (true) {
-
-          $isSunday = date('w', strtotime($candidate)) == 0;
-
-          $isHoliday = $holidayModel
-            ->where('holiday_date', $candidate)
-            ->first() ? true : false;
-
-          if (!$isSunday && !$isHoliday) {
+          if (!is_date_offday($candidate, $holidayDates)) {
             break;
           }
 
@@ -785,13 +781,7 @@ class ComplianceInventoryController extends BaseController
 
           $date = $ym . '-' . str_pad($d, 2, '0', STR_PAD_LEFT);
 
-          $isSunday = date('w', strtotime($date)) == 0;
-
-          $isHoliday = $holidayModel
-            ->where('holiday_date', $date)
-            ->first() ? true : false;
-
-          if (!$isSunday && !$isHoliday) {
+          if (!is_date_offday($date, $holidayDates)) {
             $firstValidDate = $date;
             break;
           }
@@ -825,8 +815,10 @@ class ComplianceInventoryController extends BaseController
 
     // ================= CALENDAR =================
     $periods = generate_calendar_periods($frequency, (int)$year, (int)$month);
-
-    $holidayModel = new \App\Models\HolidayModel();
+    $calendarHolidayDates = [];
+    if ($frequency === 'daily') {
+      $calendarHolidayDates = holiday_dates_between($ym . '-01', date('Y-m-t', strtotime($ym . '-01')));
+    }
 
     foreach ($periods as &$p) {
 
@@ -836,14 +828,7 @@ class ComplianceInventoryController extends BaseController
       if ($frequency === 'daily') {
 
         $date = $p['period_key'];
-
-        $isSunday = date('w', strtotime($date)) == 0;
-
-        $isHoliday = $holidayModel
-          ->where('holiday_date', $date)
-          ->first() ? true : false;
-
-        $isOffday = $isSunday || $isHoliday;
+        $isOffday = is_date_offday($date, $calendarHolidayDates);
 
         $p['is_offday'] = $isOffday;
 
@@ -872,7 +857,6 @@ class ComplianceInventoryController extends BaseController
 
     // ================= LOCK =================
     $logModel = new \App\Models\ChecklistLogModel();
-    $holidayModel = new \App\Models\HolidayModel();
 
     $exists = false;
 
@@ -894,14 +878,7 @@ class ComplianceInventoryController extends BaseController
 
     /* ================= OFFDAY KHUSUS DAILY ================= */
     if ($frequency === 'daily') {
-
-      $isSunday = date('w', strtotime($periodKey)) == 0;
-
-      $isHoliday = $holidayModel
-        ->where('holiday_date', $periodKey)
-        ->first() ? true : false;
-
-      if ($isSunday || $isHoliday) {
+      if (is_date_offday($periodKey, $calendarHolidayDates)) {
         $isLocked = true;
         $lockReason = 'offday';
       }
@@ -985,6 +962,8 @@ class ComplianceInventoryController extends BaseController
       return redirect()->to('/unauthorized');
     }
 
+    helper('checklist');
+
 
     $inventoryId = $this->request->getPost('inventory_id');
     $periodKey   = $this->request->getPost('period_key');
@@ -1043,6 +1022,14 @@ class ComplianceInventoryController extends BaseController
         ->with('error', 'Slot waktu harus dipilih.');
     }
 
+    if ($frequency === 'daily') {
+      $dayHolidayDates = holiday_dates_between($periodKey, $periodKey);
+      if (is_date_offday($periodKey, $dayHolidayDates)) {
+        return redirect()->back()
+          ->with('error', 'Checklist tidak dapat diisi pada hari libur.');
+      }
+    }
+
     foreach ($questions as $templateId => $status) {
 
       // 🔥 MAPPING STATUS
@@ -1066,23 +1053,6 @@ class ComplianceInventoryController extends BaseController
       if ($hasPhoto) {
         $photoName = $photos[$templateId]->getRandomName();
         $photos[$templateId]->move(FCPATH . 'uploads/checklist', $photoName);
-      }
-
-      /* ================= OFFDAY VALIDATION KHUSUS DAILY ================= */
-      if ($frequency === 'daily') {
-
-        $holidayModel = new \App\Models\HolidayModel();
-
-        $isSunday = date('w', strtotime($periodKey)) == 0;
-
-        $isHoliday = $holidayModel
-          ->where('holiday_date', $periodKey)
-          ->first() ? true : false;
-
-        if ($isSunday || $isHoliday) {
-          return redirect()->back()
-            ->with('error', 'Checklist tidak dapat diisi pada hari libur.');
-        }
       }
 
       $logModel->insert([
@@ -1137,7 +1107,7 @@ class ComplianceInventoryController extends BaseController
     if ($frequency === 'daily') {
 
       $daysInMonth = date('t', strtotime($ym . '-01'));
-      $holidayModel = new \App\Models\HolidayModel();
+      $holidayDates = holiday_dates_between($ym . '-01', date('Y-m-t', strtotime($ym . '-01')));
 
       $firstValidDate = null;
 
@@ -1145,13 +1115,7 @@ class ComplianceInventoryController extends BaseController
 
         $date = $ym . '-' . str_pad($d, 2, '0', STR_PAD_LEFT);
 
-        $isSunday = date('w', strtotime($date)) == 0;
-
-        $isHoliday = $holidayModel
-          ->where('holiday_date', $date)
-          ->first() ? true : false;
-
-        if (!$isSunday && !$isHoliday) {
+        if (!is_date_offday($date, $holidayDates)) {
           $firstValidDate = $date;
           break;
         }

@@ -70,3 +70,44 @@ function generate_calendar_periods(
   return $periods;
 }
 
+if (! function_exists('is_weekend_offday')) {
+  function is_weekend_offday(string $date): bool
+  {
+    $dayOfWeek = (int) date('w', strtotime($date)); // 0 = Sunday, 6 = Saturday
+
+    if ($dayOfWeek === 0) {
+      return true;
+    }
+
+    if ($dayOfWeek === 6 && $date >= '2026-04-01') {
+      return true;
+    }
+
+    return false;
+  }
+}
+
+if (! function_exists('is_date_offday')) {
+  function is_date_offday(string $date, array $holidayDates = []): bool
+  {
+    if (is_weekend_offday($date)) {
+      return true;
+    }
+
+    return in_array($date, $holidayDates, true);
+  }
+}
+
+if (! function_exists('holiday_dates_between')) {
+  function holiday_dates_between(string $startDate, string $endDate): array
+  {
+    $rows = (new \App\Models\HolidayModel())
+      ->select('holiday_date')
+      ->where('holiday_date >=', $startDate)
+      ->where('holiday_date <=', $endDate)
+      ->findAll();
+
+    return array_column($rows, 'holiday_date');
+  }
+}
+

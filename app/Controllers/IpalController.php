@@ -24,6 +24,8 @@ class IpalController extends BaseController
 
   public function index()
   {
+    helper('checklist');
+
     $monthpicker = $this->request->getGet('monthpicker');
 
     if ($monthpicker) {
@@ -89,6 +91,8 @@ class IpalController extends BaseController
 
   public function export()
   {
+    helper('checklist');
+
     $year  = $this->request->getGet('year');
     $month = $this->request->getGet('month');
 
@@ -104,6 +108,8 @@ class IpalController extends BaseController
     foreach ($dataList as $row) {
       $logs[$row['log_date']] = $row;
     }
+
+    $holidayDates = holiday_dates_between($startDate, $endDate);
 
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
@@ -159,8 +165,8 @@ class IpalController extends BaseController
       $sheet->setCellValue("F$rowNum", $row['pemakaian'] ?? '');
       $sheet->setCellValue("G$rowNum", $row['ket'] ?? '');
 
-      // Minggu merah
-      if (date('w', strtotime($date)) == 0) {
+      // Hari libur merah
+      if (is_date_offday($date, $holidayDates)) {
         $sheet->getStyle("A$rowNum:G$rowNum")
           ->getFill()->setFillType(Fill::FILL_SOLID)
           ->getStartColor()->setARGB('FFFFCCCC');

@@ -21,7 +21,7 @@ class HomeController extends BaseController
   {
     page('Home Compliance');
 
-    helper('period');
+    helper(['period', 'checklist']);
 
     $userName      = trim(session('name'));
     $selectedMonth = $this->request->getGet('month') ?? date('Y-m');
@@ -100,11 +100,8 @@ class HomeController extends BaseController
         for ($d = 1; $d <= $currentDay; $d++) {
 
           $date = $ym . '-' . str_pad($d, 2, '0', STR_PAD_LEFT);
-          $dayOfWeek = date('w', strtotime($date));
 
-          // skip Minggu & libur
-          if ($dayOfWeek == 0) continue;
-          if (in_array($date, $holidayDates)) continue;
+          if (is_date_offday($date, $holidayDates)) continue;
 
           $totalRequired++;
 
