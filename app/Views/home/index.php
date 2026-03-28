@@ -47,6 +47,24 @@ if ($progress < 50) {
         <p class="home-kicker mb-1">Beranda Compliance</p>
         <h5 class="mb-1 fw-bold">Halo, <?= esc(session('name')) ?></h5>
         <p class="text-muted mb-0">Status checklist periode <strong><?= esc($selectedMonthLabel) ?></strong></p>
+
+        <div class="home-hero-actions d-flex flex-wrap gap-2 mt-3">
+          <a href="<?= base_url('compliance/inventory') ?>" class="btn btn-sm btn-primary home-hero-btn">
+            <i class="bi bi-list-check me-1"></i> Mulai Ceklis
+          </a>
+
+          <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
+            <a href="<?= base_url('compliance/dashboard') ?>" class="btn btn-sm btn-outline-primary home-hero-btn">
+              <i class="bi bi-clipboard-data me-1"></i> Dashboard Compliance
+            </a>
+          <?php endif; ?>
+
+          <?php if (hasRole(['admin', 'compliance'])): ?>
+            <a href="<?= base_url('holidays') ?>" class="btn btn-sm btn-outline-secondary home-hero-btn">
+              <i class="bi bi-calendar-event me-1"></i> Hari Libur
+            </a>
+          <?php endif; ?>
+        </div>
       </div>
 
       <form method="get" class="home-month-form ms-auto">

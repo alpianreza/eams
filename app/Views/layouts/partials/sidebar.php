@@ -37,10 +37,14 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <!-- DASHBOARD -->
         <?php if (hasRole(['admin'])): ?>
           <li class="nav-item">
-            <a href="<?= base_url('/') ?>"
-              class="nav-link <?= $seg1 === '' ? 'active' : '' ?>">
+            <a href="<?= base_url('dashboard') ?>"
+              class="nav-link <?= in_array($seg1, ['', 'home', 'dashboard'], true) ? 'active' : '' ?>">
               <i class="nav-icon bi bi-speedometer2"></i>
               <p>Dashboard</p>
+
+              <?php if (!empty($notifCount) && $notifCount > 0): ?>
+                <span class="badge bg-danger"><?= $notifCount ?></span>
+              <?php endif; ?>
             </a>
           </li>
         <?php endif; ?>
@@ -65,10 +69,34 @@ $hasBrandLogo = file_exists($brandLogoPath);
           <li class="nav-header sidebar-section-title">IT ASSET</li>
 
           <li class="nav-item">
+            <a href="<?= base_url('it') ?>"
+              class="nav-link <?= $seg1 === 'it' && $seg2 === '' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-grid"></i>
+              <p>IT Center</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?= base_url('dashboard-it') ?>"
+              class="nav-link <?= $seg1 === 'dashboard-it' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-pie-chart"></i>
+              <p>Dashboard IT</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
             <a href="<?= base_url('it-assets') ?>"
               class="nav-link <?= $seg1 === 'it-assets' ? 'active' : '' ?>">
               <i class="nav-icon bi bi-pc-display"></i>
               <p>Data Asset IT</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="<?= base_url('it/devices') ?>"
+              class="nav-link <?= $seg1 === 'it' && $seg2 === 'devices' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-cpu"></i>
+              <p>Device Control</p>
             </a>
           </li>
 

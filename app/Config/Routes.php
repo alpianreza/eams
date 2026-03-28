@@ -8,6 +8,14 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', function () {
     return redirect()->to('/home');
 });
+$routes->get('dashboard', function () {
+    return redirect()->to('/home');
+});
+$routes->get('dashboard/(:any)', function () {
+    return redirect()->to('/home');
+});
+$routes->get('dashboard-it', 'DashboardController::index', ['filter' => 'auth']);
+$routes->get('it', 'ITController::index', ['filter' => 'auth']);
 $routes->get('/login', 'AuthController::login');
 $routes->post('/login', 'AuthController::doLogin');
 $routes->get('/logout', 'AuthController::logout');
@@ -232,6 +240,8 @@ $routes->get('/it/devices', 'ITDeviceController::index', ['filter' => 'auth']);
 $routes->get('/it/devices/ajax', 'ITDeviceController::ajax', ['filter' => 'auth']);
 $routes->post('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
 $routes->get('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
+$routes->post('/api/agent/update', 'Api\\AgentController::agentUpdate');
+$routes->get('/api/agent/update', 'Api\\AgentController::agentUpdate');
 $routes->get('/it/devices/(:num)', 'ITDeviceController::detail/$1', ['filter' => 'auth']);
 $routes->post('/it/device/push-update', 'Api\\AgentController::pushUpdate', ['filter' => 'auth']);
 $routes->post('/it/device/command', 'ITDeviceController::sendCommand', ['filter' => 'auth']);

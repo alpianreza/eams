@@ -1,126 +1,91 @@
 <?php helper(['os_lifecycle', 'device']); ?>
 
 <div class="table-responsive">
-
-  <table class="table table-sm table-bordered table-hover align-middle">
-    <thead class="table-light">
-      <tr>
-        <th>Hostname</th>
-        <th class="d-none d-md-table-cell">User</th>
-        <th class="d-none d-lg-table-cell">OS</th>
-        <th class="d-none d-xl-table-cell">CPU</th>
-        <th>RAM</th>
-        <th>Storage</th>
-        <th class="d-none d-lg-table-cell">Agent</th>
-        <th>Last Seen</th>
-        <th>Risk</th>
-        <th class="d-none d-lg-table-cell">Lifecycle</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-      <?php foreach ($devices as $d): ?>
-
-        <?php
-        $online = device_is_online($d);
-
-        /* ===== RISK (helper) ===== */
-        $score = device_risk_score($d);
-        [$label, $badge] = device_risk_label($score);
-
-        /* ===== EXTRA JSON ===== */
-        $extra = json_decode($d['cpu'] ?? '{}', true) ?? [];
-        $release = $extra['os_release'] ?? null;
-
-        /* ===== LIFECYCLE ===== */
-        $lifecycle = function_exists('windows_lifecycle')
-          ? windows_lifecycle($release)
-          : ['status' => 'unknown', 'color' => 'secondary'];
-
-        $recommend = function_exists('windows_upgrade_recommendation')
-          ? windows_upgrade_recommendation($release)
-          : null;
-        ?>
-
-        <tr class="device-row" data-id="<?= $d['id'] ?>">
-
-          <!-- HOSTNAME -->
-          <td>
-            <a href="/it/devices/<?= $d['id'] ?>" class="fw-semibold">
-              <?= esc($d['hostname'] ?? '-') ?>
-            </a>
-            <div class="small text-muted d-md-none">
-              <?= esc($d['device_user'] ?? '') ?>
-            </div>
-          </td>
-
-          <!-- USER -->
-          <td class="d-none d-md-table-cell"><?= esc($d['device_user'] ?? '-') ?></td>
-
-          <!-- OS -->
-          <td class="d-none d-lg-table-cell"><?= esc($d['os'] ?? '-') ?></td>
-
-          <!-- CPU -->
-          <td class="d-none d-xl-table-cell text-truncate device-cpu-cell">
-            <?= esc($d['cpu_name'] ?? '-') ?>
-          </td>
-
-          <!-- RAM -->
-          <td><?= esc($d['ram_gb'] ?? 0) ?> GB</td>
-
-          <!-- STORAGE -->
-          <td><?= esc($d['storage_gb'] ?? 0) ?> GB</td>
-
-          <!-- AGENT -->
-          <td class="d-none d-lg-table-cell"><?= esc($d['agent_version'] ?? '-') ?></td>
-
-          <!-- LAST SEEN -->
-          <td>
-            <?php if (!empty($d['last_seen'])): ?>
-              <?= date('d M H:i', strtotime($d['last_seen'])) ?>
+    <table class="table align-middle mb-0 it-table">
+        <thead>
+            <tr>
+                <th>Hostname</th>
+                <th class="d-none d-md-table-cell">User</th>
+                <th class="d-none d-lg-table-cell">OS</th>
+                <th class="d-none d-xl-table-cell">CPU</th>
+                <th>RAM</th>
+                <th>Storage</th>
+                <th class="d-none d-lg-table-cell">Agent</th>
+                <th>Terakhir Aktif</th>
+                <th>Risiko</th>
+                <th class="d-none d-lg-table-cell">Siklus OS</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (empty($devices)): ?>
+                <tr>
+                    <td colspan="11" class="text-center text-muted py-4">Data device tidak ditemukan.</td>
+                </tr>
             <?php else: ?>
-              -
-            <?php endif ?>
-          </td>
+                <?php foreach ($devices as $d): ?>
+                    <?php
+                    $extra = json_decode($d['cpu'] ?? '{}', true) ?? [];
+                    $heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? 600));
+                    $online = device_is_online($d, $heartbeatInterval);
+                    $score = device_risk_score($d);
+                    [$label, $badge] = device_risk_label($score);
+                    $release = $extra['os_release'] ?? null;
 
-          <!-- RISK -->
-          <td>
-            <span class="badge bg-<?= $badge ?>">
-              <?= $label ?> (<?= $score ?>)
-            </span>
-          </td>
+                    $lifecycle = function_exists('windows_lifecycle')
+                        ? windows_lifecycle($release)
+                        : ['status' => 'unknown', 'color' => 'secondary'];
 
-          <!-- LIFECYCLE -->
-          <td class="d-none d-lg-table-cell">
-            <span class="badge bg-<?= $lifecycle['color'] ?>">
-              <?= strtoupper($lifecycle['status']) ?>
-            </span>
-
-            <?php if ($recommend): ?>
-              <div class="small text-muted"><?= esc($recommend) ?></div>
-            <?php endif ?>
-          </td>
-
-          <!-- STATUS -->
-          <td>
-            <?php if ($online): ?>
-              <span class="badge bg-success">Online</span>
-            <?php else: ?>
-              <span class="badge bg-secondary">Offline</span>
-            <?php endif ?>
-          </td>
-
-        </tr>
-
-      <?php endforeach ?>
-
-    </tbody>
-  </table>
-
+                    $recommend = function_exists('windows_upgrade_recommendation')
+                        ? windows_upgrade_recommendation($release)
+                        : null;
+                    ?>
+                    <tr>
+                        <td>
+                            <a href="<?= base_url('it/devices/' . $d['id']) ?>" class="fw-semibold">
+                                <?= esc($d['hostname'] ?? '-') ?>
+                            </a>
+                            <div class="small text-muted d-md-none"><?= esc($d['device_user'] ?? '-') ?></div>
+                        </td>
+                        <td class="d-none d-md-table-cell"><?= esc($d['device_user'] ?? '-') ?></td>
+                        <td class="d-none d-lg-table-cell"><?= esc($d['os'] ?? '-') ?></td>
+                        <td class="d-none d-xl-table-cell text-truncate device-cpu-cell"><?= esc($d['cpu_name'] ?? '-') ?></td>
+                        <td><?= esc($d['ram_gb'] ?? 0) ?> GB</td>
+                        <td><?= esc($d['storage_gb'] ?? 0) ?> GB</td>
+                        <td class="d-none d-lg-table-cell"><?= esc($d['agent_version'] ?? '-') ?></td>
+                        <td><?= !empty($d['last_seen']) ? date('d M H:i', strtotime($d['last_seen'])) : '-' ?></td>
+                        <td>
+                            <span class="badge text-bg-<?= esc($badge) ?>">
+                                <?= esc($label) ?> (<?= (int) $score ?>)
+                            </span>
+                        </td>
+                        <td class="d-none d-lg-table-cell">
+                            <span class="badge text-bg-<?= esc($lifecycle['color']) ?>">
+                                <?= esc(strtoupper($lifecycle['status'])) ?>
+                            </span>
+                            <?php if ($recommend): ?>
+                                <div class="small text-muted mt-1"><?= esc($recommend) ?></div>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if ($online): ?>
+                                <span class="badge text-bg-success">Online</span>
+                            <?php else: ?>
+                                <span class="badge text-bg-secondary">Offline</span>
+                            <?php endif; ?>
+                            <div class="small text-muted mt-1">
+                                Sync <?= $heartbeatInterval >= 60 ? number_format($heartbeatInterval / 60, 0) . 'm' : (int) $heartbeatInterval . 's' ?>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
 </div>
 
-<ul class="pagination pagination-sm mb-0">
-  <?= $pager->links('default', 'eams') ?>
-</ul>
+<div class="mt-3 d-flex justify-content-end">
+    <ul class="pagination pagination-sm mb-0">
+        <?= $pager->links('default', 'eams') ?>
+    </ul>
+</div>

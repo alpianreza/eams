@@ -18,18 +18,7 @@ class AuthController extends BaseController
     {
         // jika sudah login jangan boleh kembali ke halaman login
         if (session()->get('logged_in')) {
-
-            $role = session()->get('role');
-
-            if (in_array($role, ['staff', 'compliance'])) {
-                return redirect()->to('/');
-            }
-
-            if (in_array($role, ['admin', 'auditor'])) {
-                return redirect()->to('/compliance/dashboard');
-            }
-
-            return redirect()->to('/');
+            return redirect()->to('/home');
         }
 
         // cegah browser cache halaman login
