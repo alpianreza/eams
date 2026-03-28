@@ -1283,7 +1283,10 @@ class ComplianceInventoryController extends BaseController
     }
 
     return view('compliance/inventory/qr_center', [
-      'albums' => $albums
+      'albums' => $albums,
+      'totalQr' => count($list),
+      'totalAlbums' => count($albums),
+      'title' => 'QR Center',
     ]);
   }
 
@@ -1325,7 +1328,8 @@ class ComplianceInventoryController extends BaseController
       ->findAll();
 
     return view('compliance/inventory/_qr_album_grid', [
-      'rows' => $rows
+      'rows' => $rows,
+      'itemName' => $itemName,
     ]);
   }
 

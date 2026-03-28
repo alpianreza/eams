@@ -1,0 +1,212 @@
+.evidence-page .evidence-hero-card {
+  border: 1px solid rgba(37, 99, 235, 0.16) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.08),
+    rgba(14, 165, 233, 0.08),
+    #ffffff
+  );
+}
+
+.evidence-page .evidence-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #1e3a8a;
+  background: rgba(30, 58, 138, 0.1);
+}
+
+.evidence-page .evidence-filter-card {
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+}
+
+.evidence-page .evidence-grid-wrap {
+  min-height: 220px;
+}
+
+.evidence-page .evidence-grid-state {
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.evidence-page .evidence-card-button {
+  border-radius: 12px;
+  border: 1px solid #dbe2ec !important;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.07);
+  background: #fff;
+  overflow: hidden;
+}
+
+.evidence-page .evidence-card-button:hover {
+  transform: translateY(-1px);
+  border-color: #bfdbfe !important;
+  box-shadow: 0 8px 18px rgba(30, 64, 175, 0.12);
+}
+
+.evidence-page .evidence-card-button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 1px;
+}
+
+.evidence-page .evidence-media-wrap {
+  position: relative;
+}
+
+.evidence-page .evidence-thumb {
+  width: 100%;
+  height: 178px;
+  object-fit: cover;
+}
+
+.evidence-page .evidence-status-badge {
+  position: absolute;
+  right: 0.6rem;
+  top: 0.6rem;
+}
+
+.evidence-page .evidence-period {
+  color: #64748b;
+  font-size: 0.74rem;
+}
+
+.evidence-page .evidence-item-title {
+  color: #991b1b;
+  font-size: 0.9rem;
+  min-height: 38px;
+}
+
+.evidence-page .evidence-aging {
+  margin: 0 0 0.5rem;
+  font-size: 0.77rem;
+  color: #64748b;
+}
+
+.evidence-page .evidence-aging.is-late {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.evidence-page .evidence-meta-list {
+  display: grid;
+  gap: 0.34rem;
+  margin-bottom: 0.5rem;
+}
+
+.evidence-page .evidence-meta-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.evidence-page .evidence-meta-label {
+  font-size: 0.74rem;
+  color: #64748b;
+}
+
+.evidence-page .evidence-meta-value {
+  font-size: 0.76rem;
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+}
+
+.evidence-page .evidence-remark {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 0.52rem;
+  color: #475569;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  min-height: 38px;
+}
+
+.evidence-page .evidence-pagination-wrap .pagination .page-link {
+  border-radius: 999px;
+}
+
+.evidence-modal .modal-content {
+  border: 1px solid #dbe2ec;
+  border-radius: 16px;
+}
+
+.evidence-modal .modal-header {
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.evidence-detail-media-wrap {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.evidence-detail-img {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+}
+
+.evidence-detail-title {
+  color: #991b1b;
+  font-weight: 700;
+}
+
+.evidence-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.evidence-detail-grid-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.56rem 0.64rem;
+  background: #fff;
+}
+
+.evidence-detail-grid-item span {
+  display: block;
+  color: #64748b;
+  font-size: 0.72rem;
+  margin-bottom: 0.18rem;
+}
+
+.evidence-detail-grid-item strong {
+  color: #0f172a;
+  font-size: 0.82rem;
+}
+
+.evidence-detail-label {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: #64748b;
+}
+
+.evidence-detail-note {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 0.62rem 0.68rem;
+  min-height: 74px;
+  font-size: 0.84rem;
+  color: #334155;
+}
+
+.evidence-followup-form {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 0.72rem;
+}
+
+@media (max-width: 768px) {
+  .evidence-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

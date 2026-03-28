@@ -1,212 +1,122 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid">
+<?php
+$totalAlbums = isset($totalAlbums) ? (int) $totalAlbums : count($albums ?? []);
+$totalQr = isset($totalQr) ? (int) $totalQr : (int) array_sum(array_map(static fn($album) => (int) ($album['count'] ?? 0), $albums ?? []));
+?>
 
-  <!-- HEADER -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">QR Center</h4>
-  </div>
+<div id="qrCenterPage"
+  class="qr-center-page"
+  data-url-album="<?= site_url('compliance/inventory/qr-album') ?>"
+  data-url-download="<?= site_url('compliance/inventory/qr-album-download') ?>"
+  data-url-regen="<?= site_url('compliance/inventory/qr-album-regen') ?>"
+  data-url-print="<?= site_url('compliance/inventory/qr-album-print') ?>">
 
-  <!-- =====================
-  ALBUM GRID
-  ===================== -->
-  <div id="albumContainer">
+  <section class="card border-0 shadow-sm qr-hero-card no-lift mb-3">
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <p class="qr-kicker mb-1">Compliance QR</p>
+        <h5 class="mb-1 fw-bold">QR Center</h5>
+        <p class="text-muted mb-0">Kelola album QR per item, cetak label, download ZIP, dan regenerate dalam satu halaman.</p>
+      </div>
 
-    <div class="row g-3">
+      <div class="qr-hero-stats ms-auto">
+        <span class="badge text-bg-light border"><strong id="qrAlbumCountLabel"><?= $totalAlbums ?></strong> album</span>
+        <span class="badge text-bg-light border"><strong><?= $totalQr ?></strong> QR</span>
+      </div>
+    </div>
+  </section>
 
-      <?php foreach ($albums as $itemName => $album): ?>
-
-        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
-
-          <div class="qr-album"
-            data-name="<?= esc($itemName) ?>">
-
-            <img src="/uploads/qr/<?= esc($album['cover']) ?>?v=<?= time() ?>" class="img-fluid">
-
-            <div class="album-meta">
-              <div class="fw-bold small"><?= esc($itemName) ?></div>
-              <div class="text-muted small"><?= $album['count'] ?> QR</div>
-            </div>
-
-          </div>
-
+  <section class="card border-0 shadow-sm qr-filter-card no-lift mb-3">
+    <div class="card-body">
+      <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-8 col-lg-6">
+          <label for="qrAlbumSearch" class="form-label form-label-sm mb-1">Cari Album</label>
+          <input
+            id="qrAlbumSearch"
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="Cari nama item...">
         </div>
 
-      <?php endforeach; ?>
-
+        <div class="col-12 col-md-4 col-lg-2 d-grid">
+          <button id="btnQrReset" class="btn btn-outline-danger btn-sm" type="button">
+            Reset
+          </button>
+        </div>
+      </div>
     </div>
+  </section>
 
-  </div>
+  <section id="albumContainer" class="card border-0 shadow-sm no-lift">
+    <div class="card-body">
+      <div id="qrAlbumGrid" class="row g-3">
+        <?php if (empty($albums)): ?>
+          <div class="col-12">
+            <div class="qr-empty-state text-center text-muted py-5">
+              Belum ada data QR untuk ditampilkan.
+            </div>
+          </div>
+        <?php else: ?>
+          <?php foreach ($albums as $itemName => $album): ?>
+            <?php
+            $cover = trim((string) ($album['cover'] ?? ''));
+            $coverUrl = $cover !== ''
+              ? base_url('uploads/qr/' . rawurlencode($cover))
+              : '';
+            ?>
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2 qr-album-col">
+              <button
+                type="button"
+                class="qr-album-card w-100 text-start"
+                data-name="<?= esc($itemName, 'attr') ?>"
+                data-keyword="<?= esc(strtolower($itemName), 'attr') ?>">
 
-  <!-- =====================
-  ISI ALBUM (AJAX)
-  ===================== -->
-  <div id="albumContent" style="display:none">
+                <div class="qr-album-cover">
+                  <?php if ($coverUrl !== ''): ?>
+                    <img src="<?= esc($coverUrl) ?>?v=<?= time() ?>" alt="Album <?= esc($itemName) ?>" loading="lazy">
+                  <?php else: ?>
+                    <div class="qr-album-cover-empty">QR</div>
+                  <?php endif; ?>
+                </div>
 
-    <button class="btn btn-sm btn-outline-secondary mb-3" onclick="backAlbum()">
-      ← Kembali
-    </button>
+                <div class="qr-album-meta">
+                  <div class="qr-album-title" title="<?= esc($itemName) ?>"><?= esc($itemName) ?></div>
+                  <div class="qr-album-sub"><?= (int) ($album['count'] ?? 0) ?> QR</div>
+                </div>
+              </button>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
 
-    <div id="albumAjax"></div>
+      <div id="qrAlbumEmptyFilter" class="qr-empty-state text-center text-muted py-5 d-none">
+        Album tidak ditemukan untuk kata kunci ini.
+      </div>
+    </div>
+  </section>
 
-  </div>
+  <section id="albumContent" class="card border-0 shadow-sm no-lift d-none">
+    <div class="card-body">
+      <div class="d-flex justify-content-end align-items-center mb-3 gap-2 flex-wrap">
+        <span id="albumLoading" class="text-muted small d-none">
+          <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          Memuat album...
+        </span>
+      </div>
 
+      <div id="albumAjax"></div>
+    </div>
+  </section>
 </div>
 
-<!-- =====================
-STYLE
-===================== -->
-<style>
-  .qr-album {
-    cursor: pointer;
-    border-radius: 14px;
-    overflow: hidden;
-    background: #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
-    transition: .15s;
-  }
+<?= $this->endSection() ?>
 
-  .qr-album:hover {
-    transform: translateY(-3px);
-  }
+<?= $this->section('styles') ?>
+<link rel="stylesheet" href="<?= base_url('assets/css/qr-center.css?v=' . filemtime(FCPATH . 'assets/css/qr-center.css')) ?>">
+<?= $this->endSection() ?>
 
-  .album-meta {
-    padding: 8px;
-    text-align: center;
-  }
-
-  .qr-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
-  }
-</style>
-
-<!-- =====================
-SCRIPT AJAX NAVIGATION
-===================== -->
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-
-    document.querySelectorAll('.qr-album').forEach(card => {
-
-      card.addEventListener('click', () => {
-
-        const name = card.dataset.name;
-
-        fetch(`/compliance/inventory/qr-album/${encodeURIComponent(name)}`)
-          .then(r => r.text())
-          .then(html => {
-
-            document.getElementById('albumAjax').innerHTML = html;
-
-            document.getElementById('albumContainer').style.display = 'none';
-            document.getElementById('albumContent').style.display = 'block';
-
-            window.scrollTo({
-              top: 0,
-              behavior: 'smooth'
-            });
-
-          });
-
-      });
-
-    });
-
-  });
-
-  function backAlbum() {
-    document.getElementById('albumContent').style.display = 'none';
-    document.getElementById('albumContainer').style.display = 'block';
-  }
-
-  function downloadAlbum(name) {
-
-    Swal.fire({
-      title: 'Download album?',
-      text: 'Semua QR akan diunduh sebagai ZIP',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Download'
-    }).then(r => {
-      if (!r.isConfirmed) return;
-
-      window.location = '/compliance/inventory/qr-album-download/' + encodeURIComponent(name);
-    });
-
-  }
-
-  function regenAlbum(name) {
-
-    Swal.fire({
-      title: 'Regenerate QR?',
-      text: 'Semua QR di album ini akan dibuat ulang',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Ya, regenerate',
-      cancelButtonText: 'Batal'
-    }).then(result => {
-
-      if (!result.isConfirmed) return;
-
-      Swal.fire({
-        title: 'Memproses...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-      });
-
-      fetch(`/compliance/inventory/qr-album-regen/${encodeURIComponent(name)}`)
-        .then(r => r.json())
-        .then(res => {
-
-          if (res.status) {
-
-            Swal.fire({
-              icon: 'success',
-              title: 'Berhasil',
-              text: res.message,
-              timer: 1500,
-              showConfirmButton: false
-            });
-
-            // reload album
-            fetch(`/compliance/inventory/qr-album/${encodeURIComponent(name)}`)
-              .then(r => r.text())
-              .then(html => {
-                document.getElementById('albumAjax').innerHTML = html;
-              });
-
-          } else {
-
-            Swal.fire({
-              icon: 'error',
-              title: 'Gagal',
-              text: 'Regenerate gagal'
-            });
-
-          }
-
-        }).catch(() => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Terjadi kesalahan'
-          });
-        });
-
-    });
-
-  }
-
-  function printAlbum(name) {
-    window.open(
-      '/compliance/inventory/qr-album-print/' + encodeURIComponent(name),
-      '_blank'
-    );
-  }
-</script>
-
+<?= $this->section('scripts') ?>
+<script src="<?= base_url('js/qr-center.js?v=' . filemtime(FCPATH . 'js/qr-center.js')) ?>"></script>
 <?= $this->endSection() ?>

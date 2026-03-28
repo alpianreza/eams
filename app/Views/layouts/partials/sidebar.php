@@ -16,7 +16,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
 
 <aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
   <div class="sidebar-brand eams-sidebar-brand">
-    <a href="<?= base_url('/') ?>" class="brand-link d-flex align-items-center gap-2">
+    <a href="<?= base_url('/') ?>" class="brand-link d-flex align-items-center justify-content-start gap-2">
       <?php if ($hasBrandLogo): ?>
         <img src="<?= esc($brandLogoUrl) ?>" class="sidebar-brand-icon" alt="EAMS">
         <span class="brand-copy">

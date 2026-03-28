@@ -12,6 +12,7 @@ class ComplianceEvidenceController extends BaseController
   protected $logModel;
   protected $inventoryModel;
   protected $itemTypeModel;
+  protected $allowedFollowUps = ['open', 'monitoring', 'closed'];
 
   public function __construct()
   {
@@ -26,7 +27,7 @@ class ComplianceEvidenceController extends BaseController
       'itemTypes' => $this->itemTypeModel
         ->where('active', 1)
         ->findAll(),
-      'title'     => 'Evidence Center'
+      'title' => 'Evidence Center',
     ];
 
     return view('compliance/evidence/index', $data);
@@ -35,13 +36,11 @@ class ComplianceEvidenceController extends BaseController
   public function detail($id)
   {
     try {
-
       $data['ev'] = $this->logModel
         ->select('checklist_logs.*, 
           compliance_inventory.asset_code,
           compliance_inventory.specific_area,
           asset_item_types.name as item_name')
-
         ->join(
           'compliance_inventory',
           'compliance_inventory.id = checklist_logs.inventory_id'
@@ -50,7 +49,7 @@ class ComplianceEvidenceController extends BaseController
           'asset_item_types',
           'asset_item_types.id = checklist_logs.item_type_id'
         )
-        ->where('checklist_logs.id', $id)
+        ->where('checklist_logs.id', (int) $id)
         ->first();
 
       return view('compliance/evidence/_detail', $data);
@@ -68,16 +67,15 @@ class ComplianceEvidenceController extends BaseController
   public function getEvidenceAjax()
   {
     try {
-
-      $year     = $this->request->getGet('year');
+      $year = $this->request->getGet('year');
       $itemType = $this->request->getGet('item_type');
-      $followUp = $this->request->getGet('follow_up'); // 🔥 ambil di awal
+      $followUp = strtolower(trim((string) $this->request->getGet('follow_up')));
 
       $builder = $this->logModel
         ->select('checklist_logs.*,
-        compliance_inventory.asset_code,
-        compliance_inventory.specific_area,
-        asset_item_types.name as item_name')
+          compliance_inventory.asset_code,
+          compliance_inventory.specific_area,
+          asset_item_types.name as item_name')
         ->join(
           'compliance_inventory',
           'compliance_inventory.id = checklist_logs.inventory_id'
@@ -90,16 +88,15 @@ class ComplianceEvidenceController extends BaseController
         ->where('checklist_logs.photo IS NOT NULL')
         ->where('checklist_logs.photo !=', '');
 
-      if (!empty($year)) {
-        $builder->where('YEAR(checklist_logs.check_date)', $year);
+      if (is_numeric($year)) {
+        $builder->where('YEAR(checklist_logs.check_date)', (int) $year);
       }
 
-      if (!empty($itemType)) {
-        $builder->where('checklist_logs.item_type_id', $itemType);
+      if (is_numeric($itemType)) {
+        $builder->where('checklist_logs.item_type_id', (int) $itemType);
       }
 
-      // 🔥 FOLLOW UP FILTER HARUS DI SINI
-      if (!empty($followUp)) {
+      if (in_array($followUp, $this->allowedFollowUps, true)) {
         $builder->where('checklist_logs.follow_up_status', $followUp);
       }
 
@@ -128,27 +125,46 @@ class ComplianceEvidenceController extends BaseController
     }
 
     try {
-
       $id = (int) $this->request->getPost('id');
-
       if (!$id) {
         return $this->response->setJSON([
-          'status'  => 'error',
-          'message' => 'ID tidak valid.'
+          'status' => 'error',
+          'message' => 'ID tidak valid.',
         ]);
       }
 
+      $status = strtolower(trim((string) $this->request->getPost('follow_up_status')));
+      if (!in_array($status, $this->allowedFollowUps, true)) {
+        return $this->response->setJSON([
+          'status' => 'error',
+          'message' => 'Status tindak lanjut tidak valid.',
+        ]);
+      }
+
+      $exists = $this->logModel->find($id);
+      if (!$exists) {
+        return $this->response->setJSON([
+          'status' => 'error',
+          'message' => 'Data evidence tidak ditemukan.',
+        ]);
+      }
+
+      $followUpNote = trim((string) $this->request->getPost('follow_up_note'));
+      $safeFollowUpNote = function_exists('mb_substr')
+        ? mb_substr($followUpNote, 0, 1000)
+        : substr($followUpNote, 0, 1000);
+
       $data = [
-        'follow_up_status' => $this->request->getPost('follow_up_status'),
-        'follow_up_note'   => $this->request->getPost('follow_up_note'),
-        'follow_up_date'   => date('Y-m-d')
+        'follow_up_status' => $status,
+        'follow_up_note' => $safeFollowUpNote,
+        'follow_up_date' => date('Y-m-d'),
       ];
 
       $this->logModel->update($id, $data);
 
       return $this->response->setJSON([
-        'status'  => 'success',
-        'message' => 'Status berhasil diperbarui.'
+        'status' => 'success',
+        'message' => 'Status berhasil diperbarui.',
       ]);
     } catch (\Throwable $e) {
       log_message('error', 'ComplianceEvidenceController::updateFollowUp failed: {message}', [
@@ -156,8 +172,8 @@ class ComplianceEvidenceController extends BaseController
       ]);
 
       return $this->response->setJSON([
-        'status'  => 'error',
-        'message' => 'Terjadi kesalahan saat memperbarui status.'
+        'status' => 'error',
+        'message' => 'Terjadi kesalahan saat memperbarui status.',
       ]);
     }
   }

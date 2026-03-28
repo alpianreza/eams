@@ -7,7 +7,7 @@
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
         <p class="compliance-kicker mb-1">Dashboard Kepatuhan</p>
-        <h4 class="mb-1 fw-bold">Pusat Kendali Kepatuhan</h4>
+        <h4 class="mb-1 fw-bold">Control Center Compliance</h4>
         <p class="text-muted mb-0">Pantau performa ceklis, risiko <strong>tidak sesuai</strong>, dan daftar tertunda dalam satu layar.</p>
       </div>
 
