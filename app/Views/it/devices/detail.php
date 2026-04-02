@@ -80,8 +80,10 @@ if ($assignedMeta === '') {
                 <p class="it-kicker mb-1">Detail Device</p>
                 <h5 class="fw-bold mb-1"><?= esc($device['hostname'] ?? '-') ?></h5>
                 <p class="text-muted mb-2">
+                    <?php $displayIp = $extra['lan_ip'] ?? $device['last_ip'] ?? '-'; ?>
                     User device: <strong><?= esc($device['device_user'] ?? '-') ?></strong> |
-                    IP server: <strong><?= esc($device['last_ip'] ?? '-') ?></strong>
+                    IP client: <strong><?= esc($displayIp) ?></strong>
+
                 </p>
                 <div class="d-flex flex-wrap gap-2">
                     <span class="badge rounded-pill text-bg-<?= $online ? 'success' : 'secondary' ?>">

@@ -65,7 +65,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- ================= IT ASSET ================= -->
-        <?php if (hasRole(['admin', 'compliance'])): ?>
+        <?php if (hasRole(['admin'])): ?>
           <li class="nav-header sidebar-section-title">IT ASSET</li>
 
           <li class="nav-item">
@@ -276,7 +276,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- ================= ADMIN ================= -->
-        <?php if (hasRole(['admin'])): ?>
+        <?php if (hasRole(['admin', 'compliance'])): ?>
           <li class="nav-header sidebar-section-title">ADMIN</li>
 
           <li class="nav-item">

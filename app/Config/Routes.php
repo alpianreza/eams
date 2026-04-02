@@ -41,7 +41,9 @@ $routes->group('employees', ['filter' => 'auth'], function ($routes) {
     $routes->get('detail/(:num)', 'EmployeeController::detail/$1');
     $routes->get('edit/(:num)', 'EmployeeController::edit/$1');
     $routes->post('update/(:num)', 'EmployeeController::update/$1');
-    $routes->get('deactivate/(:num)', 'EmployeeController::deactivate/$1');
+    $routes->post('activate/(:num)', 'EmployeeController::activate/$1');
+    $routes->post('deactivate/(:num)', 'EmployeeController::deactivate/$1');
+    $routes->post('delete/(:num)', 'EmployeeController::delete/$1');
 });
 
 // routes khusus admin
@@ -240,6 +242,8 @@ $routes->get('/it/devices', 'ITDeviceController::index', ['filter' => 'auth']);
 $routes->get('/it/devices/ajax', 'ITDeviceController::ajax', ['filter' => 'auth']);
 $routes->post('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
 $routes->get('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
+$routes->post('/api/agent/command', 'Api\\AgentController::command');
+$routes->get('/api/agent/command', 'Api\\AgentController::command');
 $routes->post('/api/agent/update', 'Api\\AgentController::agentUpdate');
 $routes->get('/api/agent/update', 'Api\\AgentController::agentUpdate');
 $routes->get('/it/devices/(:num)', 'ITDeviceController::detail/$1', ['filter' => 'auth']);

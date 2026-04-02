@@ -38,6 +38,9 @@ class AgentController extends BaseController
             ]);
         }
 
+        $requestIp = $this->request->getIPAddress();
+        $clientIp = trim((string) ($data['lan_ip'] ?? ''));
+
         [$device, $deviceToken] = $this->resolveDeviceAndToken($data);
 
         $payload = [
@@ -56,7 +59,7 @@ class AgentController extends BaseController
             'architecture'      => $data['architecture'] ?? null,
             'ram_gb'            => $data['ram_gb'] ?? null,
             'storage_gb'        => $data['storage_gb'] ?? null,
-            'last_ip'           => $this->request->getIPAddress(),
+            'last_ip'           => $clientIp !== '' ? $clientIp : $requestIp,
             'mac_address'       => $data['mac'] ?? null,
             'agent_version'     => $data['agent_version'] ?? null,
             'last_update_check' => date('Y-m-d H:i:s'),
@@ -85,8 +88,9 @@ class AgentController extends BaseController
             'heartbeat_normal_interval' => $oldExtra['heartbeat_normal_interval'] ?? $this->defaultHeartbeatInterval(),
             'remote_lock_until' => $oldExtra['remote_lock_until'] ?? 0,
             'remote_lock_action' => $oldExtra['remote_lock_action'] ?? null,
-            'last_remote_request_at' => $oldExtra['last_remote_request_at'] ?? null,
-            'lan_ip'       => $data['lan_ip'] ?? $oldExtra['lan_ip'] ?? null,
+            'update_channel' => $data['update_channel'] ?? $oldExtra['update_channel'] ?? 'auto',
+            'lan_ip' => $clientIp !== '' ? $clientIp : ($oldExtra['lan_ip'] ?? null),
+            'request_ip' => $requestIp,
             'hardware'     => $data['hardware'] ?? $oldExtra['hardware'] ?? [],
             'force_update' => $oldExtra['force_update'] ?? false,
             'command'      => $oldExtra['command'] ?? null,
@@ -136,6 +140,50 @@ class AgentController extends BaseController
         ]);
     }
 
+    public function command()
+    {
+        $data = $this->resolvePayload();
+        $method = strtoupper($this->request->getMethod());
+
+        if (empty($data)) {
+            if ($method === 'GET') {
+                return $this->response->setJSON([
+                    'status' => 'ok',
+                    'message' => 'Agent command API aktif',
+                    'server_time' => date(DATE_ATOM),
+                ]);
+            }
+
+            return $this->response->setStatusCode(400)->setJSON([
+                'status' => 'error',
+                'message' => 'invalid payload',
+            ]);
+        }
+
+        $device = $this->findDeviceByIdentity($data);
+        if (!$device) {
+            return $this->response->setJSON([
+                'status' => 'missing',
+                'command' => null,
+                'server_time' => date(DATE_ATOM),
+            ]);
+        }
+
+        $deviceId = (int) $device['id'];
+        $command = $this->popQueuedCommand($deviceId);
+        $latestDevice = $this->deviceModel->find($deviceId);
+        $latestExtra = $this->decodeExtra($latestDevice['cpu'] ?? null);
+
+        return $this->response->setJSON([
+            'status' => 'ok',
+            'device_token' => $latestDevice['device_token'] ?? null,
+            'heartbeat_interval' => $this->resolveHeartbeatInterval($latestExtra),
+            'command' => $command,
+            'remote_lock_until' => (int) ($latestExtra['remote_lock_until'] ?? 0),
+            'server_time' => date(DATE_ATOM),
+        ]);
+    }
+
     public function agentUpdate()
     {
         $data = $this->resolvePayload();
@@ -166,7 +214,8 @@ class AgentController extends BaseController
         }
 
         $extra = $this->decodeExtra($device['cpu'] ?? null);
-        $latest = $this->resolveLatestAgentVersion();
+        $track = $this->resolveAgentTrack($data, $device, $extra);
+        $latest = $this->resolveLatestAgentPackage($track);
 
         if (($extra['force_update'] ?? false) === true) {
             $extra['force_update'] = false;
@@ -176,19 +225,21 @@ class AgentController extends BaseController
             ]);
 
             return $this->response->setJSON([
-                'update' => true,
-                'url' => $this->buildAgentDownloadUrl($latest),
-                'version' => $latest,
+                'update' => !empty($latest['filename']),
+                'url' => !empty($latest['filename']) ? $this->buildAgentDownloadUrl($latest['filename']) : null,
+                'version' => $latest['version'] ?? null,
+                'channel' => $track,
             ]);
         }
 
-        $currentVersion = trim((string) ($device['agent_version'] ?? '0.0.0'));
+        $currentVersion = trim((string) ($device['agent_version'] ?? $data['agent_version'] ?? '0.0.0'));
 
-        if ($currentVersion === '' || version_compare($currentVersion, $latest, '<')) {
+        if (!empty($latest['filename']) && ($currentVersion === '' || version_compare($currentVersion, (string) $latest['version'], '<'))) {
             return $this->response->setJSON([
                 'update' => true,
-                'url' => $this->buildAgentDownloadUrl($latest),
-                'version' => $latest,
+                'url' => $this->buildAgentDownloadUrl($latest['filename']),
+                'version' => $latest['version'],
+                'channel' => $track,
             ]);
         }
 
@@ -244,24 +295,50 @@ class AgentController extends BaseController
         return [];
     }
 
-    private function resolveDeviceAndToken(array $data): array
+    private function findDeviceByIdentity(array $data): ?array
     {
         $providedToken = trim((string) ($data['device_token'] ?? ''));
         $macAddress = trim((string) ($data['mac'] ?? ''));
-
-        $device = null;
+        $hostname = trim((string) ($data['hostname'] ?? ''));
 
         if ($providedToken !== '') {
             $device = $this->deviceModel
                 ->where('device_token', $providedToken)
                 ->first();
+
+            if ($device) {
+                return $device;
+            }
         }
 
-        if (!$device && $macAddress !== '') {
+        if ($macAddress !== '') {
             $device = $this->deviceModel
                 ->where('mac_address', $macAddress)
                 ->first();
+
+            if ($device) {
+                return $device;
+            }
         }
+
+        if ($hostname !== '') {
+            $device = $this->deviceModel
+                ->where('hostname', $hostname)
+                ->orderBy('last_seen', 'DESC')
+                ->first();
+
+            if ($device) {
+                return $device;
+            }
+        }
+
+        return null;
+    }
+
+    private function resolveDeviceAndToken(array $data): array
+    {
+        $providedToken = trim((string) ($data['device_token'] ?? ''));
+        $device = $this->findDeviceByIdentity($data);
 
         $deviceToken = $providedToken !== ''
             ? $providedToken
@@ -269,6 +346,7 @@ class AgentController extends BaseController
 
         return [$device, $deviceToken];
     }
+
 
     private function decodeExtra(?string $raw): array
     {
@@ -414,51 +492,203 @@ class AgentController extends BaseController
         return [
             'hostname' => $device['hostname'] ?? null,
             'device_user' => $device['device_user'] ?? null,
-            'server_ip' => $device['last_ip'] ?? null,
-            'client_ip' => $extra['lan_ip'] ?? null,
+            'server_ip' => $extra['request_ip'] ?? null,
+            'client_ip' => $extra['lan_ip'] ?? $device['last_ip'] ?? null,
             'agent_version' => $device['agent_version'] ?? null,
             'heartbeat_interval' => (int) ($extra['heartbeat_interval'] ?? $this->defaultHeartbeatInterval()),
             'pending_updates' => $extra['pending'] ?? null,
             'activation_status' => $extra['activation'] ?? null,
             'last_seen' => $device['last_seen'] ?? null,
+            'update_channel' => $extra['update_channel'] ?? 'auto',
+            'os' => $device['os'] ?? null,
+            'os_version' => $device['os_version'] ?? null,
+            'os_edition' => $extra['os_edition'] ?? null,
+            'os_release' => $extra['os_release'] ?? null,
+            'os_build' => $extra['os_build'] ?? null,
+            'cpu_name' => $device['cpu_name'] ?? null,
+            'cpu_core' => $device['cpu_core'] ?? null,
+            'cpu_thread' => $device['cpu_thread'] ?? null,
+            'gpu' => $device['gpu'] ?? null,
+            'ram_gb' => $device['ram_gb'] ?? null,
+            'storage_gb' => $device['storage_gb'] ?? null,
+            'storage_total_gb' => $device['storage_gb'] ?? null,
+            'storage_free' => $extra['storage_free'] ?? null,
+            'storage_free_gb' => $extra['storage_free'] ?? null,
+            'cpu_usage' => $extra['cpu_usage'] ?? null,
+            'ram_usage' => $extra['ram_usage'] ?? null,
+            'hardware' => is_array($extra['hardware'] ?? null) ? $extra['hardware'] : [],
             'asset' => $assetSummary,
             'assignment' => $assignmentSummary,
         ];
     }
 
-    private function resolveLatestAgentVersion(): string
+    private function normalizeAgentTrack(?string $value): string
     {
-        $configured = trim((string) env('agent.latestVersion', ''));
-        if ($configured !== '') {
-            return $configured;
-        }
+        $track = strtolower(trim((string) $value));
+        $aliases = [
+            '' => 'stable',
+            'auto' => 'stable',
+            'stable' => 'stable',
+            'default' => 'stable',
+            'main' => 'stable',
+            'modern' => 'stable',
+            'win7' => 'win7',
+            'windows7' => 'win7',
+            'windows_7' => 'win7',
+            'legacy' => 'win7',
+            'legacy-win7' => 'win7',
+            'xp' => 'xp',
+            'windowsxp' => 'xp',
+            'windows_xp' => 'xp',
+            'legacy-xp' => 'xp',
+        ];
 
-        $agentDir = rtrim((string) FCPATH, '\\/') . DIRECTORY_SEPARATOR . 'downloads' . DIRECTORY_SEPARATOR . 'agent' . DIRECTORY_SEPARATOR;
-        if (is_dir($agentDir)) {
-            $latest = '0.0.0';
-            $files = glob($agentDir . 'EAMSAgent-*.exe') ?: [];
-
-            foreach ($files as $file) {
-                $name = basename($file);
-                if (preg_match('/EAMSAgent-([0-9]+(?:\.[0-9]+){1,3})\.exe/i', $name, $m)) {
-                    $ver = $m[1];
-                    if (version_compare($ver, $latest, '>')) {
-                        $latest = $ver;
-                    }
-                }
-            }
-
-            if ($latest !== '0.0.0') {
-                return $latest;
-            }
-        }
-
-        return '1.2.0';
+        return $aliases[$track] ?? 'stable';
     }
 
-    private function buildAgentDownloadUrl(string $version): string
+    private function resolveAgentTrack(array $data = [], ?array $device = null, array $extra = []): string
     {
-        return base_url('downloads/agent/EAMSAgent-' . $version . '.exe');
+        $rawTrack = strtolower(trim((string) ($data['update_channel'] ?? $extra['update_channel'] ?? '')));
+        if ($rawTrack !== '' && $rawTrack !== 'auto') {
+            return $this->normalizeAgentTrack($rawTrack);
+        }
+
+        $osText = strtolower(trim(implode(' ', array_filter([
+            (string) ($data['os'] ?? ''),
+            (string) ($data['os_version'] ?? ''),
+            (string) ($data['os_edition'] ?? $extra['os_edition'] ?? ''),
+            (string) ($device['os'] ?? ''),
+            (string) ($device['os_version'] ?? ''),
+        ]))));
+
+        if ($osText !== '') {
+            if (str_contains($osText, 'windows xp') || str_contains($osText, 'server 2003')) {
+                return 'xp';
+            }
+
+            foreach (['windows 7', 'windows 8', 'windows 8.1', 'windows vista', 'server 2008', 'server 2012'] as $keyword) {
+                if (str_contains($osText, $keyword)) {
+                    return 'win7';
+                }
+            }
+        }
+
+        $buildText = trim((string) ($data['os_build'] ?? $extra['os_build'] ?? ''));
+        $buildParts = $buildText !== '' ? explode('.', $buildText) : [];
+        $buildNumber = (int) end($buildParts);
+
+        if ($buildNumber > 0 && $buildNumber < 6000) {
+            return 'xp';
+        }
+
+        if ($buildNumber > 0 && $buildNumber < 10240) {
+            return 'win7';
+        }
+
+        return 'stable';
+    }
+
+    private function resolveAgentDownloadDirectory(): ?string
+    {
+        $candidates = [
+            rtrim((string) FCPATH, '\\/') . DIRECTORY_SEPARATOR . 'downloads' . DIRECTORY_SEPARATOR . 'agent' . DIRECTORY_SEPARATOR,
+            rtrim((string) FCPATH, '\\/') . DIRECTORY_SEPARATOR . 'download' . DIRECTORY_SEPARATOR . 'agent' . DIRECTORY_SEPARATOR,
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (is_dir($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return $candidates[0];
+    }
+
+    private function resolveAgentDownloadBasePath(): string
+    {
+        $downloadsDir = rtrim((string) FCPATH, '\\/') . DIRECTORY_SEPARATOR . 'downloads' . DIRECTORY_SEPARATOR . 'agent';
+        if (is_dir($downloadsDir)) {
+            return 'downloads/agent';
+        }
+
+        return 'download/agent';
+    }
+
+    private function resolveAgentArtifactPatterns(string $track): array
+    {
+        $normalized = $this->normalizeAgentTrack($track);
+
+        if ($normalized === 'win7') {
+            return [
+                '/^(?:EAMSAgent|YHSClient)-win7-(?<version>[0-9]+(?:\.[0-9]+){1,3})\.exe$/i',
+            ];
+        }
+
+        if ($normalized === 'xp') {
+            return [
+                '/^(?:EAMSAgent|YHSClient)-xp-(?<version>[0-9]+(?:\.[0-9]+){1,3})\.exe$/i',
+            ];
+        }
+
+        return [
+            '/^(?:EAMSAgent|YHSClient)-(?<version>[0-9]+(?:\.[0-9]+){1,3})\.exe$/i',
+        ];
+    }
+
+    private function defaultAgentArtifactFilename(string $track, string $version): string
+    {
+        $normalized = $this->normalizeAgentTrack($track);
+
+        if ($normalized === 'win7') {
+            return 'EAMSAgent-win7-' . $version . '.exe';
+        }
+
+        if ($normalized === 'xp') {
+            return 'EAMSAgent-xp-' . $version . '.exe';
+        }
+
+        return 'EAMSAgent-' . $version . '.exe';
+    }
+
+    private function resolveLatestAgentPackage(string $track): array
+    {
+        $directory = $this->resolveAgentDownloadDirectory();
+        $patterns = $this->resolveAgentArtifactPatterns($track);
+        $latest = [
+            'track' => $this->normalizeAgentTrack($track),
+            'version' => trim((string) env('agent.latestVersion', '')),
+            'filename' => null,
+        ];
+
+        foreach (glob(rtrim((string) $directory, '\\/') . DIRECTORY_SEPARATOR . '*.exe') ?: [] as $file) {
+            $name = basename($file);
+            foreach ($patterns as $pattern) {
+                if (!preg_match($pattern, $name, $match)) {
+                    continue;
+                }
+
+                $version = $match['version'] ?? null;
+                if ($version === null) {
+                    continue;
+                }
+
+                if ($latest['filename'] === null || version_compare((string) $version, (string) $latest['version'], '>')) {
+                    $latest['version'] = (string) $version;
+                    $latest['filename'] = $name;
+                }
+            }
+        }
+
+        if ($latest['filename'] === null && $latest['version'] !== '') {
+            $latest['filename'] = $this->defaultAgentArtifactFilename($latest['track'], $latest['version']);
+        }
+
+        return $latest;
+    }
+
+    private function buildAgentDownloadUrl(string $filename): string
+    {
+        return base_url($this->resolveAgentDownloadBasePath() . '/' . rawurlencode($filename));
     }
 
     private function generateInventoryNo()

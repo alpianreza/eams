@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use CodeIgniter\HTTP\Files\UploadedFile;
 use Config\Database;
 
 class EmployeeController extends BaseController
@@ -10,156 +11,347 @@ class EmployeeController extends BaseController
 
     public function __construct()
     {
+        helper('audit');
         $this->db = Database::connect();
     }
 
-    // list karyawan
     public function index()
     {
-        $employees = $this->db->table('employees')->get()->getResultArray();
+        $employees = $this->db->table('employees e')
+            ->select(
+                "e.*, " .
+                "SUM(CASE WHEN aa.id IS NOT NULL AND aa.returned_at IS NULL THEN 1 ELSE 0 END) AS active_assets, " .
+                "COUNT(aa.id) AS assignment_history",
+                false
+            )
+            ->join('asset_assignments aa', 'aa.employee_id = e.id', 'left')
+            ->groupBy('e.id')
+            ->orderBy('e.status', 'ASC')
+            ->orderBy('e.name', 'ASC')
+            ->get()
+            ->getResultArray();
 
         return view('employees/index', [
             'employees' => $employees,
-            'title'     => 'Data Karyawan'
+            'title' => 'Pemegang IT',
         ]);
     }
 
-    // form tambah
     public function create()
     {
         return view('employees/create', [
-            'title' => 'Tambah Karyawan'
+            'employee' => null,
+            'formErrors' => session('form_errors') ?? [],
+            'title' => 'Tambah Pemegang IT',
         ]);
     }
 
-    // simpan data
     public function store()
     {
-        $photoName = null;
+        $payload = $this->collectEmployeePayload();
+        $errors = $this->validateEmployeePayload($payload);
 
-        $photo = $this->request->getFile('photo');
-        if ($photo && $photo->isValid()) {
-            $photoName = $photo->getRandomName();
-            $photo->move('uploads/employees', $photoName);
+        if ($errors !== []) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', reset($errors))
+                ->with('form_errors', $errors);
         }
 
-        $this->db->table('employees')->insert([
-            'employee_id' => $this->request->getPost('employee_id'),
-            'name'        => $this->request->getPost('name'),
-            'division'    => $this->request->getPost('division'),
-            'position'    => $this->request->getPost('position'),
-            'photo'       => $photoName,
-            'status'      => 'active'
-        ]);
+        $payload['photo'] = $this->storeUploadedPhoto($this->request->getFile('photo'));
+        $payload['status'] = 'active';
 
-        return redirect()->to('employees')
-            ->with('success', 'Data karyawan berhasil ditambahkan');
+        $this->db->table('employees')->insert($payload);
+        $employeeId = (int) $this->db->insertID();
+
+        if (function_exists('audit_log')) {
+            audit_log('employee_create', 'Tambah pemegang IT ID ' . $employeeId);
+        }
+
+        return redirect()->to(base_url('employees'))
+            ->with('success', 'Pemegang IT berhasil ditambahkan.');
     }
 
-
-    // detail karyawan
-    // detail karyawan
     public function detail($id)
     {
-        // ambil data karyawan
-        $employee = $this->db->table('employees')
-            ->where('id', $id)
-            ->get()
-            ->getRowArray();
+        $employee = $this->findEmployee((int) $id);
+        if (!$employee) {
+            return redirect()->to(base_url('employees'))
+                ->with('error', 'Data pemegang IT tidak ditemukan.');
+        }
 
-        // ambil asset yang sedang dipakai karyawan
         $assignedAssets = $this->db->table('asset_assignments aa')
-            ->select('
-            a.id AS asset_id,
-            a.inventory_no,
-            a.asset_name,
-            a.status,
-            ac.sub_category,
-            aa.assigned_at
-        ')
+            ->select(
+                'a.id AS asset_id, a.inventory_no, a.asset_name, a.status, ac.sub_category, aa.assigned_at'
+            )
             ->join('assets a', 'a.id = aa.asset_id')
             ->join('asset_categories ac', 'ac.id = a.category_id')
-            ->where('aa.employee_id', $id)
+            ->where('aa.employee_id', (int) $id)
             ->where('aa.returned_at', null)
             ->orderBy('ac.sub_category', 'ASC')
             ->get()
-            ->getResult();
+            ->getResultArray();
+
+        $activeAssignments = $this->countAssignments((int) $id, true);
+        $assignmentHistory = $this->countAssignments((int) $id, false);
 
         return view('employees/detail', [
-            'employee'       => $employee,
+            'employee' => $employee,
             'assignedAssets' => $assignedAssets,
-            'title'          => 'Detail Karyawan'
+            'activeAssignments' => $activeAssignments,
+            'assignmentHistory' => $assignmentHistory,
+            'title' => 'Detail Pemegang IT',
         ]);
     }
 
-    //  edit karyawan
     public function edit($id)
     {
-        $employee = $this->db->table('employees')
-            ->where('id', $id)
-            ->get()
-            ->getRowArray();
+        $employee = $this->findEmployee((int) $id);
+        if (!$employee) {
+            return redirect()->to(base_url('employees'))
+                ->with('error', 'Data pemegang IT tidak ditemukan.');
+        }
 
         return view('employees/edit', [
             'employee' => $employee,
-            'title'    => 'Edit Karyawan'
+            'formErrors' => session('form_errors') ?? [],
+            'title' => 'Edit Pemegang IT',
         ]);
     }
 
-    // update / ganti foto
     public function update($id)
     {
-        $photoName = $this->request->getPost('old_photo');
-
-        $photo = $this->request->getFile('photo');
-        if ($photo && $photo->isValid()) {
-            $photoName = $photo->getRandomName();
-            $photo->move('uploads/employees', $photoName);
+        $id = (int) $id;
+        $employee = $this->findEmployee($id);
+        if (!$employee) {
+            return redirect()->to(base_url('employees'))
+                ->with('error', 'Data pemegang IT tidak ditemukan.');
         }
 
+        $payload = $this->collectEmployeePayload();
+        $errors = $this->validateEmployeePayload($payload, $id);
+
+        if ($errors !== []) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', reset($errors))
+                ->with('form_errors', $errors);
+        }
+
+        $payload['photo'] = $this->storeUploadedPhoto(
+            $this->request->getFile('photo'),
+            $employee['photo'] ?? null
+        );
+
         $this->db->table('employees')
             ->where('id', $id)
-            ->update([
-                'employee_id' => $this->request->getPost('employee_id'),
-                'name'        => $this->request->getPost('name'),
-                'division'    => $this->request->getPost('division'),
-                'position'    => $this->request->getPost('position'),
-                'photo'       => $photoName,
-            ]);
+            ->update($payload);
 
-        return redirect()->to('employees/detail/' . $id)
-            ->with('success', 'Data karyawan berhasil diperbarui');
+        if (function_exists('audit_log')) {
+            audit_log('employee_update', 'Edit pemegang IT ID ' . $id);
+        }
+
+        return redirect()->to(base_url('employees/detail/' . $id))
+            ->with('success', 'Pemegang IT berhasil diperbarui.');
     }
 
-    //nonaktifkan karyawan
+    public function activate($id)
+    {
+        return $this->setEmployeeStatus((int) $id, 'active', 'aktifkan');
+    }
+
     public function deactivate($id)
     {
-        $this->db->table('employees')
-            ->where('id', $id)
-            ->update(['status' => 'inactive']);
+        return $this->setEmployeeStatus((int) $id, 'inactive', 'nonaktifkan');
+    }
 
-        return redirect()->to('employees')
-            ->with('success', 'Karyawan berhasil dinonaktifkan');
+    public function delete($id)
+    {
+        $id = (int) $id;
+        $employee = $this->findEmployee($id);
+        if (!$employee) {
+            return redirect()->to(base_url('employees'))
+                ->with('error', 'Data pemegang IT tidak ditemukan.');
+        }
+
+        $activeAssignments = $this->countAssignments($id, true);
+        if ($activeAssignments > 0) {
+            return redirect()->to(base_url('employees/detail/' . $id))
+                ->with('error', 'Pemegang IT masih memiliki asset aktif. Unassign dulu sebelum dihapus.');
+        }
+
+        $assignmentHistory = $this->countAssignments($id, false);
+        if ($assignmentHistory > 0) {
+            return redirect()->to(base_url('employees/detail/' . $id))
+                ->with('warning', 'Pemegang IT ini masih punya riwayat assignment. Untuk menjaga histori, gunakan nonaktifkan saja.');
+        }
+
+        $this->deleteEmployeePhoto($employee['photo'] ?? null);
+        $this->db->table('employees')->where('id', $id)->delete();
+
+        if (function_exists('audit_log')) {
+            audit_log('employee_delete', 'Hapus pemegang IT ID ' . $id);
+        }
+
+        return redirect()->to(base_url('employees'))
+            ->with('success', 'Pemegang IT berhasil dihapus.');
     }
 
     public function unassign($employeeId, $assetId)
     {
-        $db = \Config\Database::connect();
+        $employeeId = (int) $employeeId;
+        $assetId = (int) $assetId;
 
-        $db->table('asset_assignments')
+        $this->db->table('asset_assignments')
             ->where('employee_id', $employeeId)
             ->where('asset_id', $assetId)
             ->where('returned_at', null)
             ->update([
-                'returned_at' => date('Y-m-d H:i:s')
+                'returned_at' => date('Y-m-d H:i:s'),
             ]);
-        audit_log(
-            'unassign_asset',
-            'Unassign asset ID ' . $assetId . ' dari employee ID ' . $employeeId
-        );
 
+        if (function_exists('audit_log')) {
+            audit_log(
+                'unassign_asset',
+                'Unassign asset ID ' . $assetId . ' dari employee ID ' . $employeeId
+            );
+        }
 
         return redirect()->back()
-            ->with('success', 'Asset berhasil di-unassign');
+            ->with('success', 'Asset berhasil di-unassign.');
+    }
+
+    private function collectEmployeePayload(): array
+    {
+        return [
+            'employee_id' => trim((string) $this->request->getPost('employee_id')),
+            'name' => trim((string) $this->request->getPost('name')),
+            'division' => trim((string) $this->request->getPost('division')),
+            'position' => trim((string) $this->request->getPost('position')),
+        ];
+    }
+
+    private function validateEmployeePayload(array $payload, int $ignoreId = 0): array
+    {
+        $errors = [];
+
+        foreach ([
+            'employee_id' => 'ID karyawan wajib diisi.',
+            'name' => 'Nama pemegang IT wajib diisi.',
+            'division' => 'Divisi wajib diisi.',
+            'position' => 'Jabatan wajib diisi.',
+        ] as $field => $message) {
+            if ($payload[$field] === '') {
+                $errors[$field] = $message;
+            }
+        }
+
+        $duplicate = $this->db->table('employees')
+            ->where('employee_id', $payload['employee_id']);
+
+        if ($ignoreId > 0) {
+            $duplicate->where('id !=', $ignoreId);
+        }
+
+        if ($payload['employee_id'] !== '' && $duplicate->countAllResults() > 0) {
+            $errors['employee_id'] = 'ID karyawan sudah digunakan.';
+        }
+
+        $photo = $this->request->getFile('photo');
+        if ($photo instanceof UploadedFile && $photo->getError() !== UPLOAD_ERR_NO_FILE) {
+            if (!$photo->isValid()) {
+                $errors['photo'] = 'Upload foto gagal. Silakan pilih file gambar yang valid.';
+            } else {
+                $validMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                if (!in_array($photo->getMimeType(), $validMimeTypes, true)) {
+                    $errors['photo'] = 'Format foto harus JPG, PNG, atau WEBP.';
+                } elseif ($photo->getSizeByUnit('mb') > 2) {
+                    $errors['photo'] = 'Ukuran foto maksimal 2 MB.';
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    private function setEmployeeStatus(int $id, string $status, string $action)
+    {
+        $employee = $this->findEmployee($id);
+        if (!$employee) {
+            return redirect()->to(base_url('employees'))
+                ->with('error', 'Data pemegang IT tidak ditemukan.');
+        }
+
+        $this->db->table('employees')
+            ->where('id', $id)
+            ->update(['status' => $status]);
+
+        if (function_exists('audit_log')) {
+            audit_log('employee_status', ucfirst($action) . ' pemegang IT ID ' . $id);
+        }
+
+        return redirect()->back()
+            ->with('success', 'Status pemegang IT berhasil diperbarui.');
+    }
+
+    private function findEmployee(int $id): ?array
+    {
+        $employee = $this->db->table('employees')
+            ->where('id', $id)
+            ->get()
+            ->getRowArray();
+
+        return is_array($employee) ? $employee : null;
+    }
+
+    private function countAssignments(int $employeeId, bool $onlyActive): int
+    {
+        $builder = $this->db->table('asset_assignments')
+            ->where('employee_id', $employeeId);
+
+        if ($onlyActive) {
+            $builder->where('returned_at', null);
+        }
+
+        return (int) $builder->countAllResults();
+    }
+
+    private function employeePhotoDirectory(): string
+    {
+        return rtrim((string) FCPATH, '\\/') . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . 'employees';
+    }
+
+    private function storeUploadedPhoto(?UploadedFile $photo, ?string $oldPhoto = null): ?string
+    {
+        if (!$photo instanceof UploadedFile || $photo->getError() === UPLOAD_ERR_NO_FILE) {
+            return $oldPhoto;
+        }
+
+        $directory = $this->employeePhotoDirectory();
+        if (!is_dir($directory)) {
+            mkdir($directory, 0775, true);
+        }
+
+        $photoName = $photo->getRandomName();
+        $photo->move($directory, $photoName, true);
+
+        if ($oldPhoto && $oldPhoto !== $photoName) {
+            $this->deleteEmployeePhoto($oldPhoto);
+        }
+
+        return $photoName;
+    }
+
+    private function deleteEmployeePhoto(?string $photoName): void
+    {
+        $photoName = trim((string) $photoName);
+        if ($photoName === '') {
+            return;
+        }
+
+        $path = $this->employeePhotoDirectory() . DIRECTORY_SEPARATOR . $photoName;
+        if (is_file($path)) {
+            @unlink($path);
+        }
     }
 }

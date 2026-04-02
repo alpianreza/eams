@@ -1,54 +1,22 @@
 <?= $this->extend('layouts/main') ?>
+
 <?= $this->section('content') ?>
+<div class="employee-page">
+    <section class="card border-0 shadow-sm employee-hero-card employee-hero-card--soft mb-4">
+        <div class="card-body p-4 p-lg-5">
+            <p class="employee-kicker mb-2">Pemegang IT</p>
+            <h4 class="fw-bold mb-2">Edit Pemegang IT</h4>
+            <p class="text-muted mb-0">Perbarui informasi identitas, divisi, jabatan, dan foto agar data assignment tetap sinkron.</p>
+        </div>
+    </section>
 
-<h4>Edit Karyawan</h4>
+    <form method="post" action="<?= base_url('employees/update/' . $employee['id']) ?>" enctype="multipart/form-data">
+        <?= csrf_field() ?>
+        <?= $this->include('employees/_form') ?>
+    </form>
+</div>
+<?= $this->endSection() ?>
 
-<form method="post"
-      action="<?= base_url('employees/update/'.$employee['id']) ?>"
-      enctype="multipart/form-data">
-
-    <input type="hidden" name="old_photo" value="<?= esc($employee['photo']) ?>">
-
-    <div class="mb-3">
-        <label>ID Karyawan</label>
-        <input type="text" name="employee_id"
-               class="form-control"
-               value="<?= esc($employee['employee_id']) ?>" required>
-    </div>
-
-    <div class="mb-3">
-        <label>Nama</label>
-        <input type="text" name="name"
-               class="form-control"
-               value="<?= esc($employee['name']) ?>" required>
-    </div>
-
-    <div class="mb-3">
-        <label>Divisi</label>
-        <input type="text" name="division"
-               class="form-control"
-               value="<?= esc($employee['division']) ?>" required>
-    </div>
-
-    <div class="mb-3">
-        <label>Jabatan</label>
-        <input type="text" name="position"
-               class="form-control"
-               value="<?= esc($employee['position']) ?>" required>
-    </div>
-
-    <div class="mb-3">
-        <label>Ganti Foto (opsional)</label><br>
-        <?php if ($employee['photo']): ?>
-            <img src="<?= base_url('uploads/employees/'.$employee['photo']) ?>"
-                 width="100" class="img-thumbnail mb-2"><br>
-        <?php endif; ?>
-        <input type="file" name="photo" class="form-control" accept="image/*">
-    </div>
-
-    <button class="btn btn-success">Simpan</button>
-    <a href="<?= base_url('employees/detail/'.$employee['id']) ?>"
-       class="btn btn-secondary">Batal</a>
-</form>
-
+<?= $this->section('styles') ?>
+<link rel="stylesheet" href="<?= base_url('assets/css/employees.css?v=' . filemtime(FCPATH . 'assets/css/employees.css')) ?>">
 <?= $this->endSection() ?>

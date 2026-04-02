@@ -31,6 +31,8 @@
                     $score = device_risk_score($d);
                     [$label, $badge] = device_risk_label($score);
                     $release = $extra['os_release'] ?? null;
+                    $osLabel = device_os_label($d);
+                    $osMeta = device_os_meta($d);
 
                     $lifecycle = function_exists('windows_lifecycle')
                         ? windows_lifecycle($release)
@@ -48,7 +50,12 @@
                             <div class="small text-muted d-md-none"><?= esc($d['device_user'] ?? '-') ?></div>
                         </td>
                         <td class="d-none d-md-table-cell"><?= esc($d['device_user'] ?? '-') ?></td>
-                        <td class="d-none d-lg-table-cell"><?= esc($d['os'] ?? '-') ?></td>
+                        <td class="d-none d-lg-table-cell">
+                            <div class="fw-semibold"><?= esc($osLabel) ?></div>
+                            <?php if ($osMeta !== ''): ?>
+                                <div class="small text-muted"><?= esc($osMeta) ?></div>
+                            <?php endif; ?>
+                        </td>
                         <td class="d-none d-xl-table-cell text-truncate device-cpu-cell"><?= esc($d['cpu_name'] ?? '-') ?></td>
                         <td><?= esc($d['ram_gb'] ?? 0) ?> GB</td>
                         <td><?= esc($d['storage_gb'] ?? 0) ?> GB</td>
