@@ -15,6 +15,21 @@ if ($pageTitle === '') {
     $pageTitle = 'Dashboard';
 }
 
+$resolvedBackUrl = '';
+if (!empty($backUrl)) {
+    $backUrlText = trim((string) $backUrl);
+
+    if (
+        str_starts_with($backUrlText, 'http://') ||
+        str_starts_with($backUrlText, 'https://') ||
+        str_starts_with($backUrlText, '/')
+    ) {
+        $resolvedBackUrl = $backUrlText;
+    } else {
+        $resolvedBackUrl = base_url($backUrlText);
+    }
+}
+
 ?>
 
 
@@ -72,9 +87,9 @@ if ($pageTitle === '') {
             <main class="app-main">
                 <div class="app-content">
                     <div class="container-fluid py-4">
-                        <?php if (!empty($backUrl)): ?>
+                        <?php if ($resolvedBackUrl !== ''): ?>
                             <div class="mb-3">
-                                <a href="<?= esc($backUrl) ?>" class="btn btn-outline-secondary btn-sm content-back-link">
+                                <a href="<?= esc($resolvedBackUrl) ?>" class="btn btn-outline-secondary btn-sm content-back-link">
                                     <i class="fa-solid fa-left-long me-1"></i> Kembali
                                 </a>
                             </div>
@@ -120,6 +135,7 @@ if ($pageTitle === '') {
 
 <script src="<?= base_url('js/app.js') ?>"></script>
 <script src="<?= base_url('js/checklist-master.js?v=' . filemtime(FCPATH . 'js/checklist-master.js')) ?>"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <script>
     window.FLASH_MESSAGE = {

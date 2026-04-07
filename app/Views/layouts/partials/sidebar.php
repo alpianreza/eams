@@ -8,6 +8,7 @@ $seg2 = $segments[1] ?? '';
 
 $isCompliance = $seg1 === 'compliance';
 $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
+$isQuestionnaireMenu = $isCompliance && $seg2 === 'questionnaires';
 
 $brandLogoPath = FCPATH . 'assets/images/company/logo.png';
 $brandLogoUrl = base_url('assets/images/company/logo.png');
@@ -33,21 +34,6 @@ $hasBrandLogo = file_exists($brandLogoPath);
   <div class="sidebar-wrapper">
     <nav class="mt-2">
       <ul class="nav sidebar-menu flex-column" role="menu">
-
-        <!-- DASHBOARD -->
-        <?php if (hasRole(['admin'])): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('dashboard') ?>"
-              class="nav-link <?= in_array($seg1, ['', 'home', 'dashboard'], true) ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-speedometer2"></i>
-              <p>Dashboard</p>
-
-              <?php if (!empty($notifCount) && $notifCount > 0): ?>
-                <span class="badge bg-danger"><?= $notifCount ?></span>
-              <?php endif; ?>
-            </a>
-          </li>
-        <?php endif; ?>
 
         <!-- HOME -->
         <?php if (hasRole(['staff', 'compliance', 'admin'])): ?>
@@ -207,6 +193,16 @@ $hasBrandLogo = file_exists($brandLogoPath);
               class="nav-link <?= $isCompliance && $seg2 === 'report' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>Laporan</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
+        <?php if (hasRole(['admin', 'compliance', 'auditor', 'staff'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('compliance/questionnaires') ?>"
+              class="nav-link <?= $isQuestionnaireMenu ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-ui-checks-grid"></i>
+              <p>Kuesioner</p>
             </a>
           </li>
         <?php endif; ?>

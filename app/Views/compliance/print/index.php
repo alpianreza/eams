@@ -35,6 +35,8 @@
 </div>
 
 <script>
+  const compliancePrintBase = "<?= esc(parse_url(site_url('compliance/print'), PHP_URL_PATH) ?: '/compliance/print', 'js') ?>";
+
   function loadPrintContent(url) {
 
     document.getElementById("printContent").innerHTML =
@@ -49,11 +51,11 @@
   }
 
   document.getElementById("btnPrintItem").onclick = function() {
-    loadPrintContent("/compliance/print/item");
+    loadPrintContent(compliancePrintBase + "/item");
   }
 
   document.getElementById("btnPrintBatch").onclick = function() {
-    loadPrintContent("/compliance/print/batch");
+    loadPrintContent(compliancePrintBase + "/batch");
   }
 </script>
 <script>
@@ -73,7 +75,7 @@
       let freq = e.target.selectedOptions[0].dataset.frequency
 
       // load inventory
-      fetch("/compliance/print/inventory/" + itemType)
+      fetch(compliancePrintBase + "/inventory/" + itemType)
         .then(res => res.text())
         .then(html => {
 
@@ -84,6 +86,19 @@
       // render period selector
       renderPeriod(freq)
 
+    }
+
+    if (e.target.id === "batchItemTypeSelect") {
+
+      let selected = e.target.selectedOptions[0] || null
+      let freq = selected ? (selected.dataset.frequency || "") : ""
+      let periodContainer = document.getElementById("batchPeriodContainer")
+
+      if (!periodContainer) {
+        return
+      }
+
+      periodContainer.style.display = (freq === "monthly" || freq === "weekly") ? "flex" : "none"
     }
 
   })
@@ -169,7 +184,7 @@
 
   document.addEventListener("click", function(e) {
 
-    if (e.target.id === "btnPreviewPrint") {
+    if (e.target.closest("#btnPreviewPrint")) {
 
       let inventory = []
       let year = []
@@ -198,13 +213,33 @@
       }
 
       let url =
-        "/compliance/print/item/preview" +
+        compliancePrintBase + "/item/preview" +
         "?inventory=" + inventory.join(",") +
         "&year=" + year.join(",") +
         "&month=" + month.join(",")
 
       window.open(url, "_blank")
 
+    }
+
+    if (e.target.closest("#btnPreviewBatchPrint")) {
+
+      let itemTypeId = document.getElementById("batchItemTypeSelect")?.value || ""
+      let monthValue = document.getElementById("batchMonthSelect")?.value || ""
+      let yearValue = document.getElementById("batchYearSelect")?.value || ""
+
+      if (!itemTypeId) {
+        alert("Pilih item type dulu")
+        return
+      }
+
+      let url =
+        compliancePrintBase + "/batch/preview" +
+        "?item_type_id=" + encodeURIComponent(itemTypeId) +
+        "&month=" + encodeURIComponent(monthValue) +
+        "&year=" + encodeURIComponent(yearValue)
+
+      window.open(url, "_blank")
     }
 
   })

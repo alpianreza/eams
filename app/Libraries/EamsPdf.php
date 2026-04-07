@@ -33,15 +33,15 @@ class EamsPdf
     |--------------------------------------------------------------------------
     */
 
-    // Daily report menggunakan landscape
-    if ($type === 'daily' || $type === 'daily_toilet') {
+    // Daily report dan batch form menggunakan landscape
+    if ($type === 'daily' || $type === 'daily_toilet' || $type === 'batch_form') {
       $this->mpdf = new Mpdf([
         'mode' => 'utf-8',
         'format' => 'A4-L',
-        'margin_top' => 10,
-        'margin_bottom' => 10,
-        'margin_left' => 8,
-        'margin_right' => 8,
+        'margin_top' => $type === 'batch_form' ? 7 : 10,
+        'margin_bottom' => $type === 'batch_form' ? 7 : 10,
+        'margin_left' => $type === 'batch_form' ? 6 : 8,
+        'margin_right' => $type === 'batch_form' ? 6 : 8,
       ]);
     } else {
       // Default portrait
@@ -70,6 +70,8 @@ class EamsPdf
       'weekly' => view('pdf/recap_weekly', $data),
       'recap_period' => view('pdf/recap_periodic', $data),
       'recap_year_item' => view('pdf/recap_item_yearly', $data),
+      'batch_form' => view('pdf/batch_form', $data),
+      'questionnaire_response' => view('pdf/questionnaire_response', $data),
       'attachment' => view('pdf/attachment_ng', $data),
       default => throw new \Exception('Jenis laporan tidak dikenali.')
     };

@@ -1,0 +1,18 @@
+CRITICAL - 2026-04-02 17:11:16 --> ErrorException: Undefined array key "item_name"
+[Method: GET, Route: compliance/print/item/preview]
+in APPPATH\Views\compliance\print\templates\recap_item_yearly.php on line 119.
+ 1 APPPATH\Views\compliance\print\templates\recap_item_yearly.php(119): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined array key "item_name"', 'C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\print\\templates\\recap_item_yearly.php', 119)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\print\\templates\\recap_item_yearly.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/print/templates/recap_item_yearly', [], true)
+ 5 APPPATH\Views\compliance\print\preview.php(55): view('compliance/print/templates/recap_item_yearly', [...])
+ 6 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\compliance\\print\\preview.php')
+ 7 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 8 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('compliance/print/preview', [], true)
+ 9 APPPATH\Controllers\CompliancePrintController.php(64): view('compliance/print/preview', [...])
+10 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\CompliancePrintController->itemPreview()
+11 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\CompliancePrintController))
+12 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+13 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+14 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+15 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

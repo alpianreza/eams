@@ -194,6 +194,43 @@ $routes->group('compliance/report', ['filter' => 'auth'], function ($routes) {
     $routes->get('inventory-by-type', 'ComplianceReportController::getInventoryByType');
 });
 
+$routes->group('compliance/questionnaires', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'ComplianceQuestionnaireController::index');
+    $routes->get('analytics', 'ComplianceQuestionnaireController::analytics');
+    $routes->get('create', 'ComplianceQuestionnaireController::create');
+    $routes->post('store', 'ComplianceQuestionnaireController::store');
+    $routes->get('edit/(:num)', 'ComplianceQuestionnaireController::edit/$1');
+    $routes->post('update/(:num)', 'ComplianceQuestionnaireController::update/$1');
+    $routes->post('delete/(:num)', 'ComplianceQuestionnaireController::delete/$1');
+    $routes->get('fill/(:num)', 'ComplianceQuestionnaireController::fill/$1');
+    $routes->post('submit/(:num)', 'ComplianceQuestionnaireController::submit/$1');
+    $routes->get('response/(:num)', 'ComplianceQuestionnaireController::responseDetail/$1');
+    $routes->get('response/(:num)/pdf', 'ComplianceQuestionnaireController::responsePdf/$1');
+    $routes->post('response/delete/(:num)', 'ComplianceQuestionnaireController::deleteResponse/$1');
+    $routes->get('(:num)/excel', 'ComplianceQuestionnaireController::exportExcel/$1');
+    $routes->post('(:num)/respondent-settings', 'ComplianceQuestionnaireController::updateRespondentSettings/$1');
+    $routes->post('(:num)/questions/store', 'ComplianceQuestionnaireController::storeQuestion/$1');
+    $routes->post('(:num)/questions/reorder', 'ComplianceQuestionnaireController::reorderQuestions/$1');
+    $routes->post('questions/update/(:num)', 'ComplianceQuestionnaireController::updateQuestion/$1');
+    $routes->post('questions/delete/(:num)', 'ComplianceQuestionnaireController::deleteQuestion/$1');
+    $routes->post('questions/move-up/(:num)', 'ComplianceQuestionnaireController::moveQuestionUp/$1');
+    $routes->post('questions/move-down/(:num)', 'ComplianceQuestionnaireController::moveQuestionDown/$1');
+    $routes->get('(:num)', 'ComplianceQuestionnaireController::detail/$1');
+});
+
+$routes->get('kuesioner/(:segment)', 'ComplianceQuestionnaireController::publicFill/$1');
+$routes->get('kuesioner/(:segment)/selesai', 'ComplianceQuestionnaireController::publicThanks/$1');
+$routes->post('kuesioner/(:segment)/kirim', 'ComplianceQuestionnaireController::publicSubmit/$1');
+
+$routes->group('compliance/print', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'CompliancePrintController::index');
+    $routes->get('item', 'CompliancePrintController::item');
+    $routes->get('item/preview', 'CompliancePrintController::itemPreview');
+    $routes->get('inventory/(:num)', 'CompliancePrintController::inventoryByType/$1');
+    $routes->get('batch', 'CompliancePrintController::batch');
+    $routes->get('batch/preview', 'CompliancePrintController::batchPreview');
+});
+
 $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
 
     $routes->get('evidence', 'ComplianceEvidenceController::index');
