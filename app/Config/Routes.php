@@ -74,6 +74,21 @@ $routes->post(
 
 $routes->get('audit-logs', 'AuditLogController::index', ['filter' => 'admin']);
 
+$routes->group('backups', ['filter' => 'admin'], function ($routes) {
+    $routes->get('/', 'BackupController::index');
+    $routes->post('database', 'BackupController::createDatabase');
+    $routes->post('files', 'BackupController::createFiles');
+    $routes->post('full', 'BackupController::createFull');
+    $routes->post('upload', 'BackupController::upload');
+    $routes->post('auto-enable', 'BackupController::enableAutoBackup');
+    $routes->post('auto-disable', 'BackupController::disableAutoBackup');
+    $routes->get('download/(:segment)', 'BackupController::download/$1');
+    $routes->post('restore-full/(:segment)', 'BackupController::restoreFull/$1');
+    $routes->post('restore-database/(:segment)', 'BackupController::restoreDatabase/$1');
+    $routes->post('restore-files/(:segment)', 'BackupController::restoreFiles/$1');
+    $routes->post('delete/(:segment)', 'BackupController::delete/$1');
+});
+
 //setting
 $routes->group('settings', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'SettingsController::index');

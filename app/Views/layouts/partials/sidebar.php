@@ -290,6 +290,14 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Audit Log</p>
             </a>
           </li>
+
+          <li class="nav-item">
+            <a href="<?= base_url('backups') ?>"
+              class="nav-link <?= $seg1 === 'backups' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-hdd-stack"></i>
+              <p>Backup</p>
+            </a>
+          </li>
         <?php endif; ?>
 
       </ul>
