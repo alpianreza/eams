@@ -8,6 +8,8 @@
   };
   $detailState = json_encode([
     'reorderUrl' => $isWriteAllowed ? $relative('compliance/questionnaires/' . $questionnaire['id'] . '/questions/reorder') : '',
+    'respondentSettingsUrl' => $isWriteAllowed ? $relative('compliance/questionnaires/' . $questionnaire['id'] . '/respondent-settings') : '',
+    'respondentFields' => $respondentFields,
   ], JSON_UNESCAPED_UNICODE | JSON_HEX_APOS | JSON_HEX_QUOT);
 ?>
 
@@ -25,89 +27,42 @@
         <?php endif; ?>
       </div>
 
-      <div class="d-flex flex-wrap gap-2 justify-content-end">
+      <div class="questionnaire-hero-meta col-12">
         <?php if ((int) ($questionnaire['active'] ?? 0) === 1): ?>
-          <a href="<?= esc($publicPath) ?>" class="btn btn-success" target="_blank" rel="noopener">
-            <i class="bi bi-box-arrow-up-right me-1"></i> Buka Form Publik
-          </a>
-          <button type="button" class="btn btn-outline-success" @click="copyLink('<?= esc($publicPath) ?>')">
-            <i class="bi bi-link-45deg me-1"></i> Salin Link
-          </button>
-        <?php else: ?>
-          <button type="button" class="btn btn-outline-secondary" disabled>
-            <i class="bi bi-slash-circle me-1"></i> Form Sedang Nonaktif
-          </button>
-        <?php endif; ?>
-        <a href="<?= esc($excelPath) ?>" class="btn btn-outline-success">
-          <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
-        </a>
-        <a href="<?= esc($relative('compliance/questionnaires/analytics') . '?questionnaire_id=' . (int) $questionnaire['id']) ?>" class="btn btn-outline-info">
-          <i class="bi bi-bar-chart-line me-1"></i> Analitik
-        </a>
-        <?php if ($isWriteAllowed): ?>
-          <a href="<?= esc($relative('compliance/questionnaires/edit/' . $questionnaire['id'])) ?>" class="btn btn-outline-primary">
-            <i class="bi bi-pencil-square me-1"></i> Edit Template
-          </a>
-          <form method="post" action="<?= esc($relative('compliance/questionnaires/delete/' . $questionnaire['id'])) ?>" data-delete-title="Hapus kuesioner ini?" data-delete-text="Template kuesioner akan dihapus permanen jika belum memiliki hasil." @submit.prevent="confirmDelete($event)">
-            <button type="submit" class="btn btn-outline-danger">
-              <i class="bi bi-trash me-1"></i> Hapus
+          <div class="questionnaire-hero-inline">
+            <span class="questionnaire-link-label mb-0">Tautan publik</span>
+            <code class="questionnaire-hero-code"><?= esc($publicPath) ?></code>
+            <button type="button" class="btn btn-outline-primary btn-sm" @click="copyLink('<?= esc($publicPath) ?>')">
+              <i class="bi bi-copy me-1"></i> Salin
             </button>
-          </form>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($isWriteAllowed): ?>
+          <div class="questionnaire-hero-inline questionnaire-respondent-inline">
+            <span class="questionnaire-link-label mb-0">Identitas responden</span>
+
+            <label class="form-check form-switch questionnaire-inline-switch mb-0">
+              <input class="form-check-input" type="checkbox" :checked="respondentFields.name" @change="saveRespondentSettings('name', $event.target.checked)">
+              <span class="form-check-label">Nama</span>
+            </label>
+
+            <label class="form-check form-switch questionnaire-inline-switch mb-0">
+              <input class="form-check-input" type="checkbox" :checked="respondentFields.phone" @change="saveRespondentSettings('phone', $event.target.checked)">
+              <span class="form-check-label">No HP</span>
+            </label>
+
+            <label class="form-check form-switch questionnaire-inline-switch mb-0">
+              <input class="form-check-input" type="checkbox" :checked="respondentFields.email" @change="saveRespondentSettings('email', $event.target.checked)">
+              <span class="form-check-label">Email</span>
+            </label>
+
+            <span class="questionnaire-inline-status" x-cloak x-show="isSavingRespondentSettings">Menyimpan...</span>
+          </div>
         <?php endif; ?>
       </div>
     </div>
   </section>
-
-  <div class="card no-lift questionnaire-form-card mb-3">
-    <div class="card-body">
-      <div class="questionnaire-link-label">Tautan Publik</div>
-      <div class="questionnaire-link-row">
-        <input type="text" class="form-control" value="<?= esc($publicPath) ?>" readonly>
-        <button type="button" class="btn btn-outline-primary" @click="copyLink('<?= esc($publicPath) ?>')" <?= (int) ($questionnaire['active'] ?? 0) === 1 ? '' : 'disabled' ?>>
-          <i class="bi bi-copy me-1"></i> Salin
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <?php if ($isWriteAllowed): ?>
-    <div class="card no-lift questionnaire-form-card mb-3">
-      <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-          <div>
-            <div class="questionnaire-link-label mb-1">Identitas Responden</div>
-            <div class="text-muted small">Atur field identitas yang mau ditampilkan di form publik.</div>
-          </div>
-        </div>
-
-        <form method="post" action="<?= esc($relative('compliance/questionnaires/' . $questionnaire['id'] . '/respondent-settings')) ?>" class="row g-3">
-          <div class="col-12 col-md-4">
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="collectName" name="collect_name" value="1" <?= $respondentFields['name'] ? 'checked' : '' ?>>
-              <label class="form-check-label" for="collectName">Tampilkan Nama</label>
-            </div>
-          </div>
-          <div class="col-12 col-md-4">
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="collectPhone" name="collect_phone" value="1" <?= $respondentFields['phone'] ? 'checked' : '' ?>>
-              <label class="form-check-label" for="collectPhone">Tampilkan No HP</label>
-            </div>
-          </div>
-          <div class="col-12 col-md-4">
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" id="collectEmail" name="collect_email" value="1" <?= $respondentFields['email'] ? 'checked' : '' ?>>
-              <label class="form-check-label" for="collectEmail">Tampilkan Email</label>
-            </div>
-          </div>
-          <div class="col-12 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary btn-sm">
-              <i class="bi bi-save me-1"></i> Simpan Pengaturan
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  <?php endif; ?>
 
   <div class="row g-3">
     <?php if ($isWriteAllowed): ?>
@@ -262,15 +217,9 @@
                 <thead>
                   <tr>
                     <th>Kode</th>
-                    <?php if ($respondentFields['name']): ?>
-                      <th>Nama</th>
-                    <?php endif; ?>
-                    <?php if ($respondentFields['phone']): ?>
-                      <th>Telepon</th>
-                    <?php endif; ?>
-                    <?php if ($respondentFields['email']): ?>
-                      <th>Email</th>
-                    <?php endif; ?>
+                    <th x-show="respondentFields.name" x-cloak>Nama</th>
+                    <th x-show="respondentFields.phone" x-cloak>Telepon</th>
+                    <th x-show="respondentFields.email" x-cloak>Email</th>
                     <th>Dikirim</th>
                     <th class="text-end">Aksi</th>
                   </tr>
@@ -279,15 +228,9 @@
                   <?php foreach ($responses as $response): ?>
                     <tr>
                       <td><span class="badge text-bg-light"><?= esc($response['response_code']) ?></span></td>
-                      <?php if ($respondentFields['name']): ?>
-                        <td><?= esc($response['respondent_name']) ?></td>
-                      <?php endif; ?>
-                      <?php if ($respondentFields['phone']): ?>
-                        <td><?= esc($response['phone'] ?: '-') ?></td>
-                      <?php endif; ?>
-                      <?php if ($respondentFields['email']): ?>
-                        <td><?= esc($response['email'] ?: '-') ?></td>
-                      <?php endif; ?>
+                      <td x-show="respondentFields.name" x-cloak><?= esc($response['respondent_name']) ?></td>
+                      <td x-show="respondentFields.phone" x-cloak><?= esc($response['phone'] ?: '-') ?></td>
+                      <td x-show="respondentFields.email" x-cloak><?= esc($response['email'] ?: '-') ?></td>
                       <td><?= esc($response['submitted_at'] ?: '-') ?></td>
                       <td class="text-end">
                         <a href="<?= esc($response['detail_path']) ?>" class="btn btn-outline-primary btn-sm">Detail</a>
@@ -463,8 +406,15 @@
     Alpine.data('questionnaireDetailPage', function(config) {
       return {
         reorderUrl: config.reorderUrl || '',
+        respondentSettingsUrl: config.respondentSettingsUrl || '',
+        respondentFields: {
+          name: !!(config.respondentFields && config.respondentFields.name),
+          phone: !!(config.respondentFields && config.respondentFields.phone),
+          email: !!(config.respondentFields && config.respondentFields.email)
+        },
         activeDragId: null,
         isReordering: false,
+        isSavingRespondentSettings: false,
 
         init() {
           const root = this.getQuestionListRoot();
@@ -500,6 +450,56 @@
             safeToast('Link kuesioner berhasil disalin.', 'success');
           } catch (error) {
             safeToast('Link belum bisa disalin otomatis. Silakan salin manual.', 'warning');
+          }
+        },
+
+        async saveRespondentSettings(field, checked) {
+          if (!this.respondentSettingsUrl) {
+            return;
+          }
+
+          const previousState = { ...this.respondentFields };
+          this.respondentFields[field] = checked;
+          this.isSavingRespondentSettings = true;
+
+          try {
+            const formData = new FormData();
+            if (this.respondentFields.name) {
+              formData.append('collect_name', '1');
+            }
+            if (this.respondentFields.phone) {
+              formData.append('collect_phone', '1');
+            }
+            if (this.respondentFields.email) {
+              formData.append('collect_email', '1');
+            }
+
+            const response = await fetch(this.respondentSettingsUrl, {
+              method: 'POST',
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+              },
+              body: formData
+            });
+
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+              throw new Error(result.message || 'Pengaturan identitas belum berhasil diperbarui.');
+            }
+
+            if (result.respondentFields) {
+              this.respondentFields = {
+                name: !!result.respondentFields.name,
+                phone: !!result.respondentFields.phone,
+                email: !!result.respondentFields.email
+              };
+            }
+          } catch (error) {
+            this.respondentFields = previousState;
+            safeToast(error.message || 'Pengaturan identitas belum berhasil diperbarui.', 'error');
+          } finally {
+            this.isSavingRespondentSettings = false;
           }
         },
 

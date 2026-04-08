@@ -234,7 +234,6 @@ class ComplianceQuestionnaireController extends BaseController
 
     return $this->render('compliance/questionnaire/detail', [
       'title' => 'Detail Kuesioner',
-      'backUrl' => 'compliance/questionnaires',
       'questionnaire' => $questionnaire,
       'questions' => $questions,
       'questionGroups' => $this->groupQuestionsBySection($questions),
@@ -420,6 +419,18 @@ class ComplianceQuestionnaireController extends BaseController
     ];
 
     $this->questionnaireModel->update((int) $questionnaireId, $payload);
+
+    if ($this->wantsJson()) {
+      return $this->response->setJSON([
+        'success' => true,
+        'message' => 'Pengaturan identitas responden berhasil diperbarui.',
+        'respondentFields' => [
+          'name' => (bool) $payload['collect_name'],
+          'phone' => (bool) $payload['collect_phone'],
+          'email' => (bool) $payload['collect_email'],
+        ],
+      ]);
+    }
 
     return redirect()->to(base_url('compliance/questionnaires/' . $questionnaireId))->with('success', 'Pengaturan identitas responden berhasil diperbarui.');
   }
