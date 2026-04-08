@@ -1,4 +1,4 @@
-<?= $this->extend('layouts/main') ?>
+﻿<?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
 <?php helper('device'); ?>
@@ -26,6 +26,9 @@ $remoteActionLabel = [
     'sync' => 'Sync',
     'restart_agent' => 'Restart Agent',
     'lock' => 'Lock',
+    'logoff' => 'Log Off',
+    'popup_message' => 'Kirim Pesan',
+    'collect_diagnostics' => 'Refresh Diagnosa',
 ];
 
 $cpuUsage = isset($extra['cpu_usage']) ? (float)$extra['cpu_usage'] : null;
@@ -71,6 +74,19 @@ if (!empty($assignment['position'])) {
 if ($assignedMeta === '') {
     $assignedMeta = 'Belum ada data jabatan';
 }
+
+$peripherals = is_array($hw['peripherals'] ?? null) ? $hw['peripherals'] : [];
+$keyboardList = is_array($peripherals['keyboards'] ?? null) ? $peripherals['keyboards'] : [];
+$mouseList = is_array($peripherals['mice'] ?? null) ? $peripherals['mice'] : [];
+$monitorList = is_array($peripherals['monitors'] ?? null) ? $peripherals['monitors'] : [];
+$session = is_array($extra['session'] ?? null) ? $extra['session'] : [];
+$diagnostics = is_array($extra['diagnostics'] ?? null) ? $extra['diagnostics'] : [];
+$topProcesses = is_array($diagnostics['processes'] ?? null) ? $diagnostics['processes'] : [];
+$serviceList = is_array($diagnostics['services'] ?? null) ? $diagnostics['services'] : [];
+$softwareList = is_array($diagnostics['software'] ?? null) ? $diagnostics['software'] : [];
+$lastCommandResult = is_array($extra['last_command_result'] ?? null) ? $extra['last_command_result'] : [];
+$commandHistory = is_array($commandHistory ?? null) ? $commandHistory : [];
+$diagnosticsAt = !empty($diagnostics['captured_at']) ? (int)$diagnostics['captured_at'] : null;
 ?>
 
 <div class="it-shell">
@@ -169,12 +185,28 @@ if ($assignedMeta === '') {
                 </div>
                 <div class="card-body pt-2">
                     <p class="text-muted small mb-3">
-                        Sinkronisasi normal berjalan tiap 10 menit. Saat ada aksi remote, interval otomatis dipercepat ke 10 detik.
+                        Command tetap dipoll cepat, sementara data berat seperti proses, service, dan software hanya diambil saat diminta supaya client tetap ringan.
                     </p>
                     <?php if ($remoteLockActive): ?>
                         <div class="alert alert-warning py-2 px-3 mb-3">
                             Remote lock aktif <?= (int)$remoteLockRemaining ?> detik untuk aksi
                             <strong><?= esc($remoteActionLabel[$remoteLockAction] ?? strtoupper($remoteLockAction ?: 'AKSI')) ?></strong>.
+                        </div>
+                    <?php endif; ?>
+                    <?php if (!empty($lastCommandResult['name'])): ?>
+                        <?php
+                        $lastCommandStatus = strtolower((string)($lastCommandResult['status'] ?? 'info'));
+                        $lastCommandTone = $lastCommandStatus === 'success' ? 'success' : ($lastCommandStatus === 'error' ? 'danger' : 'info');
+                        $lastCommandTime = !empty($lastCommandResult['executed_at']) ? (int)$lastCommandResult['executed_at'] : null;
+                        ?>
+                        <div class="alert alert-<?= esc($lastCommandTone) ?> py-2 px-3 mb-3">
+                            <div class="fw-semibold">Aksi terakhir: <?= esc($remoteActionLabel[$lastCommandResult['name']] ?? strtoupper(str_replace('_', ' ', (string)$lastCommandResult['name']))) ?></div>
+                            <div class="small">
+                                <?= esc($lastCommandResult['message'] ?? 'Perintah terakhir sudah dieksekusi agent.') ?>
+                                <?php if ($lastCommandTime): ?>
+                                    <span class="text-muted"> / <?= date('d M Y H:i:s', $lastCommandTime) ?></span>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     <?php endif; ?>
                     <div class="it-command-grid">
@@ -196,6 +228,15 @@ if ($assignedMeta === '') {
                         <button class="btn btn-outline-warning remote-btn" data-action="lock" data-id="<?= (int)$device['id'] ?>" data-lock-until="<?= (int)$remoteLockUntil ?>" <?= $remoteLockActive ? 'disabled' : '' ?>>
                             <i class="bi bi-lock me-1"></i> Lock Screen
                         </button>
+                        <button class="btn btn-outline-danger remote-btn" data-action="logoff" data-id="<?= (int)$device['id'] ?>" data-lock-until="<?= (int)$remoteLockUntil ?>" <?= $remoteLockActive ? 'disabled' : '' ?>>
+                            <i class="bi bi-box-arrow-right me-1"></i> Log Off User
+                        </button>
+                        <button class="btn btn-outline-primary remote-message-btn" data-id="<?= (int)$device['id'] ?>" data-lock-until="<?= (int)$remoteLockUntil ?>" <?= $remoteLockActive ? 'disabled' : '' ?>>
+                            <i class="bi bi-chat-left-text me-1"></i> Kirim Pesan
+                        </button>
+                        <button class="btn btn-outline-success diagnostic-refresh-btn" data-id="<?= (int)$device['id'] ?>" data-lock-until="<?= (int)$remoteLockUntil ?>" <?= $remoteLockActive ? 'disabled' : '' ?>>
+                            <i class="bi bi-activity me-1"></i> Refresh Diagnosa
+                        </button>
                         <button class="btn btn-outline-secondary copy-token-btn" data-token="<?= esc($device['device_token'] ?? '') ?>">
                             <i class="bi bi-clipboard-check me-1"></i> Copy Token
                         </button>
@@ -210,6 +251,9 @@ if ($assignedMeta === '') {
                             <input type="text" class="form-control font-monospace" readonly value="<?= esc($device['device_token'] ?? '-') ?>">
                             <button class="btn btn-outline-secondary copy-token-btn" data-token="<?= esc($device['device_token'] ?? '') ?>" type="button">Copy</button>
                         </div>
+                    </div>
+                    <div class="small text-muted mt-3">
+                        Aksi premium yang aktif di batch ini: popup message, refresh diagnosa proses/service/software, dan log off user.
                     </div>
                 </div>
             </section>
@@ -252,6 +296,86 @@ if ($assignedMeta === '') {
                     <div class="it-detail-kv"><span>Sisa Storage</span><strong><?= $storageFree !== null ? number_format($storageFree, 2) . ' GB' : '-' ?></strong></div>
                     <div class="it-detail-kv"><span>Agent Version</span><strong><?= esc($device['agent_version'] ?? '-') ?></strong></div>
                     <div class="it-detail-kv"><span>Last Seen</span><strong><?= !empty($device['last_seen']) ? date('d M Y H:i:s', strtotime($device['last_seen'])) : '-' ?></strong></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-0">
+        <div class="col-lg-4">
+            <section class="card border-0 shadow-sm no-lift h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h6 class="fw-semibold mb-1">Session Aktif</h6>
+                </div>
+                <div class="card-body pt-2">
+                    <div class="it-detail-kv"><span>User aktif</span><strong><?= esc($session['user'] ?? ($device['device_user'] ?? '-')) ?></strong></div>
+                    <div class="it-detail-kv"><span>Idle</span><strong><?= isset($session['idle_sec']) ? gmdate('H:i:s', (int)$session['idle_sec']) : '-' ?></strong></div>
+                    <div class="it-detail-kv"><span>Uptime agent</span><strong><?= isset($session['uptime_sec']) ? gmdate('H:i:s', (int)$session['uptime_sec']) : '-' ?></strong></div>
+                    <div class="it-detail-kv"><span>Jumlah monitor</span><strong><?= esc($session['monitor_count'] ?? '-') ?></strong></div>
+                    <div class="it-detail-kv"><span>Resolusi utama</span><strong><?= esc($session['primary_resolution'] ?? '-') ?></strong></div>
+                    <div class="it-detail-kv"><span>Polling command</span><strong><?= isset($session['command_poll_interval']) ? (int)$session['command_poll_interval'] . ' detik' : '-' ?></strong></div>
+                    <div class="it-detail-kv"><span>Startup agent</span><strong><?= !empty($session['startup_enabled']) ? 'Aktif' : 'Nonaktif' ?></strong></div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-4">
+            <section class="card border-0 shadow-sm no-lift h-100">
+                <div class="card-header bg-transparent border-0 pb-0 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fw-semibold mb-1">Top Process</h6>
+                        <?php if ($diagnosticsAt): ?>
+                            <div class="small text-muted">Snapshot <?= date('d M Y H:i:s', $diagnosticsAt) ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="card-body pt-2">
+                    <?php if (!empty($topProcesses)): ?>
+                        <ul class="list-group list-group-flush it-list">
+                            <?php foreach (array_slice($topProcesses, 0, 8) as $process): ?>
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <div>
+                                            <div class="fw-semibold"><?= esc($process['name'] ?? 'Process') ?></div>
+                                            <div class="small text-muted">PID <?= esc($process['pid'] ?? '-') ?><?= !empty($process['status']) ? ' / ' . esc($process['status']) : '' ?></div>
+                                        </div>
+                                        <div class="text-end small">
+                                            <div>RAM <?= number_format((float)($process['memory_percent'] ?? 0), 1) ?>%</div>
+                                            <div class="text-muted">CPU <?= number_format((float)($process['cpu_percent'] ?? 0), 1) ?>%</div>
+                                        </div>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="alert alert-light border mb-0">Belum ada snapshot process. Klik <strong>Refresh Diagnosa</strong> untuk mengambil data terbaru.</div>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-4">
+            <section class="card border-0 shadow-sm no-lift h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h6 class="fw-semibold mb-1">Service Penting</h6>
+                </div>
+                <div class="card-body pt-2">
+                    <?php if (!empty($serviceList)): ?>
+                        <ul class="list-group list-group-flush it-list">
+                            <?php foreach (array_slice($serviceList, 0, 8) as $service): ?>
+                                <?php $isRunning = strtolower((string)($service['status'] ?? '')) === 'running'; ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-start gap-2">
+                                    <div>
+                                        <div class="fw-semibold"><?= esc($service['display_name'] ?? $service['name'] ?? 'Service') ?></div>
+                                        <div class="small text-muted"><?= esc($service['name'] ?? '-') ?><?= !empty($service['start_type']) ? ' / ' . esc($service['start_type']) : '' ?></div>
+                                    </div>
+                                    <span class="badge text-bg-<?= $isRunning ? 'success' : 'secondary' ?>"><?= esc($service['status'] ?? '-') ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="alert alert-light border mb-0">Belum ada snapshot service. Klik <strong>Refresh Diagnosa</strong> untuk mengambil data terbaru.</div>
+                    <?php endif; ?>
                 </div>
             </section>
         </div>
@@ -348,6 +472,159 @@ if ($assignedMeta === '') {
         </div>
     </div>
 
+    <div class="row g-3 mt-0">
+        <div class="col-lg-4">
+            <section class="card border-0 shadow-sm no-lift h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h6 class="fw-semibold mb-1">Keyboard</h6>
+                </div>
+                <div class="card-body pt-2">
+                    <?php if (!empty($keyboardList)): ?>
+                        <ul class="list-group list-group-flush it-list">
+                            <?php foreach ($keyboardList as $keyboard): ?>
+                                <?php
+                                $keyboardName = trim((string)($keyboard['display_name'] ?? $keyboard['name'] ?? 'Keyboard'));
+                                $keyboardMeta = array_filter([
+                                    trim((string)($keyboard['interface'] ?? '')),
+                                    trim((string)($keyboard['status'] ?? '')),
+                                ]);
+                                ?>
+                                <li class="list-group-item">
+                                    <div class="fw-semibold"><?= esc($keyboardName !== '' ? $keyboardName : 'Keyboard') ?></div>
+                                    <div class="small text-muted"><?= !empty($keyboardMeta) ? esc(implode(' / ', $keyboardMeta)) : '-' ?></div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="alert alert-light border mb-0">Data keyboard belum tersedia.</div>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-4">
+            <section class="card border-0 shadow-sm no-lift h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h6 class="fw-semibold mb-1">Mouse / Pointer</h6>
+                </div>
+                <div class="card-body pt-2">
+                    <?php if (!empty($mouseList)): ?>
+                        <ul class="list-group list-group-flush it-list">
+                            <?php foreach ($mouseList as $mouse): ?>
+                                <?php
+                                $mouseName = trim((string)($mouse['display_name'] ?? $mouse['name'] ?? 'Pointer'));
+                                $mouseMeta = array_filter([
+                                    trim((string)($mouse['interface'] ?? '')),
+                                    trim((string)($mouse['status'] ?? '')),
+                                ]);
+                                ?>
+                                <li class="list-group-item">
+                                    <div class="fw-semibold"><?= esc($mouseName !== '' ? $mouseName : 'Pointer') ?></div>
+                                    <div class="small text-muted"><?= !empty($mouseMeta) ? esc(implode(' / ', $mouseMeta)) : '-' ?></div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="alert alert-light border mb-0">Data mouse atau pointer belum tersedia.</div>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-4">
+            <section class="card border-0 shadow-sm no-lift h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h6 class="fw-semibold mb-1">Monitor</h6>
+                </div>
+                <div class="card-body pt-2">
+                    <?php if (!empty($monitorList)): ?>
+                        <ul class="list-group list-group-flush it-list">
+                            <?php foreach ($monitorList as $monitor): ?>
+                                <?php
+                                $monitorName = trim((string)($monitor['display_name'] ?? $monitor['name'] ?? 'Monitor'));
+                                $monitorMeta = array_filter([
+                                    trim((string)($monitor['resolution'] ?? '')),
+                                    trim((string)($monitor['status'] ?? '')),
+                                ]);
+                                ?>
+                                <li class="list-group-item">
+                                    <div class="fw-semibold"><?= esc($monitorName !== '' ? $monitorName : 'Monitor') ?></div>
+                                    <div class="small text-muted"><?= !empty($monitorMeta) ? esc(implode(' / ', $monitorMeta)) : '-' ?></div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="alert alert-light border mb-0">Data monitor belum tersedia.</div>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-0">
+        <div class="col-lg-6">
+            <section class="card border-0 shadow-sm no-lift h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h6 class="fw-semibold mb-1">Software Terpasang</h6>
+                </div>
+                <div class="card-body pt-2">
+                    <?php if (!empty($softwareList)): ?>
+                        <ul class="list-group list-group-flush it-list">
+                            <?php foreach (array_slice($softwareList, 0, 10) as $software): ?>
+                                <li class="list-group-item">
+                                    <div class="fw-semibold"><?= esc($software['name'] ?? 'Software') ?></div>
+                                    <div class="small text-muted">
+                                        <?= esc($software['version'] ?? '-') ?>
+                                        <?php if (!empty($software['publisher'])): ?>
+                                            / <?= esc($software['publisher']) ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="alert alert-light border mb-0">Belum ada snapshot software. Klik <strong>Refresh Diagnosa</strong> untuk mengambil data terbaru.</div>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-lg-6">
+            <section class="card border-0 shadow-sm no-lift h-100">
+                <div class="card-header bg-transparent border-0 pb-0">
+                    <h6 class="fw-semibold mb-1">Riwayat Command</h6>
+                </div>
+                <div class="card-body pt-2">
+                    <?php if (!empty($commandHistory)): ?>
+                        <ul class="list-group list-group-flush it-list">
+                            <?php foreach ($commandHistory as $commandRow): ?>
+                                <?php
+                                $commandStatus = strtolower((string)($commandRow['status'] ?? 'queued'));
+                                $statusTone = $commandStatus === 'success' ? 'success' : ($commandStatus === 'error' ? 'danger' : ($commandStatus === 'queued' ? 'warning' : 'secondary'));
+                                $requestedAt = !empty($commandRow['requested_at']) ? date('d M Y H:i:s', strtotime($commandRow['requested_at'])) : '-';
+                                ?>
+                                <li class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-start gap-2">
+                                        <div>
+                                            <div class="fw-semibold"><?= esc($remoteActionLabel[$commandRow['command']] ?? strtoupper(str_replace('_', ' ', (string)$commandRow['command']))) ?></div>
+                                            <div class="small text-muted"><?= esc($commandRow['requested_by'] ?? 'System') ?> / <?= esc($requestedAt) ?></div>
+                                            <?php if (!empty($commandRow['result'])): ?>
+                                                <div class="small mt-1"><?= esc($commandRow['result']) ?></div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <span class="badge text-bg-<?= esc($statusTone) ?>"><?= esc($commandStatus) ?></span>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="alert alert-light border mb-0">Riwayat command akan muncul di sini setelah tabel audit aktif dan perintah pertama dikirim.</div>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </div>
+    </div>
+
     <section class="card border-0 shadow-sm no-lift mt-3">
         <div class="card-header bg-transparent border-0 pb-0">
             <h6 class="fw-semibold mb-1">Keterkaitan Asset & Assignment</h6>
@@ -393,3 +670,4 @@ if ($assignedMeta === '') {
 <?= $this->section('scripts') ?>
 <script src="<?= base_url('js/device-remote.js?v=' . filemtime(FCPATH . 'js/device-remote.js')) ?>"></script>
 <?= $this->endSection() ?>
+

@@ -5,17 +5,20 @@ namespace App\Controllers\Api;
 use App\Controllers\BaseController;
 use App\Models\ITDeviceModel;
 use App\Models\AssetModel;
+use App\Models\ItDeviceCommandModel;
 use Config\Database;
 
 class AgentController extends BaseController
 {
     protected $deviceModel;
     protected $assetModel;
+    protected $commandModel;
 
     public function __construct()
     {
         $this->deviceModel = new ITDeviceModel();
         $this->assetModel = new AssetModel();
+        $this->commandModel = new ItDeviceCommandModel();
     }
 
     public function heartbeat()
@@ -70,6 +73,11 @@ class AgentController extends BaseController
 
         $oldExtra = $device ? $this->decodeExtra($device['cpu'] ?? null) : [];
 
+        $incomingDiagnostics = $data['diagnostics'] ?? null;
+        if (!is_array($incomingDiagnostics) || empty($incomingDiagnostics)) {
+            $incomingDiagnostics = $oldExtra['diagnostics'] ?? [];
+        }
+
         $extra = [
             'os_edition'   => $data['os_edition'] ?? $oldExtra['os_edition'] ?? null,
             'os_build'     => $data['os_build'] ?? $oldExtra['os_build'] ?? null,
@@ -92,6 +100,9 @@ class AgentController extends BaseController
             'lan_ip' => $clientIp !== '' ? $clientIp : ($oldExtra['lan_ip'] ?? null),
             'request_ip' => $requestIp,
             'hardware'     => $data['hardware'] ?? $oldExtra['hardware'] ?? [],
+            'session'      => $data['session'] ?? $oldExtra['session'] ?? [],
+            'diagnostics'  => $incomingDiagnostics,
+            'last_command_result' => $data['last_command_result'] ?? $oldExtra['last_command_result'] ?? null,
             'force_update' => $oldExtra['force_update'] ?? false,
             'command'      => $oldExtra['command'] ?? null,
         ];
@@ -122,6 +133,8 @@ class AgentController extends BaseController
 
             $this->deviceModel->update($deviceId, ['asset_id' => $assetId]);
         }
+
+        $this->syncCommandResult($deviceId, $extra['last_command_result'] ?? null);
 
         $command = $this->popQueuedCommand($deviceId);
         $latestDevice = $this->deviceModel->find($deviceId);
@@ -253,7 +266,7 @@ class AgentController extends BaseController
             return $this->response->setJSON(['ok' => false, 'message' => 'ID device tidak valid']);
         }
 
-        $queued = $this->queueCommand($id, 'update', true);
+        $queued = $this->queueCommand($id, 'update', [], true);
 
         return $this->response->setJSON([
             'ok' => $queued,
@@ -358,7 +371,7 @@ class AgentController extends BaseController
         return is_array($decoded) ? $decoded : [];
     }
 
-    private function queueCommand(int $deviceId, string $command, bool $forceUpdate = false): bool
+    private function queueCommand(int $deviceId, string $command, array $args = [], bool $forceUpdate = false): bool
     {
         $device = $this->deviceModel->find($deviceId);
         if (!$device) {
@@ -366,7 +379,13 @@ class AgentController extends BaseController
         }
 
         $extra = $this->decodeExtra($device['cpu'] ?? null);
-        $extra['command'] = $command;
+        $commandId = $this->generateCommandId();
+        $extra['command'] = [
+            'id' => $commandId,
+            'name' => $command,
+            'args' => $args,
+            'queued_at' => date(DATE_ATOM),
+        ];
 
         if ($forceUpdate) {
             $extra['force_update'] = true;
@@ -385,10 +404,12 @@ class AgentController extends BaseController
             'cpu' => json_encode($extra, JSON_UNESCAPED_UNICODE),
         ]);
 
+        $this->recordCommandQueue($deviceId, $commandId, $command, $args);
+
         return true;
     }
 
-    private function popQueuedCommand(int $deviceId): ?string
+    private function popQueuedCommand(int $deviceId)
     {
         $device = $this->deviceModel->find($deviceId);
         if (!$device) {
@@ -396,9 +417,10 @@ class AgentController extends BaseController
         }
 
         $extra = $this->decodeExtra($device['cpu'] ?? null);
-        $command = trim((string) ($extra['command'] ?? ''));
+        $command = $extra['command'] ?? null;
+        $commandName = $this->extractQueuedCommandName($command);
 
-        if ($command === '') {
+        if ($commandName === '') {
             return null;
         }
 
@@ -438,7 +460,7 @@ class AgentController extends BaseController
         $normalInterval = max(60, (int) ($extra['heartbeat_normal_interval'] ?? $this->defaultHeartbeatInterval()));
         $remoteInterval = max(10, (int) ($extra['heartbeat_boost_interval'] ?? $this->remoteHeartbeatInterval()));
         $boostUntil = (int) ($extra['heartbeat_boost_until'] ?? 0);
-        $hasQueuedCommand = trim((string) ($extra['command'] ?? '')) !== '';
+        $hasQueuedCommand = $this->extractQueuedCommandName($extra['command'] ?? null) !== '';
 
         if ($hasQueuedCommand || $boostUntil > time()) {
             return $remoteInterval;
@@ -517,9 +539,99 @@ class AgentController extends BaseController
             'cpu_usage' => $extra['cpu_usage'] ?? null,
             'ram_usage' => $extra['ram_usage'] ?? null,
             'hardware' => is_array($extra['hardware'] ?? null) ? $extra['hardware'] : [],
+            'session' => is_array($extra['session'] ?? null) ? $extra['session'] : [],
+            'diagnostics' => is_array($extra['diagnostics'] ?? null) ? $extra['diagnostics'] : [],
+            'last_command_result' => is_array($extra['last_command_result'] ?? null) ? $extra['last_command_result'] : null,
             'asset' => $assetSummary,
             'assignment' => $assignmentSummary,
         ];
+    }
+
+    private function extractQueuedCommandName($commandPayload): string
+    {
+        if (is_array($commandPayload)) {
+            return strtolower(trim((string) ($commandPayload['name'] ?? $commandPayload['command'] ?? '')));
+        }
+
+        return strtolower(trim((string) $commandPayload));
+    }
+
+    private function generateCommandId(): string
+    {
+        try {
+            return bin2hex(random_bytes(12));
+        } catch (\Throwable $e) {
+            return uniqid('cmd_', true);
+        }
+    }
+
+    private function commandLogTableExists(): bool
+    {
+        static $exists = null;
+
+        if ($exists !== null) {
+            return $exists;
+        }
+
+        $exists = Database::connect()->tableExists('it_device_commands');
+        return $exists;
+    }
+
+    private function recordCommandQueue(int $deviceId, string $commandId, string $command, array $args = []): void
+    {
+        if (!$this->commandLogTableExists()) {
+            return;
+        }
+
+        $this->commandModel->insert([
+            'device_id' => $deviceId,
+            'command_id' => $commandId,
+            'command' => $command,
+            'payload_json' => !empty($args) ? json_encode($args, JSON_UNESCAPED_UNICODE) : null,
+            'status' => 'queued',
+            'requested_by' => 'System/API',
+            'requested_at' => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    private function syncCommandResult(int $deviceId, $commandResult): void
+    {
+        if (!$this->commandLogTableExists() || !is_array($commandResult)) {
+            return;
+        }
+
+        $commandId = trim((string) ($commandResult['id'] ?? ''));
+        if ($commandId === '') {
+            return;
+        }
+
+        $status = strtolower(trim((string) ($commandResult['status'] ?? 'done')));
+        $message = trim((string) ($commandResult['message'] ?? ''));
+        $executedAtRaw = $commandResult['executed_at'] ?? null;
+        $executedAt = null;
+
+        if (is_numeric($executedAtRaw)) {
+            $executedAt = date('Y-m-d H:i:s', (int) $executedAtRaw);
+        } elseif (is_string($executedAtRaw) && trim($executedAtRaw) !== '') {
+            $executedAt = date('Y-m-d H:i:s', strtotime($executedAtRaw));
+        }
+
+        $builder = $this->commandModel
+            ->where('device_id', $deviceId)
+            ->where('command_id', $commandId);
+
+        $existing = $builder->first();
+        if (!$existing) {
+            return;
+        }
+
+        $updatePayload = [
+            'status' => $status !== '' ? $status : 'done',
+            'result' => $message !== '' ? $message : null,
+            'executed_at' => $executedAt,
+        ];
+
+        $this->commandModel->update((int) $existing['id'], $updatePayload);
     }
 
     private function normalizeAgentTrack(?string $value): string

@@ -4,15 +4,18 @@ namespace App\Controllers;
 
 use App\Models\ITDeviceModel;
 use App\Models\AssetModel;
+use App\Models\ItDeviceCommandModel;
 use Config\Database;
 
 class ITDeviceController extends BaseController
 {
   protected $deviceModel;
+  protected $commandModel;
 
   public function __construct()
   {
     $this->deviceModel = new ITDeviceModel();
+    $this->commandModel = new ItDeviceCommandModel();
   }
 
   public function index()
@@ -138,6 +141,7 @@ class ITDeviceController extends BaseController
     $extra = json_decode($device['cpu'] ?? '{}', true) ?: [];
     $hw = $extra['hardware'] ?? [];
     $insights = $this->buildInsights($device, $extra);
+    $commandHistory = $this->recentCommandHistory((int) $device['id']);
 
     return view('it/devices/detail', [
       'device'     => $device,
@@ -146,48 +150,46 @@ class ITDeviceController extends BaseController
       'hw'         => $hw,
       'extra'      => $extra,
       'insights'   => $insights,
+      'commandHistory' => $commandHistory,
     ]);
   }
 
   public function sendCommand()
   {
-    $id = $this->request->getPost('id');
-    $cmd = $this->request->getPost('cmd');
+    $id = (int) $this->request->getPost('id');
+    $cmd = strtolower(trim((string) $this->request->getPost('cmd')));
+
+    if ($id <= 0 || $cmd === '') {
+      return $this->response->setJSON(['ok' => false, 'message' => 'Perintah tidak valid']);
+    }
 
     $device = $this->deviceModel->find($id);
-    if (!$device) return $this->response->setJSON(['ok' => false]);
+    if (!$device) {
+      return $this->response->setJSON(['ok' => false, 'message' => 'Device tidak ditemukan']);
+    }
 
-    $extra = json_decode($device['cpu'] ?? '{}', true);
-    $extra['command'] = $cmd;
+    $queued = $this->queueRemoteCommand($device, $cmd);
 
-    $this->deviceModel->update($id, [
-      'cpu' => json_encode($extra)
-    ]);
-
-    return $this->response->setJSON(['ok' => true]);
+    return $this->response->setJSON($queued);
   }
 
   public function remoteAction()
   {
     $id = (int)$this->request->getPost('id');
     $action = strtolower(trim((string)$this->request->getPost('action')));
-    $now = time();
-    $normalInterval = max(60, (int) env('agent.defaultHeartbeatInterval', 600));
-    $remoteInterval = max(10, (int) env('agent.remoteHeartbeatInterval', 10));
-    $boostSeconds = max(60, (int) env('agent.remoteBoostSeconds', 180));
-    $lockSeconds = max(10, (int) env('agent.remoteLockSeconds', 25));
-
-    $allowed = ['restart', 'shutdown', 'update', 'sync', 'restart_agent', 'lock'];
-    $actionLabelMap = [
+    $allowed = [
       'restart' => 'Restart OS',
       'shutdown' => 'Shutdown OS',
       'update' => 'Push Update',
       'sync' => 'Sync Sekarang',
       'restart_agent' => 'Restart Agent',
       'lock' => 'Lock Screen',
+      'logoff' => 'Log Off User',
+      'popup_message' => 'Kirim Pesan',
+      'collect_diagnostics' => 'Refresh Diagnosa',
     ];
 
-    if ($id <= 0 || !in_array($action, $allowed, true)) {
+    if ($id <= 0 || !array_key_exists($action, $allowed)) {
       return $this->response->setJSON([
         'ok' => false,
         'message' => 'Aksi tidak valid'
@@ -202,51 +204,24 @@ class ITDeviceController extends BaseController
       ]);
     }
 
-    $extra = json_decode($device['cpu'] ?? '{}', true) ?: [];
-    $lockUntil = (int)($extra['remote_lock_until'] ?? 0);
-    $queuedCommand = trim((string)($extra['command'] ?? ''));
-
-    if ($queuedCommand !== '') {
+    $args = $this->buildRemoteCommandArgs($action);
+    if (isset($args['__error'])) {
       return $this->response->setJSON([
         'ok' => false,
-        'message' => 'Masih ada perintah remote yang belum diproses agent. Coba lagi setelah sinkronisasi berikutnya.',
+        'message' => $args['__error'],
       ]);
     }
 
-    if ($lockUntil > $now) {
-      $retryAfter = $lockUntil - $now;
-
-      return $this->response->setJSON([
-        'ok' => false,
-        'message' => "Aksi remote dikunci sementara. Coba lagi dalam {$retryAfter} detik.",
-        'retry_after' => $retryAfter,
-        'lock_until' => $lockUntil,
-      ]);
-    }
-
-    $extra['command'] = $action;
-    $extra['heartbeat_boost_until'] = $now + $boostSeconds;
-    $extra['heartbeat_boost_interval'] = $remoteInterval;
-    $extra['heartbeat_normal_interval'] = $normalInterval;
-    $extra['heartbeat_interval'] = $remoteInterval;
-    $extra['remote_lock_until'] = $now + $lockSeconds;
-    $extra['remote_lock_action'] = $action;
-    $extra['last_remote_request_at'] = $now;
-
-    if ($action === 'update') {
-      $extra['force_update'] = true;
-    }
-
-    $this->deviceModel->update($id, [
-      'cpu' => json_encode($extra)
+    $queued = $this->queueRemoteCommand($device, $action, $args, [
+      'force_update' => $action === 'update',
+      'action_label' => $allowed[$action],
     ]);
 
-    return $this->response->setJSON([
-      'ok' => true,
-      'message' => "Perintah " . ($actionLabelMap[$action] ?? strtoupper($action)) . " berhasil diantrikan. Lock aktif {$lockSeconds} detik.",
-      'lock_until' => $extra['remote_lock_until'],
-      'heartbeat_interval' => $remoteInterval,
-    ]);
+    if (!$queued['ok']) {
+      return $this->response->setJSON($queued);
+    }
+
+    return $this->response->setJSON($queued);
   }
 
   private function buildInsights(array $device, array $extra): array
@@ -310,6 +285,16 @@ class ITDeviceController extends BaseController
       ];
     }
 
+    $lastCommandResult = is_array($extra['last_command_result'] ?? null) ? $extra['last_command_result'] : [];
+    if (!empty($lastCommandResult['name'])) {
+      $resultStatus = strtolower((string)($lastCommandResult['status'] ?? ''));
+      $insights[] = [
+        'tone' => $resultStatus === 'success' ? 'success' : ($resultStatus === 'error' ? 'danger' : 'info'),
+        'title' => 'Hasil aksi terakhir: ' . strtoupper(str_replace('_', ' ', (string)($lastCommandResult['name'] ?? 'remote'))),
+        'body' => trim((string)($lastCommandResult['message'] ?? 'Perintah sudah dieksekusi agent.')),
+      ];
+    }
+
     if (empty($insights)) {
       $insights[] = [
         'tone' => 'success',
@@ -319,5 +304,182 @@ class ITDeviceController extends BaseController
     }
 
     return $insights;
+  }
+
+  private function buildRemoteCommandArgs(string $action): array
+  {
+    if ($action === 'popup_message') {
+      $message = trim((string) $this->request->getPost('message'));
+      $title = trim((string) $this->request->getPost('title'));
+      $timeout = (int) $this->request->getPost('timeout');
+
+      if ($message === '') {
+        return ['__error' => 'Isi pesan tidak boleh kosong'];
+      }
+
+      return [
+        'title' => $title !== '' ? $title : 'Pesan dari Tim IT',
+        'message' => $message,
+        'timeout' => max(15, min(300, $timeout > 0 ? $timeout : 90)),
+      ];
+    }
+
+    if ($action === 'collect_diagnostics') {
+      $sectionsRaw = $this->request->getPost('sections');
+      $sections = [];
+
+      if (is_array($sectionsRaw)) {
+        $sections = $sectionsRaw;
+      } elseif (is_string($sectionsRaw) && trim($sectionsRaw) !== '') {
+        $decoded = json_decode($sectionsRaw, true);
+        if (is_array($decoded)) {
+          $sections = $decoded;
+        } else {
+          $sections = preg_split('/[\s,]+/', $sectionsRaw) ?: [];
+        }
+      }
+
+      $allowedSections = ['session', 'processes', 'services', 'software'];
+      $sections = array_values(array_intersect($allowedSections, array_map(static fn($item) => strtolower(trim((string) $item)), $sections)));
+      if (empty($sections)) {
+        $sections = $allowedSections;
+      }
+
+      return [
+        'sections' => $sections,
+        'process_limit' => 15,
+        'service_limit' => 18,
+        'software_limit' => 30,
+      ];
+    }
+
+    return [];
+  }
+
+  private function queueRemoteCommand(array $device, string $action, array $args = [], array $options = []): array
+  {
+    $now = time();
+    $extra = json_decode($device['cpu'] ?? '{}', true) ?: [];
+    $lockUntil = (int)($extra['remote_lock_until'] ?? 0);
+    $queuedCommand = $this->queuedCommandName($extra['command'] ?? null);
+
+    if ($queuedCommand !== '') {
+      return [
+        'ok' => false,
+        'message' => 'Masih ada perintah remote yang belum diproses agent. Coba lagi setelah sinkronisasi berikutnya.',
+      ];
+    }
+
+    if ($lockUntil > $now) {
+      $retryAfter = $lockUntil - $now;
+
+      return [
+        'ok' => false,
+        'message' => "Aksi remote dikunci sementara. Coba lagi dalam {$retryAfter} detik.",
+        'retry_after' => $retryAfter,
+        'lock_until' => $lockUntil,
+      ];
+    }
+
+    $commandId = $this->generateCommandId();
+    $actionLabel = trim((string)($options['action_label'] ?? strtoupper($action)));
+    $forceUpdate = (bool)($options['force_update'] ?? false);
+    $normalInterval = max(60, (int) env('agent.defaultHeartbeatInterval', 600));
+    $remoteInterval = max(10, (int) env('agent.remoteHeartbeatInterval', 10));
+    $boostSeconds = max(60, (int) env('agent.remoteBoostSeconds', 180));
+    $lockSeconds = max(10, (int) env('agent.remoteLockSeconds', 25));
+
+    $extra['command'] = [
+      'id' => $commandId,
+      'name' => $action,
+      'args' => $args,
+      'queued_at' => date(DATE_ATOM, $now),
+    ];
+    $extra['heartbeat_boost_until'] = $now + $boostSeconds;
+    $extra['heartbeat_boost_interval'] = $remoteInterval;
+    $extra['heartbeat_normal_interval'] = $normalInterval;
+    $extra['heartbeat_interval'] = $remoteInterval;
+    $extra['remote_lock_until'] = $now + $lockSeconds;
+    $extra['remote_lock_action'] = $action;
+    $extra['last_remote_request_at'] = $now;
+
+    if ($forceUpdate) {
+      $extra['force_update'] = true;
+    }
+
+    $this->deviceModel->update((int) $device['id'], [
+      'cpu' => json_encode($extra, JSON_UNESCAPED_UNICODE),
+    ]);
+
+    $this->recordCommandQueue((int) $device['id'], $commandId, $action, $args);
+
+    return [
+      'ok' => true,
+      'message' => "Perintah {$actionLabel} berhasil diantrikan. Lock aktif {$lockSeconds} detik.",
+      'lock_until' => $extra['remote_lock_until'],
+      'heartbeat_interval' => $remoteInterval,
+      'command_id' => $commandId,
+    ];
+  }
+
+  private function queuedCommandName($commandPayload): string
+  {
+    if (is_array($commandPayload)) {
+      return strtolower(trim((string)($commandPayload['name'] ?? $commandPayload['command'] ?? '')));
+    }
+
+    return strtolower(trim((string)$commandPayload));
+  }
+
+  private function generateCommandId(): string
+  {
+    try {
+      return bin2hex(random_bytes(12));
+    } catch (\Throwable $e) {
+      return uniqid('cmd_', true);
+    }
+  }
+
+  private function recordCommandQueue(int $deviceId, string $commandId, string $command, array $args = []): void
+  {
+    if (!$this->commandLogTableExists()) {
+      return;
+    }
+
+    $requestedBy = trim((string)(session('name') ?? session('username') ?? 'System'));
+
+    $this->commandModel->insert([
+      'device_id' => $deviceId,
+      'command_id' => $commandId,
+      'command' => $command,
+      'payload_json' => !empty($args) ? json_encode($args, JSON_UNESCAPED_UNICODE) : null,
+      'status' => 'queued',
+      'requested_by' => $requestedBy !== '' ? $requestedBy : 'System',
+      'requested_at' => date('Y-m-d H:i:s'),
+    ]);
+  }
+
+  private function recentCommandHistory(int $deviceId): array
+  {
+    if (!$this->commandLogTableExists()) {
+      return [];
+    }
+
+    return $this->commandModel
+      ->where('device_id', $deviceId)
+      ->orderBy('id', 'DESC')
+      ->findAll(12);
+  }
+
+  private function commandLogTableExists(): bool
+  {
+    static $exists = null;
+
+    if ($exists !== null) {
+      return $exists;
+    }
+
+    $exists = Database::connect()->tableExists('it_device_commands');
+    return $exists;
   }
 }
