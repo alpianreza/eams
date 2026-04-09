@@ -2,13 +2,13 @@
 
 namespace App\Controllers\Api;
 
-use App\Controllers\BaseController;
 use App\Models\ITDeviceModel;
 use App\Models\AssetModel;
 use App\Models\ItDeviceCommandModel;
+use CodeIgniter\Controller;
 use Config\Database;
 
-class AgentController extends BaseController
+class AgentController extends Controller
 {
     protected $deviceModel;
     protected $assetModel;
@@ -78,6 +78,11 @@ class AgentController extends BaseController
             $incomingDiagnostics = $oldExtra['diagnostics'] ?? [];
         }
 
+        $incomingHardware = $this->normalizeHardwarePayload($data['hardware'] ?? null);
+        if (empty($incomingHardware)) {
+            $incomingHardware = $oldExtra['hardware'] ?? [];
+        }
+
         $extra = [
             'os_edition'   => $data['os_edition'] ?? $oldExtra['os_edition'] ?? null,
             'os_build'     => $data['os_build'] ?? $oldExtra['os_build'] ?? null,
@@ -99,7 +104,7 @@ class AgentController extends BaseController
             'update_channel' => $data['update_channel'] ?? $oldExtra['update_channel'] ?? 'auto',
             'lan_ip' => $clientIp !== '' ? $clientIp : ($oldExtra['lan_ip'] ?? null),
             'request_ip' => $requestIp,
-            'hardware'     => $data['hardware'] ?? $oldExtra['hardware'] ?? [],
+            'hardware'     => $incomingHardware,
             'session'      => $data['session'] ?? $oldExtra['session'] ?? [],
             'diagnostics'  => $incomingDiagnostics,
             'last_command_result' => $data['last_command_result'] ?? $oldExtra['last_command_result'] ?? null,
@@ -111,6 +116,8 @@ class AgentController extends BaseController
         $extra['heartbeat_interval'] = $resolvedHeartbeatInterval;
 
         $payload['cpu'] = json_encode($extra, JSON_UNESCAPED_UNICODE);
+
+        $previousVersion = $device['agent_version'] ?? null;
 
         if ($device) {
             $this->deviceModel->update($device['id'], $payload);
@@ -135,6 +142,7 @@ class AgentController extends BaseController
         }
 
         $this->syncCommandResult($deviceId, $extra['last_command_result'] ?? null);
+        $this->syncUpdateStatusFromVersion($deviceId, $previousVersion, $payload['agent_version'] ?? null);
 
         $command = $this->popQueuedCommand($deviceId);
         $latestDevice = $this->deviceModel->find($deviceId);
@@ -151,6 +159,33 @@ class AgentController extends BaseController
             'remote_lock_until' => (int) ($latestExtra['remote_lock_until'] ?? 0),
             'server_time' => date(DATE_ATOM),
         ]);
+    }
+
+    private function normalizeHardwarePayload($hardware): array
+    {
+        if (!is_array($hardware) || empty($hardware)) {
+            return [];
+        }
+
+        $ramSlots = isset($hardware['ram_slots']) && is_array($hardware['ram_slots']) ? array_values($hardware['ram_slots']) : [];
+        $disks = isset($hardware['disks']) && is_array($hardware['disks']) ? array_values($hardware['disks']) : [];
+        $peripherals = isset($hardware['peripherals']) && is_array($hardware['peripherals']) ? $hardware['peripherals'] : [];
+
+        $normalizedPeripherals = [
+            'keyboards' => isset($peripherals['keyboards']) && is_array($peripherals['keyboards']) ? array_values($peripherals['keyboards']) : [],
+            'mice' => isset($peripherals['mice']) && is_array($peripherals['mice']) ? array_values($peripherals['mice']) : [],
+            'monitors' => isset($peripherals['monitors']) && is_array($peripherals['monitors']) ? array_values($peripherals['monitors']) : [],
+        ];
+
+        if (empty($ramSlots) && empty($disks) && empty($normalizedPeripherals['keyboards']) && empty($normalizedPeripherals['mice']) && empty($normalizedPeripherals['monitors'])) {
+            return [];
+        }
+
+        return [
+            'ram_slots' => $ramSlots,
+            'disks' => $disks,
+            'peripherals' => $normalizedPeripherals,
+        ];
     }
 
     public function command()
@@ -183,6 +218,7 @@ class AgentController extends BaseController
         }
 
         $deviceId = (int) $device['id'];
+        $this->syncRuntimeFromCommandPoll($deviceId, $device, $data);
         $command = $this->popQueuedCommand($deviceId);
         $latestDevice = $this->deviceModel->find($deviceId);
         $latestExtra = $this->decodeExtra($latestDevice['cpu'] ?? null);
@@ -228,7 +264,8 @@ class AgentController extends BaseController
 
         $extra = $this->decodeExtra($device['cpu'] ?? null);
         $track = $this->resolveAgentTrack($data, $device, $extra);
-        $latest = $this->resolveLatestAgentPackage($track);
+        $latest = $this->resolveLatestAgentRelease($track);
+        $download = $this->resolvePreferredAgentDownload($latest);
 
         if (($extra['force_update'] ?? false) === true) {
             $extra['force_update'] = false;
@@ -238,21 +275,27 @@ class AgentController extends BaseController
             ]);
 
             return $this->response->setJSON([
-                'update' => !empty($latest['filename']),
-                'url' => !empty($latest['filename']) ? $this->buildAgentDownloadUrl($latest['filename']) : null,
+                'update' => !empty($download['filename']),
+                'url' => !empty($download['filename']) ? $this->buildAgentDownloadUrl($download['filename']) : null,
                 'version' => $latest['version'] ?? null,
                 'channel' => $track,
+                'package_type' => $download['type'],
+                'package_url' => !empty($latest['package_filename']) ? $this->buildAgentDownloadUrl($latest['package_filename']) : null,
+                'installer_url' => !empty($latest['installer_filename']) ? $this->buildAgentDownloadUrl($latest['installer_filename']) : null,
             ]);
         }
 
-        $currentVersion = trim((string) ($device['agent_version'] ?? $data['agent_version'] ?? '0.0.0'));
+        $currentVersion = trim((string) ($data['agent_version'] ?? $device['agent_version'] ?? '0.0.0'));
 
-        if (!empty($latest['filename']) && ($currentVersion === '' || version_compare($currentVersion, (string) $latest['version'], '<'))) {
+        if (!empty($download['filename']) && ($currentVersion === '' || version_compare($currentVersion, (string) $latest['version'], '<'))) {
             return $this->response->setJSON([
                 'update' => true,
-                'url' => $this->buildAgentDownloadUrl($latest['filename']),
+                'url' => $this->buildAgentDownloadUrl($download['filename']),
                 'version' => $latest['version'],
                 'channel' => $track,
+                'package_type' => $download['type'],
+                'package_url' => !empty($latest['package_filename']) ? $this->buildAgentDownloadUrl($latest['package_filename']) : null,
+                'installer_url' => !empty($latest['installer_filename']) ? $this->buildAgentDownloadUrl($latest['installer_filename']) : null,
             ]);
         }
 
@@ -266,7 +309,25 @@ class AgentController extends BaseController
             return $this->response->setJSON(['ok' => false, 'message' => 'ID device tidak valid']);
         }
 
-        $queued = $this->queueCommand($id, 'update', [], true);
+        $device = $this->deviceModel->find($id);
+        $args = [];
+
+        if ($device) {
+            $extra = $this->decodeExtra($device['cpu'] ?? null);
+            $track = $this->resolveAgentTrack([], $device, $extra);
+            $latest = $this->resolveLatestAgentRelease($track);
+            $download = $this->resolvePreferredAgentDownload($latest);
+
+            if (!empty($download['filename'])) {
+                $args['url'] = $this->buildAgentDownloadUrl($download['filename']);
+            }
+
+            if (!empty($latest['version'])) {
+                $args['version'] = $latest['version'];
+            }
+        }
+
+        $queued = $this->queueCommand($id, 'update', $args, true);
 
         return $this->response->setJSON([
             'ok' => $queued,
@@ -387,6 +448,14 @@ class AgentController extends BaseController
             'queued_at' => date(DATE_ATOM),
         ];
 
+        if (!empty($args['url'])) {
+            $extra['command']['url'] = $args['url'];
+        }
+
+        if (!empty($args['version'])) {
+            $extra['command']['version'] = $args['version'];
+        }
+
         if ($forceUpdate) {
             $extra['force_update'] = true;
         }
@@ -419,6 +488,7 @@ class AgentController extends BaseController
         $extra = $this->decodeExtra($device['cpu'] ?? null);
         $command = $extra['command'] ?? null;
         $commandName = $this->extractQueuedCommandName($command);
+        $commandId = is_array($command) ? trim((string) ($command['id'] ?? '')) : '';
 
         if ($commandName === '') {
             return null;
@@ -431,6 +501,10 @@ class AgentController extends BaseController
         $this->deviceModel->update($deviceId, [
             'cpu' => json_encode($extra, JSON_UNESCAPED_UNICODE),
         ]);
+
+        if ($commandId !== '') {
+            $this->markCommandDispatched($deviceId, $commandId);
+        }
 
         return $command;
     }
@@ -594,6 +668,31 @@ class AgentController extends BaseController
         ]);
     }
 
+    private function markCommandDispatched(int $deviceId, string $commandId): void
+    {
+        if (!$this->commandLogTableExists()) {
+            return;
+        }
+
+        $existing = $this->commandModel
+            ->where('device_id', $deviceId)
+            ->where('command_id', $commandId)
+            ->first();
+
+        if (!$existing) {
+            return;
+        }
+
+        $currentStatus = strtolower(trim((string) ($existing['status'] ?? 'queued')));
+        if (in_array($currentStatus, ['success', 'error'], true)) {
+            return;
+        }
+
+        $this->commandModel->update((int) $existing['id'], [
+            'status' => 'dispatched',
+        ]);
+    }
+
     private function syncCommandResult(int $deviceId, $commandResult): void
     {
         if (!$this->commandLogTableExists() || !is_array($commandResult)) {
@@ -625,6 +724,29 @@ class AgentController extends BaseController
             return;
         }
 
+        $commandName = strtolower(trim((string) ($existing['command'] ?? '')));
+
+        if (in_array($commandName, ['update', 'push_update', 'agent_update'], true) && $status === 'success') {
+            $targetVersion = null;
+            $payloadJson = trim((string) ($existing['payload_json'] ?? ''));
+
+            if ($payloadJson !== '') {
+                $decodedPayload = json_decode($payloadJson, true);
+                if (is_array($decodedPayload) && !empty($decodedPayload['version'])) {
+                    $targetVersion = trim((string) $decodedPayload['version']);
+                }
+            }
+
+            $currentDevice = $this->deviceModel->find($deviceId);
+            $currentVersion = trim((string) ($currentDevice['agent_version'] ?? ''));
+
+            if ($targetVersion !== null && $targetVersion !== '' && ($currentVersion === '' || version_compare($currentVersion, $targetVersion, '<'))) {
+                $status = 'dispatched';
+                $message = 'Pembaruan agent sedang diproses.';
+                $executedAt = null;
+            }
+        }
+
         $updatePayload = [
             'status' => $status !== '' ? $status : 'done',
             'result' => $message !== '' ? $message : null,
@@ -632,6 +754,97 @@ class AgentController extends BaseController
         ];
 
         $this->commandModel->update((int) $existing['id'], $updatePayload);
+    }
+
+    private function syncRuntimeFromCommandPoll(int $deviceId, array $device, array $data): void
+    {
+        $extra = $this->decodeExtra($device['cpu'] ?? null);
+        $changed = false;
+        $devicePayload = [];
+
+        if (!empty($data['agent_version'])) {
+            $incomingVersion = trim((string) $data['agent_version']);
+            if ($incomingVersion !== '' && $incomingVersion !== (string) ($device['agent_version'] ?? '')) {
+                $devicePayload['agent_version'] = $incomingVersion;
+                $this->syncUpdateStatusFromVersion($deviceId, $device['agent_version'] ?? null, $incomingVersion);
+            }
+        }
+
+        if (!empty($data['session']) && is_array($data['session'])) {
+            $extra['session'] = $data['session'];
+            $changed = true;
+        }
+
+        if (!empty($data['diagnostics']) && is_array($data['diagnostics'])) {
+            $extra['diagnostics'] = $data['diagnostics'];
+            $changed = true;
+        }
+
+        if (!empty($data['last_command_result']) && is_array($data['last_command_result'])) {
+            $extra['last_command_result'] = $data['last_command_result'];
+            $changed = true;
+            $this->syncCommandResult($deviceId, $data['last_command_result']);
+        }
+
+        if ($changed) {
+            $devicePayload['cpu'] = json_encode($extra, JSON_UNESCAPED_UNICODE);
+        }
+
+        if (!empty($devicePayload)) {
+            $devicePayload['last_seen'] = date('Y-m-d H:i:s');
+            $devicePayload['status'] = 'online';
+            $this->deviceModel->update($deviceId, $devicePayload);
+        }
+    }
+
+    private function syncUpdateStatusFromVersion(int $deviceId, ?string $previousVersion, ?string $incomingVersion): void
+    {
+        if (!$this->commandLogTableExists()) {
+            return;
+        }
+
+        $previous = trim((string) $previousVersion);
+        $incoming = trim((string) $incomingVersion);
+
+        if ($incoming === '') {
+            return;
+        }
+
+        if ($previous !== '' && version_compare($incoming, $previous, '<=')) {
+            return;
+        }
+
+        $pendingUpdate = $this->commandModel
+            ->where('device_id', $deviceId)
+            ->whereIn('command', ['update', 'push_update', 'agent_update'])
+            ->whereIn('status', ['queued', 'dispatched'])
+            ->orderBy('requested_at', 'DESC')
+            ->first();
+
+        if (!$pendingUpdate) {
+            return;
+        }
+
+        $targetVersion = null;
+        $payloadJson = trim((string) ($pendingUpdate['payload_json'] ?? ''));
+        if ($payloadJson !== '') {
+            $decodedPayload = json_decode($payloadJson, true);
+            if (is_array($decodedPayload) && !empty($decodedPayload['version'])) {
+                $targetVersion = trim((string) $decodedPayload['version']);
+            }
+        }
+
+        if ($targetVersion !== null && $targetVersion !== '' && version_compare($incoming, $targetVersion, '<')) {
+            return;
+        }
+
+        $message = sprintf('Versi agent terdeteksi berubah ke %s.', $incoming);
+
+        $this->commandModel->update((int) $pendingUpdate['id'], [
+            'status' => 'success',
+            'result' => $message,
+            'executed_at' => date('Y-m-d H:i:s'),
+        ]);
     }
 
     private function normalizeAgentTrack(?string $value): string
@@ -747,6 +960,27 @@ class AgentController extends BaseController
         ];
     }
 
+    private function resolveAgentInstallerPatterns(string $track): array
+    {
+        $normalized = $this->normalizeAgentTrack($track);
+
+        if ($normalized === 'win7') {
+            return [
+                '/^(?:EAMSAgentSetup|YHSClientSetup)-win7-(?<version>[0-9]+(?:\.[0-9]+){1,3})\.exe$/i',
+            ];
+        }
+
+        if ($normalized === 'xp') {
+            return [
+                '/^(?:EAMSAgentSetup|YHSClientSetup)-xp-(?<version>[0-9]+(?:\.[0-9]+){1,3})\.exe$/i',
+            ];
+        }
+
+        return [
+            '/^(?:EAMSAgentSetup|YHSClientSetup)-(?<version>[0-9]+(?:\.[0-9]+){1,3})\.exe$/i',
+        ];
+    }
+
     private function defaultAgentArtifactFilename(string $track, string $version): string
     {
         $normalized = $this->normalizeAgentTrack($track);
@@ -762,19 +996,36 @@ class AgentController extends BaseController
         return 'EAMSAgent-' . $version . '.exe';
     }
 
-    private function resolveLatestAgentPackage(string $track): array
+    private function defaultAgentInstallerFilename(string $track, string $version): string
+    {
+        $normalized = $this->normalizeAgentTrack($track);
+
+        if ($normalized === 'win7') {
+            return 'EAMSAgentSetup-win7-' . $version . '.exe';
+        }
+
+        if ($normalized === 'xp') {
+            return 'EAMSAgentSetup-xp-' . $version . '.exe';
+        }
+
+        return 'EAMSAgentSetup-' . $version . '.exe';
+    }
+
+    private function resolveLatestAgentRelease(string $track): array
     {
         $directory = $this->resolveAgentDownloadDirectory();
-        $patterns = $this->resolveAgentArtifactPatterns($track);
+        $packagePatterns = $this->resolveAgentArtifactPatterns($track);
+        $installerPatterns = $this->resolveAgentInstallerPatterns($track);
         $latest = [
             'track' => $this->normalizeAgentTrack($track),
             'version' => trim((string) env('agent.latestVersion', '')),
-            'filename' => null,
+            'package_filename' => null,
+            'installer_filename' => null,
         ];
 
         foreach (glob(rtrim((string) $directory, '\\/') . DIRECTORY_SEPARATOR . '*.exe') ?: [] as $file) {
             $name = basename($file);
-            foreach ($patterns as $pattern) {
+            foreach ($packagePatterns as $pattern) {
                 if (!preg_match($pattern, $name, $match)) {
                     continue;
                 }
@@ -784,23 +1035,72 @@ class AgentController extends BaseController
                     continue;
                 }
 
-                if ($latest['filename'] === null || version_compare((string) $version, (string) $latest['version'], '>')) {
+                if ($latest['package_filename'] === null || version_compare((string) $version, (string) $latest['version'], '>')) {
                     $latest['version'] = (string) $version;
-                    $latest['filename'] = $name;
+                    $latest['package_filename'] = $name;
+                }
+            }
+
+            foreach ($installerPatterns as $pattern) {
+                if (!preg_match($pattern, $name, $match)) {
+                    continue;
+                }
+
+                $version = $match['version'] ?? null;
+                if ($version === null) {
+                    continue;
+                }
+
+                if ($latest['installer_filename'] === null || version_compare((string) $version, (string) $latest['version'], '>=')) {
+                    if ($latest['version'] === '' || version_compare((string) $version, (string) $latest['version'], '>=')) {
+                        $latest['version'] = (string) $version;
+                    }
+                    $latest['installer_filename'] = $name;
                 }
             }
         }
 
-        if ($latest['filename'] === null && $latest['version'] !== '') {
-            $latest['filename'] = $this->defaultAgentArtifactFilename($latest['track'], $latest['version']);
+        if ($latest['package_filename'] === null && $latest['version'] !== '') {
+            $latest['package_filename'] = $this->defaultAgentArtifactFilename($latest['track'], $latest['version']);
         }
 
         return $latest;
     }
 
+    private function resolvePreferredAgentDownload(array $release): array
+    {
+        $installerFilename = trim((string) ($release['installer_filename'] ?? ''));
+        if ($installerFilename !== '') {
+            return [
+                'filename' => $installerFilename,
+                'type' => 'installer',
+            ];
+        }
+
+        return [
+            'filename' => trim((string) ($release['package_filename'] ?? '')),
+            'type' => 'portable',
+        ];
+    }
+
+    private function currentRequestBaseUrl(): string
+    {
+        $host = trim((string) ($this->request->getServer('HTTP_HOST') ?? ''));
+        if ($host === '') {
+            return rtrim(base_url('/'), '/');
+        }
+
+        $forwardedProto = trim((string) ($this->request->getHeaderLine('X-Forwarded-Proto') ?: ''));
+        $scheme = $forwardedProto !== ''
+            ? explode(',', $forwardedProto)[0]
+            : ($this->request->isSecure() ? 'https' : 'http');
+
+        return rtrim($scheme . '://' . $host, '/');
+    }
+
     private function buildAgentDownloadUrl(string $filename): string
     {
-        return base_url($this->resolveAgentDownloadBasePath() . '/' . rawurlencode($filename));
+        return $this->currentRequestBaseUrl() . '/' . trim($this->resolveAgentDownloadBasePath(), '/') . '/' . rawurlencode($filename);
     }
 
     private function generateInventoryNo()

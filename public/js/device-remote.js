@@ -10,11 +10,10 @@
     lock: "Lock Screen",
     logoff: "Log Off User",
     popup_message: "Kirim Pesan",
-    collect_diagnostics: "Refresh Diagnosa",
   };
 
   const dangerActions = new Set(["shutdown", "restart", "logoff"]);
-  const remoteSelector = ".remote-btn, .remote-message-btn, .diagnostic-refresh-btn";
+  const remoteSelector = ".remote-btn, .remote-message-btn";
   let lockTimer = null;
 
   function notify(message, type = "info") {
@@ -112,6 +111,24 @@
     return Number($button.data("lock-until") || 0);
   }
 
+  function syncLockState() {
+    const latestLockUntil = Math.max(
+      0,
+      ...allRemoteButtons()
+        .map(function () {
+          return Number($(this).data("lock-until") || 0);
+        })
+        .get()
+    );
+
+    if (latestLockUntil > 0) {
+      applyRemoteLock(latestLockUntil, { silent: true });
+      return;
+    }
+
+    applyRemoteLock(0, { silent: true });
+  }
+
   function ensureUnlocked($button) {
     const lockUntil = currentLockUntil($button);
     const now = Math.floor(Date.now() / 1000);
@@ -143,6 +160,14 @@
           if (res.lock_until) {
             applyRemoteLock(res.lock_until, { silent: true });
           }
+          window.dispatchEvent(
+            new CustomEvent("device-remote:updated", {
+              detail: {
+                action,
+                response: res,
+              },
+            })
+          );
           return;
         }
 
@@ -239,51 +264,6 @@
     });
   }
 
-  function promptDiagnosticsRefresh($button) {
-    const defaultSections = {
-      session: true,
-      processes: true,
-      services: true,
-      software: true,
-    };
-
-    if (!window.Swal) {
-      submitRemoteAction($button, "collect_diagnostics", {
-        sections: Object.keys(defaultSections),
-      });
-      return;
-    }
-
-    Swal.fire({
-      title: "Refresh Diagnosa Device",
-      html: `
-        <div class="text-start">
-          <label class="d-flex align-items-center gap-2 mb-2"><input type="checkbox" class="diag-section" value="session" checked> Session aktif</label>
-          <label class="d-flex align-items-center gap-2 mb-2"><input type="checkbox" class="diag-section" value="processes" checked> Top process</label>
-          <label class="d-flex align-items-center gap-2 mb-2"><input type="checkbox" class="diag-section" value="services" checked> Service penting</label>
-          <label class="d-flex align-items-center gap-2"><input type="checkbox" class="diag-section" value="software" checked> Software terpasang</label>
-        </div>
-      `,
-      showCancelButton: true,
-      confirmButtonText: "Ambil Snapshot",
-      cancelButtonText: "Batal",
-      preConfirm: () => {
-        const sections = Array.from(document.querySelectorAll(".diag-section:checked")).map((item) => item.value);
-        if (!sections.length) {
-          Swal.showValidationMessage("Pilih minimal satu data diagnosa.");
-          return false;
-        }
-        return { sections };
-      },
-    }).then((result) => {
-      if (!result.isConfirmed || !result.value) {
-        return;
-      }
-
-      submitRemoteAction($button, "collect_diagnostics", result.value);
-    });
-  }
-
   $(document).on("click", ".remote-btn", function () {
     const $button = $(this);
     const action = String($button.data("action") || "").trim().toLowerCase();
@@ -305,16 +285,6 @@
     promptRemoteMessage($button);
   });
 
-  $(document).on("click", ".diagnostic-refresh-btn", function () {
-    const $button = $(this);
-
-    if (!ensureUnlocked($button)) {
-      return;
-    }
-
-    promptDiagnosticsRefresh($button);
-  });
-
   $(document).on("click", ".copy-token-btn", function () {
     const token = String($(this).data("token") || "").trim();
 
@@ -327,16 +297,7 @@
       });
   });
 
-  const initialLockUntil = Math.max(
-    0,
-    ...allRemoteButtons()
-      .map(function () {
-        return Number($(this).data("lock-until") || 0);
-      })
-      .get()
-  );
-
-  if (initialLockUntil > 0) {
-    applyRemoteLock(initialLockUntil, { silent: true });
-  }
+  window.DeviceRemote = window.DeviceRemote || {};
+  window.DeviceRemote.syncLockState = syncLockState;
+  syncLockState();
 })();

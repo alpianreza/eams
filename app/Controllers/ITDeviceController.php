@@ -22,57 +22,7 @@ class ITDeviceController extends BaseController
   {
     helper('device');
 
-    $devices = $this->deviceModel->findAll();
-
-    $total = 0;
-    $healthy = 0;
-    $warning = 0;
-    $critical = 0;
-    $offline = 0;
-    $update = 0;
-
-    foreach ($devices as $d) {
-
-      $total++;
-
-      /* ===== RISK SCORE ===== */
-      $score = device_risk_score($d);
-
-      if ($score >= 80) {
-        $healthy++;
-      } elseif ($score >= 50) {
-        $warning++;
-      } else {
-        $critical++;
-      }
-
-      /* ===== OFFLINE ===== */
-      $extra = json_decode($d['cpu'] ?? '{}', true) ?: [];
-      $heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? (int) env('agent.defaultHeartbeatInterval', 600)));
-
-      if (!device_is_online($d, $heartbeatInterval)) {
-        if (!empty($d['last_seen'])) {
-          $hours = (time() - strtotime($d['last_seen'])) / 3600;
-          if ($hours > 24) $offline++;
-        }
-      }
-
-      /* ===== NEED UPDATE ===== */
-      $pendingUpdates = (int)($extra['pending'] ?? 0);
-
-      if ($pendingUpdates > 5) {
-        $update++;
-      }
-    }
-
-    $kpi = compact(
-      'total',
-      'healthy',
-      'warning',
-      'critical',
-      'offline',
-      'update'
-    );
+    $kpi = $this->calculateKpi();
 
     page('Device Control Center');
 
@@ -80,6 +30,18 @@ class ITDeviceController extends BaseController
       'kpi' => $kpi
     ]);
   }
+
+  public function stats()
+  {
+    helper('device');
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'kpi' => $this->calculateKpi(),
+      'generated_at' => time(),
+    ]);
+  }
+
   public function ajax()
   {
     helper(['os_lifecycle', 'device']);
@@ -102,10 +64,24 @@ class ITDeviceController extends BaseController
       ->orderBy('last_seen', 'DESC')
       ->paginate($perPage);
 
+    $this->deviceModel->pager->setPath('it/devices');
+
     return view('it/devices/_table', [
       'devices' => $devices,
       'pager'   => $this->deviceModel->pager
     ]);
+  }
+
+  public function detailFragment($id)
+  {
+    helper(['device', 'os_lifecycle']);
+
+    $payload = $this->buildDetailPayload((int) $id);
+    if ($payload === null) {
+      return $this->response->setStatusCode(404)->setBody('Device tidak ditemukan');
+    }
+
+    return view('it/devices/_detail_content', $payload);
   }
 
   public function detail($id)
@@ -113,44 +89,13 @@ class ITDeviceController extends BaseController
     helper(['device', 'os_lifecycle']); // helper yang dipakai view
     page('Detail Device IT');
 
-    $device = $this->deviceModel->find($id);
-
-    if (!$device) {
+    $payload = $this->buildDetailPayload((int) $id);
+    if ($payload === null) {
       throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
     }
 
-    $asset = null;
-    $assignment = null;
-
-    if ($device['asset_id']) {
-      $asset = (new AssetModel())->find($device['asset_id']);
-
-      if ($asset) {
-        $assignment = Database::connect()
-          ->table('asset_assignments aa')
-          ->select('e.name, e.employee_id, e.division, e.position, aa.assigned_at')
-          ->join('employees e', 'e.id = aa.employee_id', 'left')
-          ->where('aa.asset_id', (int) $asset['id'])
-          ->where('aa.returned_at', null)
-          ->orderBy('aa.assigned_at', 'DESC')
-          ->get()
-          ->getRowArray();
-      }
-    }
-
-    $extra = json_decode($device['cpu'] ?? '{}', true) ?: [];
-    $hw = $extra['hardware'] ?? [];
-    $insights = $this->buildInsights($device, $extra);
-    $commandHistory = $this->recentCommandHistory((int) $device['id']);
-
     return view('it/devices/detail', [
-      'device'     => $device,
-      'asset'      => $asset,
-      'assignment' => $assignment,
-      'hw'         => $hw,
-      'extra'      => $extra,
-      'insights'   => $insights,
-      'commandHistory' => $commandHistory,
+      ...$payload,
     ]);
   }
 
@@ -186,7 +131,6 @@ class ITDeviceController extends BaseController
       'lock' => 'Lock Screen',
       'logoff' => 'Log Off User',
       'popup_message' => 'Kirim Pesan',
-      'collect_diagnostics' => 'Refresh Diagnosa',
     ];
 
     if ($id <= 0 || !array_key_exists($action, $allowed)) {
@@ -227,7 +171,7 @@ class ITDeviceController extends BaseController
   private function buildInsights(array $device, array $extra): array
   {
     $insights = [];
-    $heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? (int) env('agent.defaultHeartbeatInterval', 600)));
+    $heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? (int) env('agent.defaultHeartbeatInterval', 900)));
 
     $pendingUpdates = (int)($extra['pending'] ?? 0);
     if ($pendingUpdates >= 10) {
@@ -306,6 +250,90 @@ class ITDeviceController extends BaseController
     return $insights;
   }
 
+  private function calculateKpi(): array
+  {
+    helper('device');
+
+    $devices = $this->deviceModel->findAll();
+    $total = 0;
+    $healthy = 0;
+    $warning = 0;
+    $critical = 0;
+    $offline = 0;
+    $update = 0;
+
+    foreach ($devices as $d) {
+      $total++;
+      $score = device_risk_score($d);
+
+      if ($score >= 80) {
+        $healthy++;
+      } elseif ($score >= 50) {
+        $warning++;
+      } else {
+        $critical++;
+      }
+
+      $extra = json_decode($d['cpu'] ?? '{}', true) ?: [];
+      $heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? (int) env('agent.defaultHeartbeatInterval', 900)));
+
+      if (!device_is_online($d, $heartbeatInterval) && !empty($d['last_seen'])) {
+        $hours = (time() - strtotime($d['last_seen'])) / 3600;
+        if ($hours > 24) {
+          $offline++;
+        }
+      }
+
+      if ((int)($extra['pending'] ?? 0) > 5) {
+        $update++;
+      }
+    }
+
+    return compact('total', 'healthy', 'warning', 'critical', 'offline', 'update');
+  }
+
+  private function buildDetailPayload(int $id): ?array
+  {
+    $device = $this->deviceModel->find($id);
+    if (!$device) {
+      return null;
+    }
+
+    $asset = null;
+    $assignment = null;
+
+    if (!empty($device['asset_id'])) {
+      $asset = (new AssetModel())->find($device['asset_id']);
+
+      if ($asset) {
+        $assignment = Database::connect()
+          ->table('asset_assignments aa')
+          ->select('e.name, e.employee_id, e.division, e.position, aa.assigned_at')
+          ->join('employees e', 'e.id = aa.employee_id', 'left')
+          ->where('aa.asset_id', (int) $asset['id'])
+          ->where('aa.returned_at', null)
+          ->orderBy('aa.assigned_at', 'DESC')
+          ->get()
+          ->getRowArray();
+      }
+    }
+
+    $extra = json_decode($device['cpu'] ?? '{}', true) ?: [];
+    $hw = $extra['hardware'] ?? [];
+    $insights = $this->buildInsights($device, $extra);
+    $commandHistory = $this->recentCommandHistory((int) $device['id']);
+
+    return [
+      'device' => $device,
+      'asset' => $asset,
+      'assignment' => $assignment,
+      'hw' => $hw,
+      'extra' => $extra,
+      'insights' => $insights,
+      'commandHistory' => $commandHistory,
+    ];
+  }
+
   private function buildRemoteCommandArgs(string $action): array
   {
     if ($action === 'popup_message') {
@@ -321,35 +349,6 @@ class ITDeviceController extends BaseController
         'title' => $title !== '' ? $title : 'Pesan dari Tim IT',
         'message' => $message,
         'timeout' => max(15, min(300, $timeout > 0 ? $timeout : 90)),
-      ];
-    }
-
-    if ($action === 'collect_diagnostics') {
-      $sectionsRaw = $this->request->getPost('sections');
-      $sections = [];
-
-      if (is_array($sectionsRaw)) {
-        $sections = $sectionsRaw;
-      } elseif (is_string($sectionsRaw) && trim($sectionsRaw) !== '') {
-        $decoded = json_decode($sectionsRaw, true);
-        if (is_array($decoded)) {
-          $sections = $decoded;
-        } else {
-          $sections = preg_split('/[\s,]+/', $sectionsRaw) ?: [];
-        }
-      }
-
-      $allowedSections = ['session', 'processes', 'services', 'software'];
-      $sections = array_values(array_intersect($allowedSections, array_map(static fn($item) => strtolower(trim((string) $item)), $sections)));
-      if (empty($sections)) {
-        $sections = $allowedSections;
-      }
-
-      return [
-        'sections' => $sections,
-        'process_limit' => 15,
-        'service_limit' => 18,
-        'software_limit' => 30,
       ];
     }
 
@@ -384,7 +383,7 @@ class ITDeviceController extends BaseController
     $commandId = $this->generateCommandId();
     $actionLabel = trim((string)($options['action_label'] ?? strtoupper($action)));
     $forceUpdate = (bool)($options['force_update'] ?? false);
-    $normalInterval = max(60, (int) env('agent.defaultHeartbeatInterval', 600));
+    $normalInterval = max(60, (int) env('agent.defaultHeartbeatInterval', 900));
     $remoteInterval = max(10, (int) env('agent.remoteHeartbeatInterval', 10));
     $boostSeconds = max(60, (int) env('agent.remoteBoostSeconds', 180));
     $lockSeconds = max(10, (int) env('agent.remoteLockSeconds', 25));

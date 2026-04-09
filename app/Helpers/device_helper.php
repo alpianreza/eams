@@ -16,6 +16,14 @@ if (!function_exists('device_hardware')) {
   }
 }
 
+if (!function_exists('device_health')) {
+  function device_health(array $device): array
+  {
+    $extra = device_extra($device);
+    return is_array($extra['health'] ?? null) ? $extra['health'] : [];
+  }
+}
+
 if (!function_exists('device_ram_total')) {
   function device_ram_total(array $device): int
   {
@@ -34,6 +42,31 @@ if (!function_exists('device_ram_total')) {
   }
 }
 
+if (!function_exists('device_ram_slots_display')) {
+  function device_ram_slots_display(array $device): array
+  {
+    $hw = device_hardware($device);
+    $slots = is_array($hw['ram_slots'] ?? null) ? $hw['ram_slots'] : [];
+
+    if (!empty($slots)) {
+      return $slots;
+    }
+
+    $total = (float)($device['ram_gb'] ?? 0);
+    if ($total > 0) {
+      return [[
+        'manufacturer' => 'RAM terdeteksi',
+        'display_name' => 'Total RAM',
+        'size_gb' => $total,
+        'speed' => 0,
+        'is_fallback' => true,
+      ]];
+    }
+
+    return [];
+  }
+}
+
 if (!function_exists('device_disk_total')) {
   function device_disk_total(array $device): int
   {
@@ -49,6 +82,86 @@ if (!function_exists('device_disk_total')) {
     }
 
     return $total;
+  }
+}
+
+if (!function_exists('device_split_disk_models')) {
+  function device_split_disk_models(string $raw): array
+  {
+    $raw = trim($raw);
+    if ($raw === '') {
+      return [];
+    }
+
+    $segments = preg_split('/[;\r\n|]+/', $raw) ?: [];
+    $models = [];
+
+    foreach ($segments as $segment) {
+      $segment = trim((string)$segment);
+      if ($segment === '') {
+        continue;
+      }
+
+      $commaSplit = preg_split('/\s*,\s*(?=[^,]+(?:device|ssd|hdd|nvme|scsi|usb)\b)/i', $segment) ?: [$segment];
+      foreach ($commaSplit as $part) {
+        $part = trim((string)$part);
+        if ($part !== '') {
+          $models[] = $part;
+        }
+      }
+    }
+
+    return array_values(array_unique($models));
+  }
+}
+
+if (!function_exists('device_disks_display')) {
+  function device_disks_display(array $device): array
+  {
+    $hw = device_hardware($device);
+    $disks = is_array($hw['disks'] ?? null) ? $hw['disks'] : [];
+    $normalized = [];
+
+    foreach ($disks as $disk) {
+      if (!is_array($disk)) {
+        continue;
+      }
+
+      $model = trim((string)($disk['model'] ?? ''));
+      $size = isset($disk['size_gb']) ? (float)$disk['size_gb'] : null;
+      $models = device_split_disk_models($model);
+
+      if (count($models) > 1 && ($size === null || $size <= 0)) {
+        foreach ($models as $splitModel) {
+          $normalized[] = [
+            'model' => $splitModel,
+            'size_gb' => null,
+            'is_fallback' => true,
+          ];
+        }
+        continue;
+      }
+
+      $normalized[] = [
+        'model' => $model !== '' ? $model : 'Disk',
+        'size_gb' => $size,
+      ];
+    }
+
+    if (!empty($normalized)) {
+      return $normalized;
+    }
+
+    $diskModelRaw = trim((string)($device['disk_model'] ?? ''));
+    foreach (device_split_disk_models($diskModelRaw) as $diskModel) {
+      $normalized[] = [
+        'model' => $diskModel,
+        'size_gb' => null,
+        'is_fallback' => true,
+      ];
+    }
+
+    return $normalized;
   }
 }
 
@@ -243,5 +356,56 @@ if (!function_exists('device_is_online')) {
 
     $threshold = max(30, $interval * 2);
     return (time() - strtotime($device['last_seen'])) <= $threshold;
+  }
+}
+
+if (!function_exists('device_cpu_label')) {
+  function device_cpu_label(array $device): string
+  {
+    $label = trim((string)($device['cpu_name'] ?? ''));
+    return $label !== '' ? $label : 'Belum terbaca dari agent';
+  }
+}
+
+if (!function_exists('device_gpu_label')) {
+  function device_gpu_label(array $device): string
+  {
+    $label = trim((string)($device['gpu'] ?? ''));
+    return $label !== '' ? $label : 'Belum terbaca dari agent';
+  }
+}
+
+if (!function_exists('device_cpu_core_thread_label')) {
+  function device_cpu_core_thread_label(array $device): string
+  {
+    $core = (int)($device['cpu_core'] ?? 0);
+    $thread = (int)($device['cpu_thread'] ?? 0);
+
+    if ($core > 0 && $thread > 0) {
+      return $core . ' / ' . $thread;
+    }
+
+    return 'Belum terbaca dari agent';
+  }
+}
+
+if (!function_exists('device_missing_hardware_fields')) {
+  function device_missing_hardware_fields(array $device): array
+  {
+    $missing = [];
+
+    if (trim((string)($device['cpu_name'] ?? '')) === '') {
+      $missing[] = 'CPU';
+    }
+
+    if ((int)($device['cpu_core'] ?? 0) <= 0 || (int)($device['cpu_thread'] ?? 0) <= 0) {
+      $missing[] = 'Core/Thread';
+    }
+
+    if (trim((string)($device['gpu'] ?? '')) === '') {
+      $missing[] = 'GPU';
+    }
+
+    return $missing;
   }
 }

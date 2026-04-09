@@ -1,0 +1,28 @@
+CRITICAL - 2026-04-09 07:28:03 --> ErrorException: Undefined variable $diagnosticsAt
+[Method: GET, Route: it/devices/1/fragment]
+in APPPATH\Views\it\devices\_detail_content.php on line 318.
+ 1 APPPATH\Views\it\devices\_detail_content.php(318): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $diagnosticsAt', 'C:\\xampp\\htdocs\\eams\\app\\Views\\it\\devices\\_detail_content.php', 318)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\it\\devices\\_detail_content.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('it/devices/_detail_content', [], true)
+ 5 APPPATH\Controllers\ITDeviceController.php(84): view('it/devices/_detail_content', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ITDeviceController->detailFragment('1')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ITDeviceController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-09 07:28:04 --> ErrorException: Undefined variable $diagnosticsAt
+[Method: GET, Route: it/devices/1/fragment]
+in APPPATH\Views\it\devices\_detail_content.php on line 318.
+ 1 APPPATH\Views\it\devices\_detail_content.php(318): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $diagnosticsAt', 'C:\\xampp\\htdocs\\eams\\app\\Views\\it\\devices\\_detail_content.php', 318)
+ 2 SYSTEMPATH\View\View.php(226): include('C:\\xampp\\htdocs\\eams\\app\\Views\\it\\devices\\_detail_content.php')
+ 3 SYSTEMPATH\View\View.php(229): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1199): CodeIgniter\View\View->render('it/devices/_detail_content', [], true)
+ 5 APPPATH\Controllers\ITDeviceController.php(84): view('it/devices/_detail_content', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\ITDeviceController->detailFragment('1')
+ 7 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\ITDeviceController))
+ 8 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

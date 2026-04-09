@@ -292,6 +292,7 @@ $routes->group('compliance/inventory', ['filter' => 'auth'], function ($routes) 
 
 $routes->get('/it/devices', 'ITDeviceController::index', ['filter' => 'auth']);
 $routes->get('/it/devices/ajax', 'ITDeviceController::ajax', ['filter' => 'auth']);
+$routes->get('/it/devices/stats', 'ITDeviceController::stats', ['filter' => 'auth']);
 $routes->post('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
 $routes->get('/api/agent/heartbeat', 'Api\\AgentController::heartbeat');
 $routes->post('/api/agent/command', 'Api\\AgentController::command');
@@ -299,6 +300,7 @@ $routes->get('/api/agent/command', 'Api\\AgentController::command');
 $routes->post('/api/agent/update', 'Api\\AgentController::agentUpdate');
 $routes->get('/api/agent/update', 'Api\\AgentController::agentUpdate');
 $routes->get('/it/devices/(:num)', 'ITDeviceController::detail/$1', ['filter' => 'auth']);
+$routes->get('/it/devices/(:num)/fragment', 'ITDeviceController::detailFragment/$1', ['filter' => 'auth']);
 $routes->post('/it/device/push-update', 'Api\\AgentController::pushUpdate', ['filter' => 'auth']);
 $routes->post('/it/device/command', 'ITDeviceController::sendCommand', ['filter' => 'auth']);
 $routes->post('/it/device/remote', 'ITDeviceController::remoteAction', ['filter' => 'auth']);

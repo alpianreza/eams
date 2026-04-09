@@ -2,17 +2,25 @@
 
 <?php
 $cards = [
-    ['Total Device', $kpi['total'] ?? 0, 'bi-hdd-network', 'info'],
-    ['Sehat', $kpi['healthy'] ?? 0, 'bi-check-circle', 'success'],
-    ['Perlu Perhatian', $kpi['warning'] ?? 0, 'bi-exclamation-circle', 'warning'],
-    ['Kritis', $kpi['critical'] ?? 0, 'bi-x-circle', 'danger'],
-    ['Offline > 24 Jam', $kpi['offline'] ?? 0, 'bi-wifi-off', 'secondary'],
-    ['Perlu Update', $kpi['update'] ?? 0, 'bi-arrow-repeat', 'primary'],
+    ['key' => 'total', 'label' => 'Total Device', 'value' => $kpi['total'] ?? 0, 'icon' => 'bi-hdd-network', 'tone' => 'info'],
+    ['key' => 'healthy', 'label' => 'Sehat', 'value' => $kpi['healthy'] ?? 0, 'icon' => 'bi-check-circle', 'tone' => 'success'],
+    ['key' => 'warning', 'label' => 'Perlu Perhatian', 'value' => $kpi['warning'] ?? 0, 'icon' => 'bi-exclamation-circle', 'tone' => 'warning'],
+    ['key' => 'critical', 'label' => 'Kritis', 'value' => $kpi['critical'] ?? 0, 'icon' => 'bi-x-circle', 'tone' => 'danger'],
+    ['key' => 'offline', 'label' => 'Offline > 24 Jam', 'value' => $kpi['offline'] ?? 0, 'icon' => 'bi-wifi-off', 'tone' => 'secondary'],
+    ['key' => 'update', 'label' => 'Perlu Update', 'value' => $kpi['update'] ?? 0, 'icon' => 'bi-arrow-repeat', 'tone' => 'primary'],
 ];
 ?>
 
 <?= $this->section('content') ?>
-<div class="it-shell">
+<div
+    class="it-shell"
+    x-data="itDeviceIndex({
+        tableUrl: '/it/devices/ajax',
+        statsUrl: '/it/devices/stats',
+        initialPerPage: 20
+    })"
+    x-init="init()"
+>
     <section class="card border-0 shadow-sm no-lift it-hero-card mb-3">
         <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
@@ -33,21 +41,21 @@ $cards = [
     </section>
 
     <div class="row g-3 mb-3">
-        <?php foreach ($cards as $card): ?>
+        <template x-for="card in cards" :key="card.key">
             <div class="col-6 col-md-4 col-xl-2">
                 <article class="card border-0 shadow-sm h-100 no-lift it-stat-card">
                     <div class="card-body py-3">
-                        <span class="it-stat-label"><?= esc($card[0]) ?></span>
+                        <span class="it-stat-label" x-text="card.label"></span>
                         <div class="d-flex justify-content-between align-items-center mt-1">
-                            <strong class="it-stat-value"><?= (int) $card[1] ?></strong>
-                            <span class="it-stat-icon tone-<?= esc($card[3]) ?>">
-                                <i class="bi <?= esc($card[2]) ?>"></i>
+                            <strong class="it-stat-value" x-text="card.value"></strong>
+                            <span class="it-stat-icon" :class="'tone-' + card.tone">
+                                <i class="bi" :class="card.icon"></i>
                             </span>
                         </div>
                     </div>
                 </article>
             </div>
-        <?php endforeach; ?>
+        </template>
     </div>
 
     <section class="card border-0 shadow-sm no-lift">
@@ -59,11 +67,13 @@ $cards = [
                         type="text"
                         id="searchDevice"
                         class="form-control"
+                        x-model="q"
+                        @input="handleSearchInput()"
                         placeholder="Cari hostname, user, atau sistem operasi">
                 </div>
                 <div class="col-lg-4">
                     <label for="devicePerPage" class="form-label form-label-sm">Baris per Halaman</label>
-                    <select id="devicePerPage" class="form-select">
+                    <select id="devicePerPage" class="form-select" x-model.number="perPage" @change="changePerPage()">
                         <option value="20" selected>20</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
@@ -73,10 +83,14 @@ $cards = [
 
             <div class="it-loading-state mb-3" id="deviceLoadingState" hidden>
                 <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
-                <span>Memuat data device...</span>
             </div>
 
-            <div id="deviceAjax" class="position-relative"></div>
+            <div
+                id="deviceAjax"
+                class="position-relative"
+                @click="handleContainerClick($event)"
+                x-html="tableHtml"
+            ></div>
         </div>
     </section>
 </div>
@@ -87,6 +101,17 @@ $cards = [
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
-<script src="<?= base_url('js/it-devices.js?v=' . filemtime(FCPATH . 'js/it-devices.js')) ?>"></script>
+<script>
+    window.IT_DEVICE_INDEX_BOOT = <?= json_encode([
+        'cards' => array_map(static fn(array $card) => [
+            'key' => $card['key'],
+            'label' => $card['label'],
+            'value' => (int) $card['value'],
+            'icon' => $card['icon'],
+            'tone' => $card['tone'],
+        ], $cards),
+    ], JSON_UNESCAPED_UNICODE) ?>;
+</script>
+<script src="<?= base_url('js/it-device-live.js?v=' . filemtime(FCPATH . 'js/it-device-live.js')) ?>"></script>
 <script src="<?= base_url('js/device-remote.js?v=' . filemtime(FCPATH . 'js/device-remote.js')) ?>"></script>
 <?= $this->endSection() ?>
