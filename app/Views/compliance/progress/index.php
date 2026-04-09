@@ -370,6 +370,17 @@
               </div>
               <small class="text-muted">${u.progress ?? 0}%</small>
             </td>
+            <td class="text-end">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-success remind-user-btn"
+                data-id="${u.id}"
+                data-name="${escapeHtml(u.name)}"
+                ${!u.pending ? "disabled" : ""}
+              >
+                <i class="bi bi-send me-1"></i> Reminder
+              </button>
+            </td>
           </tr>
         `;
       }).join("");
@@ -385,6 +396,7 @@
                 <th>Pending</th>
                 <th>Late</th>
                 <th width="24%">Progress</th>
+                <th class="text-end">Aksi</th>
               </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -501,6 +513,63 @@
       `;
 
       modal.show();
+    });
+
+    document.addEventListener("click", function(e) {
+      const trigger = e.target.closest(".remind-user-btn");
+      if (!trigger) return;
+
+      const userId = trigger.dataset.id;
+      const userName = trigger.dataset.name || "user";
+      const month = monthSelect.value;
+
+      Swal.fire({
+        icon: "question",
+        title: "Kirim reminder?",
+        text: `Reminder untuk ${userName} akan memakai periode ${month}.`,
+        showCancelButton: true,
+        confirmButtonText: "Kirim",
+        cancelButtonText: "Batal"
+      }).then(result => {
+        if (!result.isConfirmed) return;
+
+        trigger.disabled = true;
+
+        fetch("/compliance/progress/remind", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+            },
+            body: new URLSearchParams({
+              user_id: userId,
+              month: month
+            })
+          })
+          .then(async res => {
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok || !data.ok) {
+              throw new Error(data.message || "Reminder gagal dikirim.");
+            }
+            return data;
+          })
+          .then(data => {
+            Swal.fire({
+              icon: "success",
+              title: "Reminder terkirim",
+              text: data.message || "Reminder berhasil dikirim."
+            });
+          })
+          .catch(err => {
+            Swal.fire({
+              icon: "error",
+              title: "Gagal",
+              text: err.message || "Reminder gagal dikirim."
+            });
+          })
+          .finally(() => {
+            trigger.disabled = false;
+          });
+      });
     });
 
     searchInput.addEventListener("input", function() {

@@ -6,6 +6,7 @@ use App\Models\ChecklistLogModel;
 use App\Models\ComplianceInventoryModel;
 use App\Models\HolidayModel;
 use App\Models\UserModel;
+use App\Services\WhatsAppService;
 
 class ProgressController extends BaseController
 {
@@ -126,6 +127,7 @@ class ProgressController extends BaseController
         ')
         ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
         ->where('compliance_inventory.active', 1)
+        ->where("TRIM(COALESCE(compliance_inventory.pic, '')) <> ''", null, false)
         ->where("compliance_inventory.pic REGEXP '{$pattern}'", null, false)
         ->findAll();
 
@@ -158,6 +160,10 @@ class ProgressController extends BaseController
     foreach ($users as $user) {
       $firstName = $firstNameByUserId[$user['id']] ?? '';
       $inventories = $inventoryByFirstName[$firstName] ?? [];
+
+      if (empty($inventories)) {
+        continue;
+      }
 
       $totalRequired = 0;
       $totalDone     = 0;
@@ -308,6 +314,8 @@ class ProgressController extends BaseController
         asset_item_types.checklist_frequency
       ')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('compliance_inventory.active', 1)
+      ->where("TRIM(COALESCE(compliance_inventory.pic, '')) <> ''", null, false)
       ->like('compliance_inventory.pic', $firstName)
       ->findAll();
 
@@ -365,5 +373,371 @@ class ProgressController extends BaseController
       'name' => $user['name'],
       'data' => $result
     ]);
+  }
+
+  public function sendReminderAjax()
+  {
+    helper(['period', 'checklist']);
+
+    if (!in_array($this->role, ['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak punya akses untuk mengirim reminder.',
+      ]);
+    }
+
+    $userId = (int) ($this->request->getPost('user_id') ?? 0);
+    $selectedMonth = $this->normalizeSelectedMonth((string) ($this->request->getPost('month') ?? date('Y-m')));
+
+    if ($userId <= 0) {
+      return $this->response->setJSON([
+        'ok' => false,
+        'message' => 'User tidak valid.',
+      ]);
+    }
+
+    $user = $this->userModel->find($userId);
+    if (!$user) {
+      return $this->response->setJSON([
+        'ok' => false,
+        'message' => 'User tidak ditemukan.',
+      ]);
+    }
+
+    $summary = $this->buildUserProgressSummary($user, $selectedMonth);
+    if (empty($summary['detailMissing'])) {
+      return $this->response->setJSON([
+        'ok' => false,
+        'message' => 'User ini tidak punya checklist pending untuk periode tersebut.',
+      ]);
+    }
+
+    $wa = new WhatsAppService();
+    if (!$wa->canSend()) {
+      return $this->response->setJSON([
+        'ok' => false,
+        'message' => 'WhatsApp belum siap kirim. Cek konfigurasi Fonnte.',
+      ]);
+    }
+
+    $phone = $this->resolveReminderPhone($user);
+    if ($phone === null) {
+      return $this->response->setJSON([
+        'ok' => false,
+        'message' => 'Nomor WhatsApp user belum tersedia.',
+      ]);
+    }
+
+    $message = $this->buildReminderMessage((string) ($user['name'] ?? $user['username'] ?? 'User'), $summary['detailMissing'], $selectedMonth);
+    $result = $wa->sendMessage($phone, $message);
+
+    if (!$result['success']) {
+      return $this->response->setJSON([
+        'ok' => false,
+        'message' => 'Reminder gagal dikirim: ' . ($result['response'] ?? 'unknown error'),
+      ]);
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'message' => 'Reminder berhasil dikirim ke ' . ($user['name'] ?? 'user') . ' untuk periode ' . $selectedMonth . '.',
+    ]);
+  }
+
+  private function normalizeSelectedMonth(string $selectedMonth): string
+  {
+    return preg_match('/^\d{4}-\d{2}$/', $selectedMonth) ? $selectedMonth : date('Y-m');
+  }
+
+  private function buildMonthContext(string $selectedMonth): array
+  {
+    $selectedMonth = $this->normalizeSelectedMonth($selectedMonth);
+    [$year, $month] = explode('-', $selectedMonth);
+    $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+    $ym = $year . '-' . $month;
+
+    $currentMonth = date('Y-m');
+    $currentDay   = (int) date('d');
+
+    $maxDay = $selectedMonth === $currentMonth
+      ? $currentDay
+      : (int) cal_days_in_month(CAL_GREGORIAN, (int) $month, (int) $year);
+
+    $holidayDates = array_column(
+      (new HolidayModel())
+        ->where('holiday_date >=', $ym . '-01')
+        ->where('holiday_date <=', $ym . '-' . str_pad((string) $maxDay, 2, '0', STR_PAD_LEFT))
+        ->findAll(),
+      'holiday_date'
+    );
+
+    $dailyPeriods = [];
+    for ($d = 1; $d <= $maxDay; $d++) {
+      $date = $ym . '-' . str_pad((string) $d, 2, '0', STR_PAD_LEFT);
+      if (is_date_offday($date, $holidayDates)) {
+        continue;
+      }
+
+      $dailyPeriods[] = [
+        'key' => $date,
+        'label' => str_pad((string) $d, 2, '0', STR_PAD_LEFT),
+      ];
+    }
+
+    $currentWeek = $selectedMonth === $currentMonth
+      ? (int) ceil($currentDay / 7)
+      : 4;
+    if ($currentWeek > 4) {
+      $currentWeek = 4;
+    }
+    if ($currentWeek < 1) {
+      $currentWeek = 1;
+    }
+
+    $weeklyPeriods = [];
+    for ($w = 1; $w <= $currentWeek; $w++) {
+      $weeklyPeriods[] = [
+        'key' => $ym . '-W' . $w,
+        'label' => 'W' . $w,
+      ];
+    }
+
+    return compact('selectedMonth', 'year', 'month', 'ym', 'maxDay', 'dailyPeriods', 'weeklyPeriods');
+  }
+
+  private function findInventoriesForUserName(string $userName): array
+  {
+    $nameParts = explode(' ', trim($userName));
+    $firstName = trim((string) ($nameParts[0] ?? ''));
+    if ($firstName === '') {
+      return [];
+    }
+
+    $safeFirstName = preg_quote($firstName, '/');
+    $pattern = "(^|[\n\\- ]+)" . $safeFirstName . "( |$)";
+
+    return $this->inventoryModel
+      ->select('
+        compliance_inventory.id,
+        compliance_inventory.specific_area,
+        compliance_inventory.pic,
+        asset_item_types.name as item_name,
+        asset_item_types.checklist_frequency
+      ')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id')
+      ->where('compliance_inventory.active', 1)
+      ->where("TRIM(COALESCE(compliance_inventory.pic, '')) <> ''", null, false)
+      ->where("compliance_inventory.pic REGEXP '{$pattern}'", null, false)
+      ->findAll();
+  }
+
+  private function buildLogLookupForInventories(array $inventories, string $ym): array
+  {
+    $inventoryIds = array_map(static fn($row) => (int) ($row['id'] ?? 0), $inventories);
+    $inventoryIds = array_values(array_filter($inventoryIds));
+    if (empty($inventoryIds)) {
+      return [];
+    }
+
+    $lookup = [];
+    $logRows = $this->logModel
+      ->select('inventory_id, period_key')
+      ->whereIn('inventory_id', $inventoryIds)
+      ->like('period_key', $ym, 'after')
+      ->groupBy(['inventory_id', 'period_key'])
+      ->findAll();
+
+    foreach ($logRows as $row) {
+      $lookup[(int) $row['inventory_id']][(string) $row['period_key']] = true;
+    }
+
+    return $lookup;
+  }
+
+  private function summarizeInventoryProgress(array $inventories, array $logLookup, array $dailyPeriods, array $weeklyPeriods, string $ym): array
+  {
+    $totalRequired = 0;
+    $totalDone     = 0;
+    $pending       = 0;
+    $late          = 0;
+    $detailMissing = [];
+
+    foreach ($inventories as $inv) {
+      $inventoryId = (int) ($inv['id'] ?? 0);
+      $frequency = strtolower((string) ($inv['checklist_frequency'] ?? ''));
+      $missingPeriods = [];
+
+      if ($frequency === 'daily') {
+        $totalRequired += count($dailyPeriods);
+
+        foreach ($dailyPeriods as $period) {
+          $periodKey = $period['key'];
+          if (!empty($logLookup[$inventoryId][$periodKey])) {
+            $totalDone++;
+            continue;
+          }
+
+          $pending++;
+          $missingPeriods[] = $period['label'];
+          if (is_period_late('daily', $periodKey)) {
+            $late++;
+          }
+        }
+      } elseif ($frequency === 'weekly') {
+        $totalRequired += count($weeklyPeriods);
+
+        foreach ($weeklyPeriods as $period) {
+          $periodKey = $period['key'];
+          if (!empty($logLookup[$inventoryId][$periodKey])) {
+            $totalDone++;
+            continue;
+          }
+
+          $pending++;
+          $missingPeriods[] = $period['label'];
+          if (is_period_late('weekly', $periodKey)) {
+            $late++;
+          }
+        }
+      } elseif ($frequency === 'monthly') {
+        $totalRequired += 1;
+
+        if (!empty($logLookup[$inventoryId][$ym])) {
+          $totalDone++;
+        } else {
+          $pending++;
+          $missingPeriods[] = 'Belum';
+          if (is_period_late('monthly', $ym)) {
+            $late++;
+          }
+        }
+      }
+
+      if (!empty($missingPeriods)) {
+        $detailMissing[] = [
+          'inventory' => ($inv['item_name'] ?? 'Item') . ' - ' . ($inv['specific_area'] ?? '-'),
+          'frequency' => ucfirst($frequency),
+          'missing'   => $missingPeriods,
+        ];
+      }
+    }
+
+    $progress = $totalRequired > 0 ? (int) round(($totalDone / $totalRequired) * 100) : 0;
+
+    return [
+      'required' => $totalRequired,
+      'done' => $totalDone,
+      'pending' => $pending,
+      'late' => $late,
+      'progress' => $progress,
+      'detailMissing' => $detailMissing,
+    ];
+  }
+
+  private function buildUserProgressSummary(array $user, string $selectedMonth): array
+  {
+    $context = $this->buildMonthContext($selectedMonth);
+    $inventories = $this->findInventoriesForUserName((string) ($user['name'] ?? ''));
+    $logLookup = $this->buildLogLookupForInventories($inventories, $context['ym']);
+    $summary = $this->summarizeInventoryProgress($inventories, $logLookup, $context['dailyPeriods'], $context['weeklyPeriods'], $context['ym']);
+    $summary['totalInventory'] = count($inventories);
+    return $summary;
+  }
+
+  private function resolveReminderPhone(array $user): ?string
+  {
+    $phoneFields = ['wa_number', 'whatsapp_number', 'phone', 'phone_number', 'mobile', 'mobile_number', 'no_hp', 'no_telp', 'telp'];
+
+    foreach ($phoneFields as $field) {
+      if (!array_key_exists($field, $user)) {
+        continue;
+      }
+
+      $normalized = $this->normalizePhone((string) $user[$field]);
+      if ($normalized !== null) {
+        return $normalized;
+      }
+    }
+
+    $namePhoneMap = $this->parseNamePhoneMap((string) config('WhatsApp')->namePhoneMap);
+    $name = $this->normalizeName((string) ($user['name'] ?? ''));
+    return $name !== '' && isset($namePhoneMap[$name]) ? $namePhoneMap[$name] : null;
+  }
+
+  private function parseNamePhoneMap(string $raw): array
+  {
+    $map = [];
+    if (trim($raw) === '') {
+      return $map;
+    }
+
+    $pairs = preg_split('/[\r\n,;]+/', $raw) ?: [];
+    foreach ($pairs as $pair) {
+      $pair = trim($pair);
+      if ($pair === '' || strpos($pair, ':') === false) {
+        continue;
+      }
+
+      [$name, $phone] = array_map('trim', explode(':', $pair, 2));
+      $normalizedName = $this->normalizeName($name);
+      $normalizedPhone = $this->normalizePhone($phone);
+      if ($normalizedName !== '' && $normalizedPhone !== null) {
+        $map[$normalizedName] = $normalizedPhone;
+      }
+    }
+
+    return $map;
+  }
+
+  private function normalizePhone(string $value): ?string
+  {
+    $digits = preg_replace('/\D+/', '', $value) ?? '';
+    if ($digits === '') {
+      return null;
+    }
+
+    if (str_starts_with($digits, '0')) {
+      $digits = '62' . substr($digits, 1);
+    } elseif (str_starts_with($digits, '8')) {
+      $digits = '62' . $digits;
+    }
+
+    if (!str_starts_with($digits, '62')) {
+      return null;
+    }
+
+    $length = strlen($digits);
+    return ($length >= 10 && $length <= 16) ? $digits : null;
+  }
+
+  private function normalizeName(string $name): string
+  {
+    $name = strtolower(trim($name));
+    return preg_replace('/\s+/', ' ', $name) ?? $name;
+  }
+
+  private function buildReminderMessage(string $name, array $detailMissing, string $selectedMonth): string
+  {
+    $periodLabel = date('F Y', strtotime($selectedMonth . '-01'));
+    $lines = [];
+    $lines[] = "Halo {$name},";
+    $lines[] = '';
+    $lines[] = "Reminder checklist EAMS untuk periode {$periodLabel}.";
+    $lines[] = 'Masih ada checklist yang belum diisi:';
+
+    foreach ($detailMissing as $index => $row) {
+      $missingText = implode(', ', array_map(static fn($item) => (string) $item, $row['missing'] ?? []));
+      $lines[] = ($index + 1) . '. ' . ($row['inventory'] ?? '-') . ' [' . ($row['frequency'] ?? '-') . ']';
+      $lines[] = '   Missing: ' . ($missingText !== '' ? $missingText : '-');
+    }
+
+    $publicUrl = env('app.publicURL') ?: config('App')->baseURL;
+    $appUrl = rtrim((string) $publicUrl, '/');
+
+    $lines[] = '';
+    $lines[] = 'Mohon segera lengkapi checklist di: ' . $appUrl . '/home';
+    $lines[] = 'Terima kasih.';
+
+    return implode("\n", $lines);
   }
 }
