@@ -26,3 +26,897 @@ in APPPATH\Views\it\devices\_detail_content.php on line 318.
  9 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
 10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
 11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2026-04-09 16:57:02 --> mysqli_sql_exception: Table 'asset_compliance_system.ems_water_consumption_years' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *\nFROM `...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\eams\app\Controllers\EmsReportController.php(51): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\EmsReportController->waterConsumption()
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmsReportController))
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2026-04-09 16:57:02 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.ems_water_consumption_years' doesn't exist
+[Method: GET, Route: ems-reports/water-consumption]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\EmsReportController.php(51): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmsReportController->waterConsumption()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmsReportController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-09 16:57:02 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.ems_water_consumption_years' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\EmsReportController.php(51): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmsReportController->waterConsumption()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmsReportController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-09 16:57:02 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.ems_water_consumption_years' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\EmsReportController.php(51): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmsReportController->waterConsumption()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmsReportController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+ERROR - 2026-04-09 16:57:21 --> mysqli_sql_exception: Table 'asset_compliance_system.ems_water_consumption_years' doesn't exist in C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php:327
+Stack trace:
+#0 C:\xampp\htdocs\eams\system\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *\nFROM `...', 0)
+#1 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *\nFROM `...')
+#2 C:\xampp\htdocs\eams\system\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *\nFROM `...')
+#3 C:\xampp\htdocs\eams\system\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *\nFROM `...', Array, false)
+#4 C:\xampp\htdocs\eams\system\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+#5 C:\xampp\htdocs\eams\system\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+#6 C:\xampp\htdocs\eams\app\Controllers\EmsReportController.php(51): CodeIgniter\BaseModel->findAll()
+#7 C:\xampp\htdocs\eams\system\CodeIgniter.php(933): App\Controllers\EmsReportController->waterConsumption()
+#8 C:\xampp\htdocs\eams\system\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmsReportController))
+#9 C:\xampp\htdocs\eams\system\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(NULL, Object(Config\Cache), false)
+#10 C:\xampp\htdocs\eams\system\Boot.php(363): CodeIgniter\CodeIgniter->run()
+#11 C:\xampp\htdocs\eams\system\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+#12 C:\xampp\htdocs\eams\public\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+#13 {main}
+CRITICAL - 2026-04-09 16:57:21 --> CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.ems_water_consumption_years' doesn't exist
+[Method: GET, Route: ems-reports/water-consumption]
+in SYSTEMPATH\Database\BaseConnection.php on line 684.
+ 1 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC', [], false)
+ 2 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 3 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 4 APPPATH\Controllers\EmsReportController.php(51): CodeIgniter\BaseModel->findAll()
+ 5 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmsReportController->waterConsumption()
+ 6 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmsReportController))
+ 7 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 8 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+10 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-09 16:57:21 --> [Caused by] CodeIgniter\Database\Exceptions\DatabaseException: Table 'asset_compliance_system.ems_water_consumption_years' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 332.
+ 1 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC')
+ 2 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC')
+ 3 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC', [], false)
+ 4 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 5 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 6 APPPATH\Controllers\EmsReportController.php(51): CodeIgniter\BaseModel->findAll()
+ 7 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmsReportController->waterConsumption()
+ 8 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmsReportController))
+ 9 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+10 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+11 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+12 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-09 16:57:21 --> [Caused by] mysqli_sql_exception: Table 'asset_compliance_system.ems_water_consumption_years' doesn't exist
+in SYSTEMPATH\Database\MySQLi\Connection.php on line 327.
+ 1 SYSTEMPATH\Database\MySQLi\Connection.php(327): mysqli->query('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC', 0)
+ 2 SYSTEMPATH\Database\BaseConnection.php(729): CodeIgniter\Database\MySQLi\Connection->execute('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC')
+ 3 SYSTEMPATH\Database\BaseConnection.php(646): CodeIgniter\Database\BaseConnection->simpleQuery('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC')
+ 4 SYSTEMPATH\Database\BaseBuilder.php(1649): CodeIgniter\Database\BaseConnection->query('SELECT *
+FROM `ems_water_consumption_years`
+ORDER BY `report_year` ASC', [], false)
+ 5 SYSTEMPATH\Model.php(286): CodeIgniter\Database\BaseBuilder->get()
+ 6 SYSTEMPATH\BaseModel.php(677): CodeIgniter\Model->doFindAll(0, 0)
+ 7 APPPATH\Controllers\EmsReportController.php(51): CodeIgniter\BaseModel->findAll()
+ 8 SYSTEMPATH\CodeIgniter.php(933): App\Controllers\EmsReportController->waterConsumption()
+ 9 SYSTEMPATH\CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\EmsReportController))
+10 SYSTEMPATH\CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+11 SYSTEMPATH\Boot.php(363): CodeIgniter\CodeIgniter->run()
+12 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+13 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2026-04-09 16:57:43 --> ErrorException: fwrite(): Write of 33580 bytes failed with errno=22 Invalid argument
+[Method: CLI, Route: routes]
+in SYSTEMPATH\CLI\InputOutput.php on line 78.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(8, 'fwrite(): Write of 33580 bytes failed with errno=22 Invalid argument', 'C:\\xampp\\htdocs\\eams\\system\\CLI\\InputOutput.php', 78)
+ 2 SYSTEMPATH\CLI\InputOutput.php(78): fwrite(resource (stream), '+---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+| Method  | Route                                                  | Name | Handler                                                                         | Before Filters | After Filters |
++---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+| GET     | /                                                      | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard                                              | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard-it                                           | »    | \\App\\Controllers\\DashboardController::index                                     | auth           | auth          |
+| GET     | it                                                     | »    | \\App\\Controllers\\ITController::index                                            | auth           | auth          |
+| GET     | login                                                  | »    | \\App\\Controllers\\AuthController::login                                          |                |               |
+| GET     | logout                                                 | »    | \\App\\Controllers\\AuthController::logout                                         |                |               |
+| GET     | it-assets                                              | »    | \\App\\Controllers\\ITAssetController::index                                       | auth           | auth          |
+| GET     | it-assets/ajax                                         | »    | \\App\\Controllers\\ITAssetController::ajax                                        | auth           | auth          |
+| GET     | it-assets/detail/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::detail/$1                                   | auth           | auth          |
+| GET     | it-assets/assign/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::assignForm/$1                               | auth           | auth          |
+| GET     | it-assets/create                                       | »    | \\App\\Controllers\\ITAssetController::create                                      | auth           | auth          |
+| GET     | it-assets/edit/([0-9]+)                                | »    | \\App\\Controllers\\ITAssetController::edit/$1                                     | auth           | auth          |
+| GET     | employees                                              | »    | \\App\\Controllers\\EmployeeController::index                                      | auth           | auth          |
+| GET     | employees/create                                       | »    | \\App\\Controllers\\EmployeeController::create                                     | auth           | auth          |
+| GET     | employees/detail/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::detail/$1                                  | auth           | auth          |
+| GET     | employees/edit/([0-9]+)                                | »    | \\App\\Controllers\\EmployeeController::edit/$1                                    | auth           | auth          |
+| GET     | users                                                  | »    | \\App\\Controllers\\UserController::index                                          | admin          | admin         |
+| GET     | users/create                                           | »    | \\App\\Controllers\\UserController::create                                         | admin          | admin         |
+| GET     | users/edit/([0-9]+)                                    | »    | \\App\\Controllers\\UserController::edit/$1                                        | admin          | admin         |
+| GET     | audit-logs                                             | »    | \\App\\Controllers\\AuditLogController::index                                      | admin          | admin         |
+| GET     | backups                                                | »    | \\App\\Controllers\\BackupController::index                                        | admin          | admin         |
+| GET     | backups/download/([^/]+)                               | »    | \\App\\Controllers\\BackupController::download/$1                                  | admin          | admin         |
+| GET     | settings                                               | »    | \\App\\Controllers\\SettingsController::index                                      | auth           | auth          |
+| GET     | compliance/dashboard                                   | »    | \\App\\Controllers\\ComplianceDashboardController::index                           | auth           | auth          |
+| GET     | compliance/dashboard/trend                             | »    | \\App\\Controllers\\ComplianceDashboardController::getTrendAjax                    | auth           | auth          |
+| GET     | compliance/dashboard/progress-trend                    | »    | \\App\\Controllers\\ComplianceDashboardController::getProgressTrendAjax            | auth           | auth          |
+| GET     | compliance/dashboard/status-pie                        | »    | \\App\\Controllers\\ComplianceDashboardController::getStatusPieAjax                | auth           | auth          |
+| GET     | compliance/dashboard/total-inventory                   | »    | \\App\\Controllers\\ComplianceDashboardController::getTotalInventoryByType         | auth           | auth          |
+| GET     | compliance/dashboard/risk-insight                      | »    | \\App\\Controllers\\ComplianceDashboardController::getRiskInsightAjax              | auth           | auth          |
+| GET     | compliance/dashboard/risk-trend                        | »    | \\App\\Controllers\\ComplianceDashboardController::getRiskTrendAjax                | auth           | auth          |
+| GET     | compliance/dashboard/pending-checklist                 | »    | \\App\\Controllers\\ComplianceDashboardController::getPendingChecklistAjax         | auth           | auth          |
+| GET     | compliance/inventory                                   | »    | \\App\\Controllers\\ComplianceInventoryController::index                           | auth           | auth          |
+| GET     | compliance/inventory/create                            | »    | \\App\\Controllers\\ComplianceInventoryController::create                          | auth           | auth          |
+| GET     | compliance/inventory/edit/([0-9]+)                     | »    | \\App\\Controllers\\ComplianceInventoryController::edit/$1                         | auth           | auth          |
+| GET     | compliance/inventory/detail/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::detail/$1                       | auth           | auth          |
+| GET     | compliance/inventory/item-types/([0-9]+)               | »    | \\App\\Controllers\\ComplianceInventoryController::getItemTypesByCategory/$1       | auth           | auth          |
+| GET     | compliance/checklist/([0-9]+)                          | »    | \\App\\Controllers\\ComplianceInventoryController::checklist/$1                    | auth           | auth          |
+| GET     | compliance/checklist/([0-9]+)/calendar                 | »    | \\App\\Controllers\\ComplianceInventoryController::calendar/$1                     | auth           | auth          |
+| GET     | compliance/checklist/master                            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterIndex               | auth           | auth          |
+| GET     | compliance/checklist/master/category/([0-9]+)          | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterByCategory/$1       | auth           | auth          |
+| GET     | compliance/checklist/master/item/([0-9]+)              | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterItem/$1             | auth           | auth          |
+| GET     | compliance/item/create                                 | »    | \\App\\Controllers\\ComplianceItemTypeController::create                           | auth           | auth          |
+| GET     | holidays                                               | »    | \\App\\Controllers\\HolidayController::index                                       | auth           | auth          |
+| GET     | compliance/report                                      | »    | \\App\\Controllers\\ComplianceReportController::index                              | auth           | auth          |
+| GET     | compliance/report/load                                 | »    | \\App\\Controllers\\ComplianceReportController::loadAjax                           | auth           | auth          |
+| GET     | compliance/report/item-by-category                     | »    | \\App\\Controllers\\ComplianceReportController::getItemTypeByCategory              | auth           | auth          |
+| GET     | compliance/report/inventory-by-type                    | »    | \\App\\Controllers\\ComplianceReportController::getInventoryByType                 | auth           | auth          |
+| GET     | compliance/questionnaires                              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::index                       | auth           | auth          |
+| GET     | compliance/questionnaires/analytics                    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::analytics                   | auth           | auth          |
+| GET     | compliance/questionnaires/create                       | »    | \\App\\Controllers\\ComplianceQuestionnaireController::create                      | auth           | auth          |
+| GET     | compliance/questionnaires/edit/([0-9]+)                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::edit/$1                     | auth           | auth          |
+| GET     | compliance/questionnaires/fill/([0-9]+)                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::fill/$1                     | auth           | auth          |
+| GET     | compliance/questionnaires/response/([0-9]+)            | »    | \\App\\Controllers\\ComplianceQuestionnaireController::responseDetail/$1           | auth           | auth          |
+| GET     | compliance/questionnaires/response/([0-9]+)/pdf        | »    | \\App\\Controllers\\ComplianceQuestionnaireController::responsePdf/$1              | auth           | auth          |
+| GET     | compliance/questionnaires/([0-9]+)/excel               | »    | \\App\\Controllers\\ComplianceQuestionnaireController::exportExcel/$1              | auth           | auth          |
+| GET     | compliance/questionnaires/([0-9]+)                     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::detail/$1                   | auth           | auth          |
+| GET     | ems-reports                                            | »    | \\App\\Controllers\\EmsReportController::index                                     | auth           | auth          |
+| GET     | ems-reports/water-consumption                          | »    | \\App\\Controllers\\EmsReportController::waterConsumption                          | auth           | auth          |
+| GET     | kuesioner/([^/]+)                                      | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicFill/$1               |                |               |
+| GET     | kuesioner/([^/]+)/selesai                              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicThanks/$1             |                |               |
+| GET     | compliance/print                                       | »    | \\App\\Controllers\\CompliancePrintController::index                               | auth           | auth          |
+| GET     | compliance/print/item                                  | »    | \\App\\Controllers\\CompliancePrintController::item                                | auth           | auth          |
+| GET     | compliance/print/item/preview                          | »    | \\App\\Controllers\\CompliancePrintController::itemPreview                         | auth           | auth          |
+| GET     | compliance/print/inventory/([0-9]+)                    | »    | \\App\\Controllers\\CompliancePrintController::inventoryByType/$1                  | auth           | auth          |
+| GET     | compliance/print/batch                                 | »    | \\App\\Controllers\\CompliancePrintController::batch                               | auth           | auth          |
+| GET     | compliance/print/batch/preview                         | »    | \\App\\Controllers\\CompliancePrintController::batchPreview                        | auth           | auth          |
+| GET     | compliance/evidence                                    | »    | \\App\\Controllers\\ComplianceEvidenceController::index                            | auth           | auth          |
+| GET     | compliance/evidence/ajax                               | »    | \\App\\Controllers\\ComplianceEvidenceController::getEvidenceAjax                  | auth           | auth          |
+| GET     | compliance/evidence/detail/([0-9]+)                    | »    | \\App\\Controllers\\ComplianceEvidenceController::detail/$1                        | auth           | auth          |
+| GET     | compliance/dashboard/data                              | »    | \\App\\Controllers\\ComplianceDashboardController::ajaxData                        | auth           | auth          |
+| GET     | export/pdf/single/([0-9]+)/(.*)                        | »    | \\App\\Controllers\\ExportPdfController::single/$1/$2                              | auth           | auth          |
+| GET     | export/pdf/recap/([0-9]+)/([0-9]+)/([0-9]+)            | »    | \\App\\Controllers\\ExportPdfController::recap/$1/$2/$3                            | auth           | auth          |
+| GET     | home                                                   | »    | \\App\\Controllers\\HomeController::index                                          | auth           | auth          |
+| GET     | compliance/progress                                    | »    | \\App\\Controllers\\ProgressController::index                                      | auth           | auth          |
+| GET     | compliance/progress/ajax                               | »    | \\App\\Controllers\\ProgressController::getProgressAjax                            | auth           | auth          |
+| GET     | compliance/progress/export                             | »    | \\App\\Controllers\\ProgressController::export                                     | auth           | auth          |
+| GET     | compliance/progress/detail                             | »    | \\App\\Controllers\\ProgressController::getUserDetailAjax                          | auth           | auth          |
+| GET     | compliance/inventory/get/([0-9]+)                      | »    | \\App\\Controllers\\ComplianceInventoryController::get/$1                          | auth           | auth          |
+| GET     | compliance/inventory/qr-center                         | »    | \\App\\Controllers\\ComplianceInventoryController::qrCenter                        | auth           | auth          |
+| GET     | compliance/inventory/qr-album/(.*)                     | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumAjax/$1                  | auth           | auth          |
+| GET     | compliance/inventory/qr-album-download/(.*)            | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumDownload/$1              | auth           | auth          |
+| GET     | compliance/inventory/qr-album-regen/(.*)               | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumRegen/$1                 | auth           | auth          |
+| GET     | compliance/inventory/qr-album-print/(.*)               | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumPrint/$1                 | auth           | auth          |
+| GET     | it/devices                                             | »    | \\App\\Controllers\\ITDeviceController::index                                      | auth           | auth          |
+| GET     | it/devices/ajax                                        | »    | \\App\\Controllers\\ITDeviceController::ajax                                       | auth           | auth          |
+| GET     | it/devices/stats                                       | »    | \\App\\Controllers\\ITDeviceController::stats                                      | auth           | auth          |
+| GET     | api/agent/heartbeat                                    | »    | \\App\\Controllers\\Api\\AgentController::heartbeat                                 |                |               |
+| GET     | api/agent/command                                      | »    | \\App\\Controllers\\Api\\AgentController::command                                   |                |               |
+| GET     | api/agent/update                                       | »    | \\App\\Controllers\\Api\\AgentController::agentUpdate                               |                |               |
+| GET     | it/devices/([0-9]+)                                    | »    | \\App\\Controllers\\ITDeviceController::detail/$1                                  | auth           | auth          |
+| GET     | it/devices/([0-9]+)/fragment                           | »    | \\App\\Controllers\\ITDeviceController::detailFragment/$1                          | auth           | auth          |
+| GET     | boiler                                                 | »    | \\App\\Controllers\\BoilerFuelController::index                                    | auth           | auth          |
+| GET     | boiler/detail/([^/]+)                                  | »    | \\App\\Controllers\\BoilerFuelController::detail/$1                                | auth           | auth          |
+| GET     | boiler/export                                          | »    | \\App\\Controllers\\BoilerFuelController::export                                   | auth           | auth          |
+| GET     | ipal                                                   | »    | \\App\\Controllers\\IpalController::index                                          | auth           | auth          |
+| GET     | ipal/export                                            | »    | \\App\\Controllers\\IpalController::export                                         | auth           | auth          |
+| GET     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| HEAD    | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| POST    | login                                                  | »    | \\App\\Controllers\\AuthController::doLogin                                        |                |               |
+| POST    | it-assets/assign/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::assignSave/$1                               | auth           | auth          |
+| POST    | it-assets/store                                        | »    | \\App\\Controllers\\ITAssetController::store                                       | auth           | auth          |
+| POST    | it-assets/update/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::update/$1                                   | auth           | auth          |
+| POST    | employees/store                                        | »    | \\App\\Controllers\\EmployeeController::store                                      | auth           | auth          |
+| POST    | employees/update/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::update/$1                                  | auth           | auth          |
+| POST    | employees/activate/([0-9]+)                            | »    | \\App\\Controllers\\EmployeeController::activate/$1                                | auth           | auth          |
+| POST    | employees/deactivate/([0-9]+)                          | »    | \\App\\Controllers\\EmployeeController::deactivate/$1                              | auth           | auth          |
+| POST    | employees/delete/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::delete/$1                                  | auth           | auth          |
+| POST    | users/store                                            | »    | \\App\\Controllers\\UserController::store                                          | admin          | admin         |
+| POST    | users/update/([0-9]+)                                  | »    | \\App\\Controllers\\UserController::update/$1                                      | admin          | admin         |
+| POST    | it-assets/assign-save/([0-9]+)                         | »    | \\App\\Controllers\\ITAssetController::assignSave/$1                               | write          | write         |
+| POST    | employees/unassign/([0-9]+)/([0-9]+)                   | »    | \\App\\Controllers\\EmployeeController::unassign/$1/$2                             | auth write     | write auth    |
+| POST    | backups/database                                       | »    | \\App\\Controllers\\BackupController::createDatabase                               | admin          | admin         |
+| POST    | backups/files                                          | »    | \\App\\Controllers\\BackupController::createFiles                                  | admin          | admin         |
+| POST    | backups/full                                           | »    | \\App\\Controllers\\BackupController::createFull                                   | admin          | admin         |
+| POST    | backups/upload                                         | »    | \\App\\Controllers\\BackupController::upload                                       | admin          | admin         |
+| POST    | backups/auto-enable                                    | »    | \\App\\Controllers\\BackupController::enableAutoBackup                             | admin          | admin         |
+| POST    | backups/auto-disable                                   | »    | \\App\\Controllers\\BackupController::disableAutoBackup                            | admin          | admin         |
+| POST    | backups/restore-full/([^/]+)                           | »    | \\App\\Controllers\\BackupController::restoreFull/$1                               | admin          | admin         |
+| POST    | backups/restore-database/([^/]+)                       | »    | \\App\\Controllers\\BackupController::restoreDatabase/$1                           | admin          | admin         |
+| POST    | backups/restore-files/([^/]+)                          | »    | \\App\\Controllers\\BackupController::restoreFiles/$1                              | admin          | admin         |
+| POST    | backups/delete/([^/]+)                                 | »    | \\App\\Controllers\\BackupController::delete/$1                                    | admin          | admin         |
+| POST    | settings/change-password                               | »    | \\App\\Controllers\\SettingsController::changePassword                             | auth           | auth          |
+| POST    | compliance/inventory/store                             | »    | \\App\\Controllers\\ComplianceInventoryController::store                           | auth           | auth          |
+| POST    | compliance/inventory/update/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::update/$1                       | auth           | auth          |
+| POST    | compliance/inventory/delete/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::delete/$1                       | auth           | auth          |
+| POST    | compliance/inventory/update-photo/([0-9]+)             | »    | \\App\\Controllers\\ComplianceInventoryController::updatePhoto/$1                  | auth           | auth          |
+| POST    | compliance/inventory/regenerate-qr/([0-9]+)            | »    | \\App\\Controllers\\ComplianceInventoryController::regenerateQr/$1                 | auth           | auth          |
+| POST    | compliance/checklist/submit                            | »    | \\App\\Controllers\\ComplianceInventoryController::submitChecklist                 | auth           | auth          |
+| POST    | compliance/checklist/master/store                      | »    | \\App\\Controllers\\ComplianceChecklistMasterController::store                     | auth           | auth          |
+| POST    | compliance/checklist/master/update/([0-9]+)            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::update/$1                 | auth           | auth          |
+| POST    | compliance/checklist/master/item-frequency/([0-9]+)    | »    | \\App\\Controllers\\ComplianceChecklistMasterController::updateItemFrequency/$1    | auth           | auth          |
+| POST    | compliance/checklist/master/delete/([0-9]+)            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::delete/$1                 | auth           | auth          |
+| POST    | compliance/item/store                                  | »    | \\App\\Controllers\\ComplianceItemTypeController::store                            | auth           | auth          |
+| POST    | holidays/store                                         | »    | \\App\\Controllers\\HolidayController::store                                       | auth           | auth          |
+| POST    | holidays/update/([0-9]+)                               | »    | \\App\\Controllers\\HolidayController::update/$1                                   | auth           | auth          |
+| POST    | holidays/delete/([0-9]+)                               | »    | \\App\\Controllers\\HolidayController::delete/$1                                   | auth           | auth          |
+| POST    | compliance/questionnaires/store                        | »    | \\App\\Controllers\\ComplianceQuestionnaireController::store                       | auth           | auth          |
+| POST    | compliance/questionnaires/update/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::update/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/delete/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::delete/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/submit/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::submit/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/response/delete/([0-9]+)     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::deleteResponse/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/respondent-settings | »    | \\App\\Controllers\\ComplianceQuestionnaireController::updateRespondentSettings/$1 | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/questions/store     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::storeQuestion/$1            | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/questions/reorder   | »    | \\App\\Controllers\\ComplianceQuestionnaireController::reorderQuestions/$1         | auth           | auth          |
+| POST    | compliance/questionnaires/questions/update/([0-9]+)    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::updateQuestion/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/delete/([0-9]+)    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::deleteQuestion/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/move-up/([0-9]+)   | »    | \\App\\Controllers\\ComplianceQuestionnaireController::moveQuestionUp/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/move-down/([0-9]+) | »    | \\App\\Controllers\\ComplianceQuestionnaireController::moveQuestionDown/$1         | auth           | auth          |
+| POST    | ems-reports/water-consumption/save                     | »    | \\App\\Controllers\\EmsReportController::saveWaterConsumption                      | auth           | auth          |
+| POST    | kuesioner/([^/]+)/kirim                                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicSubmit/$1             |                |               |
+| POST    | compliance/evidence/update-followup                    | »    | \\App\\Controllers\\ComplianceEvidenceController::updateFollowUp                   | auth           | auth          |
+| POST    | compliance/progress/remind                             | »    | \\App\\Controllers\\ProgressController::sendReminderAjax                           | auth           | auth          |
+| POST    | api/agent/heartbeat                                    | »    | \\App\\Controllers\\Api\\AgentController::heartbeat                                 |                |               |
+| POST    | api/agent/command                                      | »    | \\App\\Controllers\\Api\\AgentController::command                                   |                |               |
+| POST    | api/agent/update                                       | »    | \\App\\Controllers\\Api\\AgentController::agentUpdate                               |                |               |
+| POST    | it/device/push-update                                  | »    | \\App\\Controllers\\Api\\AgentController::pushUpdate                                | auth           | auth          |
+| POST    | it/device/command                                      | »    | \\App\\Controllers\\ITDeviceController::sendCommand                                | auth           | auth          |
+| POST    | it/device/remote                                       | »    | \\App\\Controllers\\ITDeviceController::remoteAction                               | auth           | auth          |
+| POST    | boiler/save                                            | »    | \\App\\Controllers\\BoilerFuelController::save                                     | auth           | auth          |
+| POST    | boiler/delete                                          | »    | \\App\\Controllers\\BoilerFuelController::delete                                   | auth           | auth          |
+| POST    | ipal/save                                              | »    | \\App\\Controllers\\IpalController::save                                           | auth           | auth          |
+| POST    | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| PATCH   | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| PUT     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| DELETE  | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| OPTIONS | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| TRACE   | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| CONNECT | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| CLI     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
++---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+
+')
+ 3 SYSTEMPATH\CLI\CLI.php(1126): CodeIgniter\CLI\InputOutput->fwrite(resource (stream), '+---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+| Method  | Route                                                  | Name | Handler                                                                         | Before Filters | After Filters |
++---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+| GET     | /                                                      | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard                                              | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard-it                                           | »    | \\App\\Controllers\\DashboardController::index                                     | auth           | auth          |
+| GET     | it                                                     | »    | \\App\\Controllers\\ITController::index                                            | auth           | auth          |
+| GET     | login                                                  | »    | \\App\\Controllers\\AuthController::login                                          |                |               |
+| GET     | logout                                                 | »    | \\App\\Controllers\\AuthController::logout                                         |                |               |
+| GET     | it-assets                                              | »    | \\App\\Controllers\\ITAssetController::index                                       | auth           | auth          |
+| GET     | it-assets/ajax                                         | »    | \\App\\Controllers\\ITAssetController::ajax                                        | auth           | auth          |
+| GET     | it-assets/detail/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::detail/$1                                   | auth           | auth          |
+| GET     | it-assets/assign/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::assignForm/$1                               | auth           | auth          |
+| GET     | it-assets/create                                       | »    | \\App\\Controllers\\ITAssetController::create                                      | auth           | auth          |
+| GET     | it-assets/edit/([0-9]+)                                | »    | \\App\\Controllers\\ITAssetController::edit/$1                                     | auth           | auth          |
+| GET     | employees                                              | »    | \\App\\Controllers\\EmployeeController::index                                      | auth           | auth          |
+| GET     | employees/create                                       | »    | \\App\\Controllers\\EmployeeController::create                                     | auth           | auth          |
+| GET     | employees/detail/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::detail/$1                                  | auth           | auth          |
+| GET     | employees/edit/([0-9]+)                                | »    | \\App\\Controllers\\EmployeeController::edit/$1                                    | auth           | auth          |
+| GET     | users                                                  | »    | \\App\\Controllers\\UserController::index                                          | admin          | admin         |
+| GET     | users/create                                           | »    | \\App\\Controllers\\UserController::create                                         | admin          | admin         |
+| GET     | users/edit/([0-9]+)                                    | »    | \\App\\Controllers\\UserController::edit/$1                                        | admin          | admin         |
+| GET     | audit-logs                                             | »    | \\App\\Controllers\\AuditLogController::index                                      | admin          | admin         |
+| GET     | backups                                                | »    | \\App\\Controllers\\BackupController::index                                        | admin          | admin         |
+| GET     | backups/download/([^/]+)                               | »    | \\App\\Controllers\\BackupController::download/$1                                  | admin          | admin         |
+| GET     | settings                                               | »    | \\App\\Controllers\\SettingsController::index                                      | auth           | auth          |
+| GET     | compliance/dashboard                                   | »    | \\App\\Controllers\\ComplianceDashboardController::index                           | auth           | auth          |
+| GET     | compliance/dashboard/trend                             | »    | \\App\\Controllers\\ComplianceDashboardController::getTrendAjax                    | auth           | auth          |
+| GET     | compliance/dashboard/progress-trend                    | »    | \\App\\Controllers\\ComplianceDashboardController::getProgressTrendAjax            | auth           | auth          |
+| GET     | compliance/dashboard/status-pie                        | »    | \\App\\Controllers\\ComplianceDashboardController::getStatusPieAjax                | auth           | auth          |
+| GET     | compliance/dashboard/total-inventory                   | »    | \\App\\Controllers\\ComplianceDashboardController::getTotalInventoryByType         | auth           | auth          |
+| GET     | compliance/dashboard/risk-insight                      | »    | \\App\\Controllers\\ComplianceDashboardController::getRiskInsightAjax              | auth           | auth          |
+| GET     | compliance/dashboard/risk-trend                        | »    | \\App\\Controllers\\ComplianceDashboardController::getRiskTrendAjax                | auth           | auth          |
+| GET     | compliance/dashboard/pending-checklist                 | »    | \\App\\Controllers\\ComplianceDashboardController::getPendingChecklistAjax         | auth           | auth          |
+| GET     | compliance/inventory                                   | »    | \\App\\Controllers\\ComplianceInventoryController::index                           | auth           | auth          |
+| GET     | compliance/inventory/create                            | »    | \\App\\Controllers\\ComplianceInventoryController::create                          | auth           | auth          |
+| GET     | compliance/inventory/edit/([0-9]+)                     | »    | \\App\\Controllers\\ComplianceInventoryController::edit/$1                         | auth           | auth          |
+| GET     | compliance/inventory/detail/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::detail/$1                       | auth           | auth          |
+| GET     | compliance/inventory/item-types/([0-9]+)               | »    | \\App\\Controllers\\ComplianceInventoryController::getItemTypesByCategory/$1       | auth           | auth          |
+| GET     | compliance/checklist/([0-9]+)                          | »    | \\App\\Controllers\\ComplianceInventoryController::checklist/$1                    | auth           | auth          |
+| GET     | compliance/checklist/([0-9]+)/calendar                 | »    | \\App\\Controllers\\ComplianceInventoryController::calendar/$1                     | auth           | auth          |
+| GET     | compliance/checklist/master                            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterIndex               | auth           | auth          |
+| GET     | compliance/checklist/master/category/([0-9]+)          | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterByCategory/$1       | auth           | auth          |
+| GET     | compliance/checklist/master/item/([0-9]+)              | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterItem/$1             | auth           | auth          |
+| GET     | compliance/item/create                                 | »    | \\App\\Controllers\\ComplianceItemTypeController::create                           | auth           | auth          |
+| GET     | holidays                                               | »    | \\App\\Controllers\\HolidayController::index                                       | auth           | auth          |
+| GET     | compliance/report                                      | »    | \\App\\Controllers\\ComplianceReportController::index                              | auth           | auth          |
+| GET     | compliance/report/load                                 | »    | \\App\\Controllers\\ComplianceReportController::loadAjax                           | auth           | auth          |
+| GET     | compliance/report/item-by-category                     | »    | \\App\\Controllers\\ComplianceReportController::getItemTypeByCategory              | auth           | auth          |
+| GET     | compliance/report/inventory-by-type                    | »    | \\App\\Controllers\\ComplianceReportController::getInventoryByType                 | auth           | auth          |
+| GET     | compliance/questionnaires                              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::index                       | auth           | auth          |
+| GET     | compliance/questionnaires/analytics                    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::analytics                   | auth           | auth          |
+| GET     | compliance/questionnaires/create                       | »    | \\App\\Controllers\\ComplianceQuestionnaireController::create                      | auth           | auth          |
+| GET     | compliance/questionnaires/edit/([0-9]+)                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::edit/$1                     | auth           | auth          |
+| GET     | compliance/questionnaires/fill/([0-9]+)                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::fill/$1                     | auth           | auth          |
+| GET     | compliance/questionnaires/response/([0-9]+)            | »    | \\App\\Controllers\\ComplianceQuestionnaireController::responseDetail/$1           | auth           | auth          |
+| GET     | compliance/questionnaires/response/([0-9]+)/pdf        | »    | \\App\\Controllers\\ComplianceQuestionnaireController::responsePdf/$1              | auth           | auth          |
+| GET     | compliance/questionnaires/([0-9]+)/excel               | »    | \\App\\Controllers\\ComplianceQuestionnaireController::exportExcel/$1              | auth           | auth          |
+| GET     | compliance/questionnaires/([0-9]+)                     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::detail/$1                   | auth           | auth          |
+| GET     | ems-reports                                            | »    | \\App\\Controllers\\EmsReportController::index                                     | auth           | auth          |
+| GET     | ems-reports/water-consumption                          | »    | \\App\\Controllers\\EmsReportController::waterConsumption                          | auth           | auth          |
+| GET     | kuesioner/([^/]+)                                      | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicFill/$1               |                |               |
+| GET     | kuesioner/([^/]+)/selesai                              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicThanks/$1             |                |               |
+| GET     | compliance/print                                       | »    | \\App\\Controllers\\CompliancePrintController::index                               | auth           | auth          |
+| GET     | compliance/print/item                                  | »    | \\App\\Controllers\\CompliancePrintController::item                                | auth           | auth          |
+| GET     | compliance/print/item/preview                          | »    | \\App\\Controllers\\CompliancePrintController::itemPreview                         | auth           | auth          |
+| GET     | compliance/print/inventory/([0-9]+)                    | »    | \\App\\Controllers\\CompliancePrintController::inventoryByType/$1                  | auth           | auth          |
+| GET     | compliance/print/batch                                 | »    | \\App\\Controllers\\CompliancePrintController::batch                               | auth           | auth          |
+| GET     | compliance/print/batch/preview                         | »    | \\App\\Controllers\\CompliancePrintController::batchPreview                        | auth           | auth          |
+| GET     | compliance/evidence                                    | »    | \\App\\Controllers\\ComplianceEvidenceController::index                            | auth           | auth          |
+| GET     | compliance/evidence/ajax                               | »    | \\App\\Controllers\\ComplianceEvidenceController::getEvidenceAjax                  | auth           | auth          |
+| GET     | compliance/evidence/detail/([0-9]+)                    | »    | \\App\\Controllers\\ComplianceEvidenceController::detail/$1                        | auth           | auth          |
+| GET     | compliance/dashboard/data                              | »    | \\App\\Controllers\\ComplianceDashboardController::ajaxData                        | auth           | auth          |
+| GET     | export/pdf/single/([0-9]+)/(.*)                        | »    | \\App\\Controllers\\ExportPdfController::single/$1/$2                              | auth           | auth          |
+| GET     | export/pdf/recap/([0-9]+)/([0-9]+)/([0-9]+)            | »    | \\App\\Controllers\\ExportPdfController::recap/$1/$2/$3                            | auth           | auth          |
+| GET     | home                                                   | »    | \\App\\Controllers\\HomeController::index                                          | auth           | auth          |
+| GET     | compliance/progress                                    | »    | \\App\\Controllers\\ProgressController::index                                      | auth           | auth          |
+| GET     | compliance/progress/ajax                               | »    | \\App\\Controllers\\ProgressController::getProgressAjax                            | auth           | auth          |
+| GET     | compliance/progress/export                             | »    | \\App\\Controllers\\ProgressController::export                                     | auth           | auth          |
+| GET     | compliance/progress/detail                             | »    | \\App\\Controllers\\ProgressController::getUserDetailAjax                          | auth           | auth          |
+| GET     | compliance/inventory/get/([0-9]+)                      | »    | \\App\\Controllers\\ComplianceInventoryController::get/$1                          | auth           | auth          |
+| GET     | compliance/inventory/qr-center                         | »    | \\App\\Controllers\\ComplianceInventoryController::qrCenter                        | auth           | auth          |
+| GET     | compliance/inventory/qr-album/(.*)                     | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumAjax/$1                  | auth           | auth          |
+| GET     | compliance/inventory/qr-album-download/(.*)            | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumDownload/$1              | auth           | auth          |
+| GET     | compliance/inventory/qr-album-regen/(.*)               | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumRegen/$1                 | auth           | auth          |
+| GET     | compliance/inventory/qr-album-print/(.*)               | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumPrint/$1                 | auth           | auth          |
+| GET     | it/devices                                             | »    | \\App\\Controllers\\ITDeviceController::index                                      | auth           | auth          |
+| GET     | it/devices/ajax                                        | »    | \\App\\Controllers\\ITDeviceController::ajax                                       | auth           | auth          |
+| GET     | it/devices/stats                                       | »    | \\App\\Controllers\\ITDeviceController::stats                                      | auth           | auth          |
+| GET     | api/agent/heartbeat                                    | »    | \\App\\Controllers\\Api\\AgentController::heartbeat                                 |                |               |
+| GET     | api/agent/command                                      | »    | \\App\\Controllers\\Api\\AgentController::command                                   |                |               |
+| GET     | api/agent/update                                       | »    | \\App\\Controllers\\Api\\AgentController::agentUpdate                               |                |               |
+| GET     | it/devices/([0-9]+)                                    | »    | \\App\\Controllers\\ITDeviceController::detail/$1                                  | auth           | auth          |
+| GET     | it/devices/([0-9]+)/fragment                           | »    | \\App\\Controllers\\ITDeviceController::detailFragment/$1                          | auth           | auth          |
+| GET     | boiler                                                 | »    | \\App\\Controllers\\BoilerFuelController::index                                    | auth           | auth          |
+| GET     | boiler/detail/([^/]+)                                  | »    | \\App\\Controllers\\BoilerFuelController::detail/$1                                | auth           | auth          |
+| GET     | boiler/export                                          | »    | \\App\\Controllers\\BoilerFuelController::export                                   | auth           | auth          |
+| GET     | ipal                                                   | »    | \\App\\Controllers\\IpalController::index                                          | auth           | auth          |
+| GET     | ipal/export                                            | »    | \\App\\Controllers\\IpalController::export                                         | auth           | auth          |
+| GET     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| HEAD    | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| POST    | login                                                  | »    | \\App\\Controllers\\AuthController::doLogin                                        |                |               |
+| POST    | it-assets/assign/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::assignSave/$1                               | auth           | auth          |
+| POST    | it-assets/store                                        | »    | \\App\\Controllers\\ITAssetController::store                                       | auth           | auth          |
+| POST    | it-assets/update/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::update/$1                                   | auth           | auth          |
+| POST    | employees/store                                        | »    | \\App\\Controllers\\EmployeeController::store                                      | auth           | auth          |
+| POST    | employees/update/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::update/$1                                  | auth           | auth          |
+| POST    | employees/activate/([0-9]+)                            | »    | \\App\\Controllers\\EmployeeController::activate/$1                                | auth           | auth          |
+| POST    | employees/deactivate/([0-9]+)                          | »    | \\App\\Controllers\\EmployeeController::deactivate/$1                              | auth           | auth          |
+| POST    | employees/delete/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::delete/$1                                  | auth           | auth          |
+| POST    | users/store                                            | »    | \\App\\Controllers\\UserController::store                                          | admin          | admin         |
+| POST    | users/update/([0-9]+)                                  | »    | \\App\\Controllers\\UserController::update/$1                                      | admin          | admin         |
+| POST    | it-assets/assign-save/([0-9]+)                         | »    | \\App\\Controllers\\ITAssetController::assignSave/$1                               | write          | write         |
+| POST    | employees/unassign/([0-9]+)/([0-9]+)                   | »    | \\App\\Controllers\\EmployeeController::unassign/$1/$2                             | auth write     | write auth    |
+| POST    | backups/database                                       | »    | \\App\\Controllers\\BackupController::createDatabase                               | admin          | admin         |
+| POST    | backups/files                                          | »    | \\App\\Controllers\\BackupController::createFiles                                  | admin          | admin         |
+| POST    | backups/full                                           | »    | \\App\\Controllers\\BackupController::createFull                                   | admin          | admin         |
+| POST    | backups/upload                                         | »    | \\App\\Controllers\\BackupController::upload                                       | admin          | admin         |
+| POST    | backups/auto-enable                                    | »    | \\App\\Controllers\\BackupController::enableAutoBackup                             | admin          | admin         |
+| POST    | backups/auto-disable                                   | »    | \\App\\Controllers\\BackupController::disableAutoBackup                            | admin          | admin         |
+| POST    | backups/restore-full/([^/]+)                           | »    | \\App\\Controllers\\BackupController::restoreFull/$1                               | admin          | admin         |
+| POST    | backups/restore-database/([^/]+)                       | »    | \\App\\Controllers\\BackupController::restoreDatabase/$1                           | admin          | admin         |
+| POST    | backups/restore-files/([^/]+)                          | »    | \\App\\Controllers\\BackupController::restoreFiles/$1                              | admin          | admin         |
+| POST    | backups/delete/([^/]+)                                 | »    | \\App\\Controllers\\BackupController::delete/$1                                    | admin          | admin         |
+| POST    | settings/change-password                               | »    | \\App\\Controllers\\SettingsController::changePassword                             | auth           | auth          |
+| POST    | compliance/inventory/store                             | »    | \\App\\Controllers\\ComplianceInventoryController::store                           | auth           | auth          |
+| POST    | compliance/inventory/update/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::update/$1                       | auth           | auth          |
+| POST    | compliance/inventory/delete/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::delete/$1                       | auth           | auth          |
+| POST    | compliance/inventory/update-photo/([0-9]+)             | »    | \\App\\Controllers\\ComplianceInventoryController::updatePhoto/$1                  | auth           | auth          |
+| POST    | compliance/inventory/regenerate-qr/([0-9]+)            | »    | \\App\\Controllers\\ComplianceInventoryController::regenerateQr/$1                 | auth           | auth          |
+| POST    | compliance/checklist/submit                            | »    | \\App\\Controllers\\ComplianceInventoryController::submitChecklist                 | auth           | auth          |
+| POST    | compliance/checklist/master/store                      | »    | \\App\\Controllers\\ComplianceChecklistMasterController::store                     | auth           | auth          |
+| POST    | compliance/checklist/master/update/([0-9]+)            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::update/$1                 | auth           | auth          |
+| POST    | compliance/checklist/master/item-frequency/([0-9]+)    | »    | \\App\\Controllers\\ComplianceChecklistMasterController::updateItemFrequency/$1    | auth           | auth          |
+| POST    | compliance/checklist/master/delete/([0-9]+)            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::delete/$1                 | auth           | auth          |
+| POST    | compliance/item/store                                  | »    | \\App\\Controllers\\ComplianceItemTypeController::store                            | auth           | auth          |
+| POST    | holidays/store                                         | »    | \\App\\Controllers\\HolidayController::store                                       | auth           | auth          |
+| POST    | holidays/update/([0-9]+)                               | »    | \\App\\Controllers\\HolidayController::update/$1                                   | auth           | auth          |
+| POST    | holidays/delete/([0-9]+)                               | »    | \\App\\Controllers\\HolidayController::delete/$1                                   | auth           | auth          |
+| POST    | compliance/questionnaires/store                        | »    | \\App\\Controllers\\ComplianceQuestionnaireController::store                       | auth           | auth          |
+| POST    | compliance/questionnaires/update/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::update/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/delete/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::delete/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/submit/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::submit/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/response/delete/([0-9]+)     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::deleteResponse/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/respondent-settings | »    | \\App\\Controllers\\ComplianceQuestionnaireController::updateRespondentSettings/$1 | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/questions/store     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::storeQuestion/$1            | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/questions/reorder   | »    | \\App\\Controllers\\ComplianceQuestionnaireController::reorderQuestions/$1         | auth           | auth          |
+| POST    | compliance/questionnaires/questions/update/([0-9]+)    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::updateQuestion/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/delete/([0-9]+)    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::deleteQuestion/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/move-up/([0-9]+)   | »    | \\App\\Controllers\\ComplianceQuestionnaireController::moveQuestionUp/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/move-down/([0-9]+) | »    | \\App\\Controllers\\ComplianceQuestionnaireController::moveQuestionDown/$1         | auth           | auth          |
+| POST    | ems-reports/water-consumption/save                     | »    | \\App\\Controllers\\EmsReportController::saveWaterConsumption                      | auth           | auth          |
+| POST    | kuesioner/([^/]+)/kirim                                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicSubmit/$1             |                |               |
+| POST    | compliance/evidence/update-followup                    | »    | \\App\\Controllers\\ComplianceEvidenceController::updateFollowUp                   | auth           | auth          |
+| POST    | compliance/progress/remind                             | »    | \\App\\Controllers\\ProgressController::sendReminderAjax                           | auth           | auth          |
+| POST    | api/agent/heartbeat                                    | »    | \\App\\Controllers\\Api\\AgentController::heartbeat                                 |                |               |
+| POST    | api/agent/command                                      | »    | \\App\\Controllers\\Api\\AgentController::command                                   |                |               |
+| POST    | api/agent/update                                       | »    | \\App\\Controllers\\Api\\AgentController::agentUpdate                               |                |               |
+| POST    | it/device/push-update                                  | »    | \\App\\Controllers\\Api\\AgentController::pushUpdate                                | auth           | auth          |
+| POST    | it/device/command                                      | »    | \\App\\Controllers\\ITDeviceController::sendCommand                                | auth           | auth          |
+| POST    | it/device/remote                                       | »    | \\App\\Controllers\\ITDeviceController::remoteAction                               | auth           | auth          |
+| POST    | boiler/save                                            | »    | \\App\\Controllers\\BoilerFuelController::save                                     | auth           | auth          |
+| POST    | boiler/delete                                          | »    | \\App\\Controllers\\BoilerFuelController::delete                                   | auth           | auth          |
+| POST    | ipal/save                                              | »    | \\App\\Controllers\\IpalController::save                                           | auth           | auth          |
+| POST    | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| PATCH   | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| PUT     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| DELETE  | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| OPTIONS | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| TRACE   | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| CONNECT | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| CLI     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
++---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+
+')
+ 4 SYSTEMPATH\CLI\CLI.php(465): CodeIgniter\CLI\CLI::fwrite(resource (stream), '+---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+| Method  | Route                                                  | Name | Handler                                                                         | Before Filters | After Filters |
++---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+| GET     | /                                                      | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard                                              | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard-it                                           | »    | \\App\\Controllers\\DashboardController::index                                     | auth           | auth          |
+| GET     | it                                                     | »    | \\App\\Controllers\\ITController::index                                            | auth           | auth          |
+| GET     | login                                                  | »    | \\App\\Controllers\\AuthController::login                                          |                |               |
+| GET     | logout                                                 | »    | \\App\\Controllers\\AuthController::logout                                         |                |               |
+| GET     | it-assets                                              | »    | \\App\\Controllers\\ITAssetController::index                                       | auth           | auth          |
+| GET     | it-assets/ajax                                         | »    | \\App\\Controllers\\ITAssetController::ajax                                        | auth           | auth          |
+| GET     | it-assets/detail/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::detail/$1                                   | auth           | auth          |
+| GET     | it-assets/assign/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::assignForm/$1                               | auth           | auth          |
+| GET     | it-assets/create                                       | »    | \\App\\Controllers\\ITAssetController::create                                      | auth           | auth          |
+| GET     | it-assets/edit/([0-9]+)                                | »    | \\App\\Controllers\\ITAssetController::edit/$1                                     | auth           | auth          |
+| GET     | employees                                              | »    | \\App\\Controllers\\EmployeeController::index                                      | auth           | auth          |
+| GET     | employees/create                                       | »    | \\App\\Controllers\\EmployeeController::create                                     | auth           | auth          |
+| GET     | employees/detail/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::detail/$1                                  | auth           | auth          |
+| GET     | employees/edit/([0-9]+)                                | »    | \\App\\Controllers\\EmployeeController::edit/$1                                    | auth           | auth          |
+| GET     | users                                                  | »    | \\App\\Controllers\\UserController::index                                          | admin          | admin         |
+| GET     | users/create                                           | »    | \\App\\Controllers\\UserController::create                                         | admin          | admin         |
+| GET     | users/edit/([0-9]+)                                    | »    | \\App\\Controllers\\UserController::edit/$1                                        | admin          | admin         |
+| GET     | audit-logs                                             | »    | \\App\\Controllers\\AuditLogController::index                                      | admin          | admin         |
+| GET     | backups                                                | »    | \\App\\Controllers\\BackupController::index                                        | admin          | admin         |
+| GET     | backups/download/([^/]+)                               | »    | \\App\\Controllers\\BackupController::download/$1                                  | admin          | admin         |
+| GET     | settings                                               | »    | \\App\\Controllers\\SettingsController::index                                      | auth           | auth          |
+| GET     | compliance/dashboard                                   | »    | \\App\\Controllers\\ComplianceDashboardController::index                           | auth           | auth          |
+| GET     | compliance/dashboard/trend                             | »    | \\App\\Controllers\\ComplianceDashboardController::getTrendAjax                    | auth           | auth          |
+| GET     | compliance/dashboard/progress-trend                    | »    | \\App\\Controllers\\ComplianceDashboardController::getProgressTrendAjax            | auth           | auth          |
+| GET     | compliance/dashboard/status-pie                        | »    | \\App\\Controllers\\ComplianceDashboardController::getStatusPieAjax                | auth           | auth          |
+| GET     | compliance/dashboard/total-inventory                   | »    | \\App\\Controllers\\ComplianceDashboardController::getTotalInventoryByType         | auth           | auth          |
+| GET     | compliance/dashboard/risk-insight                      | »    | \\App\\Controllers\\ComplianceDashboardController::getRiskInsightAjax              | auth           | auth          |
+| GET     | compliance/dashboard/risk-trend                        | »    | \\App\\Controllers\\ComplianceDashboardController::getRiskTrendAjax                | auth           | auth          |
+| GET     | compliance/dashboard/pending-checklist                 | »    | \\App\\Controllers\\ComplianceDashboardController::getPendingChecklistAjax         | auth           | auth          |
+| GET     | compliance/inventory                                   | »    | \\App\\Controllers\\ComplianceInventoryController::index                           | auth           | auth          |
+| GET     | compliance/inventory/create                            | »    | \\App\\Controllers\\ComplianceInventoryController::create                          | auth           | auth          |
+| GET     | compliance/inventory/edit/([0-9]+)                     | »    | \\App\\Controllers\\ComplianceInventoryController::edit/$1                         | auth           | auth          |
+| GET     | compliance/inventory/detail/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::detail/$1                       | auth           | auth          |
+| GET     | compliance/inventory/item-types/([0-9]+)               | »    | \\App\\Controllers\\ComplianceInventoryController::getItemTypesByCategory/$1       | auth           | auth          |
+| GET     | compliance/checklist/([0-9]+)                          | »    | \\App\\Controllers\\ComplianceInventoryController::checklist/$1                    | auth           | auth          |
+| GET     | compliance/checklist/([0-9]+)/calendar                 | »    | \\App\\Controllers\\ComplianceInventoryController::calendar/$1                     | auth           | auth          |
+| GET     | compliance/checklist/master                            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterIndex               | auth           | auth          |
+| GET     | compliance/checklist/master/category/([0-9]+)          | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterByCategory/$1       | auth           | auth          |
+| GET     | compliance/checklist/master/item/([0-9]+)              | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterItem/$1             | auth           | auth          |
+| GET     | compliance/item/create                                 | »    | \\App\\Controllers\\ComplianceItemTypeController::create                           | auth           | auth          |
+| GET     | holidays                                               | »    | \\App\\Controllers\\HolidayController::index                                       | auth           | auth          |
+| GET     | compliance/report                                      | »    | \\App\\Controllers\\ComplianceReportController::index                              | auth           | auth          |
+| GET     | compliance/report/load                                 | »    | \\App\\Controllers\\ComplianceReportController::loadAjax                           | auth           | auth          |
+| GET     | compliance/report/item-by-category                     | »    | \\App\\Controllers\\ComplianceReportController::getItemTypeByCategory              | auth           | auth          |
+| GET     | compliance/report/inventory-by-type                    | »    | \\App\\Controllers\\ComplianceReportController::getInventoryByType                 | auth           | auth          |
+| GET     | compliance/questionnaires                              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::index                       | auth           | auth          |
+| GET     | compliance/questionnaires/analytics                    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::analytics                   | auth           | auth          |
+| GET     | compliance/questionnaires/create                       | »    | \\App\\Controllers\\ComplianceQuestionnaireController::create                      | auth           | auth          |
+| GET     | compliance/questionnaires/edit/([0-9]+)                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::edit/$1                     | auth           | auth          |
+| GET     | compliance/questionnaires/fill/([0-9]+)                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::fill/$1                     | auth           | auth          |
+| GET     | compliance/questionnaires/response/([0-9]+)            | »    | \\App\\Controllers\\ComplianceQuestionnaireController::responseDetail/$1           | auth           | auth          |
+| GET     | compliance/questionnaires/response/([0-9]+)/pdf        | »    | \\App\\Controllers\\ComplianceQuestionnaireController::responsePdf/$1              | auth           | auth          |
+| GET     | compliance/questionnaires/([0-9]+)/excel               | »    | \\App\\Controllers\\ComplianceQuestionnaireController::exportExcel/$1              | auth           | auth          |
+| GET     | compliance/questionnaires/([0-9]+)                     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::detail/$1                   | auth           | auth          |
+| GET     | ems-reports                                            | »    | \\App\\Controllers\\EmsReportController::index                                     | auth           | auth          |
+| GET     | ems-reports/water-consumption                          | »    | \\App\\Controllers\\EmsReportController::waterConsumption                          | auth           | auth          |
+| GET     | kuesioner/([^/]+)                                      | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicFill/$1               |                |               |
+| GET     | kuesioner/([^/]+)/selesai                              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicThanks/$1             |                |               |
+| GET     | compliance/print                                       | »    | \\App\\Controllers\\CompliancePrintController::index                               | auth           | auth          |
+| GET     | compliance/print/item                                  | »    | \\App\\Controllers\\CompliancePrintController::item                                | auth           | auth          |
+| GET     | compliance/print/item/preview                          | »    | \\App\\Controllers\\CompliancePrintController::itemPreview                         | auth           | auth          |
+| GET     | compliance/print/inventory/([0-9]+)                    | »    | \\App\\Controllers\\CompliancePrintController::inventoryByType/$1                  | auth           | auth          |
+| GET     | compliance/print/batch                                 | »    | \\App\\Controllers\\CompliancePrintController::batch                               | auth           | auth          |
+| GET     | compliance/print/batch/preview                         | »    | \\App\\Controllers\\CompliancePrintController::batchPreview                        | auth           | auth          |
+| GET     | compliance/evidence                                    | »    | \\App\\Controllers\\ComplianceEvidenceController::index                            | auth           | auth          |
+| GET     | compliance/evidence/ajax                               | »    | \\App\\Controllers\\ComplianceEvidenceController::getEvidenceAjax                  | auth           | auth          |
+| GET     | compliance/evidence/detail/([0-9]+)                    | »    | \\App\\Controllers\\ComplianceEvidenceController::detail/$1                        | auth           | auth          |
+| GET     | compliance/dashboard/data                              | »    | \\App\\Controllers\\ComplianceDashboardController::ajaxData                        | auth           | auth          |
+| GET     | export/pdf/single/([0-9]+)/(.*)                        | »    | \\App\\Controllers\\ExportPdfController::single/$1/$2                              | auth           | auth          |
+| GET     | export/pdf/recap/([0-9]+)/([0-9]+)/([0-9]+)            | »    | \\App\\Controllers\\ExportPdfController::recap/$1/$2/$3                            | auth           | auth          |
+| GET     | home                                                   | »    | \\App\\Controllers\\HomeController::index                                          | auth           | auth          |
+| GET     | compliance/progress                                    | »    | \\App\\Controllers\\ProgressController::index                                      | auth           | auth          |
+| GET     | compliance/progress/ajax                               | »    | \\App\\Controllers\\ProgressController::getProgressAjax                            | auth           | auth          |
+| GET     | compliance/progress/export                             | »    | \\App\\Controllers\\ProgressController::export                                     | auth           | auth          |
+| GET     | compliance/progress/detail                             | »    | \\App\\Controllers\\ProgressController::getUserDetailAjax                          | auth           | auth          |
+| GET     | compliance/inventory/get/([0-9]+)                      | »    | \\App\\Controllers\\ComplianceInventoryController::get/$1                          | auth           | auth          |
+| GET     | compliance/inventory/qr-center                         | »    | \\App\\Controllers\\ComplianceInventoryController::qrCenter                        | auth           | auth          |
+| GET     | compliance/inventory/qr-album/(.*)                     | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumAjax/$1                  | auth           | auth          |
+| GET     | compliance/inventory/qr-album-download/(.*)            | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumDownload/$1              | auth           | auth          |
+| GET     | compliance/inventory/qr-album-regen/(.*)               | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumRegen/$1                 | auth           | auth          |
+| GET     | compliance/inventory/qr-album-print/(.*)               | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumPrint/$1                 | auth           | auth          |
+| GET     | it/devices                                             | »    | \\App\\Controllers\\ITDeviceController::index                                      | auth           | auth          |
+| GET     | it/devices/ajax                                        | »    | \\App\\Controllers\\ITDeviceController::ajax                                       | auth           | auth          |
+| GET     | it/devices/stats                                       | »    | \\App\\Controllers\\ITDeviceController::stats                                      | auth           | auth          |
+| GET     | api/agent/heartbeat                                    | »    | \\App\\Controllers\\Api\\AgentController::heartbeat                                 |                |               |
+| GET     | api/agent/command                                      | »    | \\App\\Controllers\\Api\\AgentController::command                                   |                |               |
+| GET     | api/agent/update                                       | »    | \\App\\Controllers\\Api\\AgentController::agentUpdate                               |                |               |
+| GET     | it/devices/([0-9]+)                                    | »    | \\App\\Controllers\\ITDeviceController::detail/$1                                  | auth           | auth          |
+| GET     | it/devices/([0-9]+)/fragment                           | »    | \\App\\Controllers\\ITDeviceController::detailFragment/$1                          | auth           | auth          |
+| GET     | boiler                                                 | »    | \\App\\Controllers\\BoilerFuelController::index                                    | auth           | auth          |
+| GET     | boiler/detail/([^/]+)                                  | »    | \\App\\Controllers\\BoilerFuelController::detail/$1                                | auth           | auth          |
+| GET     | boiler/export                                          | »    | \\App\\Controllers\\BoilerFuelController::export                                   | auth           | auth          |
+| GET     | ipal                                                   | »    | \\App\\Controllers\\IpalController::index                                          | auth           | auth          |
+| GET     | ipal/export                                            | »    | \\App\\Controllers\\IpalController::export                                         | auth           | auth          |
+| GET     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| HEAD    | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| POST    | login                                                  | »    | \\App\\Controllers\\AuthController::doLogin                                        |                |               |
+| POST    | it-assets/assign/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::assignSave/$1                               | auth           | auth          |
+| POST    | it-assets/store                                        | »    | \\App\\Controllers\\ITAssetController::store                                       | auth           | auth          |
+| POST    | it-assets/update/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::update/$1                                   | auth           | auth          |
+| POST    | employees/store                                        | »    | \\App\\Controllers\\EmployeeController::store                                      | auth           | auth          |
+| POST    | employees/update/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::update/$1                                  | auth           | auth          |
+| POST    | employees/activate/([0-9]+)                            | »    | \\App\\Controllers\\EmployeeController::activate/$1                                | auth           | auth          |
+| POST    | employees/deactivate/([0-9]+)                          | »    | \\App\\Controllers\\EmployeeController::deactivate/$1                              | auth           | auth          |
+| POST    | employees/delete/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::delete/$1                                  | auth           | auth          |
+| POST    | users/store                                            | »    | \\App\\Controllers\\UserController::store                                          | admin          | admin         |
+| POST    | users/update/([0-9]+)                                  | »    | \\App\\Controllers\\UserController::update/$1                                      | admin          | admin         |
+| POST    | it-assets/assign-save/([0-9]+)                         | »    | \\App\\Controllers\\ITAssetController::assignSave/$1                               | write          | write         |
+| POST    | employees/unassign/([0-9]+)/([0-9]+)                   | »    | \\App\\Controllers\\EmployeeController::unassign/$1/$2                             | auth write     | write auth    |
+| POST    | backups/database                                       | »    | \\App\\Controllers\\BackupController::createDatabase                               | admin          | admin         |
+| POST    | backups/files                                          | »    | \\App\\Controllers\\BackupController::createFiles                                  | admin          | admin         |
+| POST    | backups/full                                           | »    | \\App\\Controllers\\BackupController::createFull                                   | admin          | admin         |
+| POST    | backups/upload                                         | »    | \\App\\Controllers\\BackupController::upload                                       | admin          | admin         |
+| POST    | backups/auto-enable                                    | »    | \\App\\Controllers\\BackupController::enableAutoBackup                             | admin          | admin         |
+| POST    | backups/auto-disable                                   | »    | \\App\\Controllers\\BackupController::disableAutoBackup                            | admin          | admin         |
+| POST    | backups/restore-full/([^/]+)                           | »    | \\App\\Controllers\\BackupController::restoreFull/$1                               | admin          | admin         |
+| POST    | backups/restore-database/([^/]+)                       | »    | \\App\\Controllers\\BackupController::restoreDatabase/$1                           | admin          | admin         |
+| POST    | backups/restore-files/([^/]+)                          | »    | \\App\\Controllers\\BackupController::restoreFiles/$1                              | admin          | admin         |
+| POST    | backups/delete/([^/]+)                                 | »    | \\App\\Controllers\\BackupController::delete/$1                                    | admin          | admin         |
+| POST    | settings/change-password                               | »    | \\App\\Controllers\\SettingsController::changePassword                             | auth           | auth          |
+| POST    | compliance/inventory/store                             | »    | \\App\\Controllers\\ComplianceInventoryController::store                           | auth           | auth          |
+| POST    | compliance/inventory/update/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::update/$1                       | auth           | auth          |
+| POST    | compliance/inventory/delete/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::delete/$1                       | auth           | auth          |
+| POST    | compliance/inventory/update-photo/([0-9]+)             | »    | \\App\\Controllers\\ComplianceInventoryController::updatePhoto/$1                  | auth           | auth          |
+| POST    | compliance/inventory/regenerate-qr/([0-9]+)            | »    | \\App\\Controllers\\ComplianceInventoryController::regenerateQr/$1                 | auth           | auth          |
+| POST    | compliance/checklist/submit                            | »    | \\App\\Controllers\\ComplianceInventoryController::submitChecklist                 | auth           | auth          |
+| POST    | compliance/checklist/master/store                      | »    | \\App\\Controllers\\ComplianceChecklistMasterController::store                     | auth           | auth          |
+| POST    | compliance/checklist/master/update/([0-9]+)            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::update/$1                 | auth           | auth          |
+| POST    | compliance/checklist/master/item-frequency/([0-9]+)    | »    | \\App\\Controllers\\ComplianceChecklistMasterController::updateItemFrequency/$1    | auth           | auth          |
+| POST    | compliance/checklist/master/delete/([0-9]+)            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::delete/$1                 | auth           | auth          |
+| POST    | compliance/item/store                                  | »    | \\App\\Controllers\\ComplianceItemTypeController::store                            | auth           | auth          |
+| POST    | holidays/store                                         | »    | \\App\\Controllers\\HolidayController::store                                       | auth           | auth          |
+| POST    | holidays/update/([0-9]+)                               | »    | \\App\\Controllers\\HolidayController::update/$1                                   | auth           | auth          |
+| POST    | holidays/delete/([0-9]+)                               | »    | \\App\\Controllers\\HolidayController::delete/$1                                   | auth           | auth          |
+| POST    | compliance/questionnaires/store                        | »    | \\App\\Controllers\\ComplianceQuestionnaireController::store                       | auth           | auth          |
+| POST    | compliance/questionnaires/update/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::update/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/delete/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::delete/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/submit/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::submit/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/response/delete/([0-9]+)     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::deleteResponse/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/respondent-settings | »    | \\App\\Controllers\\ComplianceQuestionnaireController::updateRespondentSettings/$1 | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/questions/store     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::storeQuestion/$1            | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/questions/reorder   | »    | \\App\\Controllers\\ComplianceQuestionnaireController::reorderQuestions/$1         | auth           | auth          |
+| POST    | compliance/questionnaires/questions/update/([0-9]+)    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::updateQuestion/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/delete/([0-9]+)    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::deleteQuestion/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/move-up/([0-9]+)   | »    | \\App\\Controllers\\ComplianceQuestionnaireController::moveQuestionUp/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/move-down/([0-9]+) | »    | \\App\\Controllers\\ComplianceQuestionnaireController::moveQuestionDown/$1         | auth           | auth          |
+| POST    | ems-reports/water-consumption/save                     | »    | \\App\\Controllers\\EmsReportController::saveWaterConsumption                      | auth           | auth          |
+| POST    | kuesioner/([^/]+)/kirim                                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicSubmit/$1             |                |               |
+| POST    | compliance/evidence/update-followup                    | »    | \\App\\Controllers\\ComplianceEvidenceController::updateFollowUp                   | auth           | auth          |
+| POST    | compliance/progress/remind                             | »    | \\App\\Controllers\\ProgressController::sendReminderAjax                           | auth           | auth          |
+| POST    | api/agent/heartbeat                                    | »    | \\App\\Controllers\\Api\\AgentController::heartbeat                                 |                |               |
+| POST    | api/agent/command                                      | »    | \\App\\Controllers\\Api\\AgentController::command                                   |                |               |
+| POST    | api/agent/update                                       | »    | \\App\\Controllers\\Api\\AgentController::agentUpdate                               |                |               |
+| POST    | it/device/push-update                                  | »    | \\App\\Controllers\\Api\\AgentController::pushUpdate                                | auth           | auth          |
+| POST    | it/device/command                                      | »    | \\App\\Controllers\\ITDeviceController::sendCommand                                | auth           | auth          |
+| POST    | it/device/remote                                       | »    | \\App\\Controllers\\ITDeviceController::remoteAction                               | auth           | auth          |
+| POST    | boiler/save                                            | »    | \\App\\Controllers\\BoilerFuelController::save                                     | auth           | auth          |
+| POST    | boiler/delete                                          | »    | \\App\\Controllers\\BoilerFuelController::delete                                   | auth           | auth          |
+| POST    | ipal/save                                              | »    | \\App\\Controllers\\IpalController::save                                           | auth           | auth          |
+| POST    | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| PATCH   | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| PUT     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| DELETE  | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| OPTIONS | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| TRACE   | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| CONNECT | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| CLI     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
++---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+
+')
+ 5 SYSTEMPATH\CLI\CLI.php(1109): CodeIgniter\CLI\CLI::write('+---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+| Method  | Route                                                  | Name | Handler                                                                         | Before Filters | After Filters |
++---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+| GET     | /                                                      | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard                                              | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| GET     | dashboard-it                                           | »    | \\App\\Controllers\\DashboardController::index                                     | auth           | auth          |
+| GET     | it                                                     | »    | \\App\\Controllers\\ITController::index                                            | auth           | auth          |
+| GET     | login                                                  | »    | \\App\\Controllers\\AuthController::login                                          |                |               |
+| GET     | logout                                                 | »    | \\App\\Controllers\\AuthController::logout                                         |                |               |
+| GET     | it-assets                                              | »    | \\App\\Controllers\\ITAssetController::index                                       | auth           | auth          |
+| GET     | it-assets/ajax                                         | »    | \\App\\Controllers\\ITAssetController::ajax                                        | auth           | auth          |
+| GET     | it-assets/detail/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::detail/$1                                   | auth           | auth          |
+| GET     | it-assets/assign/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::assignForm/$1                               | auth           | auth          |
+| GET     | it-assets/create                                       | »    | \\App\\Controllers\\ITAssetController::create                                      | auth           | auth          |
+| GET     | it-assets/edit/([0-9]+)                                | »    | \\App\\Controllers\\ITAssetController::edit/$1                                     | auth           | auth          |
+| GET     | employees                                              | »    | \\App\\Controllers\\EmployeeController::index                                      | auth           | auth          |
+| GET     | employees/create                                       | »    | \\App\\Controllers\\EmployeeController::create                                     | auth           | auth          |
+| GET     | employees/detail/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::detail/$1                                  | auth           | auth          |
+| GET     | employees/edit/([0-9]+)                                | »    | \\App\\Controllers\\EmployeeController::edit/$1                                    | auth           | auth          |
+| GET     | users                                                  | »    | \\App\\Controllers\\UserController::index                                          | admin          | admin         |
+| GET     | users/create                                           | »    | \\App\\Controllers\\UserController::create                                         | admin          | admin         |
+| GET     | users/edit/([0-9]+)                                    | »    | \\App\\Controllers\\UserController::edit/$1                                        | admin          | admin         |
+| GET     | audit-logs                                             | »    | \\App\\Controllers\\AuditLogController::index                                      | admin          | admin         |
+| GET     | backups                                                | »    | \\App\\Controllers\\BackupController::index                                        | admin          | admin         |
+| GET     | backups/download/([^/]+)                               | »    | \\App\\Controllers\\BackupController::download/$1                                  | admin          | admin         |
+| GET     | settings                                               | »    | \\App\\Controllers\\SettingsController::index                                      | auth           | auth          |
+| GET     | compliance/dashboard                                   | »    | \\App\\Controllers\\ComplianceDashboardController::index                           | auth           | auth          |
+| GET     | compliance/dashboard/trend                             | »    | \\App\\Controllers\\ComplianceDashboardController::getTrendAjax                    | auth           | auth          |
+| GET     | compliance/dashboard/progress-trend                    | »    | \\App\\Controllers\\ComplianceDashboardController::getProgressTrendAjax            | auth           | auth          |
+| GET     | compliance/dashboard/status-pie                        | »    | \\App\\Controllers\\ComplianceDashboardController::getStatusPieAjax                | auth           | auth          |
+| GET     | compliance/dashboard/total-inventory                   | »    | \\App\\Controllers\\ComplianceDashboardController::getTotalInventoryByType         | auth           | auth          |
+| GET     | compliance/dashboard/risk-insight                      | »    | \\App\\Controllers\\ComplianceDashboardController::getRiskInsightAjax              | auth           | auth          |
+| GET     | compliance/dashboard/risk-trend                        | »    | \\App\\Controllers\\ComplianceDashboardController::getRiskTrendAjax                | auth           | auth          |
+| GET     | compliance/dashboard/pending-checklist                 | »    | \\App\\Controllers\\ComplianceDashboardController::getPendingChecklistAjax         | auth           | auth          |
+| GET     | compliance/inventory                                   | »    | \\App\\Controllers\\ComplianceInventoryController::index                           | auth           | auth          |
+| GET     | compliance/inventory/create                            | »    | \\App\\Controllers\\ComplianceInventoryController::create                          | auth           | auth          |
+| GET     | compliance/inventory/edit/([0-9]+)                     | »    | \\App\\Controllers\\ComplianceInventoryController::edit/$1                         | auth           | auth          |
+| GET     | compliance/inventory/detail/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::detail/$1                       | auth           | auth          |
+| GET     | compliance/inventory/item-types/([0-9]+)               | »    | \\App\\Controllers\\ComplianceInventoryController::getItemTypesByCategory/$1       | auth           | auth          |
+| GET     | compliance/checklist/([0-9]+)                          | »    | \\App\\Controllers\\ComplianceInventoryController::checklist/$1                    | auth           | auth          |
+| GET     | compliance/checklist/([0-9]+)/calendar                 | »    | \\App\\Controllers\\ComplianceInventoryController::calendar/$1                     | auth           | auth          |
+| GET     | compliance/checklist/master                            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterIndex               | auth           | auth          |
+| GET     | compliance/checklist/master/category/([0-9]+)          | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterByCategory/$1       | auth           | auth          |
+| GET     | compliance/checklist/master/item/([0-9]+)              | »    | \\App\\Controllers\\ComplianceChecklistMasterController::masterItem/$1             | auth           | auth          |
+| GET     | compliance/item/create                                 | »    | \\App\\Controllers\\ComplianceItemTypeController::create                           | auth           | auth          |
+| GET     | holidays                                               | »    | \\App\\Controllers\\HolidayController::index                                       | auth           | auth          |
+| GET     | compliance/report                                      | »    | \\App\\Controllers\\ComplianceReportController::index                              | auth           | auth          |
+| GET     | compliance/report/load                                 | »    | \\App\\Controllers\\ComplianceReportController::loadAjax                           | auth           | auth          |
+| GET     | compliance/report/item-by-category                     | »    | \\App\\Controllers\\ComplianceReportController::getItemTypeByCategory              | auth           | auth          |
+| GET     | compliance/report/inventory-by-type                    | »    | \\App\\Controllers\\ComplianceReportController::getInventoryByType                 | auth           | auth          |
+| GET     | compliance/questionnaires                              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::index                       | auth           | auth          |
+| GET     | compliance/questionnaires/analytics                    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::analytics                   | auth           | auth          |
+| GET     | compliance/questionnaires/create                       | »    | \\App\\Controllers\\ComplianceQuestionnaireController::create                      | auth           | auth          |
+| GET     | compliance/questionnaires/edit/([0-9]+)                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::edit/$1                     | auth           | auth          |
+| GET     | compliance/questionnaires/fill/([0-9]+)                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::fill/$1                     | auth           | auth          |
+| GET     | compliance/questionnaires/response/([0-9]+)            | »    | \\App\\Controllers\\ComplianceQuestionnaireController::responseDetail/$1           | auth           | auth          |
+| GET     | compliance/questionnaires/response/([0-9]+)/pdf        | »    | \\App\\Controllers\\ComplianceQuestionnaireController::responsePdf/$1              | auth           | auth          |
+| GET     | compliance/questionnaires/([0-9]+)/excel               | »    | \\App\\Controllers\\ComplianceQuestionnaireController::exportExcel/$1              | auth           | auth          |
+| GET     | compliance/questionnaires/([0-9]+)                     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::detail/$1                   | auth           | auth          |
+| GET     | ems-reports                                            | »    | \\App\\Controllers\\EmsReportController::index                                     | auth           | auth          |
+| GET     | ems-reports/water-consumption                          | »    | \\App\\Controllers\\EmsReportController::waterConsumption                          | auth           | auth          |
+| GET     | kuesioner/([^/]+)                                      | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicFill/$1               |                |               |
+| GET     | kuesioner/([^/]+)/selesai                              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicThanks/$1             |                |               |
+| GET     | compliance/print                                       | »    | \\App\\Controllers\\CompliancePrintController::index                               | auth           | auth          |
+| GET     | compliance/print/item                                  | »    | \\App\\Controllers\\CompliancePrintController::item                                | auth           | auth          |
+| GET     | compliance/print/item/preview                          | »    | \\App\\Controllers\\CompliancePrintController::itemPreview                         | auth           | auth          |
+| GET     | compliance/print/inventory/([0-9]+)                    | »    | \\App\\Controllers\\CompliancePrintController::inventoryByType/$1                  | auth           | auth          |
+| GET     | compliance/print/batch                                 | »    | \\App\\Controllers\\CompliancePrintController::batch                               | auth           | auth          |
+| GET     | compliance/print/batch/preview                         | »    | \\App\\Controllers\\CompliancePrintController::batchPreview                        | auth           | auth          |
+| GET     | compliance/evidence                                    | »    | \\App\\Controllers\\ComplianceEvidenceController::index                            | auth           | auth          |
+| GET     | compliance/evidence/ajax                               | »    | \\App\\Controllers\\ComplianceEvidenceController::getEvidenceAjax                  | auth           | auth          |
+| GET     | compliance/evidence/detail/([0-9]+)                    | »    | \\App\\Controllers\\ComplianceEvidenceController::detail/$1                        | auth           | auth          |
+| GET     | compliance/dashboard/data                              | »    | \\App\\Controllers\\ComplianceDashboardController::ajaxData                        | auth           | auth          |
+| GET     | export/pdf/single/([0-9]+)/(.*)                        | »    | \\App\\Controllers\\ExportPdfController::single/$1/$2                              | auth           | auth          |
+| GET     | export/pdf/recap/([0-9]+)/([0-9]+)/([0-9]+)            | »    | \\App\\Controllers\\ExportPdfController::recap/$1/$2/$3                            | auth           | auth          |
+| GET     | home                                                   | »    | \\App\\Controllers\\HomeController::index                                          | auth           | auth          |
+| GET     | compliance/progress                                    | »    | \\App\\Controllers\\ProgressController::index                                      | auth           | auth          |
+| GET     | compliance/progress/ajax                               | »    | \\App\\Controllers\\ProgressController::getProgressAjax                            | auth           | auth          |
+| GET     | compliance/progress/export                             | »    | \\App\\Controllers\\ProgressController::export                                     | auth           | auth          |
+| GET     | compliance/progress/detail                             | »    | \\App\\Controllers\\ProgressController::getUserDetailAjax                          | auth           | auth          |
+| GET     | compliance/inventory/get/([0-9]+)                      | »    | \\App\\Controllers\\ComplianceInventoryController::get/$1                          | auth           | auth          |
+| GET     | compliance/inventory/qr-center                         | »    | \\App\\Controllers\\ComplianceInventoryController::qrCenter                        | auth           | auth          |
+| GET     | compliance/inventory/qr-album/(.*)                     | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumAjax/$1                  | auth           | auth          |
+| GET     | compliance/inventory/qr-album-download/(.*)            | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumDownload/$1              | auth           | auth          |
+| GET     | compliance/inventory/qr-album-regen/(.*)               | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumRegen/$1                 | auth           | auth          |
+| GET     | compliance/inventory/qr-album-print/(.*)               | »    | \\App\\Controllers\\ComplianceInventoryController::qrAlbumPrint/$1                 | auth           | auth          |
+| GET     | it/devices                                             | »    | \\App\\Controllers\\ITDeviceController::index                                      | auth           | auth          |
+| GET     | it/devices/ajax                                        | »    | \\App\\Controllers\\ITDeviceController::ajax                                       | auth           | auth          |
+| GET     | it/devices/stats                                       | »    | \\App\\Controllers\\ITDeviceController::stats                                      | auth           | auth          |
+| GET     | api/agent/heartbeat                                    | »    | \\App\\Controllers\\Api\\AgentController::heartbeat                                 |                |               |
+| GET     | api/agent/command                                      | »    | \\App\\Controllers\\Api\\AgentController::command                                   |                |               |
+| GET     | api/agent/update                                       | »    | \\App\\Controllers\\Api\\AgentController::agentUpdate                               |                |               |
+| GET     | it/devices/([0-9]+)                                    | »    | \\App\\Controllers\\ITDeviceController::detail/$1                                  | auth           | auth          |
+| GET     | it/devices/([0-9]+)/fragment                           | »    | \\App\\Controllers\\ITDeviceController::detailFragment/$1                          | auth           | auth          |
+| GET     | boiler                                                 | »    | \\App\\Controllers\\BoilerFuelController::index                                    | auth           | auth          |
+| GET     | boiler/detail/([^/]+)                                  | »    | \\App\\Controllers\\BoilerFuelController::detail/$1                                | auth           | auth          |
+| GET     | boiler/export                                          | »    | \\App\\Controllers\\BoilerFuelController::export                                   | auth           | auth          |
+| GET     | ipal                                                   | »    | \\App\\Controllers\\IpalController::index                                          | auth           | auth          |
+| GET     | ipal/export                                            | »    | \\App\\Controllers\\IpalController::export                                         | auth           | auth          |
+| GET     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| HEAD    | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| POST    | login                                                  | »    | \\App\\Controllers\\AuthController::doLogin                                        |                |               |
+| POST    | it-assets/assign/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::assignSave/$1                               | auth           | auth          |
+| POST    | it-assets/store                                        | »    | \\App\\Controllers\\ITAssetController::store                                       | auth           | auth          |
+| POST    | it-assets/update/([0-9]+)                              | »    | \\App\\Controllers\\ITAssetController::update/$1                                   | auth           | auth          |
+| POST    | employees/store                                        | »    | \\App\\Controllers\\EmployeeController::store                                      | auth           | auth          |
+| POST    | employees/update/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::update/$1                                  | auth           | auth          |
+| POST    | employees/activate/([0-9]+)                            | »    | \\App\\Controllers\\EmployeeController::activate/$1                                | auth           | auth          |
+| POST    | employees/deactivate/([0-9]+)                          | »    | \\App\\Controllers\\EmployeeController::deactivate/$1                              | auth           | auth          |
+| POST    | employees/delete/([0-9]+)                              | »    | \\App\\Controllers\\EmployeeController::delete/$1                                  | auth           | auth          |
+| POST    | users/store                                            | »    | \\App\\Controllers\\UserController::store                                          | admin          | admin         |
+| POST    | users/update/([0-9]+)                                  | »    | \\App\\Controllers\\UserController::update/$1                                      | admin          | admin         |
+| POST    | it-assets/assign-save/([0-9]+)                         | »    | \\App\\Controllers\\ITAssetController::assignSave/$1                               | write          | write         |
+| POST    | employees/unassign/([0-9]+)/([0-9]+)                   | »    | \\App\\Controllers\\EmployeeController::unassign/$1/$2                             | auth write     | write auth    |
+| POST    | backups/database                                       | »    | \\App\\Controllers\\BackupController::createDatabase                               | admin          | admin         |
+| POST    | backups/files                                          | »    | \\App\\Controllers\\BackupController::createFiles                                  | admin          | admin         |
+| POST    | backups/full                                           | »    | \\App\\Controllers\\BackupController::createFull                                   | admin          | admin         |
+| POST    | backups/upload                                         | »    | \\App\\Controllers\\BackupController::upload                                       | admin          | admin         |
+| POST    | backups/auto-enable                                    | »    | \\App\\Controllers\\BackupController::enableAutoBackup                             | admin          | admin         |
+| POST    | backups/auto-disable                                   | »    | \\App\\Controllers\\BackupController::disableAutoBackup                            | admin          | admin         |
+| POST    | backups/restore-full/([^/]+)                           | »    | \\App\\Controllers\\BackupController::restoreFull/$1                               | admin          | admin         |
+| POST    | backups/restore-database/([^/]+)                       | »    | \\App\\Controllers\\BackupController::restoreDatabase/$1                           | admin          | admin         |
+| POST    | backups/restore-files/([^/]+)                          | »    | \\App\\Controllers\\BackupController::restoreFiles/$1                              | admin          | admin         |
+| POST    | backups/delete/([^/]+)                                 | »    | \\App\\Controllers\\BackupController::delete/$1                                    | admin          | admin         |
+| POST    | settings/change-password                               | »    | \\App\\Controllers\\SettingsController::changePassword                             | auth           | auth          |
+| POST    | compliance/inventory/store                             | »    | \\App\\Controllers\\ComplianceInventoryController::store                           | auth           | auth          |
+| POST    | compliance/inventory/update/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::update/$1                       | auth           | auth          |
+| POST    | compliance/inventory/delete/([0-9]+)                   | »    | \\App\\Controllers\\ComplianceInventoryController::delete/$1                       | auth           | auth          |
+| POST    | compliance/inventory/update-photo/([0-9]+)             | »    | \\App\\Controllers\\ComplianceInventoryController::updatePhoto/$1                  | auth           | auth          |
+| POST    | compliance/inventory/regenerate-qr/([0-9]+)            | »    | \\App\\Controllers\\ComplianceInventoryController::regenerateQr/$1                 | auth           | auth          |
+| POST    | compliance/checklist/submit                            | »    | \\App\\Controllers\\ComplianceInventoryController::submitChecklist                 | auth           | auth          |
+| POST    | compliance/checklist/master/store                      | »    | \\App\\Controllers\\ComplianceChecklistMasterController::store                     | auth           | auth          |
+| POST    | compliance/checklist/master/update/([0-9]+)            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::update/$1                 | auth           | auth          |
+| POST    | compliance/checklist/master/item-frequency/([0-9]+)    | »    | \\App\\Controllers\\ComplianceChecklistMasterController::updateItemFrequency/$1    | auth           | auth          |
+| POST    | compliance/checklist/master/delete/([0-9]+)            | »    | \\App\\Controllers\\ComplianceChecklistMasterController::delete/$1                 | auth           | auth          |
+| POST    | compliance/item/store                                  | »    | \\App\\Controllers\\ComplianceItemTypeController::store                            | auth           | auth          |
+| POST    | holidays/store                                         | »    | \\App\\Controllers\\HolidayController::store                                       | auth           | auth          |
+| POST    | holidays/update/([0-9]+)                               | »    | \\App\\Controllers\\HolidayController::update/$1                                   | auth           | auth          |
+| POST    | holidays/delete/([0-9]+)                               | »    | \\App\\Controllers\\HolidayController::delete/$1                                   | auth           | auth          |
+| POST    | compliance/questionnaires/store                        | »    | \\App\\Controllers\\ComplianceQuestionnaireController::store                       | auth           | auth          |
+| POST    | compliance/questionnaires/update/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::update/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/delete/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::delete/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/submit/([0-9]+)              | »    | \\App\\Controllers\\ComplianceQuestionnaireController::submit/$1                   | auth           | auth          |
+| POST    | compliance/questionnaires/response/delete/([0-9]+)     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::deleteResponse/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/respondent-settings | »    | \\App\\Controllers\\ComplianceQuestionnaireController::updateRespondentSettings/$1 | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/questions/store     | »    | \\App\\Controllers\\ComplianceQuestionnaireController::storeQuestion/$1            | auth           | auth          |
+| POST    | compliance/questionnaires/([0-9]+)/questions/reorder   | »    | \\App\\Controllers\\ComplianceQuestionnaireController::reorderQuestions/$1         | auth           | auth          |
+| POST    | compliance/questionnaires/questions/update/([0-9]+)    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::updateQuestion/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/delete/([0-9]+)    | »    | \\App\\Controllers\\ComplianceQuestionnaireController::deleteQuestion/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/move-up/([0-9]+)   | »    | \\App\\Controllers\\ComplianceQuestionnaireController::moveQuestionUp/$1           | auth           | auth          |
+| POST    | compliance/questionnaires/questions/move-down/([0-9]+) | »    | \\App\\Controllers\\ComplianceQuestionnaireController::moveQuestionDown/$1         | auth           | auth          |
+| POST    | ems-reports/water-consumption/save                     | »    | \\App\\Controllers\\EmsReportController::saveWaterConsumption                      | auth           | auth          |
+| POST    | kuesioner/([^/]+)/kirim                                | »    | \\App\\Controllers\\ComplianceQuestionnaireController::publicSubmit/$1             |                |               |
+| POST    | compliance/evidence/update-followup                    | »    | \\App\\Controllers\\ComplianceEvidenceController::updateFollowUp                   | auth           | auth          |
+| POST    | compliance/progress/remind                             | »    | \\App\\Controllers\\ProgressController::sendReminderAjax                           | auth           | auth          |
+| POST    | api/agent/heartbeat                                    | »    | \\App\\Controllers\\Api\\AgentController::heartbeat                                 |                |               |
+| POST    | api/agent/command                                      | »    | \\App\\Controllers\\Api\\AgentController::command                                   |                |               |
+| POST    | api/agent/update                                       | »    | \\App\\Controllers\\Api\\AgentController::agentUpdate                               |                |               |
+| POST    | it/device/push-update                                  | »    | \\App\\Controllers\\Api\\AgentController::pushUpdate                                | auth           | auth          |
+| POST    | it/device/command                                      | »    | \\App\\Controllers\\ITDeviceController::sendCommand                                | auth           | auth          |
+| POST    | it/device/remote                                       | »    | \\App\\Controllers\\ITDeviceController::remoteAction                               | auth           | auth          |
+| POST    | boiler/save                                            | »    | \\App\\Controllers\\BoilerFuelController::save                                     | auth           | auth          |
+| POST    | boiler/delete                                          | »    | \\App\\Controllers\\BoilerFuelController::delete                                   | auth           | auth          |
+| POST    | ipal/save                                              | »    | \\App\\Controllers\\IpalController::save                                           | auth           | auth          |
+| POST    | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| PATCH   | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| PUT     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| DELETE  | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| OPTIONS | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| TRACE   | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| CONNECT | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
+| CLI     | logstores/(.*)                                         | »    | (Closure)                                                                       |                |               |
++---------+--------------------------------------------------------+------+---------------------------------------------------------------------------------+----------------+---------------+
+')
+ 6 SYSTEMPATH\Commands\Utilities\Routes.php(197): CodeIgniter\CLI\CLI::table([...], [...])
+ 7 SYSTEMPATH\CLI\Commands.php(74): CodeIgniter\Commands\Utilities\Routes->run([])
+ 8 SYSTEMPATH\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('routes', [])
+ 9 SYSTEMPATH\Boot.php(388): CodeIgniter\CLI\Console->run()
+10 SYSTEMPATH\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+11 ROOTPATH\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+CRITICAL - 2026-04-09 16:57:43 --> ErrorException: Uncaught ErrorException: fwrite(): Write of 18 bytes failed with errno=22 Invalid argument in C:\xampp\htdocs\eams\system\CLI\InputOutput.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(8, 'fwrite(): Write...', 'C:\\xampp\\htdocs...', 78)
+#1 C:\xampp\htdocs\eams\system\CLI\InputOutput.php(78): fwrite(Resource id #2, '[ErrorException...')
+#2 C:\xampp\htdocs\eams\system\CLI\CLI.php(1126): CodeIgniter\CLI\InputOutput->fwrite(Resource id #2, '[ErrorException...')
+#3 C:\xampp\htdocs\eams\system\CLI\CLI.php(465): CodeIgniter\CLI\CLI::fwrite(Resource id #2, '[ErrorException...')
+#4 C:\xampp\htdocs\eams\app\Views\errors\cli\error_exception.php(6): CodeIgniter\CLI\CLI::write('[ErrorException...', 'light_gray', 'red')
+#5 C:\xampp\htdocs\eams\app\Views\errors\cli\production.php(5): include('C:\\xampp\\htdocs...')
+#6 C:\xampp\htdocs\eams\system\Debug\BaseExceptionHandler.php(270): include('C:\\xampp\\htdocs...')
+#7 C:\xampp\htdocs\eams\system\Debug\BaseExceptionHandler.php(273): CodeIgniter\Debug\BaseExceptionHandler->CodeIgniter\Debug\{closure}()
+#8 C:\xampp\htdocs\eams\system\Debug\ExceptionHandler.php(126): CodeIgniter\Debug\BaseExceptionHandler->render(Object(ErrorException), 500, 'C:\\xampp\\htdocs...')
+#9 C:\xampp\htdocs\eams\system\Debug\Exceptions.php(162): CodeIgniter\Debug\ExceptionHandler->handle(Object(ErrorException), Object(CodeIgniter\HTTP\CLIRequest), Object(CodeIgniter\HTTP\Response), 500, 1)
+#10 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler(Object(ErrorException))
+#11 {main}
+  thrown
+【Previous Exception】
+ErrorException
+fwrite(): Write of 33580 bytes failed with errno=22 Invalid argument
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler(8, 'fwrite(): Write...', 'C:\\xampp\\htdocs...', 78)
+#1 C:\xampp\htdocs\eams\system\CLI\InputOutput.php(78): fwrite(Resource id #2, '+---------+----...')
+#2 C:\xampp\htdocs\eams\system\CLI\CLI.php(1126): CodeIgniter\CLI\InputOutput->fwrite(Resource id #2, '+---------+----...')
+#3 C:\xampp\htdocs\eams\system\CLI\CLI.php(465): CodeIgniter\CLI\CLI::fwrite(Resource id #2, '+---------+----...')
+#4 C:\xampp\htdocs\eams\system\CLI\CLI.php(1109): CodeIgniter\CLI\CLI::write('+---------+----...')
+#5 C:\xampp\htdocs\eams\system\Commands\Utilities\Routes.php(197): CodeIgniter\CLI\CLI::table(Array, Array)
+#6 C:\xampp\htdocs\eams\system\CLI\Commands.php(74): CodeIgniter\Commands\Utilities\Routes->run(Array)
+#7 C:\xampp\htdocs\eams\system\CLI\Console.php(47): CodeIgniter\CLI\Commands->run('routes', Array)
+#8 C:\xampp\htdocs\eams\system\Boot.php(388): CodeIgniter\CLI\Console->run()
+#9 C:\xampp\htdocs\eams\system\Boot.php(133): CodeIgniter\Boot::runCommand(Object(CodeIgniter\CLI\Console))
+#10 C:\xampp\htdocs\eams\spark(87): CodeIgniter\Boot::bootSpark(Object(Config\Paths))
+#11 {main}
+[Method: CLI, Route: routes]
+in SYSTEMPATH\CLI\InputOutput.php on line 78.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()

@@ -16,50 +16,16 @@ class ITAssetController extends BaseController
         $this->db = Database::connect();
     }
 
-
     public function index()
     {
-        // filter kategori
         $type = $this->request->getGet('type');
-
-        // search keyword
         $keyword = $this->request->getGet('q');
-
-        // per page
         $perPage = $this->request->getGet('perPage') ?? 20;
-        $perPage = in_array($perPage, [20, 50, 100]) ? $perPage : 20;
+        $perPage = in_array((int) $perPage, [20, 50, 100], true) ? (int) $perPage : 20;
 
-        // base query
-        $builder = $this->assetModel
-            ->select('assets.*')
-            ->join('asset_categories', 'asset_categories.id = assets.category_id')
-            ->where('asset_categories.category_name', 'IT');
-
-        // filter sub kategori
-        if ($type) {
-            if ($type === 'Peripheral') {
-                $builder->whereIn(
-                    'asset_categories.sub_category',
-                    ['Mouse', 'Keyboard', 'Monitor']
-                );
-            } else {
-                $builder->where('asset_categories.sub_category', $type);
-            }
-        }
-
-        // 🔍 SEARCH
-        if ($keyword) {
-            $builder->groupStart()
-                ->like('assets.inventory_no', $keyword)
-                ->orLike('assets.asset_name', $keyword)
-                ->orLike('assets.brand', $keyword)
-                ->orLike('assets.location', $keyword)
-                ->groupEnd();
-        }
-
-        // pagination
-        $assets = $builder->paginate($perPage);
+        $assets = $this->buildAssetListQuery($type, $keyword)->paginate($perPage);
         $pager  = $this->assetModel->pager;
+        $pager->setPath('it-assets');
 
         return view('it_assets/index', [
             'assets'  => $assets,
@@ -67,18 +33,31 @@ class ITAssetController extends BaseController
             'type'    => $type,
             'perPage' => $perPage,
             'keyword' => $keyword,
-            'title'   => 'Inventaris IT'
+            'title'   => 'Inventaris IT',
         ]);
     }
 
+    public function ajax()
+    {
+        $type = $this->request->getGet('type');
+        $keyword = $this->request->getGet('q');
+        $perPage = $this->request->getGet('perPage') ?? 20;
+        $perPage = in_array((int) $perPage, [20, 50, 100], true) ? (int) $perPage : 20;
 
+        $assets = $this->buildAssetListQuery($type, $keyword)->paginate($perPage);
+        $pager  = $this->assetModel->pager;
+        $pager->setPath('it-assets');
 
+        return view('it_assets/_table', [
+            'assets' => $assets,
+            'pager' => $pager,
+        ]);
+    }
 
     public function detail($id)
     {
         $db = \Config\Database::connect();
 
-        // ambil asset
         $asset = $this->assetModel->find($id);
 
         $currentEmployee = $db->table('asset_assignments aa')
@@ -95,7 +74,6 @@ class ITAssetController extends BaseController
             ->get()
             ->getRow();
 
-        // history pemakaian asset
         $history = $db->table('asset_assignments aa')
             ->select('
         e.name,
@@ -111,15 +89,13 @@ class ITAssetController extends BaseController
             ->get()
             ->getResult();
 
-
         return view('it_assets/detail', [
             'asset'           => $asset,
             'currentEmployee' => $currentEmployee,
             'history'         => $history,
-            'title'           => 'Detail Asset IT'
+            'title'           => 'Detail Asset IT',
         ]);
     }
-
 
     public function assignForm($assetId)
     {
@@ -135,7 +111,7 @@ class ITAssetController extends BaseController
         return view('it_assets/assign', [
             'asset'     => $asset,
             'employees' => $employees,
-            'title'     => 'Assign Asset ke Karyawan'
+            'title'     => 'Assign Asset ke Karyawan',
         ]);
     }
 
@@ -149,20 +125,18 @@ class ITAssetController extends BaseController
         $db = \Config\Database::connect();
         $employeeId = $this->request->getPost('employee_id');
 
-        // tutup pemakaian lama
         $db->table('asset_assignments')
             ->where('asset_id', $assetId)
             ->where('returned_at', null)
             ->update([
-                'returned_at' => date('Y-m-d H:i:s')
+                'returned_at' => date('Y-m-d H:i:s'),
             ]);
 
-        // simpan pemakaian baru
         $db->table('asset_assignments')->insert([
             'asset_id'    => $assetId,
             'employee_id' => $employeeId,
             'assigned_at' => date('Y-m-d H:i:s'),
-            'returned_at' => null
+            'returned_at' => null,
         ]);
 
         audit_log(
@@ -173,7 +147,6 @@ class ITAssetController extends BaseController
         return redirect()->to('it-assets/detail/' . $assetId)
             ->with('success', 'Asset berhasil di-assign');
     }
-    //form tambah asset
 
     public function create()
     {
@@ -184,20 +157,18 @@ class ITAssetController extends BaseController
 
         return view('it_assets/create', [
             'categories' => $categories,
-            'title'      => 'Tambah Asset IT'
+            'title'      => 'Tambah Asset IT',
         ]);
     }
 
-    //simpan asset + foto
     public function store()
     {
-
         if (session()->get('permission') === 'read' && session()->get('role') !== 'admin') {
             return redirect()->back()
                 ->with('error', 'Anda hanya punya akses baca');
         }
-        $photoName = null;
 
+        $photoName = null;
         $photo = $this->request->getFile('photo');
         if ($photo && $photo->isValid()) {
             $photoName = $photo->getRandomName();
@@ -219,7 +190,6 @@ class ITAssetController extends BaseController
             ->with('success', 'Asset berhasil ditambahkan');
     }
 
-    // edit form asset
     public function edit($id)
     {
         $asset = $this->assetModel->find($id);
@@ -232,29 +202,22 @@ class ITAssetController extends BaseController
         return view('it_assets/edit', [
             'asset'      => $asset,
             'categories' => $categories,
-            'title'      => 'Edit Asset IT'
+            'title'      => 'Edit Asset IT',
         ]);
     }
 
-    //update asset
     public function update($id)
     {
         $db = \Config\Database::connect();
-
-        // ambil status baru
         $newStatus = $this->request->getPost('status');
-
-        // ambil foto lama
         $photoName = $this->request->getPost('old_photo');
 
-        // handle upload foto
         $photo = $this->request->getFile('photo');
         if ($photo && $photo->isValid()) {
             $photoName = $photo->getRandomName();
             $photo->move('uploads/assets', $photoName);
         }
 
-        // UPDATE ASSET
         $this->assetModel->update($id, [
             'inventory_no'  => $this->request->getPost('inventory_no'),
             'category_id'   => $this->request->getPost('category_id'),
@@ -272,12 +235,38 @@ class ITAssetController extends BaseController
                 ->where('asset_id', $id)
                 ->where('returned_at', null)
                 ->update([
-                    'returned_at' => date('Y-m-d H:i:s')
+                    'returned_at' => date('Y-m-d H:i:s'),
                 ]);
         }
-        
 
         return redirect()->to('it-assets/detail/' . $id)
             ->with('success', 'Asset berhasil diperbarui');
+    }
+
+    private function buildAssetListQuery(?string $type, ?string $keyword)
+    {
+        $builder = $this->assetModel
+            ->select('assets.*')
+            ->join('asset_categories', 'asset_categories.id = assets.category_id')
+            ->where('asset_categories.category_name', 'IT');
+
+        if ($type) {
+            if ($type === 'Peripheral') {
+                $builder->whereIn('asset_categories.sub_category', ['Mouse', 'Keyboard', 'Monitor']);
+            } else {
+                $builder->where('asset_categories.sub_category', $type);
+            }
+        }
+
+        if ($keyword) {
+            $builder->groupStart()
+                ->like('assets.inventory_no', $keyword)
+                ->orLike('assets.asset_name', $keyword)
+                ->orLike('assets.brand', $keyword)
+                ->orLike('assets.location', $keyword)
+                ->groupEnd();
+        }
+
+        return $builder->orderBy('assets.id', 'DESC');
     }
 }

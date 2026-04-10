@@ -9,6 +9,7 @@ $seg2 = $segments[1] ?? '';
 $isCompliance = $seg1 === 'compliance';
 $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 $isQuestionnaireMenu = $isCompliance && $seg2 === 'questionnaires';
+$isEmsReportMenu = $seg1 === 'ems-reports';
 
 $brandLogoPath = FCPATH . 'assets/images/company/logo.png';
 $brandLogoUrl = base_url('assets/images/company/logo.png');
@@ -193,6 +194,16 @@ $hasBrandLogo = file_exists($brandLogoPath);
               class="nav-link <?= $isCompliance && $seg2 === 'report' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>Laporan</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
+        <?php if (hasRole(['admin', 'compliance', 'auditor', 'staff'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('ems-reports') ?>"
+              class="nav-link <?= $isEmsReportMenu ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-droplet-half"></i>
+              <p>EMS Report</p>
             </a>
           </li>
         <?php endif; ?>

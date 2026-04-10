@@ -23,6 +23,7 @@ $routes->get('/logout', 'AuthController::logout');
 /** asset IT */
 $routes->group('it-assets', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'ITAssetController::index');
+    $routes->get('ajax', 'ITAssetController::ajax');
     $routes->get('detail/(:num)', 'ITAssetController::detail/$1');
     $routes->get('assign/(:num)', 'ITAssetController::assignForm/$1');
     $routes->post('assign/(:num)', 'ITAssetController::assignSave/$1');
@@ -231,6 +232,12 @@ $routes->group('compliance/questionnaires', ['filter' => 'auth'], function ($rou
     $routes->post('questions/move-up/(:num)', 'ComplianceQuestionnaireController::moveQuestionUp/$1');
     $routes->post('questions/move-down/(:num)', 'ComplianceQuestionnaireController::moveQuestionDown/$1');
     $routes->get('(:num)', 'ComplianceQuestionnaireController::detail/$1');
+});
+
+$routes->group('ems-reports', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'EmsReportController::index');
+    $routes->get('water-consumption', 'EmsReportController::waterConsumption');
+    $routes->post('water-consumption/save', 'EmsReportController::saveWaterConsumption');
 });
 
 $routes->get('kuesioner/(:segment)', 'ComplianceQuestionnaireController::publicFill/$1');

@@ -88,6 +88,7 @@ $lastCommandResult = is_array($extra['last_command_result'] ?? null) ? $extra['l
 $commandHistory = is_array($commandHistory ?? null) ? $commandHistory : [];
 $displayIp = $extra['lan_ip'] ?? $device['last_ip'] ?? '-';
 $lastSeenLabel = !empty($device['last_seen']) ? date('d M Y H:i:s', strtotime($device['last_seen'])) : '-';
+$lastSeenTs = !empty($device['last_seen']) ? strtotime($device['last_seen']) : null;
 $syncAtLabel = $syncAt ? date('d M Y H:i:s', $syncAt) : '-';
 $assetLabel = $asset ? trim((string)($asset['inventory_no'] ?? '-')) . ' - ' . trim((string)($asset['asset_name'] ?? '-')) : 'Belum ditautkan';
 $statusLabelMap = [
@@ -96,8 +97,14 @@ $statusLabelMap = [
     'success' => 'Berhasil',
     'error' => 'Gagal',
 ];
+$liveState = [
+    'lastSeenTs' => $lastSeenTs,
+    'syncAtTs' => $syncAt,
+    'remoteLockUntil' => $remoteLockUntil,
+    'remoteActionLabel' => $remoteActionLabel[$remoteLockAction] ?? strtoupper($remoteLockAction ?: 'AKSI'),
+];
 ?>
-<div class="it-shell">
+<div class="it-shell" data-it-device-state='<?= esc(json_encode($liveState, JSON_UNESCAPED_UNICODE), 'attr') ?>'>
     <section class="card border-0 shadow-sm no-lift it-hero-card mb-3">
         <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-4">
             <div class="it-hero-copy">
@@ -117,12 +124,14 @@ $statusLabelMap = [
                     <span class="badge rounded-pill text-bg-<?= esc($riskBadge) ?>">
                         Risiko <?= esc($riskLabel) ?> (<?= (int)$score ?>)
                     </span>
-                    <span class="badge rounded-pill text-bg-info">
-                        Interval sync <?= esc($heartbeatLabel) ?>
-                    </span>
                     <?php if ($remoteLockActive): ?>
-                        <span class="badge rounded-pill text-bg-warning">
-                            Remote lock <?= (int)$remoteLockRemaining ?> detik (<?= esc($remoteActionLabel[$remoteLockAction] ?? strtoupper($remoteLockAction ?: 'AKSI')) ?>)
+                        <span
+                            class="badge rounded-pill text-bg-warning"
+                            data-remote-lock-badge
+                            data-lock-until="<?= (int)$remoteLockUntil ?>"
+                            data-action-label="<?= esc($remoteActionLabel[$remoteLockAction] ?? strtoupper($remoteLockAction ?: 'AKSI')) ?>"
+                        >
+                            Remote lock <span data-remote-lock-value><?= (int)$remoteLockRemaining ?> detik</span> (<?= esc($remoteActionLabel[$remoteLockAction] ?? strtoupper($remoteLockAction ?: 'AKSI')) ?>)
                         </span>
                     <?php endif; ?>
                 </div>
@@ -145,7 +154,8 @@ $statusLabelMap = [
                 <div class="it-summary-grid">
                     <div class="it-summary-item">
                         <span class="it-summary-label">Last Seen</span>
-                        <strong><?= esc($lastSeenLabel) ?></strong>
+                        <strong data-live-last-seen-absolute><?= esc($lastSeenLabel) ?></strong>
+                        <span class="it-summary-subtext" data-live-last-seen-relative><?= $lastSeenTs ? 'Baru saja' : 'Belum ada data' ?></span>
                     </div>
                     <div class="it-summary-item">
                         <span class="it-summary-label">Asset Terkait</span>
@@ -176,7 +186,13 @@ $statusLabelMap = [
                     <div class="it-detail-kv"><span>Assign pengguna</span><strong><?= esc($assignedName) ?></strong></div>
                     <div class="it-detail-kv"><span>ID Karyawan</span><strong><?= esc($assignedEmployeeId) ?></strong></div>
                     <div class="it-detail-kv"><span>Divisi/Jabatan</span><strong><?= esc($assignedMeta) ?></strong></div>
-                    <div class="it-detail-kv"><span>Sync terakhir</span><strong><?= esc($syncAtLabel) ?></strong></div>
+                    <div class="it-detail-kv">
+                        <span>Sync terakhir</span>
+                        <strong>
+                            <span data-live-sync-absolute><?= esc($syncAtLabel) ?></span>
+                            <small class="it-inline-subtext d-block" data-live-sync-relative><?= $syncAt ? 'Baru saja' : 'Belum ada data' ?></small>
+                        </strong>
+                    </div>
                     <div class="it-detail-kv"><span>Status sync</span><strong><span class="badge text-bg-<?= esc($syncBadge) ?>"><?= esc($syncLabel) ?></span></strong></div>
                     <div class="it-detail-kv"><span>Status lisensi</span><strong><span class="badge text-bg-<?= esc($activationBadge) ?>"><?= esc($activationLabel) ?></span></strong></div>
 
@@ -221,8 +237,13 @@ $statusLabelMap = [
                 </div>
                 <div class="card-body pt-2">
                     <?php if ($remoteLockActive): ?>
-                        <div class="alert alert-warning py-2 px-3 mb-3">
-                            Remote lock aktif <?= (int)$remoteLockRemaining ?> detik untuk aksi
+                        <div
+                            class="alert alert-warning py-2 px-3 mb-3"
+                            data-remote-lock-alert
+                            data-lock-until="<?= (int)$remoteLockUntil ?>"
+                            data-action-label="<?= esc($remoteActionLabel[$remoteLockAction] ?? strtoupper($remoteLockAction ?: 'AKSI')) ?>"
+                        >
+                            Remote lock aktif <span data-remote-lock-value><?= (int)$remoteLockRemaining ?> detik</span> untuk aksi
                             <strong><?= esc($remoteActionLabel[$remoteLockAction] ?? strtoupper($remoteLockAction ?: 'AKSI')) ?></strong>.
                         </div>
                     <?php endif; ?>

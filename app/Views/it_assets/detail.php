@@ -15,7 +15,7 @@ $statusClass = match ($statusRaw) {
 ?>
 
 <?= $this->section('content') ?>
-<div class="it-shell">
+<div class="it-shell" x-data="itAssetDetail(window.IT_ASSET_DETAIL_BOOT || {})" x-init="init()">
     <section class="card border-0 shadow-sm no-lift it-hero-card mb-3">
         <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
@@ -25,6 +25,9 @@ $statusClass = match ($statusRaw) {
             </div>
 
             <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-sm btn-outline-dark it-quick-btn" @click="copyInventory()">
+                    <i class="bi bi-clipboard me-1"></i> Copy No Inventaris
+                </button>
                 <?php if ($isWritable): ?>
                     <a href="<?= base_url('it-assets/assign/' . $asset['id']) ?>" class="btn btn-sm btn-primary it-quick-btn">
                         <i class="bi bi-person-check me-1"></i> Assign Asset
@@ -40,8 +43,18 @@ $statusClass = match ($statusRaw) {
         </div>
     </section>
 
+    <section class="card border-0 shadow-sm no-lift mb-3 d-lg-none">
+        <div class="card-body py-2">
+            <div class="it-mobile-sections">
+                <button type="button" class="btn btn-sm" :class="activeSection === 'overview' ? 'btn-primary' : 'btn-outline-primary'" @click="activeSection = 'overview'">Info Asset</button>
+                <button type="button" class="btn btn-sm" :class="activeSection === 'current' ? 'btn-primary' : 'btn-outline-primary'" @click="activeSection = 'current'">Pemakai</button>
+                <button type="button" class="btn btn-sm" :class="activeSection === 'history' ? 'btn-primary' : 'btn-outline-primary'" @click="activeSection = 'history'">Riwayat</button>
+            </div>
+        </div>
+    </section>
+
     <div class="row g-3">
-        <div class="col-lg-4">
+        <div class="col-lg-4" x-show="sectionVisible('overview')" x-cloak>
             <section class="card border-0 shadow-sm no-lift h-100">
                 <div class="card-body">
                     <?php if (!empty($asset['photo'])): ?>
@@ -73,8 +86,8 @@ $statusClass = match ($statusRaw) {
             </section>
         </div>
 
-        <div class="col-lg-8">
-            <section class="card border-0 shadow-sm no-lift mb-3">
+        <div class="col-lg-8" x-show="sectionVisible('current') || sectionVisible('history')" x-cloak>
+            <section class="card border-0 shadow-sm no-lift mb-3" x-show="sectionVisible('current')" x-cloak>
                 <div class="card-header bg-transparent border-0 pb-0">
                     <h6 class="fw-semibold mb-1">Pemakai Saat Ini</h6>
                 </div>
@@ -102,7 +115,7 @@ $statusClass = match ($statusRaw) {
                 </div>
             </section>
 
-            <section class="card border-0 shadow-sm no-lift">
+            <section class="card border-0 shadow-sm no-lift" x-show="sectionVisible('history')" x-cloak>
                 <div class="card-header bg-transparent border-0 pb-0">
                     <h6 class="fw-semibold mb-1">Riwayat Pemakaian</h6>
                 </div>
@@ -151,4 +164,13 @@ $statusClass = match ($statusRaw) {
 
 <?= $this->section('styles') ?>
 <link rel="stylesheet" href="<?= base_url('assets/css/it-suite.css?v=' . filemtime(FCPATH . 'assets/css/it-suite.css')) ?>">
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+    window.IT_ASSET_DETAIL_BOOT = <?= json_encode([
+        'inventoryNo' => (string) ($asset['inventory_no'] ?? ''),
+    ], JSON_UNESCAPED_UNICODE) ?>;
+</script>
+<script src="<?= base_url('js/it-suite-alpine.js?v=' . filemtime(FCPATH . 'js/it-suite-alpine.js')) ?>"></script>
 <?= $this->endSection() ?>

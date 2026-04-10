@@ -1,0 +1,90 @@
+.ems-page .no-lift:hover {
+  transform: none !important;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06) !important;
+}
+
+.ems-page .ems-hero-card {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(16, 185, 129, 0.12), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(14, 116, 144, 0.16) !important;
+}
+
+.ems-page .ems-kicker,
+.ems-page .ems-section-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #0f766e;
+  background: rgba(15, 118, 110, 0.12);
+}
+
+.ems-page .ems-report-card {
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  border-radius: 18px;
+}
+
+.ems-page .ems-report-card.is-active {
+  border-color: rgba(14, 165, 233, 0.32) !important;
+}
+
+.ems-page .ems-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ems-page .ems-month-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.ems-page .ems-month-field {
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: #f8fafc;
+}
+
+.ems-page .ems-table thead th {
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.ems-page .ems-table td,
+.ems-page .ems-table th {
+  font-size: 0.85rem;
+  vertical-align: middle;
+}
+
+.ems-page .ems-wide-table {
+  min-width: 980px;
+}
+
+.ems-page .sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #fff;
+}
+
+.ems-page .ems-table thead .sticky-col,
+.ems-page .ems-table tfoot .sticky-col {
+  background: #f8fafc;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  .ems-page .ems-month-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ems-page .ems-wide-table {
+    min-width: 880px;
+  }
+}

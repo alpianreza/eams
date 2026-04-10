@@ -14,6 +14,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
+<script src="<?= base_url('js/it-suite-alpine.js?v=' . filemtime(FCPATH . 'js/it-suite-alpine.js')) ?>"></script>
 <script src="<?= base_url('js/it-device-live.js?v=' . filemtime(FCPATH . 'js/it-device-live.js')) ?>"></script>
 <script src="<?= base_url('js/device-remote.js?v=' . filemtime(FCPATH . 'js/device-remote.js')) ?>"></script>
 <?= $this->endSection() ?>
