@@ -238,6 +238,8 @@ $routes->group('ems-reports', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'EmsReportController::index');
     $routes->get('water-consumption', 'EmsReportController::waterConsumption');
     $routes->post('water-consumption/save', 'EmsReportController::saveWaterConsumption');
+    $routes->get('electric-consumption', 'EmsReportController::electricConsumption');
+    $routes->post('electric-consumption/save', 'EmsReportController::saveElectricConsumption');
 });
 
 $routes->get('kuesioner/(:segment)', 'ComplianceQuestionnaireController::publicFill/$1');

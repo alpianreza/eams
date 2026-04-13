@@ -37,7 +37,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
       <ul class="nav sidebar-menu flex-column" role="menu">
 
         <!-- HOME -->
-        <?php if (hasRole(['staff', 'compliance', 'admin'])): ?>
+        <?php if (hasRole(['staff', 'compliance', 'admin', 'office'])): ?>
           <li class="nav-item">
             <a href="<?= base_url('home') ?>"
               class="nav-link <?= $seg1 === 'home' ? 'active' : '' ?>">
@@ -198,7 +198,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
           </li>
         <?php endif; ?>
 
-        <?php if (hasRole(['admin', 'compliance', 'auditor', 'staff'])): ?>
+        <?php if (hasRole(['admin', 'compliance', 'office'])): ?>
           <li class="nav-item">
             <a href="<?= base_url('ems-reports') ?>"
               class="nav-link <?= $isEmsReportMenu ? 'active' : '' ?>">

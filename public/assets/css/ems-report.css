@@ -1,3 +1,7 @@
+.ems-page [x-cloak] {
+  display: none !important;
+}
+
 .ems-page .no-lift:hover {
   transform: none !important;
   box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06) !important;
@@ -36,6 +40,23 @@
   color: #0f172a;
 }
 
+.ems-page .ems-inline-search {
+  min-width: min(100%, 280px);
+  width: min(100%, 340px);
+}
+
+.ems-page .ems-card-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(14, 165, 233, 0.12);
+  color: #0284c7;
+  font-size: 1.15rem;
+}
+
 .ems-page .ems-month-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -66,6 +87,10 @@
   min-width: 980px;
 }
 
+.ems-page .ems-electric-table {
+  min-width: 1240px;
+}
+
 .ems-page .sticky-col {
   position: sticky;
   left: 0;
@@ -79,12 +104,123 @@
   z-index: 2;
 }
 
+.ems-page .ems-save-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.72rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: #fff;
+  color: #334155;
+}
+
+.ems-page .ems-save-chip.is-dirty {
+  background: #fff7ed;
+  border-color: #fdba74;
+  color: #9a3412;
+}
+
+.ems-page .ems-save-chip.is-saving {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+.ems-page .ems-save-chip.is-saved {
+  background: #ecfdf5;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.ems-page .ems-save-chip.is-error {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.ems-page .spin {
+  animation: ems-spin 0.9s linear infinite;
+}
+
+.ems-page .ems-change-cell {
+  font-weight: 700;
+  text-align: center;
+}
+
+.ems-page .ems-change-cell.is-positive {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.ems-page .ems-change-cell.is-negative {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.ems-page .ems-change-cell.is-neutral {
+  background: #f8fafc;
+  color: #475569;
+}
+
+.ems-page .ems-trend-row td {
+  vertical-align: bottom;
+}
+
+.ems-page .ems-trend-bars {
+  height: 82px;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: end;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.ems-page .ems-trend-bar {
+  display: block;
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, #111827 0%, #475569 100%);
+}
+
+.ems-page .ems-trend-change {
+  font-size: 1.25rem;
+}
+
+.ems-page .ems-electric-foot th {
+  background: #0f2f66 !important;
+  color: #fff !important;
+}
+
+@keyframes ems-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 768px) {
+  .ems-page .ems-hero-card .card-body {
+    padding: 0.95rem;
+  }
+
   .ems-page .ems-month-grid {
     grid-template-columns: 1fr;
   }
 
   .ems-page .ems-wide-table {
     min-width: 880px;
+  }
+
+  .ems-page .ems-electric-table {
+    min-width: 1140px;
+  }
+
+  .ems-page .ems-inline-search {
+    width: 100%;
   }
 }

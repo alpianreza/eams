@@ -7,13 +7,13 @@ $months = $boot['months'] ?? [];
 ?>
 
 <?= $this->section('content') ?>
-<div class="ems-page water-report-page" x-data="emsWaterConsumptionPage(window.EMS_WATER_BOOT || {})" x-init="init()">
+<div class="ems-page electric-report-page" x-data="emsElectricConsumptionPage(window.EMS_ELECTRIC_BOOT || {})" x-init="init()">
   <section class="card border-0 shadow-sm ems-hero-card no-lift mb-3">
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
         <p class="ems-kicker mb-1">EMS Report</p>
-        <h5 class="fw-bold mb-1">Water Consumption</h5>
-        <p class="text-muted mb-0">Input konsumsi air bulanan dan output produksi.</p>
+        <h5 class="fw-bold mb-1">Electric Consumption</h5>
+        <p class="text-muted mb-0">Input konsumsi listrik bulanan, output produksi, dan hitungan emisi.</p>
       </div>
       <div class="d-flex flex-wrap gap-2 align-items-center">
         <div class="ems-save-chip" :class="saveStateClass" x-cloak>
@@ -31,9 +31,9 @@ $months = $boot['months'] ?? [];
     <div class="card-body">
       <div class="d-flex flex-wrap gap-2">
         <?php foreach ($years as $year): ?>
-          <a href="/ems-reports/water-consumption?year=<?= (int) $year ?>" class="btn btn-sm <?= (int) $selectedYear === (int) $year ? 'btn-primary' : 'btn-outline-primary' ?> rounded-pill px-3">
+          <button type="button" class="btn btn-sm rounded-pill px-3" :class="selectedYear === <?= (int) $year ?> ? 'btn-primary' : 'btn-outline-primary'" @click="selectYear(<?= (int) $year ?>)">
             <?= (int) $year ?>
-          </a>
+          </button>
         <?php endforeach; ?>
       </div>
     </div>
@@ -44,27 +44,25 @@ $months = $boot['months'] ?? [];
       <section class="card border-0 shadow-sm no-lift h-100">
         <div class="card-header bg-transparent border-0 pb-0">
           <p class="ems-section-kicker mb-1">Input Bulanan</p>
-          <h6 class="fw-semibold mb-1">Form Tahun <?= (int) $selectedYear ?></h6>
+          <h6 class="fw-semibold mb-1">Form Tahun <span x-text="selectedYear"></span></h6>
         </div>
         <div class="card-body pt-2">
           <div class="mb-3">
-            <label for="production_output" class="form-label form-label-sm">Production Output</label>
-            <input id="production_output" type="number" step="0.01" min="0" class="form-control" x-model="editor.productionOutput" @input="scheduleAutosave()" placeholder="0.00">
+            <label for="electric_production_output" class="form-label form-label-sm">Production Output</label>
+            <input id="electric_production_output" type="number" step="0.01" min="0" class="form-control" x-model="editor.productionOutput" @input="scheduleAutosave()" placeholder="0.00">
           </div>
-
           <div class="ems-month-grid">
             <?php foreach ($months as $monthNum => $labels): ?>
               <div class="ems-month-field">
-                <label class="form-label form-label-sm" for="month_<?= (int) $monthNum ?>"><?= esc($labels['long']) ?></label>
+                <label class="form-label form-label-sm" for="electric_month_<?= (int) $monthNum ?>"><?= esc($labels['long']) ?></label>
                 <input
-                  id="month_<?= (int) $monthNum ?>"
+                  id="electric_month_<?= (int) $monthNum ?>"
                   type="number"
                   step="0.01"
                   min="0"
                   class="form-control form-control-sm"
                   x-model="editor.months[<?= (int) $monthNum ?>]"
-                  @input="scheduleAutosave()"
-                >
+                  @input="scheduleAutosave()">
               </div>
             <?php endforeach; ?>
           </div>
@@ -74,12 +72,12 @@ $months = $boot['months'] ?? [];
 
     <div class="col-xl-8">
       <div x-ref="summaryPanels">
-        <?= view('ems/_water_summary_panels', [
-            'years' => $boot['years'] ?? [],
-            'baselineYear' => $boot['baselineYear'] ?? $selectedYear,
-            'yearMeta' => $boot['yearMeta'] ?? [],
-            'monthlySummary' => $boot['monthlySummary'] ?? [],
-            'summaryRows' => $boot['summaryRows'] ?? [],
+        <?= view('ems/_electric_summary_panels', [
+          'years' => $boot['years'] ?? [],
+          'yearMeta' => $boot['yearMeta'] ?? [],
+          'monthlySummary' => $boot['monthlySummary'] ?? [],
+          'months' => $boot['months'] ?? [],
+          'emissionFactor' => $boot['emissionFactor'] ?? 0.87,
         ]) ?>
       </div>
     </div>
@@ -93,12 +91,12 @@ $months = $boot['months'] ?? [];
 
 <?= $this->section('scripts') ?>
 <script>
-  window.EMS_WATER_BOOT = <?= json_encode([
-      'dataset' => $boot,
-      'saveUrl' => '/ems-reports/water-consumption/save',
-      'csrfName' => $csrfName,
-      'csrfHash' => $csrfHash,
-  ], JSON_UNESCAPED_UNICODE) ?>;
+  window.EMS_ELECTRIC_BOOT = <?= json_encode([
+                                'dataset' => $boot,
+                                'saveUrl' => '/ems-reports/electric-consumption/save',
+                                'csrfName' => $csrfName,
+                                'csrfHash' => $csrfHash,
+                              ], JSON_UNESCAPED_UNICODE) ?>;
 </script>
 <script src="/js/ems-report.js?v=<?= filemtime(FCPATH . 'js/ems-report.js') ?>"></script>
 <?= $this->endSection() ?>
