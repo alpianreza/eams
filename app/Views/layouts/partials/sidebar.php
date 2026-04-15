@@ -10,6 +10,7 @@ $isCompliance = $seg1 === 'compliance';
 $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 $isQuestionnaireMenu = $isCompliance && $seg2 === 'questionnaires';
 $isEmsReportMenu = $seg1 === 'ems-reports';
+$isFdmMenu = $seg1 === 'fdm-data-collection';
 
 $brandLogoPath = FCPATH . 'assets/images/company/logo.png';
 $brandLogoUrl = base_url('assets/images/company/logo.png');
@@ -204,6 +205,16 @@ $hasBrandLogo = file_exists($brandLogoPath);
               class="nav-link <?= $isEmsReportMenu ? 'active' : '' ?>">
               <i class="nav-icon bi bi-droplet-half"></i>
               <p>EMS Report</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
+        <?php if (hasRole(['admin', 'compliance', 'office'])): ?>
+          <li class="nav-item">
+            <a href="<?= base_url('fdm-data-collection') ?>"
+              class="nav-link <?= $isFdmMenu ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-clipboard-data"></i>
+              <p>FDM Data Collection</p>
             </a>
           </li>
         <?php endif; ?>

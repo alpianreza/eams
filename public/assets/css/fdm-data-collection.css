@@ -1,0 +1,226 @@
+.fdm-page {
+  --fdm-accent: #0f6f61;
+  --fdm-accent-soft: rgba(15, 111, 97, 0.1);
+  --fdm-border: rgba(15, 23, 42, 0.08);
+}
+
+.fdm-hero-card {
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(15, 111, 97, 0.12), transparent 34%),
+    linear-gradient(135deg, #ffffff, #f4fbf8);
+}
+
+.fdm-kicker {
+  color: #2b6cb0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.fdm-inline-search {
+  width: min(100%, 320px);
+}
+
+.fdm-hero-copy {
+  max-width: 720px;
+}
+
+.fdm-collection-card {
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--fdm-border);
+}
+
+.fdm-collection-card.is-ready {
+  background:
+    radial-gradient(circle at top right, rgba(15, 111, 97, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(240, 251, 247, 0.97));
+}
+
+.fdm-collection-card.is-soon {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+}
+
+.fdm-card-title {
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+
+.fdm-card-icon {
+  width: 52px;
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: var(--fdm-accent-soft);
+  color: var(--fdm-accent);
+  font-size: 1.3rem;
+}
+
+.fdm-card-focus-note {
+  color: #0f766e;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.fdm-save-indicator {
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: #eef2ff;
+  color: #475569;
+}
+
+.fdm-save-indicator.is-dirty {
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.fdm-save-indicator.is-saving {
+  background: #ecfeff;
+  color: #0f766e;
+}
+
+.fdm-save-indicator.is-saved {
+  background: #ecfdf5;
+  color: #15803d;
+}
+
+.fdm-save-indicator.is-error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.fdm-production-table {
+  --fdm-table-border: rgba(148, 163, 184, 0.25);
+  min-width: 1320px;
+}
+
+.fdm-production-table th,
+.fdm-production-table td {
+  border-color: var(--fdm-table-border);
+  vertical-align: middle;
+}
+
+.fdm-production-table thead th {
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.fdm-sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #fff;
+}
+
+.fdm-production-table thead .fdm-sticky-col {
+  z-index: 3;
+  background: #f8fafc;
+}
+
+.fdm-col-label {
+  min-width: 320px;
+}
+
+.fdm-col-frequency {
+  min-width: 96px;
+}
+
+.fdm-col-month {
+  min-width: 92px;
+}
+
+.fdm-col-action {
+  min-width: 76px;
+}
+
+.fdm-row-total td {
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.8), rgba(255, 255, 255, 0.96));
+}
+
+.fdm-row-workforce td {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(255, 255, 255, 0.98));
+}
+
+.fdm-row-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.fdm-logo-badge {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.fdm-logo-badge.is-total {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.16), rgba(14, 165, 233, 0.28));
+  color: #1d4ed8;
+}
+
+.fdm-logo-badge.is-workforce {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(45, 212, 191, 0.26));
+  color: #0f766e;
+}
+
+.fdm-cell-readonly {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.fdm-frequency-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 68px;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #1d4ed8;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+[x-cloak] {
+  display: none !important;
+}
+
+@media (max-width: 767.98px) {
+  .fdm-hero-card {
+    border-radius: 20px;
+  }
+
+  .fdm-inline-search {
+    width: 100%;
+  }
+
+  .fdm-collection-card {
+    border-radius: 18px;
+  }
+
+  .fdm-save-indicator {
+    width: 100%;
+    text-align: center;
+  }
+}

@@ -247,6 +247,12 @@ $routes->group('ems-reports', ['filter' => 'auth'], function ($routes) {
     $routes->get('ghg-summary', 'EmsReportController::ghgSummary');
 });
 
+$routes->group('fdm-data-collection', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'FdmDataCollectionController::index');
+    $routes->get('production-section', 'FdmDataCollectionController::productionSection');
+    $routes->post('production-section/save', 'FdmDataCollectionController::saveProductionSection');
+});
+
 $routes->get('kuesioner/(:segment)', 'ComplianceQuestionnaireController::publicFill/$1');
 $routes->get('kuesioner/(:segment)/selesai', 'ComplianceQuestionnaireController::publicThanks/$1');
 $routes->post('kuesioner/(:segment)/kirim', 'ComplianceQuestionnaireController::publicSubmit/$1');
