@@ -63,7 +63,7 @@ for ($d = 1; $d <= $daysInMonth; $d++) {
             onchange="this.form.submit()">
         </form>
 
-        <a href="<?= base_url('boiler/export?year=' . $year . '&month=' . $month) ?>"
+        <a href="/boiler/export?year=<?= esc($year) ?>&month=<?= esc($month) ?>"
           class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
           <i class="bi bi-file-earmark-spreadsheet"></i>
           Export Excel
@@ -140,7 +140,7 @@ for ($d = 1; $d <= $daysInMonth; $d++) {
                   <?php endif; ?>
                 </td>
                 <td class="text-center">
-                  <a href="<?= base_url('boiler/detail/' . $date) ?>" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1">
+                  <a href="/boiler/detail/<?= esc($date) ?>" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1">
                     <i class="bi bi-eye"></i>
                     Detail
                   </a>
@@ -186,7 +186,7 @@ for ($d = 1; $d <= $daysInMonth; $d++) {
                 <strong><?= $row ? number_format($kg, 2) : '-' ?></strong>
               </div>
 
-              <a href="<?= base_url('boiler/detail/' . $date) ?>" class="btn btn-outline-primary btn-sm mt-2 w-100">
+              <a href="/boiler/detail/<?= esc($date) ?>" class="btn btn-outline-primary btn-sm mt-2 w-100">
                 Lihat Detail
               </a>
             </div>
@@ -200,5 +200,5 @@ for ($d = 1; $d <= $daysInMonth; $d++) {
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
-<link rel="stylesheet" href="<?= base_url('assets/css/utility-ops.css?v=' . filemtime(FCPATH . 'assets/css/utility-ops.css')) ?>">
+<link rel="stylesheet" href="/assets/css/utility-ops.css?v=<?= filemtime(FCPATH . 'assets/css/utility-ops.css') ?>">
 <?= $this->endSection() ?>

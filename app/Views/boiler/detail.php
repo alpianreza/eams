@@ -3,7 +3,7 @@
 
 <?php
 $monthRef = date('Y-m', strtotime($date));
-$backUrl = base_url('boiler?monthpicker=' . $monthRef);
+$backUrl = '/boiler?monthpicker=' . rawurlencode($monthRef);
 ?>
 
 <div class="utility-shell utility-boiler-shell">
@@ -147,8 +147,8 @@ $backUrl = base_url('boiler?monthpicker=' . $monthRef);
 <script>
   (() => {
     const date = "<?= esc($date) ?>";
-    const saveUrl = "<?= base_url('boiler/save') ?>";
-    const deleteUrl = "<?= base_url('boiler/delete') ?>";
+    const saveUrl = "/boiler/save";
+    const deleteUrl = "/boiler/delete";
     const isMobile = () => window.matchMedia("(max-width: 767.98px)").matches;
     const saveState = document.getElementById("saveState");
 
@@ -383,5 +383,5 @@ $backUrl = base_url('boiler?monthpicker=' . $monthRef);
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
-<link rel="stylesheet" href="<?= base_url('assets/css/utility-ops.css?v=' . filemtime(FCPATH . 'assets/css/utility-ops.css')) ?>">
+<link rel="stylesheet" href="/assets/css/utility-ops.css?v=<?= filemtime(FCPATH . 'assets/css/utility-ops.css') ?>">
 <?= $this->endSection() ?>
