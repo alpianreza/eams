@@ -11,7 +11,7 @@
       </div>
       <div class="ems-inline-search">
         <label for="emsReportSearch" class="form-label form-label-sm">Cari report</label>
-        <input id="emsReportSearch" type="text" class="form-control" x-model="query" placeholder="Contoh: water, electric, oil">
+        <input id="emsReportSearch" type="text" class="form-control" x-model="query" placeholder="Cari berdasarkan nama report...">
       </div>
     </div>
   </section>

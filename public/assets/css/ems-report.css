@@ -70,6 +70,43 @@
   background: #f8fafc;
 }
 
+.ems-page .ems-combustion-editor-block {
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 16px;
+  padding: 0.85rem;
+  background: #ffffff;
+}
+
+.ems-page .ems-report-sheet-head {
+  padding-top: 1rem;
+}
+
+.ems-page .ems-sheet-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.ems-page .ems-sheet-subtitle {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.15rem;
+}
+
+.ems-page .ems-sheet-address,
+.ems-page .ems-sheet-meta {
+  font-size: 0.84rem;
+  color: #64748b;
+}
+
+.ems-page .ems-combustion-sheet-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.75rem;
+}
+
 .ems-page .ems-table thead th {
   background: #f8fafc;
   color: #334155;
@@ -91,10 +128,20 @@
   min-width: 1240px;
 }
 
+.ems-page .ems-electric-table thead th {
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  text-align: center;
+}
+
 .ems-page .sticky-col {
   position: sticky;
   left: 0;
   z-index: 1;
+  background: #fff;
+}
+
+.ems-page .ems-electric-table tbody td:first-child,
+.ems-page .ems-electric-table tbody td:nth-child(2) {
   background: #fff;
 }
 
@@ -151,8 +198,8 @@
 }
 
 .ems-page .ems-change-cell.is-positive {
-  background: #dcfce7;
-  color: #166534;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .ems-page .ems-change-cell.is-negative {
@@ -182,16 +229,38 @@
   display: block;
   width: 100%;
   border-radius: 3px 3px 0 0;
-  background: linear-gradient(180deg, #111827 0%, #475569 100%);
+  background: linear-gradient(180deg, #111827 0%, #2f2f2f 100%);
 }
 
 .ems-page .ems-trend-change {
   font-size: 1.25rem;
 }
 
+.ems-page .ems-summary-row td,
+.ems-page .ems-summary-row th {
+  background: #f8fafc;
+}
+
 .ems-page .ems-electric-foot th {
   background: #0f2f66 !important;
   color: #fff !important;
+}
+
+.ems-page .ems-ghg-table {
+  min-width: 920px;
+}
+
+.ems-page .ems-ghg-total-row td,
+.ems-page .ems-ghg-total-row th {
+  background: #eff6ff;
+  font-weight: 700;
+}
+
+.ems-page .ems-ghg-grand-row td,
+.ems-page .ems-ghg-grand-row th {
+  background: #0f2f66;
+  color: #fff;
+  font-weight: 800;
 }
 
 @keyframes ems-spin {
@@ -218,6 +287,10 @@
 
   .ems-page .ems-electric-table {
     min-width: 1140px;
+  }
+
+  .ems-page .ems-ghg-table {
+    min-width: 860px;
   }
 
   .ems-page .ems-inline-search {

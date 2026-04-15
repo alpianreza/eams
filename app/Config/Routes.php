@@ -240,6 +240,11 @@ $routes->group('ems-reports', ['filter' => 'auth'], function ($routes) {
     $routes->post('water-consumption/save', 'EmsReportController::saveWaterConsumption');
     $routes->get('electric-consumption', 'EmsReportController::electricConsumption');
     $routes->post('electric-consumption/save', 'EmsReportController::saveElectricConsumption');
+    $routes->get('stationary-combustion', 'EmsReportController::stationaryCombustion');
+    $routes->post('stationary-combustion/save', 'EmsReportController::saveStationaryCombustion');
+    $routes->get('mobile-combustion', 'EmsReportController::mobileCombustion');
+    $routes->post('mobile-combustion/save', 'EmsReportController::saveMobileCombustion');
+    $routes->get('ghg-summary', 'EmsReportController::ghgSummary');
 });
 
 $routes->get('kuesioner/(:segment)', 'ComplianceQuestionnaireController::publicFill/$1');

@@ -6,9 +6,11 @@ $months = $months ?? [];
 $emissionFactor = $emissionFactor ?? 0.87;
 ?>
 <section class="card border-0 shadow-sm no-lift">
-  <div class="card-header bg-transparent border-0 pb-0">
-    <p class="ems-section-kicker mb-1">Monthly Summary</p>
-    <h6 class="fw-semibold mb-1">Electric Consumption</h6>
+  <div class="card-header bg-transparent border-0 pb-0 ems-report-sheet-head">
+    <div class="ems-sheet-title">2026-2030 Purchased Electricity Consumption Report</div>
+    <div class="ems-sheet-subtitle">PT.Younghyun Star</div>
+    <div class="ems-sheet-address">Kmp. Kebon Randu RT.001/004 Ds. Sekarwangi Kec. Cibadak Kab. Sukabumi - Jawa Barat, Indonesia</div>
+    <div class="ems-sheet-meta">Baseline Year: 2026, Target: -2% s/d -5%</div>
   </div>
   <div class="card-body pt-2">
     <div class="table-responsive">
@@ -91,7 +93,7 @@ $emissionFactor = $emissionFactor ?? 0.87;
             <?php endforeach; ?>
           </tr>
 
-          <tr class="fw-semibold">
+          <tr class="fw-semibold ems-summary-row">
             <td class="sticky-col">Total</td>
             <td></td>
             <?php foreach ($years as $index => $year): ?>
@@ -99,7 +101,7 @@ $emissionFactor = $emissionFactor ?? 0.87;
               <?php if ($index > 0): ?><td></td><?php endif; ?>
             <?php endforeach; ?>
           </tr>
-          <tr>
+          <tr class="ems-summary-row">
             <td class="sticky-col">Production Output</td>
             <td></td>
             <?php foreach ($years as $index => $year): ?>
@@ -107,7 +109,7 @@ $emissionFactor = $emissionFactor ?? 0.87;
               <?php if ($index > 0): ?><td></td><?php endif; ?>
             <?php endforeach; ?>
           </tr>
-          <tr>
+          <tr class="ems-summary-row">
             <td class="sticky-col">Annual Intensity Average</td>
             <td></td>
             <?php foreach ($years as $index => $year): ?>
@@ -115,7 +117,7 @@ $emissionFactor = $emissionFactor ?? 0.87;
               <?php if ($index > 0): ?><td></td><?php endif; ?>
             <?php endforeach; ?>
           </tr>
-          <tr>
+          <tr class="ems-summary-row">
             <td class="sticky-col">tCO2e Emission (Emission Factor=<?= esc(number_format((float) $emissionFactor, 2, ',', '.')) ?>)</td>
             <td></td>
             <?php foreach ($years as $index => $year): ?>

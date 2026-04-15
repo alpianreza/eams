@@ -392,4 +392,161 @@ document.addEventListener("alpine:init", () => {
       return this.saveMessage;
     },
   }));
+
+  Alpine.data("emsCombustionPage", (boot = {}) => ({
+    saveUrl: String(boot.saveUrl || ""),
+    csrfName: String(boot.csrfName || ""),
+    csrfHash: String(boot.csrfHash || ""),
+    years: [],
+    selectedYear: null,
+    monthItems: [],
+    sections: {},
+    editorYears: {},
+    yearMeta: {},
+    sectionSummaries: {},
+    editor: { productionOutput: "", sections: {} },
+    saveTimer: null,
+    saveState: "idle",
+    saveMessage: "Siap diedit",
+
+    init() {
+      this.applyDataset(boot.dataset || {});
+      this.setEditorFromYear(this.selectedYear);
+    },
+
+    applyDataset(dataset) {
+      this.years = Array.isArray(dataset.years) ? dataset.years.map((year) => Number(year)) : [];
+      this.selectedYear = Number(dataset.selectedYear || this.years[0] || new Date().getFullYear());
+      this.monthItems = Object.entries(dataset.months || {}).map(([number, labels]) => ({
+        number: Number(number),
+        short: labels.short,
+        long: labels.long,
+      }));
+      this.sections = dataset.sections || {};
+      this.editorYears = dataset.editorYears || {};
+      this.yearMeta = dataset.yearMeta || {};
+      this.sectionSummaries = dataset.sectionSummaries || {};
+    },
+
+    setEditorFromYear(year) {
+      const data = this.editorYears?.[year] || { productionOutput: null, sections: {} };
+      const sections = {};
+      Object.keys(this.sections).forEach((sectionKey) => {
+        sections[sectionKey] = {};
+        this.monthItems.forEach((month) => {
+          const value = data.sections?.[sectionKey]?.months?.[month.number]
+            ?? data.sections?.[sectionKey]?.months?.[String(month.number)]
+            ?? "";
+          sections[sectionKey][month.number] = value === null ? "" : String(value);
+        });
+      });
+
+      this.editor = {
+        productionOutput: data.productionOutput === null || data.productionOutput === undefined ? "" : String(data.productionOutput),
+        sections,
+      };
+    },
+
+    selectYear(year) {
+      this.selectedYear = Number(year);
+      this.setEditorFromYear(this.selectedYear);
+      this.saveState = "idle";
+      this.saveMessage = "Siap diedit";
+      const url = new URL(window.location.href);
+      url.searchParams.set("year", String(this.selectedYear));
+      window.history.replaceState({}, "", url.toString());
+    },
+
+    scheduleAutosave() {
+      this.saveState = "dirty";
+      this.saveMessage = "Perubahan belum tersimpan";
+      if (this.saveTimer) {
+        window.clearTimeout(this.saveTimer);
+      }
+      this.saveTimer = window.setTimeout(() => this.saveNow(), 700);
+    },
+
+    async saveNow() {
+      if (!this.saveUrl) {
+        return;
+      }
+
+      this.saveState = "saving";
+      this.saveMessage = "Menyimpan otomatis...";
+
+      const params = new URLSearchParams();
+      params.append("report_year", String(this.selectedYear));
+      params.append("production_output", this.editor.productionOutput ?? "");
+      Object.keys(this.sections).forEach((sectionKey) => {
+        this.monthItems.forEach((month) => {
+          params.append(`sections[${sectionKey}][${month.number}]`, this.editor.sections?.[sectionKey]?.[month.number] ?? "");
+        });
+      });
+      if (this.csrfName && this.csrfHash) {
+        params.append(this.csrfName, this.csrfHash);
+      }
+
+      try {
+        const response = await fetch(this.saveUrl, {
+          method: "POST",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "Accept": "application/json",
+          },
+          credentials: "same-origin",
+          body: params.toString(),
+        });
+
+        const contentType = String(response.headers.get("content-type") || "").toLowerCase();
+        const raw = await response.text();
+        let payload = null;
+
+        if (contentType.includes("application/json")) {
+          payload = JSON.parse(raw);
+        } else {
+          throw new Error("Server membalas format yang tidak valid.");
+        }
+
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.message || "save_failed");
+        }
+
+        this.csrfHash = payload.csrfHash || this.csrfHash;
+        this.applyDataset(payload.dataset || {});
+        this.setEditorFromYear(this.selectedYear);
+        if (typeof payload.summaryHtml === "string" && this.$refs.summaryPanels) {
+          this.$refs.summaryPanels.innerHTML = payload.summaryHtml;
+        }
+        this.saveState = "saved";
+        this.saveMessage = payload.message || "Tersimpan";
+      } catch (error) {
+        this.saveState = "error";
+        this.saveMessage = error.message || "Gagal menyimpan";
+        toast(this.saveMessage, "error");
+      }
+    },
+
+    get saveStateClass() {
+      return {
+        "is-idle": this.saveState === "idle",
+        "is-dirty": this.saveState === "dirty",
+        "is-saving": this.saveState === "saving",
+        "is-saved": this.saveState === "saved",
+        "is-error": this.saveState === "error",
+      };
+    },
+
+    get saveStateIcon() {
+      if (this.saveState === "saving") return "bi-arrow-repeat spin";
+      if (this.saveState === "saved") return "bi-check-circle";
+      if (this.saveState === "error") return "bi-exclamation-octagon";
+      if (this.saveState === "dirty") return "bi-pencil-square";
+      return "bi-info-circle";
+    },
+
+    get saveStateLabel() {
+      return this.saveMessage;
+    },
+  }));
 });
