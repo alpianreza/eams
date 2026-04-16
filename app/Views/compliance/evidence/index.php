@@ -9,9 +9,9 @@ $startYear = max(2024, $currentYear - 5);
 
 <div id="evidencePage"
   class="evidence-page"
-  data-url-ajax="<?= site_url('compliance/evidence/ajax') ?>"
-  data-url-detail-base="<?= site_url('compliance/evidence/detail') ?>"
-  data-url-update="<?= site_url('compliance/evidence/update-followup') ?>">
+  data-url-ajax="/compliance/evidence/ajax"
+  data-url-detail-base="/compliance/evidence/detail"
+  data-url-update="/compliance/evidence/update-followup">
 
   <section class="card border-0 shadow-sm evidence-hero-card no-lift mb-3">
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
@@ -98,5 +98,5 @@ $startYear = max(2024, $currentYear - 5);
 <?= $this->endSection() ?>
 
 <?= $this->section('styles') ?>
-<link rel="stylesheet" href="<?= base_url('assets/css/evidence.css?v=' . filemtime(FCPATH . 'assets/css/evidence.css')) ?>">
+<link rel="stylesheet" href="/assets/css/evidence.css?v=<?= filemtime(FCPATH . 'assets/css/evidence.css') ?>">
 <?= $this->endSection() ?>

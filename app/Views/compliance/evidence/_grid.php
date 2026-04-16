@@ -47,7 +47,7 @@ $emptyImage = 'data:image/svg+xml;utf8,' . rawurlencode(
 
       $photo = trim((string) ($ev['photo'] ?? ''));
       $photoUrl = $photo !== ''
-        ? base_url('uploads/checklist/' . str_replace('%2F', '/', rawurlencode($photo)))
+        ? '/uploads/checklist/' . str_replace('%2F', '/', rawurlencode($photo))
         : $emptyImage;
 
       $periodKey = trim((string) ($ev['period_key'] ?? ''));

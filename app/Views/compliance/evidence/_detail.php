@@ -40,7 +40,7 @@
 
   $photo = trim((string) ($ev['photo'] ?? ''));
   $photoUrl = $photo !== ''
-    ? base_url('uploads/checklist/' . str_replace('%2F', '/', rawurlencode($photo)))
+    ? '/uploads/checklist/' . str_replace('%2F', '/', rawurlencode($photo))
     : $emptyImage;
   ?>
 
@@ -131,7 +131,7 @@
         <?php endif; ?>
 
         <?php if (!empty($ev['inventory_id'])): ?>
-          <a href="<?= base_url('compliance/inventory/detail/' . $ev['inventory_id']) ?>"
+          <a href="/compliance/inventory/detail/<?= esc($ev['inventory_id']) ?>"
             class="btn btn-outline-primary btn-sm mt-3">
             Lihat Detail Inventory
           </a>
