@@ -157,9 +157,11 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
 
         // halaman checklist utama
         $routes->get('(:num)', 'ComplianceInventoryController::checklist/$1');
+        $routes->get('cctv-grid', 'ComplianceInventoryController::cctvGrid');
 
         // submit checklist
         $routes->post('submit', 'ComplianceInventoryController::submitChecklist');
+        $routes->post('cctv-grid/save', 'ComplianceInventoryController::saveCctvGrid');
 
         // ajax calendar
         $routes->get('(:num)/calendar', 'ComplianceInventoryController::calendar/$1');

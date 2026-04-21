@@ -6,7 +6,7 @@
   <section class="card border-0 shadow-sm checklist-hero-card no-lift mb-3">
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-2">
       <div>
-        <p class="checklist-kicker mb-1">Checklist Kepatuhan</p>
+        <p class="checklist-kicker mb-1">Checklist Compliance</p>
         <h5 class="mb-1 fw-bold"><?= esc($inventory['item_display_name']) ?></h5>
         <p class="text-muted mb-0">No Inventaris: <strong><?= esc($inventory['asset_code']) ?></strong></p>
       </div>

@@ -46,7 +46,14 @@ if ($statusValue === 'Good') {
 
       <div class="detail-hero-actions ms-auto d-flex flex-wrap gap-2">
         <?php if (hasRole(['admin', 'compliance', 'staff'])): ?>
-          <a href="<?= base_url('compliance/checklist/' . $inventory['id']) ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+          <?php if ((int) ($inventory['item_type_id'] ?? 0) === 13): ?>
+            <a href="/compliance/checklist/cctv-grid?ym=<?= esc($ym) ?>&focus_id=<?= (int) $inventory['id'] ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+              <i class="bi bi-grid-3x3-gap"></i>
+              Grid CCTV
+            </a>
+          <?php endif; ?>
+
+          <a href="/compliance/checklist/<?= (int) $inventory['id'] ?>?ym=<?= esc($ym) ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
             <i class="bi bi-clipboard-check"></i>
             Buka Ceklis
           </a>

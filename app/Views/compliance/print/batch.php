@@ -22,7 +22,7 @@
     </div>
 
     <div id="batchPeriodContainer" class="row mt-3" style="display:none;">
-      <div class="col-md-6">
+      <div id="batchMonthGroup" class="col-md-6">
         <label for="batchMonthSelect">Bulan</label>
         <select id="batchMonthSelect" class="form-control">
           <?php
@@ -50,7 +50,7 @@
         </select>
       </div>
 
-      <div class="col-md-6">
+      <div id="batchYearGroup" class="col-md-6">
         <label for="batchYearSelect">Tahun</label>
         <select id="batchYearSelect" class="form-control">
           <?php

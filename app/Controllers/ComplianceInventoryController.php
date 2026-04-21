@@ -10,6 +10,7 @@ use App\Models\ChecklistLogModel;
 
 class ComplianceInventoryController extends BaseController
 {
+  private const CCTV_ITEM_TYPE_ID = 13;
   protected $inventoryModel;
   protected $categoryModel;
   protected $areaModel;
@@ -699,6 +700,15 @@ class ComplianceInventoryController extends BaseController
       throw new \CodeIgniter\Exceptions\PageNotFoundException();
     }
 
+    if ((int) ($inventory['item_type_id'] ?? 0) === self::CCTV_ITEM_TYPE_ID) {
+      $ym = $this->request->getGet('ym');
+      if (! preg_match('/^\d{4}-\d{2}$/', (string) $ym)) {
+        $ym = date('Y-m');
+      }
+
+      return redirect()->to('/compliance/checklist/cctv-grid?ym=' . rawurlencode($ym) . '&focus_id=' . (int) $inventoryId);
+    }
+
     $frequency = $inventory['checklist_frequency'] ?? 'monthly';
 
     /* ================= SLOT CHECKLIST ================= */
@@ -1076,6 +1086,215 @@ class ComplianceInventoryController extends BaseController
       ->with('success', 'Checklist berhasil disimpan.');
   }
 
+  public function cctvGrid()
+  {
+    if (! hasRole(['admin', 'compliance', 'staff', 'auditor'])) {
+      return redirect()->to('/unauthorized');
+    }
+
+    helper('checklist');
+    page('Checklist CCTV');
+
+    $ym = (string) $this->request->getGet('ym');
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      $ym = date('Y-m');
+    }
+
+    [$year, $month] = explode('-', $ym);
+    $monthStart = $ym . '-01';
+    $monthEnd = date('Y-m-t', strtotime($monthStart));
+    $focusId = (int) ($this->request->getGet('focus_id') ?: 0);
+
+    $question = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::CCTV_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->first();
+
+    if (! $question) {
+      return redirect()->to('/compliance/inventory')->with('error', 'Pertanyaan checklist CCTV belum tersedia.');
+    }
+
+    $inventories = $this->inventoryModel
+      ->select('compliance_inventory.id, compliance_inventory.asset_code, compliance_inventory.specific_area, compliance_inventory.remark, compliance_inventory.status, asset_item_types.name AS item_display_name')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
+      ->where('compliance_inventory.item_type_id', self::CCTV_ITEM_TYPE_ID)
+      ->orderBy('compliance_inventory.asset_code', 'ASC')
+      ->findAll();
+
+    $inventoryIds = array_column($inventories, 'id');
+    $logs = [];
+    if (! empty($inventoryIds)) {
+      $logs = (new ChecklistLogModel())
+        ->select('id, inventory_id, period_key, status, checked_by, check_date')
+        ->whereIn('inventory_id', $inventoryIds)
+        ->where('item_type_id', self::CCTV_ITEM_TYPE_ID)
+        ->like('period_key', $ym . '-', 'after')
+        ->findAll();
+    }
+
+    $logMap = [];
+    foreach ($logs as $log) {
+      $logMap[(int) $log['inventory_id']][$log['period_key']] = $log;
+    }
+
+    $holidayDates = holiday_dates_between($monthStart, $monthEnd);
+    $days = generate_calendar_periods('daily', (int) $year, (int) $month);
+
+    $rows = [];
+    foreach ($inventories as $index => $inventory) {
+      $rows[] = [
+        'id' => (int) $inventory['id'],
+        'no' => $index + 1,
+        'display_name' => $this->buildCctvDisplayName($inventory),
+        'location' => trim((string) ($inventory['specific_area'] ?? '-')),
+        'asset_code' => (string) ($inventory['asset_code'] ?? ''),
+        'detail_url' => '/compliance/inventory/detail/' . (int) $inventory['id'] . '?ym=' . rawurlencode($ym),
+        'checks' => $logMap[(int) $inventory['id']] ?? [],
+      ];
+    }
+
+    return view('compliance/checklist/cctv_grid', [
+      'title' => 'Checklist CCTV',
+      'ym' => $ym,
+      'monthLabel' => date('F Y', strtotime($monthStart)),
+      'question' => $question,
+      'days' => $days,
+      'rows' => $rows,
+      'holidayDates' => $holidayDates,
+      'focusId' => $focusId,
+      'saveUrl' => '/compliance/checklist/cctv-grid/save',
+      'currentUser' => (string) session()->get('name'),
+      'csrfName' => csrf_token(),
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
+  public function saveCctvGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/cctv-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance', 'staff'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    helper('checklist');
+
+    $inventoryId = (int) $this->request->getPost('inventory_id');
+    $periodKey = (string) $this->request->getPost('period_key');
+    $mode = strtolower(trim((string) $this->request->getPost('mode')));
+
+    if ($inventoryId <= 0 || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $periodKey)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Data checklist CCTV tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $inventory = $this->inventoryModel
+      ->select('id, item_type_id')
+      ->where('id', $inventoryId)
+      ->first();
+
+    if (! $inventory || (int) ($inventory['item_type_id'] ?? 0) !== self::CCTV_ITEM_TYPE_ID) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Inventory CCTV tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $holidayDates = holiday_dates_between($periodKey, $periodKey);
+    if (is_date_offday($periodKey, $holidayDates)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Checklist tidak dapat diisi pada hari libur.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $question = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::CCTV_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->first();
+
+    if (! $question) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Pertanyaan checklist CCTV belum tersedia.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existing = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->where('period_key', $periodKey)
+      ->where('checklist_template_id', (int) $question['id'])
+      ->first();
+
+    if ($mode === 'clear') {
+      if ($existing && ($existing['status'] ?? '') === 'ok') {
+        $logModel->delete($existing['id']);
+      }
+
+      return $this->response->setJSON([
+        'ok' => true,
+        'state' => 'empty',
+        'message' => 'Checklist CCTV dikosongkan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    if ($existing) {
+      if (($existing['status'] ?? '') !== 'ok') {
+        return $this->response->setStatusCode(409)->setJSON([
+          'ok' => false,
+          'message' => 'Status temuan non-OK tetap perlu dikelola dari halaman detail item.',
+          'state' => strtolower((string) ($existing['status'] ?? 'empty')),
+          'detailUrl' => '/compliance/inventory/detail/' . $inventoryId . '?ym=' . substr($periodKey, 0, 7),
+          'csrfHash' => csrf_hash(),
+        ]);
+      }
+
+      return $this->response->setJSON([
+        'ok' => true,
+        'state' => 'ok',
+        'message' => 'Checklist CCTV sudah tercatat.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel->insert([
+      'inventory_id' => $inventoryId,
+      'item_type_id' => self::CCTV_ITEM_TYPE_ID,
+      'checklist_template_id' => (int) $question['id'],
+      'check_date' => date('Y-m-d'),
+      'period_key' => $periodKey,
+      'time_slot' => null,
+      'status' => 'ok',
+      'remark' => null,
+      'photo' => null,
+      'checked_by' => session()->get('name'),
+      'created_at' => date('Y-m-d H:i:s'),
+    ]);
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'state' => 'ok',
+      'message' => 'Checklist CCTV tersimpan.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
   public function calendar($inventoryId)
   {
     helper('checklist');
@@ -1366,5 +1585,20 @@ class ComplianceInventoryController extends BaseController
       'rows' => $rows,
       'itemName' => $itemName
     ]);
+  }
+
+  private function buildCctvDisplayName(array $inventory): string
+  {
+    $remark = trim((string) ($inventory['remark'] ?? ''));
+    if ($remark !== '') {
+      return $remark;
+    }
+
+    $assetCode = (string) ($inventory['asset_code'] ?? '');
+    if (preg_match('/(\d+)$/', $assetCode, $match)) {
+      return 'Camera ' . ltrim($match[1], '0');
+    }
+
+    return 'CCTV';
   }
 }

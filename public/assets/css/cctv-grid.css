@@ -1,0 +1,142 @@
+.cctv-grid-wrap {
+  max-height: calc(100vh - 240px);
+}
+
+.cctv-grid-table {
+  --cctv-border: #1f293733;
+  min-width: 1400px;
+  font-size: 0.85rem;
+}
+
+.cctv-grid-table th,
+.cctv-grid-table td {
+  border-color: var(--cctv-border);
+  white-space: nowrap;
+}
+
+.cctv-grid-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #f8fafc;
+  text-align: center;
+  font-weight: 700;
+}
+
+.cctv-grid-table .sticky-left {
+  position: sticky;
+  background: #fff;
+  z-index: 3;
+}
+
+.cctv-grid-table thead .sticky-left {
+  background: #f8fafc;
+  z-index: 5;
+}
+
+.cctv-grid-table .sticky-no {
+  left: 0;
+  min-width: 56px;
+}
+
+.cctv-grid-table .sticky-name {
+  left: 56px;
+  min-width: 170px;
+}
+
+.cctv-grid-table .sticky-location {
+  left: 226px;
+  min-width: 190px;
+}
+
+.cctv-grid-table tbody tr.is-focused td {
+  background: #eff6ff;
+}
+
+.cctv-grid-table tbody tr.is-focused .sticky-left {
+  background: #eff6ff;
+}
+
+.cctv-grid-table th.is-offday {
+  background: #475569;
+  color: #fff;
+}
+
+.cctv-check-cell {
+  width: 38px;
+  min-width: 38px;
+  height: 36px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.cctv-check-cell:hover:not(.is-offday) {
+  background: #f1f5f9;
+}
+
+.cctv-check-cell.is-offday {
+  background: #475569;
+  color: #475569;
+  cursor: not-allowed;
+}
+
+.cctv-check-cell.is-ok {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 1rem;
+}
+
+.cctv-check-cell.is-alert {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 1rem;
+}
+
+.cctv-check-cell.is-saving {
+  outline: 2px solid #0ea5e9;
+  outline-offset: -2px;
+}
+
+.cctv-cell-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.cctv-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.legend-box.is-ok {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.legend-box.is-offday {
+  background: #475569;
+  border-color: #334155;
+}
+
+.legend-box.is-alert {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+@media (max-width: 991.98px) {
+  .cctv-grid-wrap {
+    max-height: none;
+  }
+}

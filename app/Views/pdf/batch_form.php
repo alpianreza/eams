@@ -8,9 +8,10 @@ $groupedColumns = $layout['groupedColumns'] ?? [];
 $itemSlug = (string) ($layout['itemSlug'] ?? '');
 $isFireAlarmTemplate = $itemSlug === 'fire_alarm';
 $isEmergencyLightTemplate = $itemSlug === 'emergency_light';
+$isCctvTemplate = $itemSlug === 'cctv';
 $headerTitle = (string) ($layout['headerTitle'] ?? 'CHECKLIST');
 $headerSubtitle = (string) ($layout['headerSubtitle'] ?? '');
-$signatures = ['Diperiksa oleh', 'Dimonitor oleh', 'Mengetahui'];
+$signatures = $layout['signatures'] ?? ['Diperiksa oleh', 'Dimonitor oleh', 'Mengetahui'];
 
 $totalGroupedColumns = 0;
 foreach ($groupedColumns as $group) {
@@ -348,6 +349,79 @@ $displayStatus = static function (?string $status): string {
     background: #ff2d20;
   }
 
+  .batch-cctv-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .batch-cctv-table th,
+  .batch-cctv-table td {
+    border: 1px solid #111;
+    padding: 1.5px 1.8px;
+    font-size: 6px;
+    text-align: center;
+    vertical-align: middle;
+    word-wrap: break-word;
+  }
+
+  .batch-cctv-table .text-left {
+    text-align: left;
+  }
+
+  .batch-cctv-table .col-no {
+    width: 3.2%;
+  }
+
+  .batch-cctv-table .col-checker {
+    width: 14%;
+  }
+
+  .batch-cctv-table .col-location {
+    width: 14%;
+  }
+
+  .batch-cctv-table .col-day {
+    width: 2.1%;
+    padding: 1.2px 0;
+  }
+
+  .batch-cctv-table .col-paraf {
+    width: 6.5%;
+  }
+
+  .batch-cctv-table .cctv-head {
+    font-size: 6.5px;
+    font-weight: bold;
+    line-height: 1.1;
+  }
+
+  .batch-cctv-table .cctv-day-head {
+    font-size: 5.8px;
+    font-weight: bold;
+  }
+
+  .batch-cctv-table .cctv-answer {
+    font-size: 7px;
+    font-weight: bold;
+    height: 14px;
+  }
+
+  .batch-cctv-table .cctv-offday,
+  .batch-cctv-table .cctv-day-off {
+    background: #4b4b4b;
+    color: #4b4b4b;
+  }
+
+  .batch-cctv-table .cctv-not-ok {
+    background: #ffd8d5;
+    color: #9a1b16;
+  }
+
+  .batch-cctv-footer td {
+    height: 18px;
+    font-weight: bold;
+  }
+
   .empty-state {
     border: 1px solid #111;
     padding: 10px;
@@ -472,7 +546,15 @@ $displayStatus = static function (?string $status): string {
 <?php if (empty($inventories)): ?>
   <div class="empty-state">Belum ada inventory untuk item ini.</div>
 <?php else: ?>
-  <?php if ($isFireAlarmTemplate): ?>
+  <?php if ($isCctvTemplate): ?>
+    <?= view('pdf/batch_partials/cctv_table', [
+      'inventories' => $inventories,
+      'layout' => $layout,
+      'dailyChecklistMatrix' => $dailyChecklistMatrix ?? [],
+      'dailyPeriods' => $dailyPeriods ?? [],
+      'displayStatus' => $displayStatus,
+    ]) ?>
+  <?php elseif ($isFireAlarmTemplate): ?>
     <?= view('pdf/batch_partials/fire_alarm_table', [
       'inventories' => $inventories,
       'groupedColumns' => $groupedColumns,
@@ -541,6 +623,8 @@ $displayStatus = static function (?string $status): string {
     <strong>X</strong> = Tidak sesuai,
     <?php if ($isEmergencyLightTemplate): ?>
       <span style="background:#ff2d20; color:#ff2d20; border:1px solid #111;">__</span> = tidak berlaku
+    <?php elseif ($isCctvTemplate): ?>
+      <span style="display:inline-block; width:10px; height:8px; background:#4b4b4b; border:1px solid #111; vertical-align:middle;"></span> = offday / libur
     <?php else: ?>
       <strong>-</strong> = tidak berlaku
     <?php endif; ?>

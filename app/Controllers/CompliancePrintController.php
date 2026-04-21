@@ -90,6 +90,8 @@ class CompliancePrintController extends BaseController
 
   public function batchPreview()
   {
+    helper('checklist');
+
     $itemTypeId = (int) $this->request->getGet('item_type_id');
     $selectedMonth = (int) ($this->request->getGet('month') ?: date('n'));
     $selectedYear = (int) ($this->request->getGet('year') ?: date('Y'));
@@ -116,7 +118,6 @@ class CompliancePrintController extends BaseController
       ->select('compliance_inventory.*, asset_item_types.name AS item_name, asset_item_types.code AS item_code')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
       ->where('compliance_inventory.item_type_id', $itemTypeId)
-      ->orderBy('compliance_inventory.specific_area', 'ASC')
       ->orderBy('compliance_inventory.asset_code', 'ASC')
       ->findAll();
 
@@ -152,6 +153,17 @@ class CompliancePrintController extends BaseController
       $selectedMonth,
       $selectedYear
     );
+    $dailyChecklistMatrix = $this->buildBatchDailyChecklistMatrix(
+      $inventories,
+      (string) ($itemType['checklist_frequency'] ?? ''),
+      $selectedMonth,
+      $selectedYear
+    );
+    $dailyPeriods = $this->buildBatchDailyPeriods(
+      (string) ($itemType['checklist_frequency'] ?? ''),
+      $selectedMonth,
+      $selectedYear
+    );
 
     $pdf = new EamsPdf();
 
@@ -162,6 +174,8 @@ class CompliancePrintController extends BaseController
       'layout' => $layout,
       'checklistMatrix' => $checklistMatrix,
       'weeklyChecklistMatrix' => $weeklyChecklistMatrix,
+      'dailyChecklistMatrix' => $dailyChecklistMatrix,
+      'dailyPeriods' => $dailyPeriods,
       'findings' => $findings,
       'selectedMonth' => $selectedMonth,
       'selectedYear' => $selectedYear,
@@ -251,6 +265,12 @@ class CompliancePrintController extends BaseController
         ['key' => 'specific_area', 'label' => 'Lokasi', 'class' => 'col-location'],
       ];
       $layout['groupedColumns'] = $this->resolveEmergencyLightColumns($masters);
+    }
+
+    if ($this->itemTypeSlug($itemName) === 'cctv') {
+      $layout['headerTitle'] = 'PEMERIKSAAN & PERAWATAN CCTV';
+      $layout['headerSubtitle'] = '(CCTV Inspection & Maintenance Checklist)';
+      $layout['signatures'] = ['IT Officer', 'Diperiksa', 'Mengetahui'];
     }
 
     return $layout;
@@ -601,7 +621,7 @@ class CompliancePrintController extends BaseController
     $month = max(1, min(12, $month));
     $year = $year > 2000 ? $year : (int) date('Y');
 
-    if ($frequency === 'monthly' || $frequency === 'weekly') {
+    if ($frequency === 'daily' || $frequency === 'weekly' || $frequency === 'monthly') {
       return [
         'label' => 'BULAN',
         'value' => ($months[$month] ?? 'Bulan') . ' ' . $year,
@@ -668,6 +688,71 @@ class CompliancePrintController extends BaseController
     }
 
     return $matrix;
+  }
+
+  protected function buildBatchDailyChecklistMatrix(array $inventories, string $frequency, int $month, int $year): array
+  {
+    if ($frequency !== 'daily' || empty($inventories)) {
+      return [];
+    }
+
+    $inventoryIds = array_values(array_unique(array_map(static function (array $inventory): int {
+      return (int) ($inventory['id'] ?? 0);
+    }, $inventories)));
+
+    $inventoryIds = array_values(array_filter($inventoryIds));
+    if (empty($inventoryIds)) {
+      return [];
+    }
+
+    $monthKey = sprintf('%04d-%02d', $year, $month);
+
+    $logs = (new ChecklistLogModel())
+      ->whereIn('inventory_id', $inventoryIds)
+      ->like('period_key', $monthKey . '-', 'after')
+      ->orderBy('check_date', 'DESC')
+      ->orderBy('id', 'DESC')
+      ->findAll();
+
+    $matrix = [];
+
+    foreach ($logs as $log) {
+      $inventoryId = (int) ($log['inventory_id'] ?? 0);
+      $status = trim((string) ($log['status'] ?? ''));
+      $periodKey = trim((string) ($log['period_key'] ?? ''));
+
+      if ($inventoryId < 1 || $status === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $periodKey)) {
+        continue;
+      }
+
+      $current = $matrix[$inventoryId][$periodKey] ?? null;
+      $matrix[$inventoryId][$periodKey] = $this->aggregateBatchStatus($current, $status);
+    }
+
+    return $matrix;
+  }
+
+  protected function buildBatchDailyPeriods(string $frequency, int $month, int $year): array
+  {
+    if ($frequency !== 'daily') {
+      return [];
+    }
+
+    $month = max(1, min(12, $month));
+    $year = $year > 2000 ? $year : (int) date('Y');
+    $monthStart = sprintf('%04d-%02d-01', $year, $month);
+    $monthEnd = date('Y-m-t', strtotime($monthStart));
+    $holidayDates = holiday_dates_between($monthStart, $monthEnd);
+    $periods = generate_calendar_periods('daily', $year, $month);
+
+    foreach ($periods as &$period) {
+      $periodKey = (string) ($period['period_key'] ?? '');
+      $period['day'] = (int) date('j', strtotime($periodKey));
+      $period['is_offday'] = is_date_offday($periodKey, $holidayDates);
+    }
+    unset($period);
+
+    return $periods;
   }
 
   protected function buildBatchWeeklyChecklistMatrix(array $inventories, string $frequency, int $month, int $year): array

@@ -93,12 +93,27 @@
       let selected = e.target.selectedOptions[0] || null
       let freq = selected ? (selected.dataset.frequency || "") : ""
       let periodContainer = document.getElementById("batchPeriodContainer")
+      let monthGroup = document.getElementById("batchMonthGroup")
+      let yearGroup = document.getElementById("batchYearGroup")
 
       if (!periodContainer) {
         return
       }
 
-      periodContainer.style.display = (freq === "monthly" || freq === "weekly") ? "flex" : "none"
+      if (!freq) {
+        periodContainer.style.display = "none"
+        return
+      }
+
+      periodContainer.style.display = "flex"
+
+      if (monthGroup) {
+        monthGroup.style.display = (freq === "daily" || freq === "weekly") ? "block" : "none"
+      }
+
+      if (yearGroup) {
+        yearGroup.className = (freq === "daily" || freq === "weekly") ? "col-md-6" : "col-md-12"
+      }
     }
 
   })

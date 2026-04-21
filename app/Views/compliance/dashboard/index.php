@@ -6,7 +6,7 @@
   <section class="card shadow-sm border-0 mb-4 compliance-hero-card no-lift">
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
-        <p class="compliance-kicker mb-1">Dashboard Kepatuhan</p>
+        <p class="compliance-kicker mb-1">Dashboard Compliance</p>
         <h4 class="mb-1 fw-bold">Control Center Compliance</h4>
         <p class="text-muted mb-0">Pantau performa ceklis, risiko <strong>tidak sesuai</strong>, dan daftar tertunda dalam satu layar.</p>
       </div>
@@ -66,7 +66,7 @@
   </section>
 
   <section class="mb-4">
-    <h6 class="text-muted mb-2">Tren Kepatuhan</h6>
+    <h6 class="text-muted mb-2">Tren</h6>
     <article class="card shadow-sm border-0 compliance-panel no-lift" id="trendPanel">
       <div class="dashboard-loading-overlay">
         <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
