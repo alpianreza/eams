@@ -1,0 +1,157 @@
+.el-grid-wrap {
+  max-height: calc(100vh - 240px);
+}
+
+.el-grid-table {
+  --el-border: #1f293733;
+  min-width: 1100px;
+  font-size: 0.85rem;
+}
+
+.el-grid-table th,
+.el-grid-table td {
+  border-color: var(--el-border);
+  white-space: nowrap;
+}
+
+.el-grid-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #f8fafc;
+  text-align: center;
+  font-weight: 700;
+}
+
+.el-grid-table .sticky-left {
+  position: sticky;
+  background: #fff;
+  z-index: 3;
+}
+
+.el-grid-table thead .sticky-left {
+  background: #f8fafc;
+  z-index: 5;
+}
+
+.el-grid-table .sticky-no {
+  left: 0;
+  min-width: 56px;
+}
+
+.el-grid-table .sticky-location {
+  left: 56px;
+  min-width: 240px;
+}
+
+.el-grid-table .group-band {
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+.el-grid-table .head-sub {
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+
+.el-grid-table .col-type {
+  min-width: 120px;
+}
+
+.el-grid-table .col-question {
+  min-width: 82px;
+}
+
+.el-grid-table tbody tr.is-focused td {
+  background: #eff6ff;
+}
+
+.el-grid-table tbody tr.is-focused .sticky-left {
+  background: #eff6ff;
+}
+
+.field-cell {
+  color: #475569;
+  background: #f8fafc;
+  text-align: center;
+}
+
+.el-check-cell {
+  width: 76px;
+  min-width: 76px;
+  height: 40px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.el-check-cell:hover {
+  background: #f1f5f9;
+}
+
+.el-check-cell.is-ok {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 1rem;
+}
+
+.el-check-cell.is-not-ok {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 1rem;
+}
+
+.el-check-cell.is-na {
+  background: #e5e7eb;
+  color: #475569;
+  font-size: 1rem;
+}
+
+.el-check-cell.is-saving {
+  outline: 2px solid #0ea5e9;
+  outline-offset: -2px;
+}
+
+.el-cell-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.el-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.legend-box.is-ok {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.legend-box.is-not-ok {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.legend-box.is-na {
+  background: #e5e7eb;
+  border-color: #cbd5e1;
+}
+
+@media (max-width: 991.98px) {
+  .el-grid-wrap {
+    max-height: none;
+  }
+}

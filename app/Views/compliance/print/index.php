@@ -108,7 +108,7 @@
       periodContainer.style.display = "flex"
 
       if (monthGroup) {
-        monthGroup.style.display = (freq === "daily" || freq === "weekly") ? "block" : "none"
+        monthGroup.style.display = "block"
       }
 
       if (yearGroup) {

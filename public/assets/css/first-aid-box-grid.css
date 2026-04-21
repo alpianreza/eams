@@ -1,0 +1,133 @@
+.fab-grid-wrap {
+  max-height: calc(100vh - 240px);
+}
+
+.fab-grid-table {
+  --fab-border: #1f293733;
+  min-width: 1250px;
+  font-size: 0.85rem;
+}
+
+.fab-grid-table th,
+.fab-grid-table td {
+  border-color: var(--fab-border);
+  white-space: nowrap;
+}
+
+.fab-grid-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #f8fafc;
+  text-align: center;
+  font-weight: 700;
+}
+
+.fab-grid-table .sticky-left {
+  position: sticky;
+  background: #fff;
+  z-index: 3;
+}
+
+.fab-grid-table thead .sticky-left {
+  background: #f8fafc;
+  z-index: 5;
+}
+
+.fab-grid-table .sticky-no {
+  left: 0;
+  min-width: 56px;
+}
+
+.fab-grid-table .sticky-code {
+  left: 56px;
+  min-width: 140px;
+}
+
+.fab-grid-table .sticky-location {
+  left: 196px;
+  min-width: 220px;
+}
+
+.fab-grid-table .head-sub {
+  font-size: 0.78rem;
+  line-height: 1.2;
+  min-width: 120px;
+}
+
+.fab-grid-table tbody tr.is-focused td {
+  background: #eff6ff;
+}
+
+.fab-grid-table tbody tr.is-focused .sticky-left {
+  background: #eff6ff;
+}
+
+.fab-check-cell {
+  width: 84px;
+  min-width: 84px;
+  height: 40px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.fab-check-cell:hover {
+  background: #f1f5f9;
+}
+
+.fab-check-cell.is-ok {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 1rem;
+}
+
+.fab-check-cell.is-not-ok {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 1rem;
+}
+
+.fab-check-cell.is-saving {
+  outline: 2px solid #0ea5e9;
+  outline-offset: -2px;
+}
+
+.fab-cell-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.fab-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.legend-box.is-ok {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.legend-box.is-not-ok {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+@media (max-width: 991.98px) {
+  .fab-grid-wrap {
+    max-height: none;
+  }
+}
