@@ -1,0 +1,136 @@
+.ia-grid-wrap {
+  max-height: calc(100vh - 240px);
+}
+
+.ia-grid-table {
+  --ia-border: #1f293733;
+  min-width: 1800px;
+  font-size: 0.85rem;
+}
+
+.ia-grid-table th,
+.ia-grid-table td {
+  border-color: var(--ia-border);
+  white-space: nowrap;
+}
+
+.ia-grid-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #f8fafc;
+  text-align: center;
+  font-weight: 700;
+}
+
+.ia-grid-table .sticky-left {
+  position: sticky;
+  background: #fff;
+  z-index: 3;
+}
+
+.ia-grid-table thead .sticky-left {
+  background: #f8fafc;
+  z-index: 5;
+}
+
+.ia-grid-table .sticky-no {
+  left: 0;
+  min-width: 56px;
+}
+
+.ia-grid-table .sticky-location {
+  left: 56px;
+  min-width: 220px;
+}
+
+.ia-grid-table .month-band,
+.ia-grid-table .question-head {
+  font-size: 0.8rem;
+}
+
+.ia-grid-table .week-head,
+.ia-grid-table .col-week {
+  min-width: 48px;
+}
+
+.ia-grid-table .col-note {
+  min-width: 120px;
+}
+
+.ia-grid-table tbody tr.is-focused td {
+  background: #eff6ff;
+}
+
+.ia-grid-table tbody tr.is-focused .sticky-left {
+  background: #eff6ff;
+}
+
+.ia-check-cell {
+  width: 48px;
+  min-width: 48px;
+  height: 38px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.ia-check-cell:hover {
+  background: #f1f5f9;
+}
+
+.ia-check-cell.is-ok {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 1rem;
+}
+
+.ia-check-cell.is-not-ok {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 1rem;
+}
+
+.ia-check-cell.is-saving {
+  outline: 2px solid #0ea5e9;
+  outline-offset: -2px;
+}
+
+.ia-cell-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.ia-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.legend-box.is-ok {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.legend-box.is-not-ok {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+@media (max-width: 991.98px) {
+  .ia-grid-wrap {
+    max-height: none;
+  }
+}

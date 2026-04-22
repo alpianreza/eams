@@ -67,6 +67,48 @@ if ($statusValue === 'Good') {
               </a>
             <?php endif; ?>
 
+            <?php if ((int) ($inventory['item_type_id'] ?? 0) === 33 && hasRole(['admin', 'compliance'])): ?>
+              <a href="/compliance/checklist/first-aid-content-grid/<?= (int) $inventory['id'] ?>?ym=<?= esc($ym) ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+                <i class="bi bi-grid-3x3-gap"></i>
+                Grid First Aid Content
+              </a>
+            <?php endif; ?>
+
+            <?php if ((int) ($inventory['item_type_id'] ?? 0) === 1 && hasRole(['admin', 'compliance'])): ?>
+              <a href="/compliance/checklist/fire-extinguisher-grid?ym=<?= esc($ym) ?>&focus_id=<?= (int) $inventory['id'] ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+                <i class="bi bi-grid-3x3-gap"></i>
+                Grid Fire Extinguisher
+              </a>
+            <?php endif; ?>
+
+            <?php if ((int) ($inventory['item_type_id'] ?? 0) === 8 && hasRole(['admin', 'compliance'])): ?>
+              <a href="/compliance/checklist/intrusion-alarm-grid?ym=<?= esc($ym) ?>&focus_id=<?= (int) $inventory['id'] ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+                <i class="bi bi-grid-3x3-gap"></i>
+                Grid Intrusion Alarm
+              </a>
+            <?php endif; ?>
+
+            <?php if ((int) ($inventory['item_type_id'] ?? 0) === 2 && hasRole(['admin', 'compliance'])): ?>
+              <a href="/compliance/checklist/hydrant-grid?ym=<?= esc($ym) ?>&focus_id=<?= (int) $inventory['id'] ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+                <i class="bi bi-grid-3x3-gap"></i>
+                Grid Hydrant
+              </a>
+            <?php endif; ?>
+
+            <?php if ((int) ($inventory['item_type_id'] ?? 0) === 7 && hasRole(['admin', 'compliance'])): ?>
+              <a href="/compliance/checklist/smoke-detector-grid?ym=<?= esc($ym) ?>&focus_id=<?= (int) $inventory['id'] ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+                <i class="bi bi-grid-3x3-gap"></i>
+                Grid Smoke Detector
+              </a>
+            <?php endif; ?>
+
+            <?php if ((int) ($inventory['item_type_id'] ?? 0) === 6 && hasRole(['admin', 'compliance'])): ?>
+              <a href="/compliance/checklist/heat-detector-grid?ym=<?= esc($ym) ?>&focus_id=<?= (int) $inventory['id'] ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+                <i class="bi bi-grid-3x3-gap"></i>
+                Grid Heat Detector
+              </a>
+            <?php endif; ?>
+
             <a href="/compliance/checklist/<?= (int) $inventory['id'] ?>?ym=<?= esc($ym) ?>" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
               <i class="bi bi-clipboard-check"></i>
               Buka Ceklis

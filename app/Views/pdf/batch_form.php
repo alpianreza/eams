@@ -7,8 +7,12 @@ $period = $layout['period'] ?? ['label' => 'HARI / TANGGAL', 'value' => ''];
 $groupedColumns = $layout['groupedColumns'] ?? [];
 $itemSlug = (string) ($layout['itemSlug'] ?? '');
 $isFireAlarmTemplate = $itemSlug === 'fire_alarm';
+$isIntrusionAlarmTemplate = $itemSlug === 'intrusion_alarm';
+$isHydrantTemplate = $itemSlug === 'hydrant';
 $isEmergencyLightTemplate = $itemSlug === 'emergency_light';
 $isCctvTemplate = $itemSlug === 'cctv';
+$isSmokeDetectorTemplate = $itemSlug === 'smoke_detector';
+$isHeatDetectorTemplate = $itemSlug === 'heat_detector';
 $headerTitle = (string) ($layout['headerTitle'] ?? 'CHECKLIST');
 $headerSubtitle = (string) ($layout['headerSubtitle'] ?? '');
 $signatures = $layout['signatures'] ?? ['Diperiksa oleh', 'Dimonitor oleh', 'Mengetahui'];
@@ -345,6 +349,52 @@ $displayStatus = static function (?string $status): string {
     line-height: 1.14;
   }
 
+  .batch-smoke-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .batch-smoke-table th,
+  .batch-smoke-table td {
+    border: 1px solid #111;
+    padding: 1.9px 2.2px;
+    font-size: 7.3px;
+    line-height: 1.15;
+    text-align: center;
+    vertical-align: middle;
+    word-wrap: break-word;
+  }
+
+  .batch-smoke-table .text-left {
+    text-align: left;
+  }
+
+  .batch-smoke-table .col-no {
+    width: 4.2%;
+  }
+
+  .batch-smoke-table .col-location {
+    width: 28%;
+  }
+
+  .batch-smoke-table .col-note {
+    width: 17%;
+  }
+
+  .batch-smoke-table .smoke-head {
+    width: 6.8%;
+    height: 92px;
+    padding: 0;
+  }
+
+  .batch-smoke-table .vertical-head span {
+    display: inline-block;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    line-height: 1.08;
+    padding: 6px 0;
+  }
+
   .na-cell {
     background: #ff2d20;
   }
@@ -554,7 +604,15 @@ $displayStatus = static function (?string $status): string {
       'dailyPeriods' => $dailyPeriods ?? [],
       'displayStatus' => $displayStatus,
     ]) ?>
-  <?php elseif ($isFireAlarmTemplate): ?>
+  <?php elseif ($isHydrantTemplate): ?>
+    <?= view('pdf/batch_partials/hydrant_table', [
+      'inventories' => $inventories,
+      'masters' => $masters,
+      'period' => $period,
+      'weeklyChecklistMatrix' => $weeklyChecklistMatrix ?? [],
+      'displayStatus' => $displayStatus,
+    ]) ?>
+  <?php elseif ($isFireAlarmTemplate || $isIntrusionAlarmTemplate): ?>
     <?= view('pdf/batch_partials/fire_alarm_table', [
       'inventories' => $inventories,
       'groupedColumns' => $groupedColumns,
@@ -566,6 +624,13 @@ $displayStatus = static function (?string $status): string {
     <?= view('pdf/batch_partials/emergency_light_table', [
       'inventories' => $inventories,
       'groupedColumns' => $groupedColumns,
+      'checklistMatrix' => $checklistMatrix,
+      'displayStatus' => $displayStatus,
+    ]) ?>
+  <?php elseif ($isSmokeDetectorTemplate || $isHeatDetectorTemplate): ?>
+    <?= view('pdf/batch_partials/smoke_detector_table', [
+      'inventories' => $inventories,
+      'masters' => $masters,
       'checklistMatrix' => $checklistMatrix,
       'displayStatus' => $displayStatus,
     ]) ?>

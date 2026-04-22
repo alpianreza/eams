@@ -3,10 +3,22 @@
 <?= $this->section('content') ?>
 <?php
 $monthInput = date('Y-m', strtotime($ym . '-01'));
+$formatDate = static function (?string $date): string {
+  if (empty($date)) {
+    return '-';
+  }
+
+  $timestamp = strtotime($date);
+  if ($timestamp === false) {
+    return (string) $date;
+  }
+
+  return date('d-m-Y', $timestamp);
+};
 ?>
 
 <div
-  class="el-grid-page"
+  class="fe-grid-page"
   data-save-url="<?= esc($saveUrl) ?>"
   data-csrf-name="<?= esc($csrfName) ?>"
   data-csrf-hash="<?= esc($csrfHash) ?>">
@@ -15,10 +27,10 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
         <p class="checklist-kicker mb-1">Checklist Compliance</p>
-        <h5 class="mb-1 fw-bold">Pemeriksaan Emergency Light</h5>
+        <h5 class="mb-1 fw-bold">Checklist Alat Pemadam Api Ringan</h5>
         <p class="text-muted mb-0">
-          Klik sel untuk putar status:
-          <strong>Sesuai</strong>, <strong>Tidak Sesuai</strong>, <strong>NA</strong>, lalu kosong lagi.
+          Grid bulanan mengikuti struktur print PDF. Klik sel status untuk putar:
+          <strong>Sesuai</strong>, <strong>Tidak Sesuai</strong>, lalu kosong lagi.
         </p>
       </div>
 
@@ -35,22 +47,21 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
       <div>
         <div class="fw-semibold">Periode <?= esc($monthLabel) ?></div>
         <div class="text-muted small">
-          Grid mengikuti format print PDF agar isi bulanan lebih cepat dan konsisten.
+          Form kolektif APAR dengan urutan mengikuti nomor inventaris.
         </div>
       </div>
 
       <div class="d-flex flex-wrap gap-2 align-items-center small">
-        <span class="el-legend-pill"><span class="legend-box is-ok"></span>Sesuai</span>
-        <span class="el-legend-pill"><span class="legend-box is-not-ok"></span>Tidak Sesuai</span>
-        <span class="el-legend-pill"><span class="legend-box is-na"></span>NA</span>
+        <span class="fe-legend-pill"><span class="legend-box is-ok"></span>Sesuai</span>
+        <span class="fe-legend-pill"><span class="legend-box is-not-ok"></span>Tidak Sesuai</span>
       </div>
     </div>
   </section>
 
   <section class="card border-0 shadow-sm no-lift">
     <div class="card-body p-0">
-      <div class="table-responsive el-grid-wrap">
-        <table class="table table-bordered align-middle mb-0 el-grid-table">
+      <div class="table-responsive fe-grid-wrap">
+        <table class="table table-bordered align-middle mb-0 fe-grid-table">
           <thead>
             <tr>
               <th rowspan="2" class="sticky-left sticky-no">No</th>
@@ -64,7 +75,7 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
             <tr>
               <?php foreach ($groupedColumns as $group): ?>
                 <?php foreach (($group['columns'] ?? []) as $column): ?>
-                  <th class="<?= esc(($column['type'] ?? '') === 'field' ? 'col-type head-sub' : 'col-question head-sub') ?>">
+                  <th class="<?= esc(($column['type'] ?? '') === 'field' ? 'col-static head-sub' : 'col-question head-sub') ?>">
                     <?= esc($column['label'] ?? '') ?>
                   </th>
                 <?php endforeach; ?>
@@ -84,7 +95,16 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
                 <?php foreach ($groupedColumns as $group): ?>
                   <?php foreach (($group['columns'] ?? []) as $column): ?>
                     <?php if (($column['type'] ?? '') === 'field'): ?>
-                      <td class="field-cell"><?= esc($row['type_description']) ?></td>
+                      <?php
+                      $fieldKey = (string) ($column['key'] ?? '');
+                      $value = '-';
+                      if ($fieldKey === 'type_description') {
+                        $value = $row['type_description'];
+                      } elseif ($fieldKey === 'expired_date') {
+                        $value = $formatDate($row['expired_date']);
+                      }
+                      ?>
+                      <td class="field-cell"><?= esc($value) ?></td>
                     <?php else: ?>
                       <?php
                       $templateId = (int) ($column['id'] ?? 0);
@@ -95,26 +115,21 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
                         $cellClass = 'is-ok';
                       } elseif ($state === 'not_ok') {
                         $cellClass = 'is-not-ok';
-                      } elseif ($state === 'na') {
-                        $cellClass = 'is-na';
                       }
                       ?>
                       <td
-                        class="el-check-cell <?= esc($cellClass) ?>"
+                        class="fe-check-cell <?= esc($cellClass) ?>"
                         data-inventory-id="<?= (int) $row['id'] ?>"
                         data-template-id="<?= $templateId ?>"
                         data-period-key="<?= esc($ym) ?>"
                         data-state="<?= esc($state) ?>"
-                        data-detail-url="<?= esc($row['detail_url']) ?>"
-                        title="<?= esc($row['location'] . ' - ' . ($column['label'] ?? '')) ?>">
+                        title="<?= esc($row['asset_code'] . ' - ' . ($column['label'] ?? '')) ?>">
                         <?php if ($state === 'ok'): ?>
                           <i class="bi bi-check-lg"></i>
                         <?php elseif ($state === 'not_ok'): ?>
                           <i class="bi bi-x-lg"></i>
-                        <?php elseif ($state === 'na'): ?>
-                          <i class="bi bi-dash-lg"></i>
                         <?php else: ?>
-                          <span class="el-cell-mark"></span>
+                          <span class="fe-cell-mark"></span>
                         <?php endif; ?>
                       </td>
                     <?php endif; ?>
@@ -132,9 +147,9 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
 
 <?= $this->section('styles') ?>
 <link rel="stylesheet" href="/assets/css/checklist.css?v=<?= filemtime(FCPATH . 'assets/css/checklist.css') ?>">
-<link rel="stylesheet" href="/assets/css/emergency-light-grid.css?v=<?= filemtime(FCPATH . 'assets/css/emergency-light-grid.css') ?>">
+<link rel="stylesheet" href="/assets/css/fire-extinguisher-grid.css?v=<?= filemtime(FCPATH . 'assets/css/fire-extinguisher-grid.css') ?>">
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
-<script src="/js/emergency-light-grid.js?v=<?= filemtime(FCPATH . 'js/emergency-light-grid.js') ?>"></script>
+<script src="/js/fire-extinguisher-grid.js?v=<?= filemtime(FCPATH . 'js/fire-extinguisher-grid.js') ?>"></script>
 <?= $this->endSection() ?>

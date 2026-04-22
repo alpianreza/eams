@@ -219,7 +219,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
           </li>
         <?php endif; ?>
 
-        <?php if (hasRole(['admin', 'compliance', 'auditor', 'staff'])): ?>
+        <?php if (hasRole(['admin', 'compliance'])): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/questionnaires') ?>"
               class="nav-link <?= $isQuestionnaireMenu ? 'active' : '' ?>">

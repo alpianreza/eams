@@ -160,12 +160,27 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
         $routes->get('cctv-grid', 'ComplianceInventoryController::cctvGrid');
         $routes->get('emergency-light-grid', 'ComplianceInventoryController::emergencyLightGrid');
         $routes->get('first-aid-box-grid', 'ComplianceInventoryController::firstAidBoxGrid');
+        $routes->get('first-aid-content-grid/(:num)', 'ComplianceInventoryController::firstAidContentGrid/$1');
+        $routes->get('fire-extinguisher-grid', 'ComplianceInventoryController::fireExtinguisherGrid');
+        $routes->get('intrusion-alarm-grid', 'ComplianceInventoryController::intrusionAlarmGrid');
+        $routes->get('hydrant-grid', 'ComplianceInventoryController::hydrantGrid');
+        $routes->get('smoke-detector-grid', 'ComplianceInventoryController::smokeDetectorGrid');
+        $routes->get('heat-detector-grid', 'ComplianceInventoryController::heatDetectorGrid');
 
         // submit checklist
         $routes->post('submit', 'ComplianceInventoryController::submitChecklist');
         $routes->post('cctv-grid/save', 'ComplianceInventoryController::saveCctvGrid');
         $routes->post('emergency-light-grid/save', 'ComplianceInventoryController::saveEmergencyLightGrid');
         $routes->post('first-aid-box-grid/save', 'ComplianceInventoryController::saveFirstAidBoxGrid');
+        $routes->post('first-aid-content-grid/save', 'ComplianceInventoryController::saveFirstAidContentGrid');
+        $routes->post('first-aid-content-grid/mark-all', 'ComplianceInventoryController::markAllFirstAidContentGrid');
+        $routes->post('fire-extinguisher-grid/save', 'ComplianceInventoryController::saveFireExtinguisherGrid');
+        $routes->post('intrusion-alarm-grid/save', 'ComplianceInventoryController::saveIntrusionAlarmGrid');
+        $routes->post('hydrant-grid/save', 'ComplianceInventoryController::saveHydrantGrid');
+        $routes->post('smoke-detector-grid/save', 'ComplianceInventoryController::saveSmokeDetectorGrid');
+        $routes->post('smoke-detector-grid/mark-all', 'ComplianceInventoryController::markAllSmokeDetectorGrid');
+        $routes->post('heat-detector-grid/save', 'ComplianceInventoryController::saveHeatDetectorGrid');
+        $routes->post('heat-detector-grid/mark-all', 'ComplianceInventoryController::markAllHeatDetectorGrid');
 
         // ajax calendar
         $routes->get('(:num)/calendar', 'ComplianceInventoryController::calendar/$1');

@@ -1,0 +1,129 @@
+.fac-grid-wrap {
+  max-height: calc(100vh - 240px);
+}
+
+.fac-grid-table {
+  --fac-border: #1f293733;
+  min-width: 1500px;
+  font-size: 0.85rem;
+}
+
+.fac-grid-table th,
+.fac-grid-table td {
+  border-color: var(--fac-border);
+  white-space: nowrap;
+}
+
+.fac-grid-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #f8fafc;
+  text-align: center;
+  font-weight: 700;
+}
+
+.fac-grid-table .sticky-left {
+  position: sticky;
+  background: #fff;
+  z-index: 3;
+}
+
+.fac-grid-table thead .sticky-left {
+  background: #f8fafc;
+  z-index: 5;
+}
+
+.fac-grid-table .sticky-no {
+  left: 0;
+  min-width: 56px;
+}
+
+.fac-grid-table .sticky-question {
+  left: 56px;
+  min-width: 280px;
+}
+
+.fac-grid-table thead th.is-offday {
+  background: #475569;
+  color: #fff;
+}
+
+.fac-check-cell {
+  width: 42px;
+  min-width: 42px;
+  height: 38px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.fac-check-cell:hover:not(.is-offday) {
+  background: #f1f5f9;
+}
+
+.fac-check-cell.is-offday {
+  background: #475569;
+  color: #475569;
+  cursor: not-allowed;
+}
+
+.fac-check-cell.is-ok {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 1rem;
+}
+
+.fac-check-cell.is-not-ok {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 1rem;
+}
+
+.fac-check-cell.is-saving {
+  outline: 2px solid #0ea5e9;
+  outline-offset: -2px;
+}
+
+.fac-cell-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.fac-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.legend-box.is-ok {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.legend-box.is-not-ok {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.legend-box.is-offday {
+  background: #475569;
+  border-color: #334155;
+}
+
+@media (max-width: 991.98px) {
+  .fac-grid-wrap {
+    max-height: none;
+  }
+}

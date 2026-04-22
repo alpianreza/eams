@@ -114,12 +114,20 @@ class CompliancePrintController extends BaseController
         ->setBody('Item type tidak ditemukan.');
     }
 
-    $inventories = $inventoryModel
+    $inventoryQuery = $inventoryModel
       ->select('compliance_inventory.*, asset_item_types.name AS item_name, asset_item_types.code AS item_code')
       ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
-      ->where('compliance_inventory.item_type_id', $itemTypeId)
-      ->orderBy('compliance_inventory.asset_code', 'ASC')
-      ->findAll();
+      ->where('compliance_inventory.item_type_id', $itemTypeId);
+
+    if (in_array($this->itemTypeSlug((string) ($itemType['name'] ?? '')), ['smoke_detector', 'heat_detector'], true)) {
+      $inventoryQuery
+        ->orderBy('TRIM(compliance_inventory.specific_area)', 'ASC', false)
+        ->orderBy('compliance_inventory.asset_code', 'ASC');
+    } else {
+      $inventoryQuery->orderBy('compliance_inventory.asset_code', 'ASC');
+    }
+
+    $inventories = $inventoryQuery->findAll();
 
     $masters = $masterModel
       ->where('item_type_id', $itemTypeId)
@@ -248,12 +256,22 @@ class CompliancePrintController extends BaseController
       $layout['groupedColumns'] = $this->resolveFireExtinguisherColumns($masters);
     }
 
-    if ($this->itemTypeSlug($itemName) === 'fire_alarm') {
+    if (in_array($this->itemTypeSlug($itemName), ['fire_alarm', 'intrusion_alarm'], true)) {
       $layout['baseColumns'] = [
         ['key' => 'row_number', 'label' => 'No', 'class' => 'col-no'],
         ['key' => 'specific_area', 'label' => 'Keterangan', 'class' => 'col-location'],
       ];
       $layout['groupedColumns'] = $this->resolveFireAlarmColumns($masters);
+      $layout['trailingColumns'] = [
+        ['key' => 'notes', 'label' => 'KET', 'class' => 'col-note'],
+      ];
+    }
+
+    if ($this->itemTypeSlug($itemName) === 'hydrant') {
+      $layout['baseColumns'] = [
+        ['key' => 'row_number', 'label' => 'No', 'class' => 'col-no'],
+        ['key' => 'specific_area', 'label' => 'Keterangan', 'class' => 'col-location'],
+      ];
       $layout['trailingColumns'] = [
         ['key' => 'notes', 'label' => 'KET', 'class' => 'col-note'],
       ];
@@ -271,6 +289,28 @@ class CompliancePrintController extends BaseController
       $layout['headerTitle'] = 'PEMERIKSAAN & PERAWATAN CCTV';
       $layout['headerSubtitle'] = '(CCTV Inspection & Maintenance Checklist)';
       $layout['signatures'] = ['IT Officer', 'Diperiksa', 'Mengetahui'];
+    }
+
+    if (in_array($this->itemTypeSlug($itemName), ['smoke_detector', 'heat_detector'], true)) {
+      $layout['baseColumns'] = [
+        ['key' => 'row_number', 'label' => 'No.', 'class' => 'col-no'],
+        ['key' => 'specific_area', 'label' => 'Lokasi', 'class' => 'col-location'],
+      ];
+      $layout['groupedColumns'] = [[
+        'label' => '',
+        'columns' => array_map(function (array $master): array {
+          return [
+            'type' => 'question',
+            'id' => (int) ($master['id'] ?? 0),
+            'label' => $this->resolveQuestionLabel((string) ($master['question'] ?? '')),
+            'class' => 'col-question',
+          ];
+        }, $masters),
+      ]];
+      $layout['trailingColumns'] = [
+        ['key' => 'notes', 'label' => 'Keterangan', 'class' => 'col-note'],
+      ];
+      $layout['signatures'] = ['Diperiksa oleh', 'Mengetahui'];
     }
 
     return $layout;
@@ -551,10 +591,14 @@ class CompliancePrintController extends BaseController
 
   protected function resolveBatchHeaderSubtitle(string $itemName): string
   {
-    $subtitleMap = [
-      'fire_alarm' => '(Fire Alarm Checklist)',
-      'emergency_light' => '(Emergency Light and Exit Checklist)',
-    ];
+      $subtitleMap = [
+        'fire_alarm' => '(Fire Alarm Checklist)',
+        'emergency_light' => '(Emergency Light and Exit Checklist)',
+        'intrusion_alarm' => '(Intrusion Alarm Inspection & Maintenance Checklist)',
+        'hydrant' => '(Weekly Hydrant Checklist)',
+        'smoke_detector' => '(Smoke Detector Checklist)',
+        'heat_detector' => '(Heat Detector Checklist)',
+      ];
 
     $slug = $this->itemTypeSlug($itemName);
     if (isset($subtitleMap[$slug])) {
@@ -566,11 +610,15 @@ class CompliancePrintController extends BaseController
 
   protected function resolveBatchHeaderTitle(string $itemName): string
   {
-    $titleMap = [
-      'fire_extinguisher' => 'CHECKLIST ALAT PEMADAM API RINGAN',
-      'fire_alarm' => 'CHECKLIST ALARM KEBAKARAN',
-      'emergency_light' => 'CHECKLIST LAMPU DARURAT DAN LAMPU EXIT',
-    ];
+      $titleMap = [
+        'fire_extinguisher' => 'CHECKLIST ALAT PEMADAM API RINGAN',
+        'fire_alarm' => 'CHECKLIST ALARM KEBAKARAN',
+        'emergency_light' => 'CHECKLIST LAMPU DARURAT DAN LAMPU EXIT',
+        'intrusion_alarm' => 'PEMERIKSAAN & PERAWATAN ALARM KEAMANAN',
+        'hydrant' => 'PENGECEKAN HIDRAN PER MINGGU',
+        'smoke_detector' => 'CHECKLIST SMOKE DETECTOR',
+        'heat_detector' => 'CHECKLIST HEAT DETECTOR',
+      ];
 
     $slug = $this->itemTypeSlug($itemName);
     if (isset($titleMap[$slug])) {

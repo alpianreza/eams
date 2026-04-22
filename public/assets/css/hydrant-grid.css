@@ -1,0 +1,134 @@
+.hyd-grid-wrap {
+  max-height: calc(100vh - 240px);
+}
+
+.hyd-grid-table {
+  --hyd-border: #1f293733;
+  min-width: 1900px;
+  font-size: 0.85rem;
+}
+
+.hyd-grid-table th,
+.hyd-grid-table td {
+  border-color: var(--hyd-border);
+  white-space: nowrap;
+}
+
+.hyd-grid-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #f8fafc;
+  text-align: center;
+  font-weight: 700;
+}
+
+.hyd-grid-table .sticky-left {
+  position: sticky;
+  background: #fff;
+  z-index: 3;
+}
+
+.hyd-grid-table thead .sticky-left {
+  background: #f8fafc;
+  z-index: 5;
+}
+
+.hyd-grid-table .sticky-no {
+  left: 0;
+  min-width: 56px;
+}
+
+.hyd-grid-table .sticky-question {
+  left: 56px;
+  min-width: 260px;
+}
+
+.hyd-grid-table .sticky-footer {
+  left: 0;
+  z-index: 3;
+  background: #fff;
+  font-weight: 700;
+}
+
+.hyd-grid-table .month-band,
+.hyd-grid-table .question-head {
+  font-size: 0.8rem;
+}
+
+.hyd-grid-table .col-week {
+  min-width: 46px;
+}
+
+.hyd-grid-table .col-note {
+  min-width: 110px;
+}
+
+.hyd-check-cell {
+  width: 46px;
+  min-width: 46px;
+  height: 38px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.hyd-check-cell:hover {
+  background: #f1f5f9;
+}
+
+.hyd-check-cell.is-ok {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 1rem;
+}
+
+.hyd-check-cell.is-not-ok {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 1rem;
+}
+
+.hyd-check-cell.is-saving {
+  outline: 2px solid #0ea5e9;
+  outline-offset: -2px;
+}
+
+.hyd-cell-mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.hyd-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.legend-box.is-ok {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.legend-box.is-not-ok {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+@media (max-width: 991.98px) {
+  .hyd-grid-wrap {
+    max-height: none;
+  }
+}
