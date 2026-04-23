@@ -52,8 +52,11 @@ $routes->group('users', ['filter' => 'admin'], function ($routes) {
     $routes->get('/', 'UserController::index');
     $routes->get('create', 'UserController::create');
     $routes->post('store', 'UserController::store');
+    $routes->post('roles/store', 'UserController::storeRole');
     $routes->get('edit/(:num)', 'UserController::edit/$1');
     $routes->post('update/(:num)', 'UserController::update/$1');
+    $routes->post('deactivate/(:num)', 'UserController::deactivate/$1');
+    $routes->post('activate/(:num)', 'UserController::activate/$1');
 });
 
 //filter
@@ -94,6 +97,15 @@ $routes->group('backups', ['filter' => 'admin'], function ($routes) {
 $routes->group('settings', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'SettingsController::index');
     $routes->post('change-password', 'SettingsController::changePassword');
+});
+
+$routes->group('patrol', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'PatrolController::index');
+    $routes->get('dashboard', 'PatrolController::dashboard');
+    $routes->post('sessions/start', 'PatrolController::startSession');
+    $routes->post('sessions/scan', 'PatrolController::scanCheckpoint');
+    $routes->post('sessions/cancel', 'PatrolController::cancelSession');
+    $routes->post('layout/save', 'PatrolController::saveLayout');
 });
 
 // Compliance Inventory

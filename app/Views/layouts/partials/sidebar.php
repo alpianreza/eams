@@ -11,6 +11,7 @@ $isChecklistMenu = $isCompliance && in_array($seg2, ['inventory', 'checklist']);
 $isQuestionnaireMenu = $isCompliance && $seg2 === 'questionnaires';
 $isEmsReportMenu = $seg1 === 'ems-reports';
 $isFdmMenu = $seg1 === 'fdm-data-collection';
+$isPatrolMenu = $seg1 === 'patrol';
 
 $brandLogoPath = FCPATH . 'assets/images/company/logo.png';
 $brandLogoUrl = base_url('assets/images/company/logo.png');
@@ -50,6 +51,27 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <?php endif; ?>
             </a>
           </li>
+        <?php endif; ?>
+
+        <!-- PATROL -->
+        <?php if (hasRole(['security', 'compliance', 'admin'])): ?>
+          <li class="nav-header sidebar-section-title">SECURITY</li>
+          <li class="nav-item">
+            <a href="/patrol"
+              class="nav-link <?= $isPatrolMenu ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-compass"></i>
+              <p>Patrol Harian</p>
+            </a>
+          </li>
+          <?php if (hasRole(['admin', 'compliance'])): ?>
+            <li class="nav-item">
+              <a href="/patrol/dashboard"
+                class="nav-link <?= $seg1 === 'patrol' && $seg2 === 'dashboard' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-speedometer2"></i>
+                <p>Patrol Dashboard</p>
+              </a>
+            </li>
+          <?php endif; ?>
         <?php endif; ?>
 
         <!-- ================= IT ASSET ================= -->

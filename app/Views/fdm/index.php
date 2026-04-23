@@ -8,8 +8,7 @@
         <p class="fdm-kicker mb-1">FDM Data Collection</p>
         <h5 class="fw-bold mb-1">Data Workspace</h5>
         <p class="text-muted mb-0">
-          Ruang kerja pengumpulan data FDM. Form utama kita fokuskan ke <strong>Production Section</strong>,
-          sementara workspace lain tetap disiapkan menyusul.
+          Ruang kerja pengumpulan data FDM.
         </p>
       </div>
 
@@ -20,8 +19,7 @@
           type="text"
           class="form-control"
           x-model="query"
-          placeholder="Cari berdasarkan nama atau fungsi..."
-        >
+          placeholder="Cari berdasarkan nama atau fungsi...">
       </div>
     </div>
   </section>
