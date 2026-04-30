@@ -1,5 +1,36 @@
 "use strict";
 
+document.addEventListener("alpine:init", function () {
+  Alpine.data("complianceInventoryPage", (boot = {}) => ({
+    sortKey: boot.sortKey || "no",
+    sortDirection: boot.sortDirection || "asc",
+    toggleSort(key) {
+      if (this.sortKey === key) {
+        this.sortDirection = this.sortDirection === "asc" ? "desc" : "asc";
+      } else {
+        this.sortKey = key;
+        this.sortDirection = "asc";
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("inventory-sort-change", {
+          detail: {
+            sortKey: this.sortKey,
+            sortDirection: this.sortDirection,
+          },
+        })
+      );
+    },
+    sortIcon(key) {
+      if (this.sortKey !== key) {
+        return "bi-arrow-down-up";
+      }
+
+      return this.sortDirection === "asc" ? "bi-sort-down" : "bi-sort-down-alt";
+    },
+  }));
+});
+
 function relUrl(raw) {
   const url = new URL(raw, window.location.origin);
   return url.pathname + url.search;
@@ -10,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
   initInventoryAddModal();
   initInventoryAjaxFilters();
   initInventoryDeleteAndQrActions();
+  initInventorySortButtons();
 });
 
 function initInventoryEditModal() {
@@ -170,6 +202,8 @@ function initInventoryAjaxFilters() {
     search: document.getElementById("searchInput"),
     perPage: document.getElementById("filterPerPage"),
     reset: document.getElementById("btnResetFilter"),
+    sortKey: document.getElementById("inventorySortKey"),
+    sortDirection: document.getElementById("inventorySortDirection"),
   };
 
   const defaultPerPage = filters.perPage?.value || "20";
@@ -208,6 +242,14 @@ function initInventoryAjaxFilters() {
 
     if (filters.perPage?.value) {
       params.set("perPage", filters.perPage.value);
+    }
+
+    if (filters.sortKey?.value) {
+      params.set("sort", filters.sortKey.value);
+    }
+
+    if (filters.sortDirection?.value) {
+      params.set("direction", filters.sortDirection.value);
     }
 
     return params;
@@ -261,6 +303,9 @@ function initInventoryAjaxFilters() {
         }
 
         ajaxContainer.innerHTML = newContent.innerHTML;
+        if (window.Alpine) {
+          window.Alpine.initTree(ajaxContainer);
+        }
 
         window.history.pushState({}, "", finalUrl);
         bindPaginationLinks();
@@ -322,8 +367,35 @@ function initInventoryAjaxFilters() {
     if (filters.area) filters.area.value = "";
     if (filters.search) filters.search.value = "";
     if (filters.perPage) filters.perPage.value = defaultPerPage;
+    if (filters.sortKey) filters.sortKey.value = "no";
+    if (filters.sortDirection) filters.sortDirection.value = "asc";
+
+    const pageRoot = document.getElementById("inventoryPageRoot");
+    if (pageRoot && pageRoot._x_dataStack?.[0]) {
+      pageRoot._x_dataStack[0].sortKey = "no";
+      pageRoot._x_dataStack[0].sortDirection = "asc";
+    }
 
     loadInventory(indexBasePath);
+    toggleResetButton();
+  });
+
+  window.addEventListener("inventory-sort-change", function (event) {
+    const detail = event.detail || {};
+    if (filters.sortKey) {
+      filters.sortKey.value = detail.sortKey || "no";
+    }
+    if (filters.sortDirection) {
+      filters.sortDirection.value = detail.sortDirection || "asc";
+    }
+
+    const params = collectFilterQuery();
+    const queryString = params.toString();
+    const targetUrl = queryString
+      ? `${indexBasePath}?${queryString}`
+      : indexBasePath;
+
+    loadInventory(targetUrl);
     toggleResetButton();
   });
 
@@ -477,6 +549,35 @@ function initInventoryDeleteAndQrActions() {
           safeToast("Gagal memperbarui QR.", "error");
         });
     }
+  });
+}
+
+function initInventorySortButtons() {
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest(".inventory-sort-btn[data-sort-key]");
+    if (!button) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const sortKey = button.dataset.sortKey || "no";
+    const pageRoot = document.getElementById("inventoryPageRoot");
+    const alpineState = pageRoot?._x_dataStack?.[0] || null;
+
+    if (alpineState && typeof alpineState.toggleSort === "function") {
+      alpineState.toggleSort(sortKey);
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent("inventory-sort-change", {
+        detail: {
+          sortKey,
+          sortDirection: "asc",
+        },
+      })
+    );
   });
 }
 

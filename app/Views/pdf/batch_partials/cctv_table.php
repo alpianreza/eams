@@ -1,9 +1,35 @@
 <?php
-$resolveInspectionName = static function (array $inventory): string {
+$resolveSpecialInspectionName = static function (int $number): ?string {
+  return match ($number) {
+    33 => 'Monitor',
+    34 => 'Hardisk',
+    35 => 'DVR',
+    default => null,
+  };
+};
+
+$displayCctvStatus = static function (?string $status): string {
+  return match ($status) {
+    'ok' => '✔',
+    'not_ok' => 'X',
+    'na' => '-',
+    default => '',
+  };
+};
+
+$resolveInspectionName = static function (array $inventory, int $rowNumber) use ($resolveSpecialInspectionName): string {
+  $specialRowName = $resolveSpecialInspectionName($rowNumber);
+  if ($specialRowName !== null) {
+    return $specialRowName;
+  }
+
   $assetCode = trim((string) ($inventory['asset_code'] ?? ''));
 
   if ($assetCode !== '' && preg_match('/(\d+)\s*$/', $assetCode, $matches)) {
-    return 'Camera ' . ((int) $matches[1]);
+    $assetNumber = (int) $matches[1];
+    $specialAssetName = $resolveSpecialInspectionName($assetNumber);
+
+    return $specialAssetName ?? ('Camera ' . $assetNumber);
   }
 
   return $assetCode !== '' ? $assetCode : 'CCTV';
@@ -32,7 +58,7 @@ $resolveInspectionName = static function (array $inventory): string {
       <?php $inventoryId = (int) ($inventory['id'] ?? 0); ?>
       <tr>
         <td><?= $index + 1 ?></td>
-        <td class="text-left"><?= esc($resolveInspectionName($inventory)) ?></td>
+        <td class="text-left"><?= esc($resolveInspectionName($inventory, $index + 1)) ?></td>
         <td class="text-left"><?= esc(trim((string) ($inventory['specific_area'] ?? '')) !== '' ? $inventory['specific_area'] : '-') ?></td>
 
         <?php foreach ($dailyPeriods as $period): ?>
@@ -49,7 +75,7 @@ $resolveInspectionName = static function (array $inventory): string {
           ?>
           <td class="<?= esc($cellClass) ?>">
             <?php if (empty($period['is_offday'])): ?>
-              <?= esc($displayStatus($status)) ?>
+              <?= esc($displayCctvStatus($status)) ?>
             <?php endif; ?>
           </td>
         <?php endforeach; ?>

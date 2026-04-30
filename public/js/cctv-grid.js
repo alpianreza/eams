@@ -3,9 +3,17 @@
   if (!page) return;
 
   const saveUrl = page.dataset.saveUrl || '';
+  const bulkUrl = page.dataset.bulkUrl || '';
+  const ym = page.dataset.ym || '';
   let csrfName = page.dataset.csrfName || '';
   let csrfHash = page.dataset.csrfHash || '';
   let busyKey = null;
+
+  const cycleMap = {
+    empty: 'ok',
+    ok: 'not_ok',
+    not_ok: 'clear',
+  };
 
   const setCellState = (cell, state) => {
     cell.dataset.state = state;
@@ -79,24 +87,86 @@
     }
   };
 
+  const setAllEmptyCellsToOk = () => {
+    page.querySelectorAll('.cctv-check-cell').forEach((cell) => {
+      if (cell.dataset.offday === '1') return;
+      const state = cell.dataset.state || 'empty';
+      if (state !== 'empty') return;
+      setCellState(cell, 'ok');
+    });
+  };
+
+  const markAll = async () => {
+    if (!bulkUrl || !ym || busyKey === '__bulk__') {
+      return;
+    }
+
+    busyKey = '__bulk__';
+    const button = page.querySelector('.cctv-mark-all-btn');
+    if (button) {
+      button.disabled = true;
+    }
+
+    try {
+      const body = new URLSearchParams();
+      body.set('ym', ym);
+      if (csrfName) {
+        body.set(csrfName, csrfHash);
+      }
+
+      const response = await fetch(bulkUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: body.toString(),
+        credentials: 'same-origin',
+      });
+
+      const result = await response.json();
+      csrfHash = result.csrfHash || csrfHash;
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.message || 'Gagal mencentang semua CCTV.');
+      }
+
+      setAllEmptyCellsToOk();
+    } catch (error) {
+      console.error(error);
+      alert(error.message || 'Gagal mencentang semua CCTV.');
+    } finally {
+      busyKey = null;
+      if (button) {
+        button.disabled = false;
+      }
+    }
+  };
+
   page.addEventListener('click', (event) => {
     const cell = event.target.closest('.cctv-check-cell');
-    if (!cell) return;
-
-    if (cell.dataset.offday === '1') {
-      return;
-    }
-
-    const state = cell.dataset.state || 'empty';
-    if (state === 'not_ok' || state === 'na') {
-      const detailUrl = cell.dataset.detailUrl;
-      if (detailUrl) {
-        window.location.href = detailUrl;
+    if (cell) {
+      if (cell.dataset.offday === '1') {
+        return;
       }
+
+      const state = cell.dataset.state || 'empty';
+      if (state === 'na') {
+        const detailUrl = cell.dataset.detailUrl;
+        if (detailUrl) {
+          window.location.href = detailUrl;
+        }
+        return;
+      }
+
+      const nextMode = cycleMap[state] || 'ok';
+      saveCell(cell, nextMode);
       return;
     }
 
-    const nextMode = state === 'ok' ? 'clear' : 'ok';
-    saveCell(cell, nextMode);
+    const bulkButton = event.target.closest('.cctv-mark-all-btn');
+    if (bulkButton) {
+      markAll();
+    }
   });
 })();

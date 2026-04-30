@@ -495,18 +495,25 @@ document.addEventListener("alpine:init", () => {
   Alpine.data("patrolDashboardPage", (boot = {}) => ({
     today: String(boot.today || ""),
     user: boot.user || {},
+    routes: Array.isArray(boot.routes) ? boot.routes : [],
     adminStats: boot.adminStats || {},
     recentSessions: Array.isArray(boot.recentSessions) ? boot.recentSessions : [],
     recentLogs: Array.isArray(boot.recentLogs) ? boot.recentLogs : [],
+    photoLogs: Array.isArray(boot.photoLogs) ? boot.photoLogs : [],
     layout: boot.layout || { id: 0, name: "Layout Utama", image_url: "" },
+    canEditLayout: Boolean(boot.can_edit_layout),
     csrfName: String(boot.csrfName || ""),
     csrfHash: String(boot.csrfHash || ""),
 
     layoutName: String(boot.layout?.name || "Layout Utama"),
     layoutPreviewUrl: String(boot.layout?.image_url || ""),
+    layoutScale: Number(boot.layout?.image_scale ?? 1),
+    layoutOffsetX: Number(boot.layout?.image_offset_x ?? 0),
+    layoutOffsetY: Number(boot.layout?.image_offset_y ?? 0),
     layoutFile: null,
     layoutFileName: "",
     layoutTempUrl: "",
+    selectedRouteId: Array.isArray(boot.routes) && boot.routes[0] ? Number(boot.routes[0].id) : "",
     checkpointDrafts: deepClone(Array.isArray(boot.checkpoints) ? boot.checkpoints : []).map((checkpoint) => ({
       ...checkpoint,
       map_x: Number(checkpoint.map_x ?? 0),
@@ -517,13 +524,22 @@ document.addEventListener("alpine:init", () => {
     })),
     selectedCheckpointId: null,
     selectedCheckpointDraft: null,
+    selectedCheckpointPhotoLog: null,
+    selectedCheckpointPhotoLogs: [],
+    selectedCheckpointModalOpen: false,
     draggingId: null,
     draggingPointerId: null,
+    layoutPanPointerId: null,
+    layoutPanStart: null,
     busy: false,
     errorMessage: "",
     successMessage: "",
 
     init() {
+      if (!this.selectedRouteId && this.routes.length) {
+        this.selectedRouteId = Number(this.routes[0].id || 0);
+      }
+
       if (this.checkpointDrafts.length) {
         const first = this.checkpointDrafts[0];
         this.selectCheckpoint(first.id);
@@ -532,6 +548,32 @@ document.addEventListener("alpine:init", () => {
 
     canViewDashboard() {
       return ["admin", "compliance"].includes(String(this.user.role || "").toLowerCase());
+    },
+
+    canEditLayoutMode() {
+      return this.canEditLayout;
+    },
+
+    routeById(routeId) {
+      const targetId = Number(routeId || 0);
+      return this.routes.find((route) => Number(route.id || 0) === targetId) || null;
+    },
+
+    selectRoute(routeId) {
+      this.selectedRouteId = Number(routeId || 0);
+    },
+
+    activeRouteCheckpoints() {
+      const route = this.routeById(this.selectedRouteId);
+      const checkpoints = Array.isArray(route?.checkpoints) ? route.checkpoints : this.checkpointDrafts;
+
+      return checkpoints.map((routeCheckpoint, index) => {
+        const detail = this.checkpointById(routeCheckpoint.id) || routeCheckpoint;
+        return {
+          ...detail,
+          route_order: Number(routeCheckpoint.route_order || index + 1),
+        };
+      });
     },
 
     clearAlerts() {
@@ -569,22 +611,110 @@ document.addEventListener("alpine:init", () => {
 
       this.selectedCheckpointId = Number(checkpoint.id || 0);
       this.selectedCheckpointDraft = checkpoint;
+      this.selectedCheckpointPhotoLogs = this.checkpointPhotoLogs(checkpoint.id);
+      this.selectedCheckpointPhotoLog = this.selectedCheckpointPhotoLogs[0] || this.latestPhotoLog(checkpoint.id);
     },
 
-    markerClass(checkpoint) {
-      return checkpoint === this.selectedCheckpointDraft ? "is-selected" : "";
+    latestPhotoLog(checkpointId) {
+      const targetId = Number(checkpointId || 0);
+      return this.checkpointPhotoLogs(targetId)[0] || null;
     },
 
-    markerStyle(checkpoint) {
+    photoCount(checkpointId) {
+      return this.checkpointPhotoLogs(checkpointId).reduce((sum, log) => sum + Number(log.photo_count || 0), 0);
+    },
+
+    photoLabel(checkpointId) {
+      const count = this.photoCount(checkpointId);
+      if (!count) {
+        return "";
+      }
+      return count > 1 ? `${count}` : "1";
+    },
+
+    mapMarkerClass(checkpoint) {
+      const latest = this.latestPhotoLog(checkpoint.id);
+      const selected = checkpoint === this.selectedCheckpointDraft;
+      if (selected) {
+        return ["is-selected", latest?.status === "not_ok" ? "is-issue" : latest ? "is-photo" : ""].filter(Boolean).join(" ");
+      }
+      if (latest?.status === "not_ok") {
+        return "is-issue";
+      }
+      if (latest) {
+        return "is-photo";
+      }
+      return "";
+    },
+
+    mapMarkerStyle(checkpoint) {
       const x = Number(checkpoint.map_x || 0);
       const y = Number(checkpoint.map_y || 0);
       return `left:${x}%;top:${y}%;`;
     },
 
+    clampLayoutScale(value) {
+      const numeric = Number(value || 1);
+      return Math.max(1, Math.min(3, Number(numeric.toFixed(2))));
+    },
+
+    clampLayoutOffset(value) {
+      const numeric = Number(value || 0);
+      return Math.max(-80, Math.min(80, Number(numeric.toFixed(2))));
+    },
+
+    syncLayoutTransform() {
+      this.layoutScale = this.clampLayoutScale(this.layoutScale);
+      this.layoutOffsetX = this.clampLayoutOffset(this.layoutOffsetX);
+      this.layoutOffsetY = this.clampLayoutOffset(this.layoutOffsetY);
+    },
+
+    selectMapCheckpoint(checkpointId) {
+      this.selectCheckpoint(checkpointId);
+      this.selectedCheckpointModalOpen = true;
+    },
+
+    closeCheckpointModal() {
+      this.selectedCheckpointModalOpen = false;
+    },
+
+    checkpointPhotoLogs(checkpointId) {
+      const targetId = Number(checkpointId || 0);
+      return this.photoLogs.filter((log) => Number(log.checkpoint_id || 0) === targetId);
+    },
+
+    checkpointPhotos(checkpointId) {
+      return this.checkpointPhotoLogs(checkpointId).flatMap((log) => Array.isArray(log.photos) ? log.photos : []);
+    },
+
+    photoUrl(path) {
+      const value = String(path || "").trim();
+      if (!value) {
+        return "";
+      }
+
+      if (/^(https?:)?\/\//i.test(value) || value.startsWith("/")) {
+        return value;
+      }
+
+      return `/${value.replace(/^\/+/, "")}`;
+    },
+
     layoutCanvasStyle() {
       if (this.layoutTempUrl || this.layoutPreviewUrl) {
+        return "background-image: none;";
+      }
+
+      return "";
+    },
+
+    layoutImageLayerStyle() {
+      if (this.layoutTempUrl || this.layoutPreviewUrl) {
         const imageUrl = this.layoutTempUrl || this.layoutPreviewUrl;
-        return `background-image: linear-gradient(rgba(239, 246, 255, 0.35), rgba(226, 232, 240, 0.6)), url('${imageUrl}')`;
+        const scale = this.clampLayoutScale(this.layoutScale);
+        const offsetX = this.clampLayoutOffset(this.layoutOffsetX);
+        const offsetY = this.clampLayoutOffset(this.layoutOffsetY);
+        return `background-image: linear-gradient(rgba(239, 246, 255, 0.35), rgba(226, 232, 240, 0.6)), url('${imageUrl}'); transform: translate(${offsetX}%, ${offsetY}%) scale(${scale});`;
       }
 
       return "";
@@ -609,10 +739,35 @@ document.addEventListener("alpine:init", () => {
         URL.revokeObjectURL(this.layoutTempUrl);
       }
       this.layoutTempUrl = URL.createObjectURL(this.layoutFile);
+      this.resetLayoutImageTransform(false);
+    },
+
+    beginLayoutPan(event) {
+      if (this.busy || !this.canEditLayoutMode()) {
+        return;
+      }
+
+      if (event.target.closest(".patrol-marker")) {
+        return;
+      }
+
+      const canvas = this.$refs.layoutCanvas;
+      if (!canvas) {
+        return;
+      }
+
+      this.layoutPanPointerId = event.pointerId;
+      this.layoutPanStart = {
+        clientX: event.clientX,
+        clientY: event.clientY,
+        offsetX: Number(this.layoutOffsetX || 0),
+        offsetY: Number(this.layoutOffsetY || 0),
+      };
+      event.preventDefault();
     },
 
     beginDrag(checkpoint, event) {
-      if (this.busy) {
+      if (this.busy || !this.canEditLayoutMode()) {
         return;
       }
 
@@ -632,8 +787,17 @@ document.addEventListener("alpine:init", () => {
       this.draggingPointerId = null;
     },
 
+    stopLayoutPan(event) {
+      if (event && this.layoutPanPointerId !== null && event.pointerId !== this.layoutPanPointerId) {
+        return;
+      }
+
+      this.layoutPanPointerId = null;
+      this.layoutPanStart = null;
+    },
+
     dragCheckpoint(event) {
-      if (!this.draggingId || this.draggingPointerId === null || event.pointerId !== this.draggingPointerId) {
+      if (!this.canEditLayoutMode() || !this.draggingId || this.draggingPointerId === null || event.pointerId !== this.draggingPointerId) {
         return;
       }
 
@@ -655,7 +819,43 @@ document.addEventListener("alpine:init", () => {
       this.selectedCheckpointDraft = checkpoint;
     },
 
+    dragLayoutImage(event) {
+      if (!this.canEditLayoutMode() || this.layoutPanPointerId === null || event.pointerId !== this.layoutPanPointerId) {
+        return;
+      }
+
+      const canvas = this.$refs.layoutCanvas;
+      if (!canvas || !this.layoutPanStart) {
+        return;
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) {
+        return;
+      }
+
+      const deltaX = ((event.clientX - this.layoutPanStart.clientX) / rect.width) * 100;
+      const deltaY = ((event.clientY - this.layoutPanStart.clientY) / rect.height) * 100;
+
+      this.layoutOffsetX = this.clampLayoutOffset(this.layoutPanStart.offsetX + deltaX);
+      this.layoutOffsetY = this.clampLayoutOffset(this.layoutPanStart.offsetY + deltaY);
+      event.preventDefault();
+    },
+
+    resetLayoutImageTransform(withFlash = true) {
+      this.layoutScale = 1;
+      this.layoutOffsetX = 0;
+      this.layoutOffsetY = 0;
+      if (withFlash) {
+        this.flash("success", "Posisi gambar layout direset.");
+      }
+    },
+
     resetDraft() {
+      if (!this.canEditLayoutMode()) {
+        return;
+      }
+
       if (!window.confirm("Batal semua perubahan layout patroli?")) {
         return;
       }
@@ -667,6 +867,9 @@ document.addEventListener("alpine:init", () => {
 
       this.layoutName = String(boot.layout?.name || "Layout Utama");
       this.layoutPreviewUrl = String(boot.layout?.image_url || "");
+      this.layoutScale = Number(boot.layout?.image_scale ?? 1);
+      this.layoutOffsetX = Number(boot.layout?.image_offset_x ?? 0);
+      this.layoutOffsetY = Number(boot.layout?.image_offset_y ?? 0);
       this.layoutFile = null;
       this.layoutFileName = "";
       if (this.$refs.layoutFileInput) {
@@ -691,7 +894,7 @@ document.addEventListener("alpine:init", () => {
     },
 
     async saveLayout() {
-      if (this.busy) {
+      if (this.busy || !this.canEditLayoutMode()) {
         return;
       }
 
@@ -701,6 +904,9 @@ document.addEventListener("alpine:init", () => {
       try {
         const body = new FormData();
         body.append("name", this.layoutName || "Layout Utama");
+        body.append("image_scale", String(this.clampLayoutScale(this.layoutScale)));
+        body.append("image_offset_x", String(this.clampLayoutOffset(this.layoutOffsetX)));
+        body.append("image_offset_y", String(this.clampLayoutOffset(this.layoutOffsetY)));
         body.append(
           "checkpoints_json",
           JSON.stringify(
@@ -744,6 +950,9 @@ document.addEventListener("alpine:init", () => {
         if (result.payload?.layout) {
           this.layout = result.payload.layout;
           this.layoutName = result.payload.layout.name || this.layoutName;
+          this.layoutScale = Number(result.payload.layout.image_scale ?? this.layoutScale);
+          this.layoutOffsetX = Number(result.payload.layout.image_offset_x ?? this.layoutOffsetX);
+          this.layoutOffsetY = Number(result.payload.layout.image_offset_y ?? this.layoutOffsetY);
           if (this.layoutTempUrl) {
             URL.revokeObjectURL(this.layoutTempUrl);
             this.layoutTempUrl = "";
@@ -770,13 +979,13 @@ document.addEventListener("alpine:init", () => {
           }
         }
 
-        this.flash("success", result.message || "Layout patroli berhasil disimpan.");
-      } catch (error) {
-        console.error(error);
-        this.flash("error", error.message || "Gagal menyimpan layout patroli.");
-      } finally {
-        this.busy = false;
-      }
+      this.flash("success", result.message || "Layout patroli berhasil disimpan.");
+    } catch (error) {
+      console.error(error);
+      this.flash("error", error.message || "Gagal menyimpan layout patroli.");
+    } finally {
+      this.busy = false;
+    }
     },
   }));
 });

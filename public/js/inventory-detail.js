@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const url = new URL(window.location.href);
     url.searchParams.set("ym", ym);
+    url.searchParams.delete("page_checklist_history");
 
     container.classList.add("is-loading");
 

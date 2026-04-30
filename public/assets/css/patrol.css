@@ -24,8 +24,13 @@
 }
 
 .patrol-map {
+  --patrol-map-max-width: 700px;
   position: relative;
-  min-height: 620px;
+  display: block;
+  width: min(100%, var(--patrol-map-max-width));
+  max-width: var(--patrol-map-max-width);
+  aspect-ratio: 542 / 504;
+  min-height: 0;
   border-radius: 1.25rem;
   background:
     radial-gradient(circle at 18% 18%, rgba(34, 197, 94, 0.14), transparent 22%),
@@ -34,11 +39,20 @@
   border: 1px solid rgba(148, 163, 184, 0.22);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   overflow: hidden;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  margin: 0 auto;
 }
 
 .patrol-layout-canvas {
+  --patrol-map-max-width: 700px;
   position: relative;
-  min-height: 620px;
+  display: block;
+  width: min(100%, var(--patrol-map-max-width));
+  max-width: var(--patrol-map-max-width);
+  aspect-ratio: 542 / 504;
+  min-height: 0;
   border-radius: 1.25rem;
   background:
     radial-gradient(circle at 18% 18%, rgba(34, 197, 94, 0.14), transparent 22%),
@@ -47,6 +61,34 @@
   border: 1px solid rgba(148, 163, 184, 0.22);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   overflow: hidden;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  margin: 0 auto;
+}
+
+.patrol-map-dashboard {
+  --patrol-map-max-width: 700px;
+}
+
+.patrol-map-editor {
+  --patrol-map-max-width: 700px;
+  cursor: grab;
+}
+
+.patrol-map-editor:active {
+  cursor: grabbing;
+}
+
+.patrol-layout-image-layer {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  transform-origin: center center;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .patrol-layout-overlay {
@@ -54,6 +96,7 @@
   inset: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(15, 23, 42, 0.04));
   pointer-events: none;
+  z-index: 2;
 }
 
 .patrol-map-grid {
@@ -65,6 +108,7 @@
   background-size: 48px 48px;
   opacity: 0.35;
   pointer-events: none;
+  z-index: 1;
 }
 
 .patrol-map-building {
@@ -105,14 +149,15 @@
 
 .patrol-marker {
   position: absolute;
-  width: 42px;
-  height: 42px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.95);
+  border: 3px solid rgba(255, 255, 255, 0.95);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
+  font-size: 0.9rem;
   transform: translate(-50%, -50%);
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
   color: #fff;
@@ -126,14 +171,35 @@
   height: 48px;
   cursor: grab;
   touch-action: none;
+  font-size: 1rem;
+  border-width: 4px;
 }
 
 .patrol-layout-marker:active {
   cursor: grabbing;
 }
 
+.patrol-layout-marker.is-readonly {
+  cursor: pointer;
+}
+
 .patrol-layout-marker.is-selected {
   box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.18), 0 12px 24px rgba(15, 23, 42, 0.2);
+}
+
+.patrol-map-dashboard .patrol-marker {
+  width: 30px;
+  height: 30px;
+  font-size: 0.76rem;
+  border-width: 2px;
+}
+
+.patrol-map-dashboard .patrol-marker-photo-badge {
+  right: -5px;
+  bottom: -7px;
+  gap: 1px;
+  padding: 0.1rem 0.24rem;
+  font-size: 0.5rem;
 }
 
 .patrol-marker:hover {
@@ -152,6 +218,14 @@
   background: linear-gradient(180deg, #64748b, #475569);
 }
 
+.patrol-marker.is-photo {
+  background: linear-gradient(180deg, #0ea5e9, #0284c7);
+}
+
+.patrol-marker.is-issue {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
 .patrol-marker.is-next::after {
   content: "";
   position: absolute;
@@ -159,6 +233,23 @@
   border-radius: 50%;
   border: 2px solid rgba(37, 99, 235, 0.4);
   animation: patrolPulse 1.8s infinite;
+}
+
+.patrol-marker-photo-badge {
+  position: absolute;
+  right: -7px;
+  bottom: -9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0.14rem 0.3rem;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(15, 23, 42, 0.88);
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
 }
 
 @keyframes patrolPulse {
@@ -264,13 +355,37 @@
   object-fit: cover;
 }
 
+.patrol-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.52);
+  backdrop-filter: blur(6px);
+  z-index: 1080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.patrol-modal-panel {
+  width: min(1100px, 100%);
+  max-height: min(88vh, 900px);
+  overflow: hidden;
+  border-radius: 1.2rem;
+}
+
+.patrol-modal-panel .card-body {
+  overflow: auto;
+  max-height: calc(88vh - 88px);
+}
+
 @media (max-width: 991.98px) {
   .patrol-map {
-    min-height: 460px;
+    max-width: 100%;
   }
 
   .patrol-layout-canvas {
-    min-height: 460px;
+    max-width: 100%;
   }
 
   .patrol-editor-panel {
@@ -280,21 +395,45 @@
 
 @media (max-width: 575.98px) {
   .patrol-map {
-    min-height: 360px;
+    max-width: 100%;
   }
 
   .patrol-layout-canvas {
-    min-height: 360px;
+    max-width: 100%;
+  }
+
+  .patrol-building-main {
+    display: none;
   }
 
   .patrol-marker {
-    width: 36px;
-    height: 36px;
-    font-size: 0.85rem;
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
   }
 
   .patrol-layout-marker {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
+  }
+
+  .patrol-map-dashboard .patrol-marker {
+    width: 28px;
+    height: 28px;
+    font-size: 0.72rem;
+  }
+
+  .patrol-marker-photo-badge {
+    right: -5px;
+    bottom: -7px;
+    font-size: 0.52rem;
+  }
+
+  .patrol-modal-panel {
+    max-height: 92vh;
+  }
+
+  .patrol-modal-panel .card-body {
+    max-height: calc(92vh - 88px);
   }
 }

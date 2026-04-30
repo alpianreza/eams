@@ -33,6 +33,11 @@ class PatrolController extends BaseController
     return in_array($this->currentRole(), ['compliance', 'admin'], true);
   }
 
+  private function canEditLayout(): bool
+  {
+    return $this->currentRole() === 'admin';
+  }
+
   private function json(array $payload, int $statusCode = 200)
   {
     return $this->response->setStatusCode($statusCode)->setJSON($payload);
@@ -151,6 +156,53 @@ class PatrolController extends BaseController
     }
 
     return $builder->orderBy('log.checked_at', 'DESC')->limit(12)->get()->getResultArray();
+  }
+
+  private function loadPhotoLogs(): array
+  {
+    $builder = $this->db->table('patrol_logs log');
+    $builder->select('log.*, session.patrol_date, session.status as session_status, route.name as route_name, cp.code, cp.name as checkpoint_name, cp.area');
+    $builder->join('patrol_sessions session', 'session.id = log.session_id');
+    $builder->join('patrol_routes route', 'route.id = log.route_id');
+    $builder->join('patrol_checkpoints cp', 'cp.id = log.checkpoint_id');
+    $builder->where('session.patrol_date', $this->today());
+    $builder->orderBy('log.checked_at', 'DESC');
+
+    if (!$this->canViewDashboard()) {
+      $builder->where('log.checked_by', $this->currentUserId());
+    }
+
+    $rows = $builder->get()->getResultArray();
+    $logIds = array_values(array_filter(array_map(static fn ($row) => (int) ($row['id'] ?? 0), $rows)));
+    if (empty($logIds)) {
+      return [];
+    }
+
+    $photoRows = $this->db->table('patrol_log_photos')
+      ->whereIn('log_id', $logIds)
+      ->orderBy('sort_order', 'ASC')
+      ->get()
+      ->getResultArray();
+
+    $photoMap = [];
+    foreach ($photoRows as $photoRow) {
+      $photoMap[(int) ($photoRow['log_id'] ?? 0)][] = $photoRow;
+    }
+
+    $filtered = [];
+    foreach ($rows as $row) {
+      $rowId = (int) ($row['id'] ?? 0);
+      $photos = $photoMap[$rowId] ?? [];
+      if (empty($photos)) {
+        continue;
+      }
+
+      $row['photos'] = $photos;
+      $row['photo_count'] = count($photos);
+      $filtered[] = $row;
+    }
+
+    return $filtered;
   }
 
   private function loadAdminStats(): array
@@ -291,6 +343,9 @@ class PatrolController extends BaseController
         'name' => (string) ($layout['name'] ?? 'Layout Utama'),
         'image_path' => (string) ($layout['image_path'] ?? ''),
         'image_url' => $this->layoutImageUrl($layout),
+        'image_scale' => (float) ($layout['image_scale'] ?? 1),
+        'image_offset_x' => (float) ($layout['image_offset_x'] ?? 0),
+        'image_offset_y' => (float) ($layout['image_offset_y'] ?? 0),
       ],
       'activeSession' => $activeSessionPayload,
       'csrfName' => csrf_token(),
@@ -298,7 +353,7 @@ class PatrolController extends BaseController
     ];
   }
 
-  private function buildDashboardBoot(): array
+  private function buildDashboardBoot(bool $canEditLayout = false): array
   {
     $layout = $this->loadActiveLayout();
     return [
@@ -315,10 +370,15 @@ class PatrolController extends BaseController
         'name' => (string) ($layout['name'] ?? 'Layout Utama'),
         'image_path' => (string) ($layout['image_path'] ?? ''),
         'image_url' => $this->layoutImageUrl($layout),
+        'image_scale' => (float) ($layout['image_scale'] ?? 1),
+        'image_offset_x' => (float) ($layout['image_offset_x'] ?? 0),
+        'image_offset_y' => (float) ($layout['image_offset_y'] ?? 0),
       ],
+      'can_edit_layout' => $canEditLayout,
       'adminStats' => $this->loadAdminStats(),
       'recentSessions' => $this->loadRecentSessions(),
       'recentLogs' => $this->loadRecentLogs(),
+      'photoLogs' => $this->loadPhotoLogs(),
       'csrfName' => csrf_token(),
       'csrfHash' => csrf_hash(),
     ];
@@ -362,7 +422,25 @@ class PatrolController extends BaseController
 
     return view('patrol/dashboard', [
       'title' => 'Patrol Dashboard',
-      'boot' => $this->buildDashboardBoot(),
+      'viewMode' => 'dashboard',
+      'boot' => $this->buildDashboardBoot(false),
+    ]);
+  }
+
+  public function editor()
+  {
+    if ($redirect = $this->ensureDashboardAccess()) {
+      return $redirect;
+    }
+
+    if (!$this->canEditLayout()) {
+      return redirect()->to('/patrol/dashboard')->with('error', 'Hanya admin yang boleh membuka editor layout patroli.');
+    }
+
+    return view('patrol/editor', [
+      'title' => 'Patrol Layout Editor',
+      'viewMode' => 'editor',
+      'boot' => $this->buildDashboardBoot(true),
     ]);
   }
 
@@ -698,9 +776,19 @@ class PatrolController extends BaseController
       return $redirect;
     }
 
+    if (!$this->canEditLayout()) {
+      return $this->json([
+        'ok' => false,
+        'message' => 'Hanya admin yang boleh mengubah layout patroli.',
+      ], 403);
+    }
+
     $name = trim((string) $this->request->getPost('name'));
     $checkpointsJson = (string) $this->request->getPost('checkpoints_json');
     $checkpoints = json_decode($checkpointsJson, true);
+    $imageScale = (float) $this->request->getPost('image_scale');
+    $imageOffsetX = (float) $this->request->getPost('image_offset_x');
+    $imageOffsetY = (float) $this->request->getPost('image_offset_y');
 
     if (!is_array($checkpoints)) {
       return $this->json([
@@ -712,6 +800,10 @@ class PatrolController extends BaseController
     if ($name === '') {
       $name = 'Layout Utama';
     }
+
+    $imageScale = max(1, min(3, $imageScale > 0 ? $imageScale : 1));
+    $imageOffsetX = max(-80, min(80, $imageOffsetX));
+    $imageOffsetY = max(-80, min(80, $imageOffsetY));
 
     $layout = $this->loadActiveLayout();
     $imagePath = $layout['image_path'] ?? null;
@@ -734,15 +826,24 @@ class PatrolController extends BaseController
       $this->db->table('patrol_layouts')->where('id', (int) $layout['id'])->update([
         'name' => $name,
         'image_path' => $imagePath,
+        'image_scale' => $imageScale,
+        'image_offset_x' => $imageOffsetX,
+        'image_offset_y' => $imageOffsetY,
         'updated_at' => $this->now(),
       ]);
     } else {
       $this->db->table('patrol_layouts')->insert([
         'name' => $name,
         'image_path' => $imagePath,
+        'image_scale' => $imageScale,
+        'image_offset_x' => $imageOffsetX,
+        'image_offset_y' => $imageOffsetY,
         'active' => 1,
         'created_at' => $this->now(),
       ]);
+      $layout = [
+        'id' => (int) $this->db->insertID(),
+      ];
     }
 
     foreach ($checkpoints as $row) {
@@ -777,6 +878,9 @@ class PatrolController extends BaseController
           'image_url' => $this->layoutImageUrl([
             'image_path' => $imagePath,
           ]),
+          'image_scale' => $imageScale,
+          'image_offset_x' => $imageOffsetX,
+          'image_offset_y' => $imageOffsetY,
         ],
         'checkpoints' => $this->loadCheckpointCatalog(),
       ],

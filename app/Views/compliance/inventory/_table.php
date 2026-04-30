@@ -1,6 +1,17 @@
 <?php
 $totalRows = is_array($inventories) ? count($inventories) : 0;
-$runningNo = 1;
+$currentPage = isset($pager) ? (int) $pager->getCurrentPage('default') : 1;
+$perPageValue = isset($perPage) ? (int) $perPage : $totalRows;
+$runningNo = (($currentPage > 0 ? $currentPage : 1) - 1) * max($perPageValue, 1) + 1;
+$activeSort = (string) ($sort ?? 'no');
+$activeDirection = (string) ($direction ?? 'asc');
+$sortIconClass = static function (string $key) use ($activeSort, $activeDirection): string {
+  if ($activeSort !== $key) {
+    return 'bi-arrow-down-up';
+  }
+
+  return $activeDirection === 'desc' ? 'bi-sort-down-alt' : 'bi-sort-down';
+};
 ?>
 
 <div class="inventory-desktop">
@@ -10,15 +21,50 @@ $runningNo = 1;
         <table id="inventoryTable" class="table table-striped align-middle mb-0 inventory-table">
           <thead class="table-light">
             <tr>
-              <th width="60">No</th>
+              <th width="60">
+                <button type="button" class="inventory-sort-btn" data-sort-key="no" @click.prevent="toggleSort('no')">
+                  <span>No</span>
+                  <i class="bi <?= esc($sortIconClass('no')) ?>"></i>
+                </button>
+              </th>
               <th class="d-none">Kategori</th>
               <th class="d-none">Area</th>
-              <th>Nama Item</th>
-              <th>No Inventaris</th>
-              <th>Tipe</th>
-              <th>Area Spesifik</th>
-              <th>PIC</th>
-              <th>Status</th>
+              <th>
+                <button type="button" class="inventory-sort-btn" data-sort-key="item" @click.prevent="toggleSort('item')">
+                  <span>Nama Item</span>
+                  <i class="bi <?= esc($sortIconClass('item')) ?>"></i>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="inventory-sort-btn" data-sort-key="asset_code" @click.prevent="toggleSort('asset_code')">
+                  <span>No Inventaris</span>
+                  <i class="bi <?= esc($sortIconClass('asset_code')) ?>"></i>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="inventory-sort-btn" data-sort-key="type" @click.prevent="toggleSort('type')">
+                  <span>Tipe</span>
+                  <i class="bi <?= esc($sortIconClass('type')) ?>"></i>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="inventory-sort-btn" data-sort-key="specific_area" @click.prevent="toggleSort('specific_area')">
+                  <span>Area Spesifik</span>
+                  <i class="bi <?= esc($sortIconClass('specific_area')) ?>"></i>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="inventory-sort-btn" data-sort-key="pic" @click.prevent="toggleSort('pic')">
+                  <span>PIC</span>
+                  <i class="bi <?= esc($sortIconClass('pic')) ?>"></i>
+                </button>
+              </th>
+              <th>
+                <button type="button" class="inventory-sort-btn" data-sort-key="status" @click.prevent="toggleSort('status')">
+                  <span>Status</span>
+                  <i class="bi <?= esc($sortIconClass('status')) ?>"></i>
+                </button>
+              </th>
               <th>Catatan</th>
               <?php if (hasRole(['admin', 'compliance'])): ?>
                 <th width="140" class="text-center">Aksi</th>
@@ -62,7 +108,7 @@ $runningNo = 1;
               ?>
 
               <tr class="<?= $rowClass ?>" data-inventory-id="<?= $inv['id'] ?>">
-                <td><?= $runningNo++ ?></td>
+                <td class="inventory-row-no"><?= $runningNo++ ?></td>
 
                 <td class="d-none col-category"><?= esc($inv['category_name']) ?></td>
                 <td class="d-none col-area"><?= esc($inv['area_name']) ?></td>

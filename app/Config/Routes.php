@@ -102,6 +102,7 @@ $routes->group('settings', ['filter' => 'auth'], function ($routes) {
 $routes->group('patrol', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'PatrolController::index');
     $routes->get('dashboard', 'PatrolController::dashboard');
+    $routes->get('editor', 'PatrolController::editor');
     $routes->post('sessions/start', 'PatrolController::startSession');
     $routes->post('sessions/scan', 'PatrolController::scanCheckpoint');
     $routes->post('sessions/cancel', 'PatrolController::cancelSession');
@@ -182,6 +183,7 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
         // submit checklist
         $routes->post('submit', 'ComplianceInventoryController::submitChecklist');
         $routes->post('cctv-grid/save', 'ComplianceInventoryController::saveCctvGrid');
+        $routes->post('cctv-grid/mark-all', 'ComplianceInventoryController::markAllCctvGrid');
         $routes->post('emergency-light-grid/save', 'ComplianceInventoryController::saveEmergencyLightGrid');
         $routes->post('first-aid-box-grid/save', 'ComplianceInventoryController::saveFirstAidBoxGrid');
         $routes->post('first-aid-content-grid/save', 'ComplianceInventoryController::saveFirstAidContentGrid');

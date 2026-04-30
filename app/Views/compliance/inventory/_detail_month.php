@@ -145,6 +145,17 @@
           </tbody>
         </table>
       </div>
+
+      <?php if (!empty($checklistPager) && $checklistPager->getPageCount('checklist_history') > 1): ?>
+        <?php $checklistPager->only(['ym']); ?>
+        <div class="px-3 py-3 border-top d-flex justify-content-center">
+          <nav aria-label="Pagination riwayat checklist">
+            <ul class="pagination pagination-sm mb-0">
+              <?= $checklistPager->links('checklist_history', 'eams') ?>
+            </ul>
+          </nav>
+        </div>
+      <?php endif; ?>
     </div>
   </section>
 </div>

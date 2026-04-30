@@ -33,10 +33,40 @@
   color: #334155;
   border-bottom-color: #e2e8f0;
   white-space: nowrap;
+  vertical-align: middle;
 }
 
 .inventory-table td {
   font-size: 0.84rem;
+}
+
+.inventory-sort-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  width: 100%;
+  min-width: max-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.inventory-sort-btn i {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.inventory-sort-btn:hover {
+  color: #0f3f8f;
+}
+
+.inventory-sort-btn:hover i {
+  color: #2563eb;
 }
 
 .inventory-row-actions .btn {

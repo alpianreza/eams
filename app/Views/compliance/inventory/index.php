@@ -2,7 +2,13 @@
 
 <?= $this->section('content') ?>
 
-<div class="inventory-page compliance-inventory-page">
+<div
+  id="inventoryPageRoot"
+  class="inventory-page compliance-inventory-page"
+  x-data="complianceInventoryPage({
+    sortKey: <?= json_encode($sort ?? 'no') ?>,
+    sortDirection: <?= json_encode($direction ?? 'asc') ?>
+  })">
   <section class="card border-0 shadow-sm inventory-hero-card no-lift mb-3">
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
@@ -104,6 +110,9 @@
       <?= $this->include('compliance/inventory/_pagination') ?>
     </div>
   </div>
+
+  <input type="hidden" id="inventorySortKey" :value="sortKey">
+  <input type="hidden" id="inventorySortDirection" :value="sortDirection">
 
   <?= $this->include('compliance/inventory/_modal_add') ?>
   <?= $this->include('compliance/inventory/_modal_qr') ?>

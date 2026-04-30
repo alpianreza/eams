@@ -2,6 +2,7 @@
 
 <?php
 $boot = $boot ?? [];
+$viewMode = $viewMode ?? 'dashboard';
 ?>
 
 <?= $this->section('styles') ?>
@@ -14,14 +15,14 @@ $boot = $boot ?? [];
   window.PATROL_DASHBOARD_BOOT = <?= json_encode($boot, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
 </script>
 
-<div class="patrol-page" x-cloak x-data="patrolDashboardPage(window.PATROL_DASHBOARD_BOOT)" x-init="init()" @pointermove.window="dragCheckpoint($event)" @pointerup.window="stopDrag($event)" @pointercancel.window="stopDrag($event)">
+<div class="patrol-page" x-cloak x-data="patrolDashboardPage(window.PATROL_DASHBOARD_BOOT)" x-init="init()" @pointermove.window="dragCheckpoint($event); dragLayoutImage($event)" @pointerup.window="stopDrag($event); stopLayoutPan($event)" @pointercancel.window="stopDrag($event); stopLayoutPan($event)">
   <section class="card patrol-hero border-0 shadow-sm no-lift mb-3">
     <div class="card-body d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
       <div>
         <p class="inventory-kicker mb-1">Patrol Dashboard</p>
         <h4 class="fw-bold mb-2">Dashboard Layout & Monitoring Patroli</h4>
         <p class="text-muted mb-0">
-          Admin dan compliance bisa mengubah layout gambar, memindahkan titik patroli, dan memantau progres patroli harian.
+          Klik checkpoint untuk melihat detail, foto check-in, dan histori patroli.
         </p>
       </div>
 
@@ -38,6 +39,12 @@ $boot = $boot ?? [];
           <i class="bi bi-shield-check me-1"></i>
           <span x-text="user.role ? user.role.toUpperCase() : '-'"></span>
         </span>
+        <?php if (($boot['user']['role'] ?? '') === 'admin'): ?>
+          <a href="/patrol/editor" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-pencil-square me-1"></i>
+            Edit Layout
+          </a>
+        <?php endif; ?>
         <a href="/patrol" class="btn btn-sm btn-outline-primary">
           <i class="bi bi-arrow-left me-1"></i>
           Kembali ke Patroli
@@ -73,171 +80,61 @@ $boot = $boot ?? [];
     </div>
   </section>
 
-  <section class="row g-3">
-    <div class="col-xl-8">
-      <div class="card patrol-map-card border-0 shadow-sm no-lift h-100">
-        <div class="card-header bg-white border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
-          <div>
-            <h6 class="mb-0 fw-semibold">Editor Layout</h6>
-            <div class="text-muted small">Upload gambar layout, lalu geser titik patroli di atas denah.</div>
-          </div>
-          <div class="d-flex flex-wrap gap-2">
-            <button type="button" class="btn btn-outline-secondary btn-sm" @click="resetDraft()" :disabled="busy">
-              <i class="bi bi-arrow-counterclockwise me-1"></i>
-              Batal Edit
-            </button>
-            <button type="button" class="btn btn-primary btn-sm" @click="saveLayout()" :disabled="busy">
-              <span x-show="!busy"><i class="bi bi-save me-1"></i> Simpan Layout</span>
-              <span x-show="busy"><i class="bi bi-hourglass-split me-1"></i> Menyimpan...</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="card-body">
-          <div class="alert alert-warning py-2 small mb-3" x-show="errorMessage" x-text="errorMessage"></div>
-          <div class="alert alert-success py-2 small mb-3" x-show="successMessage" x-text="successMessage"></div>
-
-          <div class="row g-3 mb-3">
-            <div class="col-lg-5">
-              <label class="form-label small text-muted">Nama Layout</label>
-              <input type="text" class="form-control" x-model.trim="layoutName" placeholder="Layout Utama">
-            </div>
-            <div class="col-lg-7">
-              <label class="form-label small text-muted">Ganti Gambar Layout</label>
-              <input type="file" class="form-control" accept="image/*" @change="handleLayoutFileChange($event)" :disabled="busy" x-ref="layoutFileInput">
-              <div class="form-text">
-                Gunakan gambar denah PT. File baru akan mengganti background layout.
-                <span class="fw-semibold" x-show="layoutFileName" x-text="'File: ' + layoutFileName"></span>
-              </div>
-            </div>
-          </div>
-
-          <div
-            class="patrol-layout-canvas"
-            x-ref="layoutCanvas"
-            :style="layoutCanvasStyle()">
-            <div class="patrol-map-grid"></div>
-            <div class="patrol-layout-overlay"></div>
-
-            <template x-for="checkpoint in checkpointDrafts" :key="`layout-marker-${checkpoint.id}`">
-              <button
-                type="button"
-                class="patrol-layout-marker patrol-marker"
-                :class="[selectedCheckpointId === checkpoint.id ? 'is-selected' : '', markerClass(checkpoint)]"
-                :style="markerStyle(checkpoint)"
-                @pointerdown.prevent="beginDrag(checkpoint, $event)"
-                @click.stop="selectCheckpoint(checkpoint.id)"
-                :title="`${checkpoint.code} - ${checkpoint.name}`">
-                <span x-text="checkpoint.code"></span>
-              </button>
-            </template>
-          </div>
-
-          <div class="d-flex flex-wrap gap-2 mt-3">
-            <template x-for="checkpoint in checkpointDrafts" :key="`layout-chip-${checkpoint.id}`">
-              <button
-                type="button"
-                class="badge rounded-pill text-bg-light border text-dark patrol-chip patrol-chip-btn"
-                :class="selectedCheckpointId === checkpoint.id ? 'is-selected' : ''"
-                @click="selectCheckpoint(checkpoint.id)">
-                <span class="fw-semibold" x-text="checkpoint.code"></span>
-                <span class="mx-1">-</span>
-                <span x-text="checkpoint.name"></span>
-                <span class="mx-1 text-muted">|</span>
-                <span class="text-primary" x-text="checkpoint.barcode_value"></span>
-              </button>
-            </template>
-          </div>
-        </div>
+  <section class="card patrol-map-card border-0 shadow-sm no-lift mb-3">
+    <div class="card-header bg-white border-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div>
+        <h6 class="mb-0 fw-semibold">Layout Patroli</h6>
+        <div class="text-muted small">Klik checkpoint untuk melihat detail dan semua foto check-in.</div>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <template x-for="route in routes" :key="route.id">
+          <button
+            type="button"
+            class="btn btn-sm"
+            :class="selectedRouteId == route.id ? 'btn-primary' : 'btn-outline-primary'"
+            @click="selectRoute(route.id)"
+            x-text="route.name">
+          </button>
+        </template>
       </div>
     </div>
 
-    <div class="col-xl-4">
-      <div class="card border-0 shadow-sm no-lift mb-3 patrol-editor-panel">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-            <div>
-              <h6 class="fw-semibold mb-1">Titik Terpilih</h6>
-              <p class="text-muted small mb-0">Klik marker untuk mengedit koordinat, barcode, dan radius GPS.</p>
-            </div>
-            <span class="badge text-bg-primary" x-text="selectedCheckpointDraft ? selectedCheckpointDraft.code : '-'"></span>
-          </div>
-
-          <template x-if="selectedCheckpointDraft">
-            <div class="d-grid gap-3">
-              <div>
-                <label class="form-label small text-muted">Nama Titik</label>
-                <input type="text" class="form-control" x-model.trim="selectedCheckpointDraft.name">
-              </div>
-              <div>
-                <label class="form-label small text-muted">Area</label>
-                <input type="text" class="form-control" x-model.trim="selectedCheckpointDraft.area">
-              </div>
-              <div>
-                <label class="form-label small text-muted">Barcode</label>
-                <input type="text" class="form-control" x-model.trim="selectedCheckpointDraft.barcode_value">
-              </div>
-              <div class="row g-2">
-                <div class="col-6">
-                  <label class="form-label small text-muted">Lat GPS</label>
-                  <input type="number" step="0.000001" class="form-control" x-model.trim="selectedCheckpointDraft.lat">
-                </div>
-                <div class="col-6">
-                  <label class="form-label small text-muted">Lng GPS</label>
-                  <input type="number" step="0.000001" class="form-control" x-model.trim="selectedCheckpointDraft.lng">
-                </div>
-              </div>
-              <div class="row g-2">
-                <div class="col-6">
-                  <label class="form-label small text-muted">Radius (m)</label>
-                  <input type="number" min="1" step="1" class="form-control" x-model.trim="selectedCheckpointDraft.radius_m">
-                </div>
-                <div class="col-6">
-                  <label class="form-label small text-muted">Koordinat X %</label>
-                  <input type="number" min="0" max="100" step="0.1" class="form-control" x-model.trim="selectedCheckpointDraft.map_x">
-                </div>
-              </div>
-              <div>
-                <label class="form-label small text-muted">Koordinat Y %</label>
-                <input type="number" min="0" max="100" step="0.1" class="form-control" x-model.trim="selectedCheckpointDraft.map_y">
-              </div>
-              <div class="patrol-mini-stat bg-light">
-                <div class="text-muted small">Posisi Marker</div>
-                <div class="fw-semibold" x-text="`${selectedCheckpointDraft.map_x ?? 0}% / ${selectedCheckpointDraft.map_y ?? 0}%`"></div>
-              </div>
-            </div>
-          </template>
-
-          <div class="alert alert-light border mt-3 mb-0 small">
-            <div class="fw-semibold mb-1">Tips</div>
-            <div>Geser marker di denah atau ubah angka X/Y untuk presisi.</div>
-            <div>Barcode yang tampil di bawah marker dipakai saat scan checkpoint.</div>
-          </div>
-        </div>
+    <div class="card-body">
+      <div
+        class="patrol-map patrol-map-dashboard"
+        :class="{'has-session': !!activeSession, 'has-layout-image': !!layout.image_url}"
+        :style="layoutCanvasStyle()">
+        <div class="patrol-layout-image-layer" :style="layoutImageLayerStyle()"></div>
+        <div class="patrol-map-grid"></div>
+        <template x-for="checkpoint in activeRouteCheckpoints()" :key="`map-${checkpoint.id}`">
+          <button
+            type="button"
+            class="patrol-marker"
+            :class="mapMarkerClass(checkpoint)"
+            :style="mapMarkerStyle(checkpoint)"
+            @click="selectMapCheckpoint(checkpoint.id)"
+            :title="`${checkpoint.code} - ${checkpoint.name}`">
+            <span x-text="checkpoint.route_order"></span>
+            <span class="patrol-marker-photo-badge" x-show="photoCount(checkpoint.id) > 0">
+              <i class="bi bi-camera-fill me-1"></i>
+              <span x-text="photoLabel(checkpoint.id)"></span>
+            </span>
+          </button>
+        </template>
       </div>
 
-      <div class="card border-0 shadow-sm no-lift mb-3">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="fw-semibold mb-0">Daftar Titik</h6>
-            <span class="badge text-bg-light border text-dark" x-text="checkpointDrafts.length"></span>
-          </div>
-
-          <div class="d-grid gap-2">
-            <template x-for="checkpoint in checkpointDrafts" :key="`checkpoint-list-${checkpoint.id}`">
-              <button type="button" class="text-start patrol-checkpoint-card" :class="selectedCheckpointId === checkpoint.id ? 'is-selected' : ''" @click="selectCheckpoint(checkpoint.id)">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                  <div>
-                    <div class="fw-semibold" x-text="checkpoint.code + ' - ' + checkpoint.name"></div>
-                    <div class="text-muted small" x-text="checkpoint.area || '-'"></div>
-                    <div class="text-primary small" x-text="'Barcode: ' + (checkpoint.barcode_value || '-')"></div>
-                  </div>
-                  <span class="badge text-bg-secondary" x-text="`${Number(checkpoint.map_x || 0).toFixed(1)} / ${Number(checkpoint.map_y || 0).toFixed(1)}`"></span>
-                </div>
-              </button>
-            </template>
-          </div>
-        </div>
+      <div class="d-flex flex-wrap gap-2 mt-3">
+        <template x-for="checkpoint in activeRouteCheckpoints()" :key="`chip-${checkpoint.id}`">
+          <span class="badge rounded-pill text-bg-light border text-dark patrol-chip">
+            <span class="fw-semibold" x-text="checkpoint.code"></span>
+            <span class="mx-1">-</span>
+            <span x-text="checkpoint.name"></span>
+            <span class="mx-1 text-muted">|</span>
+            <span class="text-primary" x-text="checkpoint.barcode_value"></span>
+            <span class="mx-1 text-muted">|</span>
+            <span class="text-success" x-text="photoCount(checkpoint.id) ? `Foto ${photoCount(checkpoint.id)}` : 'Belum ada foto'"></span>
+          </span>
+        </template>
       </div>
     </div>
   </section>
@@ -309,6 +206,65 @@ $boot = $boot ?? [];
       </div>
     </div>
   </section>
+
+  <div class="patrol-modal-backdrop" x-show="selectedCheckpointModalOpen" x-transition.opacity>
+    <div class="patrol-modal-panel card border-0 shadow-lg" @click.outside="closeCheckpointModal()">
+      <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+        <div>
+          <div class="inventory-kicker mb-1">Checkpoint Detail</div>
+          <h5 class="mb-0 fw-bold" x-text="selectedCheckpointDraft ? (selectedCheckpointDraft.code + ' - ' + selectedCheckpointDraft.name) : 'Checkpoint'"></h5>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary" @click="closeCheckpointModal()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-lg-5">
+            <div class="patrol-mini-stat bg-light h-100">
+              <div class="text-muted small">Area</div>
+              <div class="fw-semibold" x-text="selectedCheckpointDraft ? (selectedCheckpointDraft.area || '-') : '-'"></div>
+              <div class="text-muted small mt-2">Barcode</div>
+              <div class="fw-semibold text-primary" x-text="selectedCheckpointDraft ? (selectedCheckpointDraft.barcode_value || '-') : '-'"></div>
+              <div class="text-muted small mt-2">GPS</div>
+              <div class="fw-semibold" x-text="selectedCheckpointDraft ? `${Number(selectedCheckpointDraft.lat || 0).toFixed(6)}, ${Number(selectedCheckpointDraft.lng || 0).toFixed(6)}` : '-'"></div>
+              <div class="text-muted small mt-2">Radius</div>
+              <div class="fw-semibold" x-text="selectedCheckpointDraft ? `${selectedCheckpointDraft.radius_m || 10} meter` : '-'"></div>
+              <div class="text-muted small mt-2">Posisi Marker</div>
+              <div class="fw-semibold" x-text="selectedCheckpointDraft ? `${Number(selectedCheckpointDraft.map_x || 0).toFixed(1)}% / ${Number(selectedCheckpointDraft.map_y || 0).toFixed(1)}%` : '-'"></div>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <template x-if="!selectedCheckpointPhotoLogs.length">
+              <div class="text-muted small">Belum ada foto check-in pada checkpoint ini.</div>
+            </template>
+            <div class="d-grid gap-3" x-show="selectedCheckpointPhotoLogs.length">
+              <template x-for="log in selectedCheckpointPhotoLogs" :key="`modal-log-${log.id}`">
+                <div class="patrol-mini-stat bg-light">
+                  <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                    <div>
+                      <div class="fw-semibold" x-text="log.checked_at"></div>
+                      <div class="text-muted small" x-text="(log.status === 'not_ok' ? 'Temuan' : 'Aman') + ' | ' + (log.distance_m || 0) + ' meter'"></div>
+                    </div>
+                    <span class="badge" :class="log.status === 'not_ok' ? 'text-bg-danger' : 'text-bg-success'" x-text="log.status === 'not_ok' ? 'Temuan' : 'Aman'"></span>
+                  </div>
+                  <div class="row g-2">
+                    <template x-for="(photo, index) in (Array.isArray(log.photos) ? log.photos : [])" :key="`modal-photo-${log.id}-${index}`">
+                      <div class="col-6 col-md-4">
+                        <a :href="photoUrl(photo.photo_path)" target="_blank" rel="noopener" class="d-block">
+                          <img :src="photoUrl(photo.photo_path)" class="img-fluid rounded-3 border patrol-preview" alt="Foto patroli checkpoint">
+                        </a>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <?= $this->endSection() ?>

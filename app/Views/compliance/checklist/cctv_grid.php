@@ -8,6 +8,8 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
 <div
   class="cctv-grid-page"
   data-save-url="<?= esc($saveUrl) ?>"
+  data-bulk-url="<?= esc($bulkUrl) ?>"
+  data-ym="<?= esc($ym) ?>"
   data-csrf-name="<?= esc($csrfName) ?>"
   data-csrf-hash="<?= esc($csrfHash) ?>">
 
@@ -39,6 +41,12 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
       </div>
 
       <div class="d-flex flex-wrap gap-2 align-items-center small">
+        <?php if (hasRole(['admin', 'compliance'])): ?>
+          <button type="button" class="btn btn-success btn-sm cctv-mark-all-btn">
+            <i class="bi bi-check2-square"></i>
+            Centang Semua
+          </button>
+        <?php endif; ?>
         <span class="cctv-legend-pill"><span class="legend-box is-ok"></span>Sesuai</span>
         <span class="cctv-legend-pill"><span class="legend-box is-offday"></span>Libur</span>
         <span class="cctv-legend-pill"><span class="legend-box is-alert"></span>Non-OK dari detail</span>
