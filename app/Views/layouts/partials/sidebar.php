@@ -114,7 +114,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
             <a href="<?= base_url('employees') ?>"
               class="nav-link <?= $seg1 === 'employees' ? 'active' : '' ?>">
               <i class="nav-icon bi bi-people"></i>
-              <p>Pemegang IT</p>
+              <p>Users IT</p>
             </a>
           </li>
         <?php endif; ?>
@@ -205,7 +205,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
             <a href="<?= site_url('holidays') ?>"
               class="nav-link <?= $seg1 === 'holidays' ? 'active' : '' ?>">
               <i class="nav-icon bi bi-calendar-event"></i>
-              <p>Hari Libur</p>
+              <p>Holiday</p>
             </a>
           </li>
         <?php endif; ?>
@@ -216,7 +216,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
             <a href="<?= base_url('compliance/report') ?>"
               class="nav-link <?= $isCompliance && $seg2 === 'report' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-file-alt"></i>
-              <p>Laporan</p>
+              <p>Report</p>
             </a>
           </li>
         <?php endif; ?>
@@ -263,7 +263,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <?php
-        $isUtilityMenu = in_array($seg1, ['boiler', 'ipal']);
+        $isUtilityMenu = in_array($seg1, ['boiler', 'ipal', 'pdam-water']);
         ?>
 
         <?php if (hasRole(['admin', 'compliance'])): ?>
@@ -298,6 +298,14 @@ $hasBrandLogo = file_exists($brandLogoPath);
                   class="nav-link <?= $seg1 === 'ipal' ? 'active' : '' ?>">
                   <i class="fas fa-water"></i>
                   <p>IPAL Limbah</p>
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a href="<?= base_url('pdam-water') ?>"
+                  class="nav-link <?= $seg1 === 'pdam-water' ? 'active' : '' ?>">
+                  <i class="fas fa-faucet"></i>
+                  <p>Air PDAM</p>
                 </a>
               </li>
 

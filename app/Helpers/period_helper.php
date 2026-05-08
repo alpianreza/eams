@@ -80,7 +80,12 @@ if (! function_exists('is_period_editable')) {
       return true;
     }
 
-    // WEEKLY / MONTHLY → cek grace 3 bulan
+    // MONTHLY → tetap bisa dibuka untuk backfill bulan-bulan sebelumnya.
+    if ($frequency === 'monthly') {
+      return true;
+    }
+
+    // WEEKLY → cek grace 3 bulan
     $nowYM = date('Y-m');
     $periodYM = substr($periodKey, 0, 7);
 

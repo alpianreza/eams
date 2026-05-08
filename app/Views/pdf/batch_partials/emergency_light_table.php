@@ -1,5 +1,11 @@
 <?php
-$resolveApplicability = static function (array $inventory, array $group, array $checklistMatrix): bool {
+$forceApplicable = !empty($forceApplicable);
+
+$resolveApplicability = static function (array $inventory, array $group, array $checklistMatrix) use ($forceApplicable): bool {
+  if ($forceApplicable) {
+    return true;
+  }
+
   $inventoryId = (int) ($inventory['id'] ?? 0);
   $groupKey = (string) ($group['group_key'] ?? '');
   $questionIds = array_values(array_filter(array_map('intval', $group['question_ids'] ?? [])));

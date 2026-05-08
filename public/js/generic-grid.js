@@ -1,10 +1,12 @@
 (function () {
-  const page = document.querySelector('.ia-grid-page');
+  const page = document.querySelector('.gg-grid-page');
   if (!page) return;
 
   const saveUrl = page.dataset.saveUrl || '';
   const bulkUrl = page.dataset.bulkUrl || '';
+  const inventoryId = page.dataset.inventoryId || '';
   const ym = page.dataset.ym || '';
+  const frequency = page.dataset.frequency || '';
   let csrfName = page.dataset.csrfName || '';
   let csrfHash = page.dataset.csrfHash || '';
   let busyKey = null;
@@ -32,14 +34,14 @@
     }
 
     cell.classList.add('is-empty');
-    cell.innerHTML = '<span class="ia-cell-mark"></span>';
+    cell.innerHTML = '<span class="gg-cell-mark"></span>';
   };
 
   const saveCell = async (cell, mode) => {
-    const inventoryId = cell.dataset.inventoryId;
     const templateId = cell.dataset.templateId;
     const periodKey = cell.dataset.periodKey;
-    const requestKey = `${inventoryId}:${templateId}:${periodKey}`;
+    const timeSlot = cell.dataset.timeSlot || '';
+    const requestKey = `${inventoryId}:${templateId}:${periodKey}:${timeSlot}`;
 
     if (!inventoryId || !templateId || !periodKey || busyKey === requestKey) {
       return;
@@ -53,6 +55,7 @@
       body.set('inventory_id', inventoryId);
       body.set('template_id', templateId);
       body.set('period_key', periodKey);
+      body.set('time_slot', timeSlot);
       body.set('mode', mode);
       if (csrfName) {
         body.set(csrfName, csrfHash);
@@ -72,31 +75,44 @@
       csrfHash = result.csrfHash || csrfHash;
 
       if (!response.ok || !result.ok) {
-        throw new Error(result.message || 'Gagal menyimpan checklist Intrusion Alarm.');
+        throw new Error(result.message || 'Gagal menyimpan checklist grid.');
       }
 
       setCellState(cell, result.state || (mode === 'clear' ? 'empty' : mode));
     } catch (error) {
       console.error(error);
-      alert(error.message || 'Gagal menyimpan checklist Intrusion Alarm.');
+      alert(error.message || 'Gagal menyimpan checklist grid.');
     } finally {
       busyKey = null;
       cell.classList.remove('is-saving');
     }
   };
 
+  const setAllEligibleCellsToOk = () => {
+    page.querySelectorAll('.gg-check-cell').forEach((cell) => {
+      if (cell.dataset.offday === '1') return;
+      const state = cell.dataset.state || 'empty';
+      if (state !== 'empty') return;
+      setCellState(cell, 'ok');
+    });
+  };
+
   const markAll = async () => {
-    if (!bulkUrl || !ym || busyKey === '__bulk__') {
+    if (!bulkUrl || !inventoryId || !ym || busyKey === '__bulk__') {
       return;
     }
 
     busyKey = '__bulk__';
-    const button = page.querySelector('.ia-mark-all-btn');
-    if (button) button.disabled = true;
+    const button = page.querySelector('.gg-mark-all-btn');
+    if (button) {
+      button.disabled = true;
+    }
 
     try {
       const body = new URLSearchParams();
+      body.set('inventory_id', inventoryId);
       body.set('ym', ym);
+      body.set('frequency', frequency);
       if (csrfName) {
         body.set(csrfName, csrfHash);
       }
@@ -115,34 +131,33 @@
       csrfHash = result.csrfHash || csrfHash;
 
       if (!response.ok || !result.ok) {
-        throw new Error(result.message || 'Gagal mencentang semua Intrusion Alarm.');
+        throw new Error(result.message || 'Gagal mencentang semua checklist grid.');
       }
 
-      page.querySelectorAll('.ia-check-cell').forEach((cell) => {
-        const state = cell.dataset.state || 'empty';
-        if (state === 'empty') {
-          setCellState(cell, 'ok');
-        }
-      });
+      setAllEligibleCellsToOk();
     } catch (error) {
       console.error(error);
-      alert(error.message || 'Gagal mencentang semua Intrusion Alarm.');
+      alert(error.message || 'Gagal mencentang semua checklist grid.');
     } finally {
       busyKey = null;
-      if (button) button.disabled = false;
+      if (button) {
+        button.disabled = false;
+      }
     }
   };
 
   page.addEventListener('click', (event) => {
-    const cell = event.target.closest('.ia-check-cell');
+    const cell = event.target.closest('.gg-check-cell');
     if (cell) {
+      if (cell.dataset.offday === '1') return;
+
       const state = cell.dataset.state || 'empty';
       const nextMode = cycleMap[state] || 'ok';
       saveCell(cell, nextMode);
       return;
     }
 
-    const bulkButton = event.target.closest('.ia-mark-all-btn');
+    const bulkButton = event.target.closest('.gg-mark-all-btn');
     if (bulkButton) {
       markAll();
     }

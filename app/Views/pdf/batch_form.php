@@ -10,6 +10,7 @@ $isFireAlarmTemplate = $itemSlug === 'fire_alarm';
 $isIntrusionAlarmTemplate = $itemSlug === 'intrusion_alarm';
 $isHydrantTemplate = $itemSlug === 'hydrant';
 $isEmergencyLightTemplate = $itemSlug === 'emergency_light';
+$isEmergencyExitLightTemplate = $itemSlug === 'emergency_exit_light';
 $isCctvTemplate = $itemSlug === 'cctv';
 $isSmokeDetectorTemplate = $itemSlug === 'smoke_detector';
 $isHeatDetectorTemplate = $itemSlug === 'heat_detector';
@@ -620,12 +621,13 @@ $displayStatus = static function (?string $status): string {
       'weeklyChecklistMatrix' => $weeklyChecklistMatrix ?? [],
       'displayStatus' => $displayStatus,
     ]) ?>
-  <?php elseif ($isEmergencyLightTemplate): ?>
+  <?php elseif ($isEmergencyLightTemplate || $isEmergencyExitLightTemplate): ?>
     <?= view('pdf/batch_partials/emergency_light_table', [
       'inventories' => $inventories,
       'groupedColumns' => $groupedColumns,
       'checklistMatrix' => $checklistMatrix,
       'displayStatus' => $displayStatus,
+      'forceApplicable' => $isEmergencyExitLightTemplate,
     ]) ?>
   <?php elseif ($isSmokeDetectorTemplate || $isHeatDetectorTemplate): ?>
     <?= view('pdf/batch_partials/smoke_detector_table', [

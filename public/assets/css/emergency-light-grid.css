@@ -12,6 +12,7 @@
 .el-grid-table td {
   border-color: var(--el-border);
   white-space: nowrap;
+  padding: 0.5rem 0.6rem;
 }
 
 .el-grid-table thead th {
@@ -36,12 +37,18 @@
 
 .el-grid-table .sticky-no {
   left: 0;
-  min-width: 56px;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
 }
 
 .el-grid-table .sticky-location {
-  left: 56px;
-  min-width: 240px;
+  left: 52px;
+  min-width: 180px;
+  max-width: 240px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
 }
 
 .el-grid-table .group-band {
@@ -55,11 +62,11 @@
 }
 
 .el-grid-table .col-type {
-  min-width: 120px;
+  min-width: 92px;
 }
 
 .el-grid-table .col-question {
-  min-width: 82px;
+  min-width: 72px;
 }
 
 .el-grid-table tbody tr.is-focused td {
@@ -153,5 +160,23 @@
 @media (max-width: 991.98px) {
   .el-grid-wrap {
     max-height: none;
+  }
+
+  .el-grid-table .sticky-no {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+  }
+
+  .el-grid-table .sticky-location {
+    left: 44px;
+    min-width: 150px;
+    max-width: 180px;
+  }
+
+  .el-check-cell {
+    width: 64px;
+    min-width: 64px;
+    height: 36px;
   }
 }

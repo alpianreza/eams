@@ -12,6 +12,7 @@ class ComplianceInventoryController extends BaseController
 {
   private const CCTV_ITEM_TYPE_ID = 13;
   private const EMERGENCY_LIGHT_ITEM_TYPE_ID = 4;
+  private const EMERGENCY_EXIT_LIGHT_ITEM_TYPE_ID = 59;
   private const FIRST_AID_BOX_ITEM_TYPE_ID = 10;
   private const FIRST_AID_CONTENT_ITEM_TYPE_ID = 33;
   private const FIRE_EXTINGUISHER_ITEM_TYPE_ID = 1;
@@ -19,6 +20,8 @@ class ComplianceInventoryController extends BaseController
   private const HYDRANT_ITEM_TYPE_ID = 2;
   private const HEAT_DETECTOR_ITEM_TYPE_ID = 6;
   private const SMOKE_DETECTOR_ITEM_TYPE_ID = 7;
+  private const GATE_INSPECTION_ITEM_TYPE_ID = 40;
+  private const TOILET_CHECKLIST_ITEM_TYPE_ID = 52;
   protected $inventoryModel;
   protected $categoryModel;
   protected $areaModel;
@@ -1544,6 +1547,7 @@ class ComplianceInventoryController extends BaseController
       'rows' => $rows,
       'groupedColumns' => $questionColumns,
       'saveUrl' => '/compliance/checklist/emergency-light-grid/save',
+      'bulkUrl' => '/compliance/checklist/emergency-light-grid/mark-all',
       'csrfName' => csrf_token(),
       'csrfHash' => csrf_hash(),
       'focusId' => $focusId,
@@ -1661,6 +1665,247 @@ class ComplianceInventoryController extends BaseController
       'message' => 'Checklist Emergency Light tersimpan.',
       'csrfHash' => csrf_hash(),
     ]);
+  }
+
+  public function markAllEmergencyLightGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/emergency-light-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $periodKey = trim((string) $this->request->getPost('period_key'));
+    if (! preg_match('/^\d{4}-\d{2}$/', $periodKey)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode Emergency Light tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    return $this->bulkMarkEmergencyLampGrid(self::EMERGENCY_LIGHT_ITEM_TYPE_ID, $periodKey, 'Emergency Light');
+  }
+
+  public function emergencyExitLightGrid()
+  {
+    if (! hasRole(['admin', 'compliance'])) {
+      return redirect()->to('/unauthorized');
+    }
+
+    page('Checklist Emergency Exit Light');
+
+    $ym = (string) $this->request->getGet('ym');
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      $ym = date('Y-m');
+    }
+
+    $focusId = (int) ($this->request->getGet('focus_id') ?: 0);
+
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::EMERGENCY_EXIT_LIGHT_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    if (empty($questions)) {
+      return redirect()->to('/compliance/inventory')->with('error', 'Pertanyaan checklist Emergency Exit Light belum tersedia.');
+    }
+
+    $inventories = $this->inventoryModel
+      ->select('compliance_inventory.id, compliance_inventory.asset_code, compliance_inventory.specific_area, compliance_inventory.type_description, compliance_inventory.status, asset_item_types.name AS item_display_name')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
+      ->where('compliance_inventory.item_type_id', self::EMERGENCY_EXIT_LIGHT_ITEM_TYPE_ID)
+      ->orderBy('compliance_inventory.asset_code', 'ASC')
+      ->findAll();
+
+    $questionColumns = $this->resolveEmergencyExitLightGridColumns($questions);
+    $inventoryIds = array_column($inventories, 'id');
+    $logMap = [];
+
+    if (! empty($inventoryIds)) {
+      $logs = (new ChecklistLogModel())
+        ->select('id, inventory_id, checklist_template_id, period_key, status, checked_by, check_date')
+        ->whereIn('inventory_id', $inventoryIds)
+        ->where('item_type_id', self::EMERGENCY_EXIT_LIGHT_ITEM_TYPE_ID)
+        ->where('period_key', $ym)
+        ->findAll();
+
+      foreach ($logs as $log) {
+        $logMap[(int) $log['inventory_id']][(int) $log['checklist_template_id']] = $log;
+      }
+    }
+
+    $rows = [];
+    foreach ($inventories as $index => $inventory) {
+      $inventoryId = (int) ($inventory['id'] ?? 0);
+      $rows[] = [
+        'id' => $inventoryId,
+        'no' => $index + 1,
+        'location' => trim((string) ($inventory['specific_area'] ?? '')) !== '' ? (string) $inventory['specific_area'] : '-',
+        'type_description' => trim((string) ($inventory['type_description'] ?? '')) !== '' ? (string) $inventory['type_description'] : '-',
+        'checks' => $logMap[$inventoryId] ?? [],
+        'detail_url' => '/compliance/checklist/' . $inventoryId . '?ym=' . rawurlencode($ym),
+      ];
+    }
+
+    return view('compliance/checklist/emergency_exit_light_grid', [
+      'title' => 'Checklist Emergency Exit Light',
+      'ym' => $ym,
+      'monthLabel' => date('F Y', strtotime($ym . '-01')),
+      'rows' => $rows,
+      'groupedColumns' => $questionColumns,
+      'saveUrl' => '/compliance/checklist/emergency-exit-light-grid/save',
+      'bulkUrl' => '/compliance/checklist/emergency-exit-light-grid/mark-all',
+      'csrfName' => csrf_token(),
+      'csrfHash' => csrf_hash(),
+      'focusId' => $focusId,
+      'currentUser' => trim((string) session()->get('name')),
+    ]);
+  }
+
+  public function saveEmergencyExitLightGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/emergency-exit-light-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $inventoryId = (int) $this->request->getPost('inventory_id');
+    $periodKey = trim((string) $this->request->getPost('period_key'));
+    $templateId = (int) $this->request->getPost('template_id');
+    $mode = strtolower(trim((string) $this->request->getPost('mode')));
+
+    if ($inventoryId <= 0 || $templateId <= 0 || ! preg_match('/^\d{4}-\d{2}$/', $periodKey)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Data checklist Emergency Exit Light tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    if (! in_array($mode, ['ok', 'not_ok', 'na', 'clear'], true)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Status checklist tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $inventory = $this->inventoryModel
+      ->where('id', $inventoryId)
+      ->first();
+
+    if (! $inventory || (int) ($inventory['item_type_id'] ?? 0) !== self::EMERGENCY_EXIT_LIGHT_ITEM_TYPE_ID) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Inventory Emergency Exit Light tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $question = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::EMERGENCY_EXIT_LIGHT_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->where('id', $templateId)
+      ->first();
+
+    if (! $question) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Pertanyaan checklist tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existing = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->where('period_key', $periodKey)
+      ->where('checklist_template_id', $templateId)
+      ->first();
+
+    if ($mode === 'clear') {
+      if ($existing) {
+        $logModel->delete($existing['id']);
+      }
+
+      return $this->response->setJSON([
+        'ok' => true,
+        'state' => 'empty',
+        'message' => 'Checklist Emergency Exit Light dibersihkan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    if ($existing) {
+      $logModel->update($existing['id'], [
+        'status' => $mode,
+        'checked_by' => session()->get('name'),
+        'check_date' => date('Y-m-d'),
+        'updated_at' => date('Y-m-d H:i:s'),
+      ]);
+    } else {
+      $logModel->insert([
+        'inventory_id' => $inventoryId,
+        'item_type_id' => self::EMERGENCY_EXIT_LIGHT_ITEM_TYPE_ID,
+        'checklist_template_id' => $templateId,
+        'check_date' => date('Y-m-d'),
+        'period_key' => $periodKey,
+        'time_slot' => null,
+        'status' => $mode,
+        'remark' => null,
+        'photo' => null,
+        'checked_by' => session()->get('name'),
+        'created_at' => date('Y-m-d H:i:s'),
+      ]);
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'state' => $mode,
+      'message' => 'Checklist Emergency Exit Light tersimpan.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
+  public function markAllEmergencyExitLightGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/emergency-exit-light-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $periodKey = trim((string) $this->request->getPost('period_key'));
+    if (! preg_match('/^\d{4}-\d{2}$/', $periodKey)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode Emergency Exit Light tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    return $this->bulkMarkEmergencyLampGrid(self::EMERGENCY_EXIT_LIGHT_ITEM_TYPE_ID, $periodKey, 'Emergency Exit Light');
   }
 
   public function firstAidBoxGrid()
@@ -1846,6 +2091,100 @@ class ComplianceInventoryController extends BaseController
       'ok' => true,
       'state' => $mode,
       'message' => 'Checklist First Aid Box tersimpan.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
+  public function markAllFirstAidBoxGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/first-aid-box-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $periodKey = trim((string) $this->request->getPost('period_key'));
+    if (! preg_match('/^\d{4}-\d{2}$/', $periodKey)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode First Aid Box tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::FIRST_AID_BOX_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    $inventories = $this->inventoryModel
+      ->select('id')
+      ->where('item_type_id', self::FIRST_AID_BOX_ITEM_TYPE_ID)
+      ->findAll();
+
+    $inventoryIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $inventories)));
+    $questionIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $questions)));
+
+    if (empty($inventoryIds) || empty($questionIds)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada data First Aid Box untuk diperbarui.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existingLogs = $logModel
+      ->whereIn('inventory_id', $inventoryIds)
+      ->whereIn('checklist_template_id', $questionIds)
+      ->where('item_type_id', self::FIRST_AID_BOX_ITEM_TYPE_ID)
+      ->where('period_key', $periodKey)
+      ->findAll();
+
+    $existingMap = [];
+    foreach ($existingLogs as $log) {
+      $existingMap[(int) $log['inventory_id']][(int) $log['checklist_template_id']] = $log;
+    }
+
+    $now = date('Y-m-d H:i:s');
+    $checkDate = date('Y-m-d');
+    $checkedBy = session()->get('name');
+    $inserted = 0;
+
+    foreach ($inventoryIds as $inventoryId) {
+      foreach ($questionIds as $questionId) {
+        if (isset($existingMap[$inventoryId][$questionId])) {
+          continue;
+        }
+
+        $logModel->insert([
+          'inventory_id' => $inventoryId,
+          'item_type_id' => self::FIRST_AID_BOX_ITEM_TYPE_ID,
+          'checklist_template_id' => $questionId,
+          'check_date' => $checkDate,
+          'period_key' => $periodKey,
+          'time_slot' => null,
+          'status' => 'ok',
+          'remark' => null,
+          'photo' => null,
+          'checked_by' => $checkedBy,
+          'created_at' => $now,
+        ]);
+        $inserted++;
+      }
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'inserted' => $inserted,
+      'message' => 'Centang semua hanya mengisi sel kosong. Data yang sudah terisi tidak ditimpa.',
       'csrfHash' => csrf_hash(),
     ]);
   }
@@ -2350,6 +2689,100 @@ class ComplianceInventoryController extends BaseController
     ]);
   }
 
+  public function markAllFireExtinguisherGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/fire-extinguisher-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $periodKey = trim((string) $this->request->getPost('period_key'));
+    if (! preg_match('/^\d{4}-\d{2}$/', $periodKey)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode Fire Extinguisher tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::FIRE_EXTINGUISHER_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    $inventories = $this->inventoryModel
+      ->select('id')
+      ->where('item_type_id', self::FIRE_EXTINGUISHER_ITEM_TYPE_ID)
+      ->findAll();
+
+    $inventoryIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $inventories)));
+    $questionIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $questions)));
+
+    if (empty($inventoryIds) || empty($questionIds)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada data Fire Extinguisher untuk diperbarui.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existingLogs = $logModel
+      ->whereIn('inventory_id', $inventoryIds)
+      ->whereIn('checklist_template_id', $questionIds)
+      ->where('item_type_id', self::FIRE_EXTINGUISHER_ITEM_TYPE_ID)
+      ->where('period_key', $periodKey)
+      ->findAll();
+
+    $existingMap = [];
+    foreach ($existingLogs as $log) {
+      $existingMap[(int) $log['inventory_id']][(int) $log['checklist_template_id']] = $log;
+    }
+
+    $now = date('Y-m-d H:i:s');
+    $checkDate = date('Y-m-d');
+    $checkedBy = session()->get('name');
+    $inserted = 0;
+
+    foreach ($inventoryIds as $inventoryId) {
+      foreach ($questionIds as $questionId) {
+        if (isset($existingMap[$inventoryId][$questionId])) {
+          continue;
+        }
+
+        $logModel->insert([
+          'inventory_id' => $inventoryId,
+          'item_type_id' => self::FIRE_EXTINGUISHER_ITEM_TYPE_ID,
+          'checklist_template_id' => $questionId,
+          'check_date' => $checkDate,
+          'period_key' => $periodKey,
+          'time_slot' => null,
+          'status' => 'ok',
+          'remark' => null,
+          'photo' => null,
+          'checked_by' => $checkedBy,
+          'created_at' => $now,
+        ]);
+        $inserted++;
+      }
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'inserted' => $inserted,
+      'message' => 'Centang semua hanya mengisi sel kosong. Data yang sudah terisi tidak ditimpa.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
   public function intrusionAlarmGrid()
   {
     if (! hasRole(['admin', 'compliance'])) {
@@ -2538,6 +2971,120 @@ class ComplianceInventoryController extends BaseController
     ]);
   }
 
+  public function markAllIntrusionAlarmGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/intrusion-alarm-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    helper('checklist');
+
+    $ym = trim((string) $this->request->getPost('ym'));
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode Intrusion Alarm tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::INTRUSION_ALARM_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    $inventories = $this->inventoryModel
+      ->select('id')
+      ->where('item_type_id', self::INTRUSION_ALARM_ITEM_TYPE_ID)
+      ->findAll();
+
+    $inventoryIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $inventories)));
+    $questionIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $questions)));
+
+    if (empty($inventoryIds) || empty($questionIds)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada data Intrusion Alarm untuk diperbarui.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $periods = [];
+    for ($week = 1; $week <= 4; $week++) {
+      $periodKey = sprintf('%s-W%d', $ym, $week);
+      if (is_period_future('weekly', $periodKey) || ! is_period_editable('weekly', $periodKey)) {
+        continue;
+      }
+      $periods[] = $periodKey;
+    }
+
+    if (empty($periods)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada periode Intrusion Alarm yang bisa dicentang.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existingLogs = $logModel
+      ->whereIn('inventory_id', $inventoryIds)
+      ->whereIn('checklist_template_id', $questionIds)
+      ->where('item_type_id', self::INTRUSION_ALARM_ITEM_TYPE_ID)
+      ->like('period_key', $ym . '-W', 'after')
+      ->findAll();
+
+    $existingMap = [];
+    foreach ($existingLogs as $log) {
+      $existingMap[(int) $log['inventory_id']][(int) $log['checklist_template_id']][(string) $log['period_key']] = $log;
+    }
+
+    $now = date('Y-m-d H:i:s');
+    $checkedBy = session()->get('name');
+    $inserted = 0;
+
+    foreach ($inventoryIds as $inventoryId) {
+      foreach ($questionIds as $questionId) {
+        foreach ($periods as $periodKey) {
+          if (isset($existingMap[$inventoryId][$questionId][$periodKey])) {
+            continue;
+          }
+
+          $logModel->insert([
+            'inventory_id' => $inventoryId,
+            'item_type_id' => self::INTRUSION_ALARM_ITEM_TYPE_ID,
+            'checklist_template_id' => $questionId,
+            'check_date' => preg_replace('/-W[1-4]$/', '-01', $periodKey),
+            'period_key' => $periodKey,
+            'time_slot' => null,
+            'status' => 'ok',
+            'remark' => null,
+            'photo' => null,
+            'checked_by' => $checkedBy,
+            'created_at' => $now,
+          ]);
+          $inserted++;
+        }
+      }
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'inserted' => $inserted,
+      'message' => 'Centang semua hanya mengisi sel kosong. Data yang sudah terisi tidak ditimpa.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
   public function hydrantGrid()
   {
     if (! hasRole(['admin', 'compliance'])) {
@@ -2716,6 +3263,120 @@ class ComplianceInventoryController extends BaseController
       'ok' => true,
       'state' => $mode,
       'message' => 'Checklist Hydrant tersimpan.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
+  public function markAllHydrantGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/hydrant-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    helper('checklist');
+
+    $ym = trim((string) $this->request->getPost('ym'));
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode Hydrant tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::HYDRANT_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    $inventories = $this->inventoryModel
+      ->select('id')
+      ->where('item_type_id', self::HYDRANT_ITEM_TYPE_ID)
+      ->findAll();
+
+    $inventoryIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $inventories)));
+    $questionIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $questions)));
+
+    if (empty($inventoryIds) || empty($questionIds)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada data Hydrant untuk diperbarui.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $periods = [];
+    for ($week = 1; $week <= 4; $week++) {
+      $periodKey = sprintf('%s-W%d', $ym, $week);
+      if (is_period_future('weekly', $periodKey) || ! is_period_editable('weekly', $periodKey)) {
+        continue;
+      }
+      $periods[] = $periodKey;
+    }
+
+    if (empty($periods)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada periode Hydrant yang bisa dicentang.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existingLogs = $logModel
+      ->whereIn('inventory_id', $inventoryIds)
+      ->whereIn('checklist_template_id', $questionIds)
+      ->where('item_type_id', self::HYDRANT_ITEM_TYPE_ID)
+      ->like('period_key', $ym . '-W', 'after')
+      ->findAll();
+
+    $existingMap = [];
+    foreach ($existingLogs as $log) {
+      $existingMap[(int) $log['inventory_id']][(int) $log['checklist_template_id']][(string) $log['period_key']] = $log;
+    }
+
+    $now = date('Y-m-d H:i:s');
+    $checkedBy = session()->get('name');
+    $inserted = 0;
+
+    foreach ($inventoryIds as $inventoryId) {
+      foreach ($questionIds as $questionId) {
+        foreach ($periods as $periodKey) {
+          if (isset($existingMap[$inventoryId][$questionId][$periodKey])) {
+            continue;
+          }
+
+          $logModel->insert([
+            'inventory_id' => $inventoryId,
+            'item_type_id' => self::HYDRANT_ITEM_TYPE_ID,
+            'checklist_template_id' => $questionId,
+            'check_date' => preg_replace('/-W[1-4]$/', '-01', $periodKey),
+            'period_key' => $periodKey,
+            'time_slot' => null,
+            'status' => 'ok',
+            'remark' => null,
+            'photo' => null,
+            'checked_by' => $checkedBy,
+            'created_at' => $now,
+          ]);
+          $inserted++;
+        }
+      }
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'inserted' => $inserted,
+      'message' => 'Centang semua hanya mengisi sel kosong. Data yang sudah terisi tidak ditimpa.',
       'csrfHash' => csrf_hash(),
     ]);
   }
@@ -3077,6 +3738,801 @@ class ComplianceInventoryController extends BaseController
     ]);
   }
 
+  public function gateGrid($inventoryId)
+  {
+    if (! hasRole(['admin', 'compliance'])) {
+      return redirect()->to('/unauthorized');
+    }
+
+    helper('checklist');
+    page('Checklist Gerbang');
+
+    $inventoryId = (int) $inventoryId;
+    $ym = (string) $this->request->getGet('ym');
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      $ym = date('Y-m');
+    }
+
+    [$year, $month] = explode('-', $ym);
+    $monthStart = $ym . '-01';
+    $monthEnd = date('Y-m-t', strtotime($monthStart));
+
+    $inventory = $this->inventoryModel
+      ->select('compliance_inventory.*, asset_item_types.name AS item_display_name, asset_item_types.checklist_frequency, asset_item_types.allow_na')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
+      ->where('compliance_inventory.id', $inventoryId)
+      ->first();
+
+    if (! $inventory || (int) ($inventory['item_type_id'] ?? 0) !== self::GATE_INSPECTION_ITEM_TYPE_ID) {
+      return redirect()->to('/compliance/inventory')->with('error', 'Inventory Gerbang tidak ditemukan.');
+    }
+
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::GATE_INSPECTION_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    if (empty($questions)) {
+      return redirect()->to('/compliance/inventory')->with('error', 'Pertanyaan checklist Gerbang belum tersedia.');
+    }
+
+    $logMap = [];
+
+    $logs = (new ChecklistLogModel())
+      ->select('id, inventory_id, checklist_template_id, period_key, status, checked_by, check_date')
+      ->where('inventory_id', $inventoryId)
+      ->where('item_type_id', self::GATE_INSPECTION_ITEM_TYPE_ID)
+      ->like('period_key', $ym . '-', 'after')
+      ->findAll();
+
+    foreach ($logs as $log) {
+      $logMap[(int) $log['checklist_template_id']][(string) $log['period_key']] = $log;
+    }
+
+    $holidayDates = holiday_dates_between($monthStart, $monthEnd);
+    $days = generate_calendar_periods('daily', (int) $year, (int) $month);
+    foreach ($days as &$day) {
+      $day['is_offday'] = is_date_offday((string) ($day['period_key'] ?? ''), $holidayDates);
+    }
+    unset($day);
+
+    $rows = [];
+    $rowNo = 1;
+    foreach ($questions as $question) {
+      $templateId = (int) ($question['id'] ?? 0);
+      $rows[] = [
+        'row_no' => $rowNo++,
+        'inventory_id' => $inventoryId,
+        'asset_code' => (string) ($inventory['asset_code'] ?? '-'),
+        'location' => trim((string) ($inventory['specific_area'] ?? '')) !== '' ? trim((string) $inventory['specific_area']) : '-',
+        'question_id' => $templateId,
+        'question' => trim((string) ($question['question'] ?? '')) !== '' ? trim((string) $question['question']) : '-',
+        'checks' => $logMap[$templateId] ?? [],
+        'detail_url' => '/compliance/checklist/' . $inventoryId . '?ym=' . rawurlencode($ym),
+      ];
+    }
+
+    return view('compliance/checklist/gate_grid', [
+      'title' => 'Checklist Gerbang',
+      'inventory' => $inventory,
+      'ym' => $ym,
+      'monthLabel' => date('F Y', strtotime($ym . '-01')),
+      'rows' => $rows,
+      'days' => $days,
+      'saveUrl' => '/compliance/checklist/gate-grid/save',
+      'bulkUrl' => '/compliance/checklist/gate-grid/mark-all',
+      'csrfName' => csrf_token(),
+      'csrfHash' => csrf_hash(),
+      'itemLabel' => 'Gerbang',
+    ]);
+  }
+
+  public function genericGrid($inventoryId)
+  {
+    if (! hasRole(['admin', 'compliance', 'staff'])) {
+      return redirect()->to('/unauthorized');
+    }
+
+    helper('checklist');
+    page('Checklist Grid');
+
+    $inventoryId = (int) $inventoryId;
+    $inventory = $this->inventoryModel
+      ->select('
+        compliance_inventory.*,
+        asset_item_types.name AS item_display_name,
+        asset_item_types.checklist_frequency,
+        asset_item_types.allow_na
+      ')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
+      ->where('compliance_inventory.id', $inventoryId)
+      ->first();
+
+    if (! $inventory) {
+      return redirect()->to('/compliance/inventory')->with('error', 'Inventory tidak ditemukan.');
+    }
+
+    $frequency = strtolower((string) ($inventory['checklist_frequency'] ?? 'monthly'));
+    $isSlotChecklist = (int) ($inventory['item_type_id'] ?? 0) === self::TOILET_CHECKLIST_ITEM_TYPE_ID;
+
+    $ym = (string) $this->request->getGet('ym');
+    if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      $ym = date('Y-m');
+    }
+
+    [$year, $month] = explode('-', $ym);
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', $inventory['item_type_id'])
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    if (empty($questions)) {
+      return redirect()->to('/compliance/inventory/detail/' . $inventoryId)->with('error', 'Pertanyaan checklist belum tersedia.');
+    }
+
+    $columns = [];
+    $columnMap = [];
+    $holidayDates = [];
+    $periodPrefix = null;
+
+    if ($frequency === 'daily') {
+      $holidayDates = holiday_dates_between($ym . '-01', date('Y-m-t', strtotime($ym . '-01')));
+      $columns = generate_calendar_periods('daily', (int) $year, (int) $month);
+      foreach ($columns as &$column) {
+        $column['is_offday'] = is_date_offday((string) ($column['period_key'] ?? ''), $holidayDates);
+      }
+      unset($column);
+      $periodPrefix = $ym . '-';
+    } elseif ($frequency === 'weekly') {
+      $columns = array_map(static fn(int $week): array => [
+        'period_key' => sprintf('%s-W%d', $ym, $week),
+        'label' => 'W' . $week,
+        'is_offday' => false,
+      ], [1, 2, 3, 4]);
+      $periodPrefix = $ym . '-W';
+    } else {
+      for ($m = 1; $m <= 12; $m++) {
+        $periodKey = sprintf('%04d-%02d', (int) $year, $m);
+        $columns[] = [
+          'period_key' => $periodKey,
+          'label' => date('M', strtotime($periodKey . '-01')),
+          'is_offday' => false,
+        ];
+      }
+      $periodPrefix = $year . '-';
+    }
+
+    foreach ($columns as $column) {
+      $columnMap[(string) $column['period_key']] = $column;
+    }
+
+    $logQuery = (new ChecklistLogModel())
+      ->select('id, inventory_id, checklist_template_id, period_key, status, time_slot')
+      ->where('inventory_id', $inventoryId)
+      ->where('item_type_id', (int) $inventory['item_type_id']);
+
+    if ($frequency === 'monthly') {
+      $logQuery->like('period_key', $periodPrefix, 'after');
+    } else {
+      $logQuery->like('period_key', $periodPrefix, 'after');
+    }
+
+    $logs = $logQuery->findAll();
+    $logMap = [];
+    foreach ($logs as $log) {
+      $templateId = (int) ($log['checklist_template_id'] ?? 0);
+      $periodKey = (string) ($log['period_key'] ?? '');
+      $slot = trim((string) ($log['time_slot'] ?? ''));
+      $logMap[$templateId][$slot][$periodKey] = $log;
+    }
+
+    $slotLabels = [
+      'PG' => 'Pagi',
+      'SI' => 'Siang',
+      'SO' => 'Sore',
+    ];
+
+    $rows = [];
+    $rowNo = 1;
+    if ($isSlotChecklist && $frequency === 'daily') {
+      foreach ($slotLabels as $slotCode => $slotLabel) {
+        foreach ($questions as $question) {
+          $templateId = (int) ($question['id'] ?? 0);
+          $rows[] = [
+            'row_no' => $rowNo++,
+            'template_id' => $templateId,
+            'slot_code' => $slotCode,
+            'slot_label' => $slotLabel,
+            'question' => trim((string) ($question['question'] ?? '')) !== '' ? trim((string) ($question['question'])) : '-',
+            'checks' => $logMap[$templateId][$slotCode] ?? [],
+          ];
+        }
+      }
+    } else {
+      foreach ($questions as $question) {
+        $templateId = (int) ($question['id'] ?? 0);
+        $rows[] = [
+          'row_no' => $rowNo++,
+          'template_id' => $templateId,
+          'slot_code' => '',
+          'slot_label' => '',
+          'question' => trim((string) ($question['question'] ?? '')) !== '' ? trim((string) ($question['question'])) : '-',
+          'checks' => $logMap[$templateId][''] ?? [],
+        ];
+      }
+    }
+
+    return view('compliance/checklist/generic_grid', [
+      'title' => 'Checklist Grid',
+      'inventory' => $inventory,
+      'frequency' => $frequency,
+      'ym' => $ym,
+      'year' => (int) $year,
+      'monthLabel' => date('F Y', strtotime($ym . '-01')),
+      'columns' => $columns,
+      'rows' => $rows,
+      'isSlotChecklist' => $isSlotChecklist,
+      'saveUrl' => '/compliance/checklist/generic-grid/save',
+      'csrfName' => csrf_token(),
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
+  public function saveGenericGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/inventory');
+    }
+
+    if (! hasRole(['admin', 'compliance', 'staff'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    helper('checklist');
+
+    $inventoryId = (int) $this->request->getPost('inventory_id');
+    $templateId = (int) $this->request->getPost('template_id');
+    $periodKey = trim((string) $this->request->getPost('period_key'));
+    $mode = strtolower(trim((string) $this->request->getPost('mode')));
+    $timeSlot = trim((string) $this->request->getPost('time_slot'));
+
+    if ($inventoryId <= 0 || $templateId <= 0 || ! in_array($mode, ['ok', 'not_ok', 'clear'], true)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Data checklist grid tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $inventory = $this->inventoryModel
+      ->select('compliance_inventory.id, compliance_inventory.item_type_id, asset_item_types.checklist_frequency')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
+      ->where('compliance_inventory.id', $inventoryId)
+      ->first();
+
+    if (! $inventory) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Inventory tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $frequency = strtolower((string) ($inventory['checklist_frequency'] ?? 'monthly'));
+    $isSlotChecklist = (int) ($inventory['item_type_id'] ?? 0) === self::TOILET_CHECKLIST_ITEM_TYPE_ID;
+
+    if (
+      ($frequency === 'daily' && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $periodKey)) ||
+      ($frequency === 'weekly' && ! preg_match('/^\d{4}-\d{2}-W[1-4]$/', $periodKey)) ||
+      ($frequency === 'monthly' && ! preg_match('/^\d{4}-\d{2}$/', $periodKey))
+    ) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode checklist grid tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    if ($frequency === 'daily') {
+      $holidayDates = holiday_dates_between($periodKey, $periodKey);
+      if (is_date_offday($periodKey, $holidayDates)) {
+        return $this->response->setStatusCode(422)->setJSON([
+          'ok' => false,
+          'message' => 'Checklist tidak dapat diisi pada hari libur.',
+          'csrfHash' => csrf_hash(),
+        ]);
+      }
+    } elseif (is_period_future($frequency, $periodKey) || ! is_period_editable($frequency, $periodKey)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode checklist tidak bisa diedit.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    if (! $isSlotChecklist) {
+      $timeSlot = '';
+    } elseif (! in_array($timeSlot, ['PG', 'SI', 'SO'], true)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Slot checklist tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $question = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', (int) $inventory['item_type_id'])
+      ->where('active', 1)
+      ->where('id', $templateId)
+      ->first();
+
+    if (! $question) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Pertanyaan checklist tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existingQuery = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->where('period_key', $periodKey)
+      ->where('checklist_template_id', $templateId);
+
+    if ($isSlotChecklist) {
+      $existingQuery->where('time_slot', $timeSlot);
+    }
+
+    $existing = $existingQuery->first();
+
+    if ($mode === 'clear') {
+      if ($existing) {
+        $logModel->delete($existing['id']);
+      }
+
+      return $this->response->setJSON([
+        'ok' => true,
+        'state' => 'empty',
+        'message' => 'Checklist grid dibersihkan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $payload = [
+      'inventory_id' => $inventoryId,
+      'item_type_id' => (int) $inventory['item_type_id'],
+      'checklist_template_id' => $templateId,
+      'check_date' => $frequency === 'daily'
+        ? $periodKey
+        : ($frequency === 'weekly'
+          ? preg_replace('/-W[1-4]$/', '-01', $periodKey)
+          : ($periodKey . '-01')),
+      'period_key' => $periodKey,
+      'time_slot' => $isSlotChecklist ? $timeSlot : null,
+      'status' => $mode,
+      'remark' => null,
+      'photo' => null,
+      'checked_by' => session()->get('name'),
+      'created_at' => date('Y-m-d H:i:s'),
+    ];
+
+    if ($existing) {
+      $logModel->update($existing['id'], [
+        'status' => $mode,
+        'check_date' => $payload['check_date'],
+        'time_slot' => $payload['time_slot'],
+        'checked_by' => $payload['checked_by'],
+      ]);
+    } else {
+      $logModel->insert($payload);
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'state' => $mode,
+      'message' => 'Checklist grid tersimpan.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
+  public function markAllGenericGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/inventory');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    helper('checklist');
+
+    $inventoryId = (int) $this->request->getPost('inventory_id');
+    $ym = trim((string) $this->request->getPost('ym'));
+
+    if ($inventoryId <= 0 || ! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode checklist grid tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $inventory = $this->inventoryModel
+      ->select('compliance_inventory.id, compliance_inventory.item_type_id, asset_item_types.checklist_frequency')
+      ->join('asset_item_types', 'asset_item_types.id = compliance_inventory.item_type_id', 'left')
+      ->where('compliance_inventory.id', $inventoryId)
+      ->first();
+
+    if (! $inventory) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Inventory tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $frequency = strtolower((string) ($inventory['checklist_frequency'] ?? 'monthly'));
+    $isSlotChecklist = (int) ($inventory['item_type_id'] ?? 0) === self::TOILET_CHECKLIST_ITEM_TYPE_ID;
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', (int) $inventory['item_type_id'])
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    $questionIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $questions)));
+    if (empty($questionIds)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada pertanyaan checklist aktif.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    [$year, $month] = explode('-', $ym);
+    $periods = [];
+    $periodPrefix = '';
+    $holidayDates = [];
+
+    if ($frequency === 'daily') {
+      $periodPrefix = $ym . '-';
+      $monthStart = $ym . '-01';
+      $monthEnd = date('Y-m-t', strtotime($monthStart));
+      $holidayDates = holiday_dates_between($monthStart, $monthEnd);
+
+      foreach (generate_calendar_periods('daily', (int) $year, (int) $month) as $day) {
+        $periodKey = (string) ($day['period_key'] ?? '');
+        if ($periodKey === '' || is_date_offday($periodKey, $holidayDates) || is_period_future('daily', $periodKey)) {
+          continue;
+        }
+        $periods[] = $periodKey;
+      }
+    } elseif ($frequency === 'weekly') {
+      $periodPrefix = $ym . '-W';
+      for ($week = 1; $week <= 4; $week++) {
+        $periodKey = sprintf('%s-W%d', $ym, $week);
+        if (is_period_future('weekly', $periodKey) || ! is_period_editable('weekly', $periodKey)) {
+          continue;
+        }
+        $periods[] = $periodKey;
+      }
+    } else {
+      $periodPrefix = $year . '-';
+      for ($monthNumber = 1; $monthNumber <= 12; $monthNumber++) {
+        $periodKey = sprintf('%04d-%02d', (int) $year, $monthNumber);
+        if (is_period_future('monthly', $periodKey) || ! is_period_editable('monthly', $periodKey)) {
+          continue;
+        }
+        $periods[] = $periodKey;
+      }
+    }
+
+    if (empty($periods)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada periode checklist yang bisa dicentang.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $slots = $isSlotChecklist ? ['PG', 'SI', 'SO'] : [''];
+    $logModel = new ChecklistLogModel();
+    $existingLogs = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->where('item_type_id', (int) $inventory['item_type_id'])
+      ->whereIn('checklist_template_id', $questionIds)
+      ->like('period_key', $periodPrefix, 'after')
+      ->findAll();
+
+    $existingMap = [];
+    foreach ($existingLogs as $log) {
+      $templateId = (int) ($log['checklist_template_id'] ?? 0);
+      $slot = trim((string) ($log['time_slot'] ?? ''));
+      $periodKey = (string) ($log['period_key'] ?? '');
+      $existingMap[$templateId][$slot][$periodKey] = $log;
+    }
+
+    $now = date('Y-m-d H:i:s');
+    $checkedBy = session()->get('name');
+    $inserted = 0;
+
+    foreach ($questionIds as $questionId) {
+      foreach ($slots as $slot) {
+        foreach ($periods as $periodKey) {
+          if (isset($existingMap[$questionId][$slot][$periodKey])) {
+            continue;
+          }
+
+          $checkDate = $frequency === 'daily'
+            ? $periodKey
+            : ($frequency === 'weekly'
+              ? preg_replace('/-W[1-4]$/', '-01', $periodKey)
+              : ($periodKey . '-01'));
+
+          $logModel->insert([
+            'inventory_id' => $inventoryId,
+            'item_type_id' => (int) $inventory['item_type_id'],
+            'checklist_template_id' => $questionId,
+            'check_date' => $checkDate,
+            'period_key' => $periodKey,
+            'time_slot' => $isSlotChecklist ? $slot : null,
+            'status' => 'ok',
+            'remark' => null,
+            'photo' => null,
+            'checked_by' => $checkedBy,
+            'created_at' => $now,
+          ]);
+          $inserted++;
+        }
+      }
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'inserted' => $inserted,
+      'message' => 'Centang semua hanya mengisi sel kosong. Data yang sudah terisi tidak ditimpa.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
+  public function saveGateGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/checklist/gate-grid');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $inventoryId = (int) $this->request->getPost('inventory_id');
+    $periodKey = trim((string) $this->request->getPost('period_key'));
+    $templateId = (int) $this->request->getPost('template_id');
+    $mode = strtolower(trim((string) $this->request->getPost('mode')));
+
+    if ($inventoryId <= 0 || $templateId <= 0 || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $periodKey)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Data checklist Gerbang tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    if (! in_array($mode, ['ok', 'not_ok', 'clear'], true)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Status checklist tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $inventory = $this->inventoryModel->where('id', $inventoryId)->first();
+    if (! $inventory || (int) ($inventory['item_type_id'] ?? 0) !== self::GATE_INSPECTION_ITEM_TYPE_ID) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Inventory Gerbang tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $holidayDates = holiday_dates_between($periodKey, $periodKey);
+    if (is_date_offday($periodKey, $holidayDates)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Checklist tidak dapat diisi pada hari libur.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $question = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::GATE_INSPECTION_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->where('id', $templateId)
+      ->first();
+
+    if (! $question) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Pertanyaan checklist tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existing = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->where('period_key', $periodKey)
+      ->where('checklist_template_id', $templateId)
+      ->first();
+
+    if ($mode === 'clear') {
+      if ($existing) {
+        $logModel->delete($existing['id']);
+      }
+
+      return $this->response->setJSON([
+        'ok' => true,
+        'state' => 'empty',
+        'message' => 'Checklist Gerbang dibersihkan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    if ($existing) {
+      $logModel->update($existing['id'], [
+        'status' => $mode,
+        'checked_by' => session()->get('name'),
+        'check_date' => date('Y-m-d'),
+        'updated_at' => date('Y-m-d H:i:s'),
+      ]);
+    } else {
+      $logModel->insert([
+        'inventory_id' => $inventoryId,
+        'item_type_id' => self::GATE_INSPECTION_ITEM_TYPE_ID,
+        'checklist_template_id' => $templateId,
+        'check_date' => date('Y-m-d'),
+        'period_key' => $periodKey,
+        'time_slot' => null,
+        'status' => $mode,
+        'remark' => null,
+        'photo' => null,
+        'checked_by' => session()->get('name'),
+        'created_at' => date('Y-m-d H:i:s'),
+      ]);
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'state' => $mode,
+      'message' => 'Checklist Gerbang tersimpan.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
+  public function markAllGateGrid()
+  {
+    if (! $this->request->isAJAX()) {
+      return redirect()->to('/compliance/inventory');
+    }
+
+    if (! hasRole(['admin', 'compliance'])) {
+      return $this->response->setStatusCode(403)->setJSON([
+        'ok' => false,
+        'message' => 'Anda tidak memiliki akses.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    helper('checklist');
+
+    $inventoryId = (int) $this->request->getPost('inventory_id');
+    $ym = trim((string) $this->request->getPost('ym'));
+    if ($inventoryId <= 0 || ! preg_match('/^\d{4}-\d{2}$/', $ym)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'ok' => false,
+        'message' => 'Periode Gerbang tidak valid.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $inventory = $this->inventoryModel->where('id', $inventoryId)->first();
+    if (! $inventory || (int) ($inventory['item_type_id'] ?? 0) !== self::GATE_INSPECTION_ITEM_TYPE_ID) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'ok' => false,
+        'message' => 'Inventory Gerbang tidak ditemukan.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', self::GATE_INSPECTION_ITEM_TYPE_ID)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    $questionIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $questions)));
+
+    if (empty($questionIds)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada data Gerbang untuk diperbarui.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existingLogs = $logModel
+      ->where('inventory_id', $inventoryId)
+      ->whereIn('checklist_template_id', $questionIds)
+      ->where('item_type_id', self::GATE_INSPECTION_ITEM_TYPE_ID)
+      ->like('period_key', $ym . '-', 'after')
+      ->findAll();
+
+    $existingMap = [];
+    foreach ($existingLogs as $log) {
+      $existingMap[(int) $log['inventory_id']][(int) $log['checklist_template_id']][(string) $log['period_key']] = $log;
+    }
+
+    $now = date('Y-m-d H:i:s');
+    $checkDate = date('Y-m-d');
+    $checkedBy = session()->get('name');
+    $inserted = 0;
+    $monthStart = $ym . '-01';
+    $monthEnd = date('Y-m-t', strtotime($monthStart));
+    $holidayDates = holiday_dates_between($monthStart, $monthEnd);
+    $days = generate_calendar_periods('daily', (int) substr($ym, 0, 4), (int) substr($ym, 5, 2));
+
+    foreach ($questionIds as $questionId) {
+      foreach ($days as $day) {
+        $periodKey = (string) ($day['period_key'] ?? '');
+        if ($periodKey === '' || is_date_offday($periodKey, $holidayDates)) {
+          continue;
+        }
+
+        if (isset($existingMap[$inventoryId][$questionId][$periodKey])) {
+          continue;
+        }
+
+        $logModel->insert([
+          'inventory_id' => $inventoryId,
+          'item_type_id' => self::GATE_INSPECTION_ITEM_TYPE_ID,
+          'checklist_template_id' => $questionId,
+          'check_date' => $checkDate,
+          'period_key' => $periodKey,
+          'time_slot' => null,
+          'status' => 'ok',
+          'remark' => null,
+          'photo' => null,
+          'checked_by' => $checkedBy,
+          'created_at' => $now,
+        ]);
+        $inserted++;
+      }
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'inserted' => $inserted,
+      'message' => 'Centang semua hanya mengisi sel kosong. Data yang sudah terisi tidak ditimpa.',
+      'csrfHash' => csrf_hash(),
+    ]);
+  }
+
   public function saveHeatDetectorGrid()
   {
     if (! $this->request->isAJAX()) {
@@ -3287,72 +4743,7 @@ class ComplianceInventoryController extends BaseController
   private function resolveEmergencyLightGridColumns(array $masters): array
   {
     $groups = [
-      'lampu_darurat' => [
-        'group_key' => 'lampu_darurat',
-        'label' => 'Lampu Darurat',
-        'columns' => [
-          [
-            'type' => 'field',
-            'key' => 'type_description',
-            'label' => 'Jenis Lampu',
-            'class' => 'col-type',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'berfungsi',
-            'id' => 0,
-            'label' => 'Berfungsi Baik',
-            'class' => 'col-question',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'pecah',
-            'id' => 0,
-            'label' => 'Tidak Pecah',
-            'class' => 'col-question',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'kabel',
-            'id' => 0,
-            'label' => 'Kabel',
-            'class' => 'col-question',
-          ],
-        ],
-      ],
-      'lampu_exit' => [
-        'group_key' => 'lampu_exit',
-        'label' => 'Lampu EXIT',
-        'columns' => [
-          [
-            'type' => 'field',
-            'key' => 'type_description',
-            'label' => 'Jenis Lampu',
-            'class' => 'col-type',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'berfungsi',
-            'id' => 0,
-            'label' => 'Berfungsi Baik',
-            'class' => 'col-question',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'pecah',
-            'id' => 0,
-            'label' => 'Tidak Pecah',
-            'class' => 'col-question',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'kabel',
-            'id' => 0,
-            'label' => 'Kabel',
-            'class' => 'col-question',
-          ],
-        ],
-      ],
+      'lampu_darurat' => $this->buildEmergencyLampGroup('lampu_darurat', 'Lampu Darurat'),
     ];
 
     foreach ($masters as $master) {
@@ -3364,9 +4755,7 @@ class ComplianceInventoryController extends BaseController
       }
 
       $groupKey = null;
-      if (strpos($question, 'exit') !== false) {
-        $groupKey = 'lampu_exit';
-      } elseif (strpos($question, 'darurat') !== false || strpos($question, 'emergency') !== false) {
+      if (strpos($question, 'darurat') !== false || strpos($question, 'emergency') !== false) {
         $groupKey = 'lampu_darurat';
       }
 
@@ -3392,6 +4781,161 @@ class ComplianceInventoryController extends BaseController
     }
 
     return array_values($groups);
+  }
+
+  private function resolveEmergencyExitLightGridColumns(array $masters): array
+  {
+    $groups = [
+      'lampu_exit' => $this->buildEmergencyLampGroup('lampu_exit', 'Lampu EXIT'),
+    ];
+
+    foreach ($masters as $master) {
+      $templateId = (int) ($master['id'] ?? 0);
+      $question = strtolower(trim((string) ($master['question'] ?? '')));
+
+      if ($templateId < 1 || $question === '') {
+        continue;
+      }
+
+      if (strpos($question, 'jenis') !== false) {
+        continue;
+      }
+
+      foreach ($groups['lampu_exit']['columns'] as &$column) {
+        if (($column['type'] ?? '') !== 'question') {
+          continue;
+        }
+
+        $slot = (string) ($column['slot'] ?? '');
+        if ($slot === 'berfungsi' && strpos($question, 'berfun') !== false) {
+          $column['id'] = $templateId;
+        } elseif ($slot === 'pecah' && strpos($question, 'pecah') !== false) {
+          $column['id'] = $templateId;
+        } elseif ($slot === 'kabel' && strpos($question, 'kabel') !== false) {
+          $column['id'] = $templateId;
+        }
+      }
+      unset($column);
+    }
+
+    return array_values($groups);
+  }
+
+  private function buildEmergencyLampGroup(string $groupKey, string $label): array
+  {
+    return [
+      'group_key' => $groupKey,
+      'label' => $label,
+      'columns' => [
+        [
+          'type' => 'field',
+          'key' => 'type_description',
+          'label' => 'Jenis Lampu',
+          'class' => 'col-type',
+        ],
+        [
+          'type' => 'question',
+          'slot' => 'berfungsi',
+          'id' => 0,
+          'label' => 'Berfungsi Baik',
+          'class' => 'col-question',
+        ],
+        [
+          'type' => 'question',
+          'slot' => 'pecah',
+          'id' => 0,
+          'label' => 'Tidak Pecah',
+          'class' => 'col-question',
+        ],
+        [
+          'type' => 'question',
+          'slot' => 'kabel',
+          'id' => 0,
+          'label' => 'Kabel',
+          'class' => 'col-question',
+        ],
+      ],
+    ];
+  }
+
+  private function bulkMarkEmergencyLampGrid(int $itemTypeId, string $periodKey, string $itemLabel)
+  {
+    $questions = (new \App\Models\ChecklistMasterModel())
+      ->where('item_type_id', $itemTypeId)
+      ->where('active', 1)
+      ->orderBy('id', 'ASC')
+      ->findAll();
+
+    $inventories = $this->inventoryModel
+      ->select('id')
+      ->where('item_type_id', $itemTypeId)
+      ->findAll();
+
+    $inventoryIds = array_values(array_filter(array_map(static fn(array $row): int => (int) ($row['id'] ?? 0), $inventories)));
+    $questionIds = array_values(array_filter(array_map(static function (array $row): int {
+      $question = strtolower(trim((string) ($row['question'] ?? '')));
+      if (strpos($question, 'jenis') !== false) {
+        return 0;
+      }
+
+      return (int) ($row['id'] ?? 0);
+    }, $questions)));
+
+    if (empty($inventoryIds) || empty($questionIds)) {
+      return $this->response->setJSON([
+        'ok' => true,
+        'message' => 'Tidak ada data ' . $itemLabel . ' untuk diperbarui.',
+        'csrfHash' => csrf_hash(),
+      ]);
+    }
+
+    $logModel = new ChecklistLogModel();
+    $existingLogs = $logModel
+      ->whereIn('inventory_id', $inventoryIds)
+      ->whereIn('checklist_template_id', $questionIds)
+      ->where('item_type_id', $itemTypeId)
+      ->where('period_key', $periodKey)
+      ->findAll();
+
+    $existingMap = [];
+    foreach ($existingLogs as $log) {
+      $existingMap[(int) $log['inventory_id']][(int) $log['checklist_template_id']] = $log;
+    }
+
+    $now = date('Y-m-d H:i:s');
+    $checkDate = date('Y-m-d');
+    $checkedBy = session()->get('name');
+    $inserted = 0;
+
+    foreach ($inventoryIds as $inventoryId) {
+      foreach ($questionIds as $questionId) {
+        if (isset($existingMap[$inventoryId][$questionId])) {
+          continue;
+        }
+
+        $logModel->insert([
+          'inventory_id' => $inventoryId,
+          'item_type_id' => $itemTypeId,
+          'checklist_template_id' => $questionId,
+          'check_date' => $checkDate,
+          'period_key' => $periodKey,
+          'time_slot' => null,
+          'status' => 'ok',
+          'remark' => null,
+          'photo' => null,
+          'checked_by' => $checkedBy,
+          'created_at' => $now,
+        ]);
+        $inserted++;
+      }
+    }
+
+    return $this->response->setJSON([
+      'ok' => true,
+      'inserted' => $inserted,
+      'message' => 'Centang semua hanya mengisi sel kosong. Data yang sudah terisi tidak ditimpa.',
+      'csrfHash' => csrf_hash(),
+    ]);
   }
 
   private function resolveWeeklyAlarmGridColumns(array $masters): array

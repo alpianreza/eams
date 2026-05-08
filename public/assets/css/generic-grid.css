@@ -1,21 +1,21 @@
-.cctv-grid-wrap {
+.gg-grid-wrap {
   max-height: calc(100vh - 240px);
 }
 
-.cctv-grid-table {
-  --cctv-border: #1f293733;
-  min-width: 1180px;
+.gg-grid-table {
+  --gg-border: #1f293733;
+  min-width: 820px;
   font-size: 0.85rem;
 }
 
-.cctv-grid-table th,
-.cctv-grid-table td {
-  border-color: var(--cctv-border);
+.gg-grid-table th,
+.gg-grid-table td {
+  border-color: var(--gg-border);
   white-space: nowrap;
-  padding: 0.5rem 0.55rem;
+  padding: 0.55rem 0.65rem;
 }
 
-.cctv-grid-table thead th {
+.gg-grid-table thead th {
   position: sticky;
   top: 0;
   z-index: 4;
@@ -24,100 +24,99 @@
   font-weight: 700;
 }
 
-.cctv-grid-table .sticky-left {
+.gg-grid-table .sticky-left {
   position: sticky;
   background: #fff;
   z-index: 3;
 }
 
-.cctv-grid-table thead .sticky-left {
+.gg-grid-table thead .sticky-left {
   background: #f8fafc;
   z-index: 5;
 }
 
-.cctv-grid-table .sticky-no {
+.gg-grid-table .sticky-no {
   left: 0;
   width: 52px;
   min-width: 52px;
   max-width: 52px;
 }
 
-.cctv-grid-table .sticky-name {
+.gg-grid-table .sticky-slot {
   left: 52px;
-  min-width: 128px;
-  max-width: 150px;
+  width: 84px;
+  min-width: 84px;
+  max-width: 84px;
+}
+
+.gg-grid-table .sticky-question {
+  left: 52px;
+  min-width: 220px;
+  max-width: 360px;
   white-space: normal;
   word-break: break-word;
   line-height: 1.35;
 }
 
-.cctv-grid-table .sticky-location {
-  left: 180px;
-  min-width: 150px;
-  max-width: 180px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.35;
+.gg-grid-table .sticky-question.with-slot {
+  left: 136px;
 }
 
-.cctv-grid-table tbody tr.is-focused td {
-  background: #eff6ff;
+.gg-grid-table thead .sticky-question,
+.gg-grid-table tbody .sticky-question {
+  width: auto;
 }
 
-.cctv-grid-table tbody tr.is-focused .sticky-left {
-  background: #eff6ff;
-}
-
-.cctv-grid-table th.is-offday {
+.gg-grid-table thead th.is-offday {
   background: #475569;
   color: #fff;
 }
 
-.cctv-check-cell {
-  width: 38px;
-  min-width: 38px;
-  height: 36px;
+.gg-check-cell {
+  width: 42px;
+  min-width: 42px;
+  height: 38px;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
-.cctv-check-cell:hover:not(.is-offday) {
+.gg-check-cell:hover:not(.is-offday) {
   background: #f1f5f9;
 }
 
-.cctv-check-cell.is-offday {
+.gg-check-cell.is-offday {
   background: #475569;
   color: #475569;
   cursor: not-allowed;
 }
 
-.cctv-check-cell.is-ok {
+.gg-check-cell.is-ok {
   background: #dcfce7;
   color: #15803d;
   font-size: 1rem;
 }
 
-.cctv-check-cell.is-alert {
+.gg-check-cell.is-not-ok {
   background: #fee2e2;
   color: #b91c1c;
   font-size: 1rem;
 }
 
-.cctv-check-cell.is-saving {
+.gg-check-cell.is-saving {
   outline: 2px solid #0ea5e9;
   outline-offset: -2px;
 }
 
-.cctv-cell-mark {
+.gg-cell-mark {
   display: inline-block;
   width: 8px;
   height: 8px;
   border-radius: 999px;
 }
 
-.cctv-legend-pill {
+.gg-legend-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -136,41 +135,57 @@
   border-color: #86efac;
 }
 
+.legend-box.is-not-ok {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
 .legend-box.is-offday {
   background: #475569;
   border-color: #334155;
 }
 
-.legend-box.is-alert {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
 @media (max-width: 991.98px) {
-  .cctv-grid-wrap {
+  .gg-grid-wrap {
     max-height: none;
   }
 
-  .cctv-grid-table {
-    min-width: 980px;
+  .gg-grid-table {
+    min-width: 680px;
     font-size: 0.8rem;
   }
 
-  .cctv-grid-table .sticky-no {
+  .gg-grid-table th,
+  .gg-grid-table td {
+    padding: 0.45rem 0.5rem;
+  }
+
+  .gg-grid-table .sticky-no {
     width: 44px;
     min-width: 44px;
     max-width: 44px;
   }
 
-  .cctv-grid-table .sticky-name {
+  .gg-grid-table .sticky-slot {
     left: 44px;
-    min-width: 104px;
-    max-width: 120px;
+    width: 72px;
+    min-width: 72px;
+    max-width: 72px;
   }
 
-  .cctv-grid-table .sticky-location {
-    left: 148px;
-    min-width: 120px;
-    max-width: 140px;
+  .gg-grid-table .sticky-question {
+    left: 44px;
+    min-width: 170px;
+    max-width: 240px;
+  }
+
+  .gg-grid-table .sticky-question.with-slot {
+    left: 116px;
+  }
+
+  .gg-check-cell {
+    width: 36px;
+    min-width: 36px;
+    height: 34px;
   }
 }

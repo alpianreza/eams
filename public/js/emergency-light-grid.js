@@ -3,6 +3,9 @@
   if (!page) return;
 
   const saveUrl = page.dataset.saveUrl || '';
+  const bulkUrl = page.dataset.bulkUrl || '';
+  const periodKey = page.dataset.periodKey || '';
+  const itemLabel = page.dataset.itemLabel || 'Checklist';
   let csrfName = page.dataset.csrfName || '';
   let csrfHash = page.dataset.csrfHash || '';
   let busyKey = null;
@@ -38,6 +41,14 @@
 
     cell.classList.add('is-empty');
     cell.innerHTML = '<span class="el-cell-mark"></span>';
+  };
+
+  const setAllEmptyCellsToOk = () => {
+    page.querySelectorAll('.el-check-cell').forEach((cell) => {
+      const state = cell.dataset.state || 'empty';
+      if (state !== 'empty') return;
+      setCellState(cell, 'ok');
+    });
   };
 
   const saveCell = async (cell, mode) => {
@@ -90,12 +101,65 @@
     }
   };
 
+  const markAll = async () => {
+    if (!bulkUrl || !periodKey || busyKey === '__bulk__') {
+      return;
+    }
+
+    busyKey = '__bulk__';
+    const button = page.querySelector('.el-mark-all-btn');
+    if (button) {
+      button.disabled = true;
+    }
+
+    try {
+      const body = new URLSearchParams();
+      body.set('period_key', periodKey);
+      if (csrfName) {
+        body.set(csrfName, csrfHash);
+      }
+
+      const response = await fetch(bulkUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: body.toString(),
+        credentials: 'same-origin',
+      });
+
+      const result = await response.json();
+      csrfHash = result.csrfHash || csrfHash;
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.message || `Gagal mencentang semua ${itemLabel}.`);
+      }
+
+      setAllEmptyCellsToOk();
+    } catch (error) {
+      console.error(error);
+      alert(error.message || `Gagal mencentang semua ${itemLabel}.`);
+    } finally {
+      busyKey = null;
+      if (button) {
+        button.disabled = false;
+      }
+    }
+  };
+
   page.addEventListener('click', (event) => {
     const cell = event.target.closest('.el-check-cell');
-    if (!cell) return;
+    if (cell) {
+      const state = cell.dataset.state || 'empty';
+      const nextMode = cycleMap[state] || 'ok';
+      saveCell(cell, nextMode);
+      return;
+    }
 
-    const state = cell.dataset.state || 'empty';
-    const nextMode = cycleMap[state] || 'ok';
-    saveCell(cell, nextMode);
+    const bulkButton = event.target.closest('.el-mark-all-btn');
+    if (bulkButton) {
+      markAll();
+    }
   });
 })();

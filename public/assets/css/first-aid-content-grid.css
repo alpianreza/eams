@@ -4,7 +4,7 @@
 
 .fac-grid-table {
   --fac-border: #1f293733;
-  min-width: 1500px;
+  min-width: 1180px;
   font-size: 0.85rem;
 }
 
@@ -12,6 +12,7 @@
 .fac-grid-table td {
   border-color: var(--fac-border);
   white-space: nowrap;
+  padding: 0.5rem 0.55rem;
 }
 
 .fac-grid-table thead th {
@@ -36,12 +37,18 @@
 
 .fac-grid-table .sticky-no {
   left: 0;
-  min-width: 56px;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
 }
 
 .fac-grid-table .sticky-question {
-  left: 56px;
-  min-width: 280px;
+  left: 52px;
+  min-width: 200px;
+  max-width: 260px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
 }
 
 .fac-grid-table thead th.is-offday {
@@ -125,5 +132,28 @@
 @media (max-width: 991.98px) {
   .fac-grid-wrap {
     max-height: none;
+  }
+
+  .fac-grid-table {
+    min-width: 920px;
+    font-size: 0.8rem;
+  }
+
+  .fac-grid-table .sticky-no {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+  }
+
+  .fac-grid-table .sticky-question {
+    left: 44px;
+    min-width: 150px;
+    max-width: 190px;
+  }
+
+  .fac-check-cell {
+    width: 36px;
+    min-width: 36px;
+    height: 34px;
   }
 }

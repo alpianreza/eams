@@ -8,6 +8,8 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
 <div
   class="ia-grid-page"
   data-save-url="<?= esc($saveUrl) ?>"
+  data-bulk-url="/compliance/checklist/intrusion-alarm-grid/mark-all"
+  data-ym="<?= esc($ym) ?>"
   data-csrf-name="<?= esc($csrfName) ?>"
   data-csrf-hash="<?= esc($csrfHash) ?>">
 
@@ -39,6 +41,10 @@ $monthInput = date('Y-m', strtotime($ym . '-01'));
       </div>
 
       <div class="d-flex flex-wrap gap-2 align-items-center small">
+        <button type="button" class="btn btn-success btn-sm ia-mark-all-btn">
+          <i class="bi bi-check2-square"></i>
+          Centang Semua
+        </button>
         <span class="ia-legend-pill"><span class="legend-box is-ok"></span>Sesuai</span>
         <span class="ia-legend-pill"><span class="legend-box is-not-ok"></span>Tidak Sesuai</span>
       </div>

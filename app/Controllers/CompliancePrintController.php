@@ -285,6 +285,14 @@ class CompliancePrintController extends BaseController
       $layout['groupedColumns'] = $this->resolveEmergencyLightColumns($masters);
     }
 
+    if ($this->itemTypeSlug($itemName) === 'emergency_exit_light') {
+      $layout['baseColumns'] = [
+        ['key' => 'row_number', 'label' => 'No', 'class' => 'col-no'],
+        ['key' => 'specific_area', 'label' => 'Lokasi', 'class' => 'col-location'],
+      ];
+      $layout['groupedColumns'] = $this->resolveEmergencyExitLightColumns($masters);
+    }
+
     if ($this->itemTypeSlug($itemName) === 'cctv') {
       $layout['headerTitle'] = 'PEMERIKSAAN & PERAWATAN CCTV';
       $layout['headerSubtitle'] = '(CCTV Inspection & Maintenance Checklist)';
@@ -361,74 +369,7 @@ class CompliancePrintController extends BaseController
   protected function resolveEmergencyLightColumns(array $masters): array
   {
     $groups = [
-      'lampu_darurat' => [
-        'group_key' => 'lampu_darurat',
-        'label' => 'Lampu Darurat',
-        'question_ids' => [],
-        'columns' => [
-          [
-            'type' => 'field',
-            'key' => 'type_description',
-            'label' => 'Jenis Lampu',
-            'class' => 'col-type',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'berfungsi',
-            'id' => 0,
-            'label' => 'Berfungsi Baik',
-            'class' => 'col-question',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'pecah',
-            'id' => 0,
-            'label' => 'Tidak Pecah',
-            'class' => 'col-question',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'kabel',
-            'id' => 0,
-            'label' => 'Kabel',
-            'class' => 'col-question',
-          ],
-        ],
-      ],
-      'lampu_exit' => [
-        'group_key' => 'lampu_exit',
-        'label' => 'Lampu EXIT',
-        'question_ids' => [],
-        'columns' => [
-          [
-            'type' => 'field',
-            'key' => 'type_description',
-            'label' => 'Jenis Lampu',
-            'class' => 'col-type',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'berfungsi',
-            'id' => 0,
-            'label' => 'Berfungsi Baik',
-            'class' => 'col-question',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'pecah',
-            'id' => 0,
-            'label' => 'Tidak Pecah',
-            'class' => 'col-question',
-          ],
-          [
-            'type' => 'question',
-            'slot' => 'kabel',
-            'id' => 0,
-            'label' => 'Kabel',
-            'class' => 'col-question',
-          ],
-        ],
-      ],
+      'lampu_darurat' => $this->buildEmergencyLampPrintGroup('lampu_darurat', 'Lampu Darurat'),
     ];
 
     foreach ($masters as $master) {
@@ -442,9 +383,7 @@ class CompliancePrintController extends BaseController
 
       $groupKey = null;
 
-      if (strpos($questionLower, 'exit') !== false) {
-        $groupKey = 'lampu_exit';
-      } elseif (strpos($questionLower, 'darurat') !== false || strpos($questionLower, 'emergency') !== false) {
+      if (strpos($questionLower, 'darurat') !== false || strpos($questionLower, 'emergency') !== false) {
         $groupKey = 'lampu_darurat';
       }
 
@@ -472,6 +411,85 @@ class CompliancePrintController extends BaseController
     }
 
     return array_values($groups);
+  }
+
+  protected function resolveEmergencyExitLightColumns(array $masters): array
+  {
+    $groups = [
+      'lampu_exit' => $this->buildEmergencyLampPrintGroup('lampu_exit', 'Lampu EXIT'),
+    ];
+
+    foreach ($masters as $master) {
+      $templateId = (int) ($master['id'] ?? 0);
+      $question = $this->normalizeQuestion((string) ($master['question'] ?? ''));
+      $questionLower = strtolower($question);
+
+      if ($templateId < 1 || $questionLower === '') {
+        continue;
+      }
+
+      if (strpos($questionLower, 'jenis') !== false) {
+        continue;
+      }
+
+      $groups['lampu_exit']['question_ids'][] = $templateId;
+
+      foreach ($groups['lampu_exit']['columns'] as &$column) {
+        if (($column['type'] ?? '') !== 'question') {
+          continue;
+        }
+
+        $slot = (string) ($column['slot'] ?? '');
+        if ($slot === 'berfungsi' && strpos($questionLower, 'berfun') !== false) {
+          $column['id'] = $templateId;
+        } elseif ($slot === 'pecah' && strpos($questionLower, 'pecah') !== false) {
+          $column['id'] = $templateId;
+        } elseif ($slot === 'kabel' && strpos($questionLower, 'kabel') !== false) {
+          $column['id'] = $templateId;
+        }
+      }
+      unset($column);
+    }
+
+    return array_values($groups);
+  }
+
+  protected function buildEmergencyLampPrintGroup(string $groupKey, string $label): array
+  {
+    return [
+      'group_key' => $groupKey,
+      'label' => $label,
+      'question_ids' => [],
+      'columns' => [
+        [
+          'type' => 'field',
+          'key' => 'type_description',
+          'label' => 'Jenis Lampu',
+          'class' => 'col-type',
+        ],
+        [
+          'type' => 'question',
+          'slot' => 'berfungsi',
+          'id' => 0,
+          'label' => 'Berfungsi Baik',
+          'class' => 'col-question',
+        ],
+        [
+          'type' => 'question',
+          'slot' => 'pecah',
+          'id' => 0,
+          'label' => 'Tidak Pecah',
+          'class' => 'col-question',
+        ],
+        [
+          'type' => 'question',
+          'slot' => 'kabel',
+          'id' => 0,
+          'label' => 'Kabel',
+          'class' => 'col-question',
+        ],
+      ],
+    ];
   }
 
   protected function resolveFireExtinguisherColumns(array $masters): array
@@ -591,14 +609,15 @@ class CompliancePrintController extends BaseController
 
   protected function resolveBatchHeaderSubtitle(string $itemName): string
   {
-      $subtitleMap = [
-        'fire_alarm' => '(Fire Alarm Checklist)',
-        'emergency_light' => '(Emergency Light and Exit Checklist)',
-        'intrusion_alarm' => '(Intrusion Alarm Inspection & Maintenance Checklist)',
-        'hydrant' => '(Weekly Hydrant Checklist)',
-        'smoke_detector' => '(Smoke Detector Checklist)',
-        'heat_detector' => '(Heat Detector Checklist)',
-      ];
+    $subtitleMap = [
+      'fire_alarm' => '(Fire Alarm Checklist)',
+      'emergency_light' => '(Emergency Light Checklist)',
+      'emergency_exit_light' => '(Emergency Exit Light Checklist)',
+      'intrusion_alarm' => '(Intrusion Alarm Inspection & Maintenance Checklist)',
+      'hydrant' => '(Weekly Hydrant Checklist)',
+      'smoke_detector' => '(Smoke Detector Checklist)',
+      'heat_detector' => '(Heat Detector Checklist)',
+    ];
 
     $slug = $this->itemTypeSlug($itemName);
     if (isset($subtitleMap[$slug])) {
@@ -610,15 +629,16 @@ class CompliancePrintController extends BaseController
 
   protected function resolveBatchHeaderTitle(string $itemName): string
   {
-      $titleMap = [
-        'fire_extinguisher' => 'CHECKLIST ALAT PEMADAM API RINGAN',
-        'fire_alarm' => 'CHECKLIST ALARM KEBAKARAN',
-        'emergency_light' => 'CHECKLIST LAMPU DARURAT DAN LAMPU EXIT',
-        'intrusion_alarm' => 'PEMERIKSAAN & PERAWATAN ALARM KEAMANAN',
-        'hydrant' => 'PENGECEKAN HIDRAN PER MINGGU',
-        'smoke_detector' => 'CHECKLIST SMOKE DETECTOR',
-        'heat_detector' => 'CHECKLIST HEAT DETECTOR',
-      ];
+    $titleMap = [
+      'fire_extinguisher' => 'CHECKLIST ALAT PEMADAM API RINGAN',
+      'fire_alarm' => 'CHECKLIST ALARM KEBAKARAN',
+      'emergency_light' => 'CHECKLIST LAMPU DARURAT',
+      'emergency_exit_light' => 'CHECKLIST LAMPU EXIT DARURAT',
+      'intrusion_alarm' => 'PEMERIKSAAN & PERAWATAN ALARM KEAMANAN',
+      'hydrant' => 'PENGECEKAN HIDRAN PER MINGGU',
+      'smoke_detector' => 'CHECKLIST SMOKE DETECTOR',
+      'heat_detector' => 'CHECKLIST HEAT DETECTOR',
+    ];
 
     $slug = $this->itemTypeSlug($itemName);
     if (isset($titleMap[$slug])) {

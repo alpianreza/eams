@@ -12,6 +12,7 @@
 .sd-grid-table td {
   border-color: var(--sd-border);
   white-space: nowrap;
+  padding: 0.5rem 0.55rem;
 }
 
 .sd-grid-table thead th {
@@ -36,12 +37,18 @@
 
 .sd-grid-table .sticky-no {
   left: 0;
-  min-width: 56px;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
 }
 
 .sd-grid-table .sticky-location {
-  left: 56px;
-  min-width: 260px;
+  left: 52px;
+  min-width: 180px;
+  max-width: 220px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
 }
 
 .sd-grid-table .col-question {
@@ -133,5 +140,28 @@
 @media (max-width: 991.98px) {
   .sd-grid-wrap {
     max-height: none;
+  }
+
+  .sd-grid-table {
+    min-width: 920px;
+    font-size: 0.8rem;
+  }
+
+  .sd-grid-table .sticky-no {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+  }
+
+  .sd-grid-table .sticky-location {
+    left: 44px;
+    min-width: 130px;
+    max-width: 170px;
+  }
+
+  .sd-check-cell {
+    width: 36px;
+    min-width: 36px;
+    height: 34px;
   }
 }

@@ -1,9 +1,10 @@
 (function () {
-  const page = document.querySelector('.ia-grid-page');
+  const page = document.querySelector('.gate-grid-page');
   if (!page) return;
 
   const saveUrl = page.dataset.saveUrl || '';
   const bulkUrl = page.dataset.bulkUrl || '';
+  const inventoryId = page.dataset.inventoryId || '';
   const ym = page.dataset.ym || '';
   let csrfName = page.dataset.csrfName || '';
   let csrfHash = page.dataset.csrfHash || '';
@@ -32,7 +33,7 @@
     }
 
     cell.classList.add('is-empty');
-    cell.innerHTML = '<span class="ia-cell-mark"></span>';
+    cell.innerHTML = '<span class="gate-cell-mark"></span>';
   };
 
   const saveCell = async (cell, mode) => {
@@ -72,30 +73,42 @@
       csrfHash = result.csrfHash || csrfHash;
 
       if (!response.ok || !result.ok) {
-        throw new Error(result.message || 'Gagal menyimpan checklist Intrusion Alarm.');
+        throw new Error(result.message || 'Gagal menyimpan checklist Gerbang.');
       }
 
       setCellState(cell, result.state || (mode === 'clear' ? 'empty' : mode));
     } catch (error) {
       console.error(error);
-      alert(error.message || 'Gagal menyimpan checklist Intrusion Alarm.');
+      alert(error.message || 'Gagal menyimpan checklist Gerbang.');
     } finally {
       busyKey = null;
       cell.classList.remove('is-saving');
     }
   };
 
+  const setAllEmptyCellsToOk = () => {
+    page.querySelectorAll('.gate-check-cell').forEach((cell) => {
+      if (cell.dataset.offday === '1') return;
+      const state = cell.dataset.state || 'empty';
+      if (state !== 'empty') return;
+      setCellState(cell, 'ok');
+    });
+  };
+
   const markAll = async () => {
-    if (!bulkUrl || !ym || busyKey === '__bulk__') {
+    if (!bulkUrl || !inventoryId || !ym || busyKey === '__bulk__') {
       return;
     }
 
     busyKey = '__bulk__';
-    const button = page.querySelector('.ia-mark-all-btn');
-    if (button) button.disabled = true;
+    const button = page.querySelector('.gate-mark-all-btn');
+    if (button) {
+      button.disabled = true;
+    }
 
     try {
       const body = new URLSearchParams();
+      body.set('inventory_id', inventoryId);
       body.set('ym', ym);
       if (csrfName) {
         body.set(csrfName, csrfHash);
@@ -115,34 +128,35 @@
       csrfHash = result.csrfHash || csrfHash;
 
       if (!response.ok || !result.ok) {
-        throw new Error(result.message || 'Gagal mencentang semua Intrusion Alarm.');
+        throw new Error(result.message || 'Gagal mencentang semua Gerbang.');
       }
 
-      page.querySelectorAll('.ia-check-cell').forEach((cell) => {
-        const state = cell.dataset.state || 'empty';
-        if (state === 'empty') {
-          setCellState(cell, 'ok');
-        }
-      });
+      setAllEmptyCellsToOk();
     } catch (error) {
       console.error(error);
-      alert(error.message || 'Gagal mencentang semua Intrusion Alarm.');
+      alert(error.message || 'Gagal mencentang semua Gerbang.');
     } finally {
       busyKey = null;
-      if (button) button.disabled = false;
+      if (button) {
+        button.disabled = false;
+      }
     }
   };
 
   page.addEventListener('click', (event) => {
-    const cell = event.target.closest('.ia-check-cell');
+    const cell = event.target.closest('.gate-check-cell');
     if (cell) {
+      if (cell.dataset.offday === '1') {
+        return;
+      }
+
       const state = cell.dataset.state || 'empty';
       const nextMode = cycleMap[state] || 'ok';
       saveCell(cell, nextMode);
       return;
     }
 
-    const bulkButton = event.target.closest('.ia-mark-all-btn');
+    const bulkButton = event.target.closest('.gate-mark-all-btn');
     if (bulkButton) {
       markAll();
     }

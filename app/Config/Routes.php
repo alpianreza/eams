@@ -172,6 +172,7 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
         $routes->get('(:num)', 'ComplianceInventoryController::checklist/$1');
         $routes->get('cctv-grid', 'ComplianceInventoryController::cctvGrid');
         $routes->get('emergency-light-grid', 'ComplianceInventoryController::emergencyLightGrid');
+        $routes->get('emergency-exit-light-grid', 'ComplianceInventoryController::emergencyExitLightGrid');
         $routes->get('first-aid-box-grid', 'ComplianceInventoryController::firstAidBoxGrid');
         $routes->get('first-aid-content-grid/(:num)', 'ComplianceInventoryController::firstAidContentGrid/$1');
         $routes->get('fire-extinguisher-grid', 'ComplianceInventoryController::fireExtinguisherGrid');
@@ -179,22 +180,35 @@ $routes->group('compliance', ['filter' => 'auth'], function ($routes) {
         $routes->get('hydrant-grid', 'ComplianceInventoryController::hydrantGrid');
         $routes->get('smoke-detector-grid', 'ComplianceInventoryController::smokeDetectorGrid');
         $routes->get('heat-detector-grid', 'ComplianceInventoryController::heatDetectorGrid');
+        $routes->get('gate-grid/(:num)', 'ComplianceInventoryController::gateGrid/$1');
+        $routes->get('generic-grid/(:num)', 'ComplianceInventoryController::genericGrid/$1');
 
         // submit checklist
         $routes->post('submit', 'ComplianceInventoryController::submitChecklist');
         $routes->post('cctv-grid/save', 'ComplianceInventoryController::saveCctvGrid');
         $routes->post('cctv-grid/mark-all', 'ComplianceInventoryController::markAllCctvGrid');
         $routes->post('emergency-light-grid/save', 'ComplianceInventoryController::saveEmergencyLightGrid');
+        $routes->post('emergency-light-grid/mark-all', 'ComplianceInventoryController::markAllEmergencyLightGrid');
+        $routes->post('emergency-exit-light-grid/save', 'ComplianceInventoryController::saveEmergencyExitLightGrid');
+        $routes->post('emergency-exit-light-grid/mark-all', 'ComplianceInventoryController::markAllEmergencyExitLightGrid');
         $routes->post('first-aid-box-grid/save', 'ComplianceInventoryController::saveFirstAidBoxGrid');
+        $routes->post('first-aid-box-grid/mark-all', 'ComplianceInventoryController::markAllFirstAidBoxGrid');
         $routes->post('first-aid-content-grid/save', 'ComplianceInventoryController::saveFirstAidContentGrid');
         $routes->post('first-aid-content-grid/mark-all', 'ComplianceInventoryController::markAllFirstAidContentGrid');
         $routes->post('fire-extinguisher-grid/save', 'ComplianceInventoryController::saveFireExtinguisherGrid');
+        $routes->post('fire-extinguisher-grid/mark-all', 'ComplianceInventoryController::markAllFireExtinguisherGrid');
         $routes->post('intrusion-alarm-grid/save', 'ComplianceInventoryController::saveIntrusionAlarmGrid');
+        $routes->post('intrusion-alarm-grid/mark-all', 'ComplianceInventoryController::markAllIntrusionAlarmGrid');
         $routes->post('hydrant-grid/save', 'ComplianceInventoryController::saveHydrantGrid');
+        $routes->post('hydrant-grid/mark-all', 'ComplianceInventoryController::markAllHydrantGrid');
         $routes->post('smoke-detector-grid/save', 'ComplianceInventoryController::saveSmokeDetectorGrid');
         $routes->post('smoke-detector-grid/mark-all', 'ComplianceInventoryController::markAllSmokeDetectorGrid');
         $routes->post('heat-detector-grid/save', 'ComplianceInventoryController::saveHeatDetectorGrid');
         $routes->post('heat-detector-grid/mark-all', 'ComplianceInventoryController::markAllHeatDetectorGrid');
+        $routes->post('gate-grid/save', 'ComplianceInventoryController::saveGateGrid');
+        $routes->post('gate-grid/mark-all', 'ComplianceInventoryController::markAllGateGrid');
+        $routes->post('generic-grid/save', 'ComplianceInventoryController::saveGenericGrid');
+        $routes->post('generic-grid/mark-all', 'ComplianceInventoryController::markAllGenericGrid');
 
         // ajax calendar
         $routes->get('(:num)/calendar', 'ComplianceInventoryController::calendar/$1');
@@ -378,6 +392,13 @@ $routes->group('ipal', ['filter' => 'auth'], function ($routes) {
 });
 
 $routes->get('ipal/export', 'IpalController::export', ['filter' => 'auth']);
+
+$routes->group('pdam-water', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'PdamWaterController::index');
+    $routes->get('detail/(:segment)', 'PdamWaterController::detail/$1');
+    $routes->post('save', 'PdamWaterController::save');
+    $routes->post('delete', 'PdamWaterController::delete');
+});
 
 $routes->add('logstores/(:any)', function () {
     return service('response')->setStatusCode(404);

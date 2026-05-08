@@ -4,7 +4,7 @@
 
 .ia-grid-table {
   --ia-border: #1f293733;
-  min-width: 1800px;
+  min-width: 1500px;
   font-size: 0.85rem;
 }
 
@@ -12,6 +12,7 @@
 .ia-grid-table td {
   border-color: var(--ia-border);
   white-space: nowrap;
+  padding: 0.5rem 0.55rem;
 }
 
 .ia-grid-table thead th {
@@ -36,12 +37,18 @@
 
 .ia-grid-table .sticky-no {
   left: 0;
-  min-width: 56px;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
 }
 
 .ia-grid-table .sticky-location {
-  left: 56px;
-  min-width: 220px;
+  left: 52px;
+  min-width: 170px;
+  max-width: 220px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
 }
 
 .ia-grid-table .month-band,
@@ -132,5 +139,28 @@
 @media (max-width: 991.98px) {
   .ia-grid-wrap {
     max-height: none;
+  }
+
+  .ia-grid-table {
+    min-width: 1240px;
+    font-size: 0.8rem;
+  }
+
+  .ia-grid-table .sticky-no {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+  }
+
+  .ia-grid-table .sticky-location {
+    left: 44px;
+    min-width: 130px;
+    max-width: 170px;
+  }
+
+  .ia-check-cell {
+    width: 42px;
+    min-width: 42px;
+    height: 34px;
   }
 }

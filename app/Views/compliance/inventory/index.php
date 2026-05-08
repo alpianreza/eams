@@ -14,7 +14,7 @@
       <div>
         <p class="inventory-kicker mb-1">Compliance Inventory</p>
         <h5 class="mb-1 fw-bold">Daftar Aset Compliance & Fasilitas</h5>
-        <p class="text-muted mb-0">Kelola aset, area, PIC, dan status kondisi dalam satu halaman.</p>
+        <p class="text-muted mb-0">Kelola aset, area, PIC, dan status kondisi.</p>
       </div>
 
       <?php if (hasRole(['admin', 'compliance'])): ?>

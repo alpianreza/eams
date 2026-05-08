@@ -78,6 +78,7 @@
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
+<?php $collections = $collections ?? []; ?>
 <script>
   window.FDM_DATA_COLLECTION_BOOT = <?= json_encode(['collections' => $collections], JSON_UNESCAPED_UNICODE) ?>;
 </script>

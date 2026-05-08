@@ -4,7 +4,7 @@
 
 .fe-grid-table {
   --fe-border: #1f293733;
-  min-width: 1800px;
+  min-width: 1500px;
   font-size: 0.85rem;
 }
 
@@ -12,6 +12,7 @@
 .fe-grid-table td {
   border-color: var(--fe-border);
   white-space: nowrap;
+  padding: 0.5rem 0.6rem;
 }
 
 .fe-grid-table thead th {
@@ -36,12 +37,18 @@
 
 .fe-grid-table .sticky-no {
   left: 0;
-  min-width: 56px;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
 }
 
 .fe-grid-table .sticky-location {
-  left: 56px;
-  min-width: 220px;
+  left: 52px;
+  min-width: 170px;
+  max-width: 220px;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
 }
 
 .fe-grid-table .group-band {
@@ -55,11 +62,11 @@
 }
 
 .fe-grid-table .col-static {
-  min-width: 120px;
+  min-width: 100px;
 }
 
 .fe-grid-table .col-question {
-  min-width: 96px;
+  min-width: 82px;
 }
 
 .fe-grid-table tbody tr.is-focused td {
@@ -142,5 +149,28 @@
 @media (max-width: 991.98px) {
   .fe-grid-wrap {
     max-height: none;
+  }
+
+  .fe-grid-table {
+    min-width: 1280px;
+    font-size: 0.8rem;
+  }
+
+  .fe-grid-table .sticky-no {
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+  }
+
+  .fe-grid-table .sticky-location {
+    left: 44px;
+    min-width: 140px;
+    max-width: 170px;
+  }
+
+  .fe-check-cell {
+    width: 72px;
+    min-width: 72px;
+    height: 36px;
   }
 }

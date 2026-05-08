@@ -3,25 +3,14 @@
 <?= $this->section('content') ?>
 <?php
 $monthInput = date('Y-m', strtotime($ym . '-01'));
-$formatDate = static function (?string $date): string {
-  if (empty($date)) {
-    return '-';
-  }
-
-  $timestamp = strtotime($date);
-  if ($timestamp === false) {
-    return (string) $date;
-  }
-
-  return date('d-m-Y', $timestamp);
-};
 ?>
 
 <div
-  class="fe-grid-page"
+  class="el-grid-page"
   data-save-url="<?= esc($saveUrl) ?>"
-  data-bulk-url="/compliance/checklist/fire-extinguisher-grid/mark-all"
+  data-bulk-url="<?= esc($bulkUrl) ?>"
   data-period-key="<?= esc($ym) ?>"
+  data-item-label="Emergency Exit Light"
   data-csrf-name="<?= esc($csrfName) ?>"
   data-csrf-hash="<?= esc($csrfHash) ?>">
 
@@ -29,10 +18,10 @@ $formatDate = static function (?string $date): string {
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
         <p class="checklist-kicker mb-1">Checklist Compliance</p>
-        <h5 class="mb-1 fw-bold">Checklist Alat Pemadam Api Ringan</h5>
+        <h5 class="mb-1 fw-bold">Pemeriksaan Emergency Exit Light</h5>
         <p class="text-muted mb-0">
-          Grid bulanan mengikuti struktur print PDF. Klik sel status untuk putar:
-          <strong>Sesuai</strong>, <strong>Tidak Sesuai</strong>, lalu kosong lagi.
+          Klik sel untuk putar status:
+          <strong>Sesuai</strong>, <strong>Tidak Sesuai</strong>, <strong>NA</strong>, lalu kosong lagi.
         </p>
       </div>
 
@@ -49,25 +38,26 @@ $formatDate = static function (?string $date): string {
       <div>
         <div class="fw-semibold">Periode <?= esc($monthLabel) ?></div>
         <div class="text-muted small">
-          Form kolektif APAR dengan urutan mengikuti nomor inventaris.
+          Grid mengikuti format print PDF agar isi bulanan lebih cepat dan konsisten.
         </div>
       </div>
 
       <div class="d-flex flex-wrap gap-2 align-items-center small">
-        <button type="button" class="btn btn-success btn-sm fe-mark-all-btn">
+        <button type="button" class="btn btn-success btn-sm el-mark-all-btn">
           <i class="bi bi-check2-square"></i>
           Centang Semua
         </button>
-        <span class="fe-legend-pill"><span class="legend-box is-ok"></span>Sesuai</span>
-        <span class="fe-legend-pill"><span class="legend-box is-not-ok"></span>Tidak Sesuai</span>
+        <span class="el-legend-pill"><span class="legend-box is-ok"></span>Sesuai</span>
+        <span class="el-legend-pill"><span class="legend-box is-not-ok"></span>Tidak Sesuai</span>
+        <span class="el-legend-pill"><span class="legend-box is-na"></span>NA</span>
       </div>
     </div>
   </section>
 
   <section class="card border-0 shadow-sm no-lift">
     <div class="card-body p-0">
-      <div class="table-responsive fe-grid-wrap">
-        <table class="table table-bordered align-middle mb-0 fe-grid-table">
+      <div class="table-responsive el-grid-wrap">
+        <table class="table table-bordered align-middle mb-0 el-grid-table">
           <thead>
             <tr>
               <th rowspan="2" class="sticky-left sticky-no">No</th>
@@ -81,7 +71,7 @@ $formatDate = static function (?string $date): string {
             <tr>
               <?php foreach ($groupedColumns as $group): ?>
                 <?php foreach (($group['columns'] ?? []) as $column): ?>
-                  <th class="<?= esc(($column['type'] ?? '') === 'field' ? 'col-static head-sub' : 'col-question head-sub') ?>">
+                  <th class="<?= esc(($column['type'] ?? '') === 'field' ? 'col-type head-sub' : 'col-question head-sub') ?>">
                     <?= esc($column['label'] ?? '') ?>
                   </th>
                 <?php endforeach; ?>
@@ -101,16 +91,7 @@ $formatDate = static function (?string $date): string {
                 <?php foreach ($groupedColumns as $group): ?>
                   <?php foreach (($group['columns'] ?? []) as $column): ?>
                     <?php if (($column['type'] ?? '') === 'field'): ?>
-                      <?php
-                      $fieldKey = (string) ($column['key'] ?? '');
-                      $value = '-';
-                      if ($fieldKey === 'type_description') {
-                        $value = $row['type_description'];
-                      } elseif ($fieldKey === 'expired_date') {
-                        $value = $formatDate($row['expired_date']);
-                      }
-                      ?>
-                      <td class="field-cell"><?= esc($value) ?></td>
+                      <td class="field-cell"><?= esc($row['type_description']) ?></td>
                     <?php else: ?>
                       <?php
                       $templateId = (int) ($column['id'] ?? 0);
@@ -121,21 +102,26 @@ $formatDate = static function (?string $date): string {
                         $cellClass = 'is-ok';
                       } elseif ($state === 'not_ok') {
                         $cellClass = 'is-not-ok';
+                      } elseif ($state === 'na') {
+                        $cellClass = 'is-na';
                       }
                       ?>
                       <td
-                        class="fe-check-cell <?= esc($cellClass) ?>"
+                        class="el-check-cell <?= esc($cellClass) ?>"
                         data-inventory-id="<?= (int) $row['id'] ?>"
                         data-template-id="<?= $templateId ?>"
                         data-period-key="<?= esc($ym) ?>"
                         data-state="<?= esc($state) ?>"
-                        title="<?= esc($row['asset_code'] . ' - ' . ($column['label'] ?? '')) ?>">
+                        data-detail-url="<?= esc($row['detail_url']) ?>"
+                        title="<?= esc($row['location'] . ' - ' . ($column['label'] ?? '')) ?>">
                         <?php if ($state === 'ok'): ?>
                           <i class="bi bi-check-lg"></i>
                         <?php elseif ($state === 'not_ok'): ?>
                           <i class="bi bi-x-lg"></i>
+                        <?php elseif ($state === 'na'): ?>
+                          <i class="bi bi-dash-lg"></i>
                         <?php else: ?>
-                          <span class="fe-cell-mark"></span>
+                          <span class="el-cell-mark"></span>
                         <?php endif; ?>
                       </td>
                     <?php endif; ?>
@@ -153,9 +139,9 @@ $formatDate = static function (?string $date): string {
 
 <?= $this->section('styles') ?>
 <link rel="stylesheet" href="/assets/css/checklist.css?v=<?= filemtime(FCPATH . 'assets/css/checklist.css') ?>">
-<link rel="stylesheet" href="/assets/css/fire-extinguisher-grid.css?v=<?= filemtime(FCPATH . 'assets/css/fire-extinguisher-grid.css') ?>">
+<link rel="stylesheet" href="/assets/css/emergency-light-grid.css?v=<?= filemtime(FCPATH . 'assets/css/emergency-light-grid.css') ?>">
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
-<script src="/js/fire-extinguisher-grid.js?v=<?= filemtime(FCPATH . 'js/fire-extinguisher-grid.js') ?>"></script>
+<script src="/js/emergency-light-grid.js?v=<?= filemtime(FCPATH . 'js/emergency-light-grid.js') ?>"></script>
 <?= $this->endSection() ?>

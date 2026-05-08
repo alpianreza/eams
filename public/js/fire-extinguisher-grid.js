@@ -3,6 +3,8 @@
   if (!page) return;
 
   const saveUrl = page.dataset.saveUrl || '';
+  const bulkUrl = page.dataset.bulkUrl || '';
+  const periodKey = page.dataset.periodKey || '';
   let csrfName = page.dataset.csrfName || '';
   let csrfHash = page.dataset.csrfHash || '';
   let busyKey = null;
@@ -83,12 +85,66 @@
     }
   };
 
+  const markAll = async () => {
+    if (!bulkUrl || !periodKey || busyKey === '__bulk__') {
+      return;
+    }
+
+    busyKey = '__bulk__';
+    const button = page.querySelector('.fe-mark-all-btn');
+    if (button) button.disabled = true;
+
+    try {
+      const body = new URLSearchParams();
+      body.set('period_key', periodKey);
+      if (csrfName) {
+        body.set(csrfName, csrfHash);
+      }
+
+      const response = await fetch(bulkUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: body.toString(),
+        credentials: 'same-origin',
+      });
+
+      const result = await response.json();
+      csrfHash = result.csrfHash || csrfHash;
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.message || 'Gagal mencentang semua Fire Extinguisher.');
+      }
+
+      page.querySelectorAll('.fe-check-cell').forEach((cell) => {
+        const state = cell.dataset.state || 'empty';
+        if (state === 'empty') {
+          setCellState(cell, 'ok');
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      alert(error.message || 'Gagal mencentang semua Fire Extinguisher.');
+    } finally {
+      busyKey = null;
+      if (button) button.disabled = false;
+    }
+  };
+
   page.addEventListener('click', (event) => {
     const cell = event.target.closest('.fe-check-cell');
-    if (!cell) return;
+    if (cell) {
+      const state = cell.dataset.state || 'empty';
+      const nextMode = cycleMap[state] || 'ok';
+      saveCell(cell, nextMode);
+      return;
+    }
 
-    const state = cell.dataset.state || 'empty';
-    const nextMode = cycleMap[state] || 'ok';
-    saveCell(cell, nextMode);
+    const bulkButton = event.target.closest('.fe-mark-all-btn');
+    if (bulkButton) {
+      markAll();
+    }
   });
 })();
