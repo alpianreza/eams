@@ -30,6 +30,12 @@ $dayMap = [
 $daysInMonth = (int) date('t', strtotime("$year-$month-01"));
 $monthLabel = ($monthMap[$month] ?? date('F', strtotime("$year-$month-01"))) . ' ' . $year;
 $filledDays = count($logs);
+$timeOptions = [];
+for ($hour = 7; $hour <= 17; $hour++) {
+  foreach ([0, 30] as $minute) {
+    $timeOptions[] = sprintf('%02d:%02d', $hour, $minute);
+  }
+}
 ?>
 
 <div class="utility-shell utility-pdam-shell">
@@ -49,6 +55,19 @@ $filledDays = count($logs);
             class="form-control form-control-sm"
             onchange="this.form.submit()">
         </form>
+
+        <a href="<?= base_url('pdam-water/export-excel?year=' . $year . '&month=' . $month) ?>"
+          class="btn btn-success btn-sm d-inline-flex align-items-center gap-1">
+          <i class="bi bi-file-earmark-spreadsheet"></i>
+          Export Excel
+        </a>
+
+        <a href="<?= base_url('pdam-water/export-pdf?year=' . $year . '&month=' . $month) ?>"
+          target="_blank"
+          class="btn btn-danger btn-sm d-inline-flex align-items-center gap-1">
+          <i class="bi bi-file-earmark-pdf"></i>
+          Export PDF
+        </a>
       </div>
     </div>
   </section>
@@ -111,14 +130,16 @@ $filledDays = count($logs);
                 <td><?= esc($dayName) ?></td>
                 <td><?= esc(date('d M Y', strtotime($date))) ?></td>
                 <td>
-                  <input
-                    type="text"
-                    inputmode="numeric"
-                    autocomplete="off"
-                    placeholder="07:30"
-                    class="form-control form-control-sm pdam-time"
-                    value="<?= esc($timeValue) ?>"
+                  <select
+                    class="form-select form-select-sm pdam-time"
                     <?= $isOff ? 'disabled' : '' ?>>
+                    <option value="">Pilih Jam</option>
+                    <?php foreach ($timeOptions as $option): ?>
+                      <option value="<?= esc($option) ?>" <?= $timeValue === $option ? 'selected' : '' ?>>
+                        <?= esc($option) ?>
+                      </option>
+                    <?php endforeach; ?>
+                  </select>
                 </td>
                 <td>
                   <input
@@ -180,14 +201,16 @@ $filledDays = count($logs);
 
               <div class="mb-2">
                 <label class="form-label small mb-1">Jam</label>
-                <input
-                  type="text"
-                  inputmode="numeric"
-                  autocomplete="off"
-                  placeholder="07:30"
-                  class="form-control pdam-time"
-                  value="<?= esc($timeValue) ?>"
+                <select
+                  class="form-select pdam-time"
                   <?= $isOff ? 'disabled' : '' ?>>
+                  <option value="">Pilih Jam</option>
+                  <?php foreach ($timeOptions as $option): ?>
+                    <option value="<?= esc($option) ?>" <?= $timeValue === $option ? 'selected' : '' ?>>
+                      <?= esc($option) ?>
+                    </option>
+                  <?php endforeach; ?>
+                </select>
               </div>
 
               <div class="mb-2">
@@ -258,27 +281,7 @@ $filledDays = count($logs);
       saveState.textContent = text;
     };
 
-    const normalizeTimeValue = (rawValue) => {
-      const raw = String(rawValue || "").trim().replace(/\./g, ":").replace(/\s+/g, "");
-      if (!raw) return "";
-
-      const build = (h, m) => {
-        const hh = parseInt(h, 10);
-        const mm = parseInt(m, 10);
-        if (!Number.isFinite(hh) || !Number.isFinite(mm)) return "";
-        if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return "";
-        return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
-      };
-
-      if (/^\d{1,2}$/.test(raw)) return build(raw, "0");
-      if (/^\d{3,4}$/.test(raw)) return build(raw.slice(0, raw.length - 2), raw.slice(-2));
-      if (/^\d{1,2}:\d{1,2}(:\d{1,2})?$/.test(raw)) {
-        const parts = raw.split(":");
-        return build(parts[0], parts[1]);
-      }
-
-      return "";
-    };
+    const normalizeTimeValue = (rawValue) => String(rawValue || "").trim();
 
     const mirrorRowState = (date, payload = {}) => {
       document.querySelectorAll(`[data-date="${date}"]`).forEach((row) => {
@@ -325,8 +328,8 @@ $filledDays = count($logs);
       document.getElementById("latestMeterValue").textContent = latestMeter ? latestMeter.toFixed(2) : "0.00";
     };
 
-    const saveDay = async (date) => {
-      const source = document.querySelector(`#pdamTable tbody tr[data-date="${date}"]`) || document.querySelector(`#pdamMobileList [data-date="${date}"]`);
+    const saveDay = async (date, source = null) => {
+      source = source || document.querySelector(`#pdamTable tbody tr[data-date="${date}"]`) || document.querySelector(`#pdamMobileList [data-date="${date}"]`);
       if (!source) return;
 
       const timeInput = source.querySelector(".pdam-time");
@@ -381,7 +384,7 @@ $filledDays = count($logs);
       }
     };
 
-    document.addEventListener("input", (event) => {
+    const handleFieldChange = (event) => {
       const input = event.target;
       if (!(input instanceof HTMLElement)) return;
       if (!input.matches(".pdam-time, .pdam-meter, .pdam-note")) return;
@@ -396,10 +399,14 @@ $filledDays = count($logs);
       if (timers[date]) {
         clearTimeout(timers[date]);
       }
+      const sourceRow = row;
       timers[date] = setTimeout(() => {
-        saveDay(date);
+        saveDay(date, sourceRow);
       }, 700);
-    });
+    };
+
+    document.addEventListener("input", handleFieldChange);
+    document.addEventListener("change", handleFieldChange);
 
     recalcSummary();
   })();

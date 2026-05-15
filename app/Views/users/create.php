@@ -5,6 +5,11 @@
 <?php
 $roles = $roles ?? [];
 $roleValue = old('role', 'staff');
+$accessGroups = $accessGroups ?? [];
+$selectedPageAccess = old('page_access');
+$selectedPageAccess = is_array($selectedPageAccess)
+  ? $selectedPageAccess
+  : array_keys(access_menu_catalog());
 ?>
 
 <div class="card shadow-sm">
@@ -66,6 +71,41 @@ $roleValue = old('role', 'staff');
         <div class="col-md-6">
           <label class="form-label">Foto</label>
           <input type="file" name="photo" class="form-control" accept="image/*">
+        </div>
+
+        <div class="col-12">
+          <div class="border rounded-3 p-3 bg-light-subtle">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <div>
+                <label class="form-label fw-semibold mb-1">Halaman Yang Ditampilkan</label>
+                <div class="text-muted small">Centang halaman yang boleh tampil dan diakses oleh user ini.</div>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <?php foreach ($accessGroups as $groupName => $items): ?>
+                <div class="col-md-6 col-xl-4">
+                  <div class="border rounded-3 p-3 h-100 bg-white">
+                    <div class="fw-semibold mb-2"><?= esc($groupName) ?></div>
+                    <?php foreach ($items as $key => $item): ?>
+                      <div class="form-check mb-2">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          name="page_access[]"
+                          value="<?= esc($key) ?>"
+                          id="page_access_<?= esc($key) ?>"
+                          <?= in_array($key, $selectedPageAccess, true) ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="page_access_<?= esc($key) ?>">
+                          <?= esc($item['label'] ?? $key) ?>
+                        </label>
+                      </div>
+                    <?php endforeach; ?>
+                  </div>
+                </div>
+              <?php endforeach; ?>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -7,6 +7,12 @@ $backUrl = '/pdam-water?monthpicker=' . rawurlencode($monthRef);
 $timeValue = !empty($log['log_time']) ? substr((string) $log['log_time'], 0, 5) : '';
 $meterValue = isset($log['meter_reading']) ? (string) $log['meter_reading'] : '';
 $noteValue = isset($log['note']) ? (string) $log['note'] : '';
+$timeOptions = [];
+for ($hour = 7; $hour <= 17; $hour++) {
+  foreach ([0, 30] as $minute) {
+    $timeOptions[] = sprintf('%02d:%02d', $hour, $minute);
+  }
+}
 ?>
 
 <div class="utility-shell utility-pdam-shell">
@@ -37,13 +43,14 @@ $noteValue = isset($log['note']) ? (string) $log['note'] : '';
       <div class="row g-3" id="pdamForm">
         <div class="col-md-4">
           <label class="form-label small mb-1">Jam</label>
-          <input
-            type="text"
-            inputmode="numeric"
-            autocomplete="off"
-            placeholder="07:30"
-            class="form-control time"
-            value="<?= esc($timeValue) ?>">
+          <select class="form-select time">
+            <option value="">Pilih Jam</option>
+            <?php foreach ($timeOptions as $option): ?>
+              <option value="<?= esc($option) ?>" <?= $timeValue === $option ? 'selected' : '' ?>>
+                <?= esc($option) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
         </div>
         <div class="col-md-4">
           <label class="form-label small mb-1">Meteran Air</label>
@@ -105,35 +112,7 @@ $noteValue = isset($log['note']) ? (string) $log['note'] : '';
       return Number.isFinite(n) ? n : 0;
     };
 
-    const normalizeTimeValue = (rawValue) => {
-      const raw = String(rawValue || "").trim().replace(/\./g, ":").replace(/\s+/g, "");
-      if (!raw) return "";
-
-      const build = (h, m) => {
-        const hh = parseInt(h, 10);
-        const mm = parseInt(m, 10);
-        if (!Number.isFinite(hh) || !Number.isFinite(mm)) return "";
-        if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return "";
-        return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
-      };
-
-      if (/^\d{1,2}$/.test(raw)) {
-        return build(raw, "0");
-      }
-
-      if (/^\d{3,4}$/.test(raw)) {
-        const hhPart = raw.slice(0, raw.length - 2);
-        const mmPart = raw.slice(-2);
-        return build(hhPart, mmPart);
-      }
-
-      if (/^\d{1,2}:\d{1,2}(:\d{1,2})?$/.test(raw)) {
-        const parts = raw.split(":");
-        return build(parts[0], parts[1]);
-      }
-
-      return "";
-    };
+    const normalizeTimeValue = (rawValue) => String(rawValue || "").trim();
 
     const calculateSummary = () => {
       const meter = parseNum(form?.querySelector(".meter_reading")?.value || 0);

@@ -47,8 +47,8 @@ $routes->group('employees', ['filter' => 'auth'], function ($routes) {
     $routes->post('delete/(:num)', 'EmployeeController::delete/$1');
 });
 
-// routes khusus admin
-$routes->group('users', ['filter' => 'admin'], function ($routes) {
+// routes manajemen user
+$routes->group('users', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'UserController::index');
     $routes->get('create', 'UserController::create');
     $routes->post('store', 'UserController::store');
@@ -396,6 +396,8 @@ $routes->get('ipal/export', 'IpalController::export', ['filter' => 'auth']);
 $routes->group('pdam-water', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'PdamWaterController::index');
     $routes->get('detail/(:segment)', 'PdamWaterController::detail/$1');
+    $routes->get('export-excel', 'PdamWaterController::exportExcel');
+    $routes->get('export-pdf', 'PdamWaterController::exportPdf');
     $routes->post('save', 'PdamWaterController::save');
     $routes->post('delete', 'PdamWaterController::delete');
 });

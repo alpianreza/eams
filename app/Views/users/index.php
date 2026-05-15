@@ -2,6 +2,7 @@
 
 <?php
 $bootUsers = array_map(static function (array $user): array {
+  $pageAccess = normalize_page_access($user['page_access'] ?? '');
   return [
     'id'         => (int) ($user['id'] ?? 0),
     'name'       => (string) ($user['name'] ?? ''),
@@ -11,6 +12,7 @@ $bootUsers = array_map(static function (array $user): array {
     'permission' => (string) ($user['permission'] ?? ''),
     'status'     => (string) ($user['status'] ?? ''),
     'photo'      => (string) ($user['photo'] ?? ''),
+    'page_access_count' => count($pageAccess),
   ];
 }, $users ?? []);
 
@@ -36,7 +38,7 @@ $bootRoles = array_map(static function (array $role): array {
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
         <p class="inventory-kicker mb-1">Manajemen User</p>
-        <h5 class="mb-1 fw-bold">Kelola user, role, dan akses dasar</h5>
+        <h5 class="mb-1 fw-bold">Kelola user, role, halaman, dan mode akses</h5>
         <p class="text-muted mb-0">
           Cari user lebih cepat, tambah role baru dari halaman ini, dan jaga struktur akses tetap rapi.
         </p>
@@ -127,6 +129,7 @@ $bootRoles = array_map(static function (array $role): array {
                   <th>WhatsApp</th>
                   <th>Role</th>
                   <th>Permission</th>
+                  <th>Halaman</th>
                   <th>Status</th>
                   <th width="180">Aksi</th>
                 </tr>
@@ -150,6 +153,11 @@ $bootRoles = array_map(static function (array $role): array {
                       <span class="badge" :class="user.permission === 'write' ? 'bg-primary' : 'bg-secondary'" x-text="user.permission"></span>
                     </td>
                     <td>
+                      <span class="badge bg-light text-dark border">
+                        <span x-text="user.page_access_count"></span> menu
+                      </span>
+                    </td>
+                    <td>
                       <span class="badge bg-success" x-show="user.status === 'active'">Aktif</span>
                       <span class="badge bg-secondary" x-show="user.status !== 'active'">Nonaktif</span>
                     </td>
@@ -169,7 +177,7 @@ $bootRoles = array_map(static function (array $role): array {
                   </tr>
                 </template>
                 <tr x-show="filteredUsers().length === 0">
-                  <td colspan="8" class="text-center text-muted py-4">
+                  <td colspan="9" class="text-center text-muted py-4">
                     Tidak ada user yang cocok dengan filter.
                   </td>
                 </tr>
@@ -220,7 +228,8 @@ $bootRoles = array_map(static function (array $role): array {
           <ul class="small text-muted mb-0 ps-3">
             <li>Tambah role dari panel kanan.</li>
             <li>Gunakan role baru di form tambah/edit user.</li>
-            <li>Kalau role baru perlu akses menu, kita tinggal sambungkan di helper aksesnya.</li>
+            <li>Role menentukan batas dasar, centang halaman menentukan menu yang tampil.</li>
+            <li>Read Only bisa buka halaman, tapi aksi simpan/edit tetap ditahan.</li>
           </ul>
         </div>
       </div>

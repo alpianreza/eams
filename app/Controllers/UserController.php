@@ -16,6 +16,15 @@ class UserController extends BaseController
     $this->roleModel = new UserRoleModel();
   }
 
+  private function ensureAccess()
+  {
+    if (! hasRole(['admin', 'compliance'])) {
+      return redirect()->to('/')->with('error', 'Akses ditolak');
+    }
+
+    return null;
+  }
+
   private function normalizePhone($value): ?string
   {
     $digits = preg_replace('/\D+/', '', (string) $value);
@@ -51,6 +60,19 @@ class UserController extends BaseController
     $role = str_replace(['_', '-'], ' ', trim($role));
 
     return $role !== '' ? ucwords($role) : '-';
+  }
+
+  private function accessGroups(): array
+  {
+    return access_menu_groups();
+  }
+
+  private function normalizePageAccess($rawValue): string
+  {
+    return json_encode(
+      normalize_page_access($rawValue),
+      JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    ) ?: '[]';
   }
 
   private function loadRoles(): array
@@ -93,8 +115,12 @@ class UserController extends BaseController
 
   public function index()
   {
+    if ($redirect = $this->ensureAccess()) {
+      return $redirect;
+    }
+
     $users = $this->db->table('users')
-      ->select('id,name,username,photo,role,permission,status,wa_number,created_at')
+      ->select('id,name,username,photo,role,permission,status,wa_number,page_access,created_at')
       ->orderBy('name', 'ASC')
       ->get()
       ->getResultArray();
@@ -102,22 +128,37 @@ class UserController extends BaseController
     return view('users/index', [
       'users' => $users,
       'roles' => $this->loadRoles(),
+      'accessGroups' => $this->accessGroups(),
       'title' => 'Manajemen User',
     ]);
   }
 
   public function create()
   {
+    if ($redirect = $this->ensureAccess()) {
+      return $redirect;
+    }
+
     return view('users/create', [
       'title' => 'Tambah User',
       'roles' => $this->loadRoles(),
+      'accessGroups' => $this->accessGroups(),
     ]);
   }
 
   public function store()
   {
+    if ($redirect = $this->ensureAccess()) {
+      return $redirect;
+    }
+
     $wa = $this->normalizePhone($this->request->getPost('wa_number'));
     $role = $this->normalizeRole($this->request->getPost('role'));
+    $pageAccess = normalize_page_access($this->request->getPost('page_access'));
+
+    if ($pageAccess === []) {
+      return redirect()->back()->withInput()->with('error', 'Pilih minimal satu halaman untuk user ini.');
+    }
 
     $this->ensureRoleExists($role);
 
@@ -128,6 +169,7 @@ class UserController extends BaseController
       'role'       => $role,
       'permission' => $this->request->getPost('permission'),
       'wa_number'  => $wa,
+      'page_access' => $this->normalizePageAccess($pageAccess),
       'status'     => 'active',
       'created_at' => date('Y-m-d H:i:s'),
     ]);
@@ -142,6 +184,10 @@ class UserController extends BaseController
 
   public function storeRole()
   {
+    if ($redirect = $this->ensureAccess()) {
+      return $redirect;
+    }
+
     $rawRole = trim((string) $this->request->getPost('name'));
     if ($rawRole === '') {
       return redirect()->back()->with('error', 'Nama role wajib diisi.');
@@ -169,8 +215,12 @@ class UserController extends BaseController
 
   public function edit($id)
   {
+    if ($redirect = $this->ensureAccess()) {
+      return $redirect;
+    }
+
     $user = $this->db->table('users')
-      ->select('id,name,username,photo,role,permission,status,wa_number,created_at')
+      ->select('id,name,username,photo,role,permission,status,wa_number,page_access,created_at')
       ->where('id', $id)
       ->get()
       ->getRowArray();
@@ -182,12 +232,17 @@ class UserController extends BaseController
     return view('users/edit', [
       'user'  => $user,
       'roles' => $this->loadRoles(),
+      'accessGroups' => $this->accessGroups(),
       'title' => 'Edit User',
     ]);
   }
 
   public function update($id)
   {
+    if ($redirect = $this->ensureAccess()) {
+      return $redirect;
+    }
+
     $user = $this->db->table('users')
       ->where('id', $id)
       ->get()
@@ -199,6 +254,12 @@ class UserController extends BaseController
 
     $wa = $this->normalizePhone($this->request->getPost('wa_number'));
     $role = $this->normalizeRole($this->request->getPost('role'));
+    $pageAccess = normalize_page_access($this->request->getPost('page_access'));
+
+    if ($pageAccess === []) {
+      return redirect()->back()->withInput()->with('error', 'Pilih minimal satu halaman untuk user ini.');
+    }
+
     $this->ensureRoleExists($role);
 
     $data = [
@@ -208,6 +269,7 @@ class UserController extends BaseController
       'permission' => $this->request->getPost('permission'),
       'status'     => $this->request->getPost('status'),
       'wa_number'  => $wa,
+      'page_access' => $this->normalizePageAccess($pageAccess),
     ];
 
     if ($this->request->getPost('password')) {
@@ -240,6 +302,21 @@ class UserController extends BaseController
       ->where('id', $id)
       ->update($data);
 
+    if ((int) session()->get('user_id') === (int) $id) {
+      $sessionPayload = [
+        'name' => $data['name'],
+        'role' => $data['role'],
+        'permission' => $data['permission'],
+        'page_access' => $data['page_access'],
+      ];
+
+      if (isset($data['photo'])) {
+        $sessionPayload['photo'] = $data['photo'];
+      }
+
+      session()->set($sessionPayload);
+    }
+
     audit_log('update_user', 'Mengubah user ' . $data['username']);
 
     return redirect()->to('users')->with('success', 'User berhasil diupdate');
@@ -247,6 +324,10 @@ class UserController extends BaseController
 
   public function deactivate($id)
   {
+    if ($redirect = $this->ensureAccess()) {
+      return $redirect;
+    }
+
     $this->db->table('users')
       ->where('id', $id)
       ->update(['status' => 'inactive']);
@@ -256,6 +337,10 @@ class UserController extends BaseController
 
   public function activate($id)
   {
+    if ($redirect = $this->ensureAccess()) {
+      return $redirect;
+    }
+
     $this->db->table('users')
       ->where('id', $id)
       ->update(['status' => 'active']);

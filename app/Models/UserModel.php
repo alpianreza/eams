@@ -14,7 +14,10 @@ class UserModel extends Model
         'name',
         'password',
         'role',
+        'permission',
         'status',
-        'wa_number', // TAMBAHKAN INI
+        'wa_number',
+        'photo',
+        'page_access',
     ];
 }

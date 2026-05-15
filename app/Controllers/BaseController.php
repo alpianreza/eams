@@ -10,7 +10,7 @@ use Psr\Log\LoggerInterface;
 abstract class BaseController extends Controller
 {
     protected $request;
-    protected $helpers = ['url', 'compliance', 'period'];
+    protected $helpers = ['url', 'compliance', 'period', 'role', 'access'];
 
     protected bool $isWritable = false;
     protected string $role = 'viewer';

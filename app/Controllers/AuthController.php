@@ -53,7 +53,8 @@ class AuthController extends BaseController
             'name'      => $user['name'],
             'role'      => $user['role'],
             'photo'     => $user['photo'] ?? null,
-            'permission' => $user['permission']
+            'permission' => $user['permission'],
+            'page_access' => $user['page_access'] ?? null,
         ]);
 
         // cek redirect dari filter (misal scan QR)
@@ -65,7 +66,7 @@ class AuthController extends BaseController
         }
 
         // default
-        return redirect()->to('/home');
+        return redirect()->to(resolve_default_landing_url());
     }
     // logout
     public function logout()

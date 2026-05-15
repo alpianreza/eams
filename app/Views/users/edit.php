@@ -2,7 +2,14 @@
 
 <?= $this->section('content') ?>
 
-<?php $roles = $roles ?? []; ?>
+<?php
+$roles = $roles ?? [];
+$accessGroups = $accessGroups ?? [];
+$selectedPageAccess = old('page_access');
+if (! is_array($selectedPageAccess)) {
+  $selectedPageAccess = normalize_page_access($user['page_access'] ?? '');
+}
+?>
 
 <div class="card shadow-sm">
   <div class="card-header d-flex justify-content-between align-items-center">
@@ -80,6 +87,39 @@
                 <option value="active" <?= $user['status'] == 'active' ? 'selected' : '' ?>>Active</option>
                 <option value="inactive" <?= $user['status'] == 'inactive' ? 'selected' : '' ?>>Inactive</option>
               </select>
+            </div>
+
+            <div class="col-12">
+              <div class="border rounded-3 p-3 bg-light-subtle">
+                <div class="mb-3">
+                  <label class="form-label fw-semibold mb-1">Halaman Yang Ditampilkan</label>
+                  <div class="text-muted small">Centang hanya halaman yang boleh tampil dan bisa dibuka oleh user ini.</div>
+                </div>
+
+                <div class="row g-3">
+                  <?php foreach ($accessGroups as $groupName => $items): ?>
+                    <div class="col-md-6">
+                      <div class="border rounded-3 p-3 h-100 bg-white">
+                        <div class="fw-semibold mb-2"><?= esc($groupName) ?></div>
+                        <?php foreach ($items as $key => $item): ?>
+                          <div class="form-check mb-2">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              name="page_access[]"
+                              value="<?= esc($key) ?>"
+                              id="page_access_<?= esc($key) ?>"
+                              <?= in_array($key, $selectedPageAccess, true) ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="page_access_<?= esc($key) ?>">
+                              <?= esc($item['label'] ?? $key) ?>
+                            </label>
+                          </div>
+                        <?php endforeach; ?>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
             </div>
           </div>
         </div>

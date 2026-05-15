@@ -10,6 +10,8 @@ class AuthFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
+        helper('access');
+
         if (! session()->get('logged_in')) {
 
             // 🔥 KHUSUS AJAX (JANGAN REDIRECT HTML)
@@ -25,6 +27,22 @@ class AuthFilter implements FilterInterface
             session()->set('redirect_after_login', current_url());
 
             return redirect()->to('/login');
+        }
+
+        $path = '/' . ltrim($request->getUri()->getPath(), '/');
+        $pageKey = resolve_page_key_from_path($path);
+
+        if ($pageKey !== null && ! canAccessPage($pageKey)) {
+            if ($request->isAJAX()) {
+                return service('response')
+                    ->setStatusCode(403)
+                    ->setJSON([
+                        'message' => 'Akses halaman ditolak',
+                    ]);
+            }
+
+            return redirect()->to(resolve_default_landing_url())
+                ->with('error', 'Halaman ini tidak diizinkan untuk user tersebut.');
         }
     }
 

@@ -10,14 +10,13 @@ class WriteFilter implements FilterInterface
 {
   public function before(RequestInterface $request, $arguments = null)
   {
+    helper('access');
+
     if (! session()->get('logged_in')) {
       return redirect()->to('/login');
     }
 
-    $role       = session()->get('role');
-    $permission = session()->get('permission');
-
-    if ($permission === 'read' && $role !== 'admin') {
+    if (! hasWriteAccess()) {
       return redirect()->back()
         ->with('error', 'Anda hanya punya akses baca');
     }

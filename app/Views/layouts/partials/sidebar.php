@@ -16,6 +16,60 @@ $isPatrolMenu = $seg1 === 'patrol';
 $brandLogoPath = FCPATH . 'assets/images/company/logo.png';
 $brandLogoUrl = base_url('assets/images/company/logo.png');
 $hasBrandLogo = file_exists($brandLogoPath);
+
+$canHome = canAccessPage('home');
+$canPatrolDaily = canAccessPage('patrol_daily');
+$canPatrolDashboard = canAccessPage('patrol_dashboard');
+$canItCenter = canAccessPage('it_center');
+$canDashboardIt = canAccessPage('dashboard_it');
+$canItAssets = canAccessPage('it_assets');
+$canDeviceControl = canAccessPage('device_control');
+$canEmployees = canAccessPage('employees');
+$canComplianceDashboard = canAccessPage('compliance_dashboard');
+$canComplianceProgress = canAccessPage('compliance_progress');
+$canComplianceInventory = canAccessPage('compliance_inventory');
+$canChecklistMaster = canAccessPage('checklist_master');
+$canQrGallery = canAccessPage('qr_gallery');
+$canHolidays = canAccessPage('holidays');
+$canComplianceReport = canAccessPage('compliance_report');
+$canEmsReports = canAccessPage('ems_reports');
+$canFdm = canAccessPage('fdm_data_collection');
+$canQuestionnaires = canAccessPage('questionnaires');
+$canEvidenceCenter = canAccessPage('evidence_center');
+$canBoiler = canAccessPage('boiler_fuel');
+$canIpal = canAccessPage('ipal');
+$canPdamWater = canAccessPage('pdam_water');
+$canCompliancePrint = canAccessPage('compliance_print');
+$canUsersManagement = canAccessPage('users_management');
+$canAuditLogs = canAccessPage('audit_logs');
+$canBackups = canAccessPage('backups');
+
+$showHome = canShowMenuPage(['staff', 'compliance', 'admin', 'office'], 'home');
+$showPatrolDaily = canShowMenuPage(['security', 'compliance', 'admin'], 'patrol_daily');
+$showPatrolDashboard = canShowMenuPage(['admin', 'compliance'], 'patrol_dashboard');
+$showItCenter = canShowMenuPage(['admin'], 'it_center');
+$showDashboardIt = canShowMenuPage(['admin'], 'dashboard_it');
+$showItAssets = canShowMenuPage(['admin'], 'it_assets');
+$showDeviceControl = canShowMenuPage(['admin'], 'device_control');
+$showEmployees = canShowMenuPage(['admin'], 'employees');
+$showComplianceDashboard = canShowMenuPage(['admin', 'compliance', 'auditor'], 'compliance_dashboard');
+$showComplianceProgress = canShowMenuPage(['admin', 'compliance'], 'compliance_progress');
+$showComplianceInventory = canShowMenuPage(['admin', 'compliance', 'staff'], 'compliance_inventory');
+$showChecklistMaster = canShowMenuPage(['admin', 'compliance'], 'checklist_master');
+$showQrGallery = canShowMenuPage(['admin', 'compliance'], 'qr_gallery');
+$showHolidays = canShowMenuPage(['admin', 'compliance'], 'holidays');
+$showComplianceReport = canShowMenuPage(['admin', 'compliance', 'auditor'], 'compliance_report');
+$showEmsReports = canShowMenuPage(['admin', 'compliance', 'office'], 'ems_reports');
+$showFdm = canShowMenuPage(['admin', 'compliance', 'office'], 'fdm_data_collection');
+$showQuestionnaires = canShowMenuPage(['admin', 'compliance'], 'questionnaires');
+$showEvidenceCenter = canShowMenuPage(['admin', 'compliance', 'auditor'], 'evidence_center');
+$showBoiler = canShowMenuPage(['admin', 'compliance'], 'boiler_fuel');
+$showIpal = canShowMenuPage(['admin', 'compliance'], 'ipal');
+$showPdamWater = canShowMenuPage(['admin', 'compliance'], 'pdam_water');
+$showCompliancePrint = canShowMenuPage(['admin', 'compliance', 'auditor'], 'compliance_print');
+$showUsersManagement = canShowMenuPage(['admin', 'compliance'], 'users_management');
+$showAuditLogs = canShowMenuPage(['admin', 'compliance'], 'audit_logs');
+$showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
 ?>
 
 <aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
@@ -39,7 +93,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
       <ul class="nav sidebar-menu flex-column" role="menu">
 
         <!-- HOME -->
-        <?php if (hasRole(['staff', 'compliance', 'admin', 'office'])): ?>
+        <?php if ($showHome && $canHome): ?>
           <li class="nav-item">
             <a href="<?= base_url('home') ?>"
               class="nav-link <?= $seg1 === 'home' ? 'active' : '' ?>">
@@ -54,8 +108,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- PATROL -->
-        <?php if (hasRole(['security', 'compliance', 'admin'])): ?>
+        <?php if (($showPatrolDaily || $showPatrolDashboard) && ($canPatrolDaily || $canPatrolDashboard)): ?>
           <li class="nav-header sidebar-section-title">SECURITY</li>
+          <?php if ($showPatrolDaily && $canPatrolDaily): ?>
           <li class="nav-item">
             <a href="/patrol"
               class="nav-link <?= $isPatrolMenu ? 'active' : '' ?>">
@@ -63,7 +118,8 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Patrol Harian</p>
             </a>
           </li>
-          <?php if (hasRole(['admin', 'compliance'])): ?>
+          <?php endif; ?>
+          <?php if ($showPatrolDashboard && $canPatrolDashboard): ?>
             <li class="nav-item">
               <a href="/patrol/dashboard"
                 class="nav-link <?= $seg1 === 'patrol' && $seg2 === 'dashboard' ? 'active' : '' ?>">
@@ -75,9 +131,10 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- ================= IT ASSET ================= -->
-        <?php if (hasRole(['admin'])): ?>
+        <?php if ($showItCenter || $showDashboardIt || $showItAssets || $showDeviceControl || $showEmployees): ?>
           <li class="nav-header sidebar-section-title">IT ASSET</li>
 
+          <?php if ($showItCenter && $canItCenter): ?>
           <li class="nav-item">
             <a href="<?= base_url('it') ?>"
               class="nav-link <?= $seg1 === 'it' && $seg2 === '' ? 'active' : '' ?>">
@@ -85,7 +142,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>IT Center</p>
             </a>
           </li>
+          <?php endif; ?>
 
+          <?php if ($showDashboardIt && $canDashboardIt): ?>
           <li class="nav-item">
             <a href="<?= base_url('dashboard-it') ?>"
               class="nav-link <?= $seg1 === 'dashboard-it' ? 'active' : '' ?>">
@@ -93,7 +152,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Dashboard IT</p>
             </a>
           </li>
+          <?php endif; ?>
 
+          <?php if ($showItAssets && $canItAssets): ?>
           <li class="nav-item">
             <a href="<?= base_url('it-assets') ?>"
               class="nav-link <?= $seg1 === 'it-assets' ? 'active' : '' ?>">
@@ -101,7 +162,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Data Asset IT</p>
             </a>
           </li>
+          <?php endif; ?>
 
+          <?php if ($showDeviceControl && $canDeviceControl): ?>
           <li class="nav-item">
             <a href="<?= base_url('it/devices') ?>"
               class="nav-link <?= $seg1 === 'it' && $seg2 === 'devices' ? 'active' : '' ?>">
@@ -109,7 +172,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Device Control</p>
             </a>
           </li>
+          <?php endif; ?>
 
+          <?php if ($showEmployees && $canEmployees): ?>
           <li class="nav-item">
             <a href="<?= base_url('employees') ?>"
               class="nav-link <?= $seg1 === 'employees' ? 'active' : '' ?>">
@@ -117,15 +182,16 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Users IT</p>
             </a>
           </li>
+          <?php endif; ?>
         <?php endif; ?>
 
         <!-- ================= COMPLIANCE ================= -->
-        <?php if (hasRole(['admin', 'compliance', 'staff', 'auditor'])): ?>
+        <?php if ($showComplianceDashboard || $showComplianceProgress || $showComplianceInventory || $showChecklistMaster || $showQrGallery || $showHolidays || $showComplianceReport || $showEmsReports || $showFdm || $showQuestionnaires || $showEvidenceCenter || $showBoiler || $showIpal || $showPdamWater || $showCompliancePrint): ?>
           <li class="nav-header sidebar-section-title">COMPLIANCE</li>
         <?php endif; ?>
 
         <!-- DASHBOARD COMPLIANCE -->
-        <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
+        <?php if ($showComplianceDashboard && $canComplianceDashboard): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/dashboard') ?>"
               class="nav-link <?= $isCompliance && $seg2 === 'dashboard' ? 'active' : '' ?>">
@@ -136,7 +202,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- PROGRESS -->
-        <?php if (hasRole(['admin', 'compliance'])): ?>
+        <?php if ($showComplianceProgress && $canComplianceProgress): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/progress') ?>"
               class="nav-link <?= $isCompliance && $seg2 === 'progress' ? 'active' : '' ?>">
@@ -147,7 +213,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- CHECKLIST MENU -->
-        <?php if (hasRole(['admin', 'compliance', 'staff'])): ?>
+        <?php if ($showComplianceInventory || $showChecklistMaster || $showQrGallery): ?>
           <li class="nav-item">
             <a class="nav-link <?= $isChecklistMenu ? 'active' : '' ?>"
               data-bs-toggle="collapse"
@@ -164,6 +230,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
             <ul class="collapse nav flex-column ms-4 <?= $isChecklistMenu ? 'show' : '' ?>"
               id="menuComplianceChecklist">
 
+              <?php if ($showComplianceInventory && $canComplianceInventory): ?>
               <li class="nav-item">
                 <a href="<?= base_url('compliance/inventory') ?>"
                   class="nav-link <?= $seg2 === 'inventory' ? 'active' : '' ?>">
@@ -171,8 +238,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
                   <p>Inventory / Asset</p>
                 </a>
               </li>
+              <?php endif; ?>
 
-              <?php if (hasRole(['admin', 'compliance'])): ?>
+              <?php if ($showChecklistMaster && $canChecklistMaster): ?>
                 <li class="nav-item">
                   <a href="<?= site_url('compliance/checklist/master') ?>"
                     class="nav-link <?= url_is('compliance/checklist/master*') ? 'active' : '' ?>">
@@ -182,7 +250,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
                 </li>
               <?php endif; ?>
 
-              <?php if (hasRole(['admin', 'compliance'])): ?>
+              <?php if ($showQrGallery && $canQrGallery): ?>
 
                 <li class="nav-item">
                   <a href="<?= base_url('compliance/inventory/qr-center') ?>"
@@ -200,7 +268,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- HOLIDAYS -->
-        <?php if (hasRole(['admin', 'compliance'])): ?>
+        <?php if ($showHolidays && $canHolidays): ?>
           <li class="nav-item">
             <a href="<?= site_url('holidays') ?>"
               class="nav-link <?= $seg1 === 'holidays' ? 'active' : '' ?>">
@@ -211,7 +279,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- REPORT -->
-        <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
+        <?php if ($showComplianceReport && $canComplianceReport): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/report') ?>"
               class="nav-link <?= $isCompliance && $seg2 === 'report' ? 'active' : '' ?>">
@@ -221,7 +289,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
           </li>
         <?php endif; ?>
 
-        <?php if (hasRole(['admin', 'compliance', 'office'])): ?>
+        <?php if ($showEmsReports && $canEmsReports): ?>
           <li class="nav-item">
             <a href="<?= base_url('ems-reports') ?>"
               class="nav-link <?= $isEmsReportMenu ? 'active' : '' ?>">
@@ -231,7 +299,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
           </li>
         <?php endif; ?>
 
-        <?php if (hasRole(['admin', 'compliance', 'office'])): ?>
+        <?php if ($showFdm && $canFdm): ?>
           <li class="nav-item">
             <a href="<?= base_url('fdm-data-collection') ?>"
               class="nav-link <?= $isFdmMenu ? 'active' : '' ?>">
@@ -241,7 +309,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
           </li>
         <?php endif; ?>
 
-        <?php if (hasRole(['admin', 'compliance'])): ?>
+        <?php if ($showQuestionnaires && $canQuestionnaires): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/questionnaires') ?>"
               class="nav-link <?= $isQuestionnaireMenu ? 'active' : '' ?>">
@@ -252,7 +320,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- EVIDENCE -->
-        <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
+        <?php if ($showEvidenceCenter && $canEvidenceCenter): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/evidence') ?>"
               class="nav-link <?= $isCompliance && $seg2 === 'evidence' ? 'active' : '' ?>">
@@ -266,7 +334,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
         $isUtilityMenu = in_array($seg1, ['boiler', 'ipal', 'pdam-water']);
         ?>
 
-        <?php if (hasRole(['admin', 'compliance'])): ?>
+        <?php if ($showBoiler || $showIpal || $showPdamWater): ?>
           <li class="nav-item">
 
             <a class="nav-link <?= $isUtilityMenu ? 'active' : '' ?>"
@@ -285,6 +353,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
             <ul class="collapse nav flex-column ms-4 <?= $isUtilityMenu ? 'show' : '' ?>"
               id="menuUtility">
 
+              <?php if ($showBoiler && $canBoiler): ?>
               <li class="nav-item">
                 <a href="<?= base_url('boiler') ?>"
                   class="nav-link <?= $seg1 === 'boiler' ? 'active' : '' ?>">
@@ -292,7 +361,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
                   <p>Boiler Fuel</p>
                 </a>
               </li>
+              <?php endif; ?>
 
+              <?php if ($showIpal && $canIpal): ?>
               <li class="nav-item">
                 <a href="<?= base_url('ipal') ?>"
                   class="nav-link <?= $seg1 === 'ipal' ? 'active' : '' ?>">
@@ -300,7 +371,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
                   <p>IPAL Limbah</p>
                 </a>
               </li>
+              <?php endif; ?>
 
+              <?php if ($showPdamWater && $canPdamWater): ?>
               <li class="nav-item">
                 <a href="<?= base_url('pdam-water') ?>"
                   class="nav-link <?= $seg1 === 'pdam-water' ? 'active' : '' ?>">
@@ -308,13 +381,14 @@ $hasBrandLogo = file_exists($brandLogoPath);
                   <p>Air PDAM</p>
                 </a>
               </li>
+              <?php endif; ?>
 
             </ul>
 
           </li>
         <?php endif; ?>
 
-        <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
+        <?php if ($showCompliancePrint && $canCompliancePrint): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/print') ?>" class="nav-link <?= $isCompliance && $seg2 === 'print' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-print"></i>
@@ -324,9 +398,10 @@ $hasBrandLogo = file_exists($brandLogoPath);
         <?php endif; ?>
 
         <!-- ================= ADMIN ================= -->
-        <?php if (hasRole(['admin', 'compliance'])): ?>
+        <?php if ($showUsersManagement || $showAuditLogs || $showBackups): ?>
           <li class="nav-header sidebar-section-title">ADMIN</li>
 
+          <?php if ($showUsersManagement && $canUsersManagement): ?>
           <li class="nav-item">
             <a href="<?= base_url('users') ?>"
               class="nav-link <?= $seg1 === 'users' ? 'active' : '' ?>">
@@ -334,7 +409,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Manajemen User</p>
             </a>
           </li>
+          <?php endif; ?>
 
+          <?php if ($showAuditLogs && $canAuditLogs): ?>
           <li class="nav-item">
             <a href="<?= base_url('audit-logs') ?>"
               class="nav-link <?= $seg1 === 'audit-logs' ? 'active' : '' ?>">
@@ -342,7 +419,9 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Audit Log</p>
             </a>
           </li>
+          <?php endif; ?>
 
+          <?php if ($showBackups && $canBackups): ?>
           <li class="nav-item">
             <a href="<?= base_url('backups') ?>"
               class="nav-link <?= $seg1 === 'backups' ? 'active' : '' ?>">
@@ -350,6 +429,7 @@ $hasBrandLogo = file_exists($brandLogoPath);
               <p>Backup</p>
             </a>
           </li>
+          <?php endif; ?>
         <?php endif; ?>
 
       </ul>
