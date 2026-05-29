@@ -29,8 +29,8 @@ DEFAULT_CONFIG = {
     "lan_url": "http://192.168.1.14/api/agent/heartbeat",
     "public_url": "https://eams.ptyhs.com/api/agent/heartbeat",
     "command_url": "https://eams.ptyhs.com/api/agent/command",
-    "interval": 600,
-    "command_poll_interval": 10,
+    "interval": 900,
+    "command_poll_interval": 5,
     "agent_version": "2.1",
     "update_url": "https://eams.ptyhs.com/api/agent/update",
     "startup": True,
@@ -217,7 +217,7 @@ if INTERVAL < 10:
     cfg["interval"] = INTERVAL
     save_config()
 
-if COMMAND_POLL_INTERVAL < 10:
+if COMMAND_POLL_INTERVAL < 5:
     COMMAND_POLL_INTERVAL = DEFAULT_CONFIG["command_poll_interval"]
     cfg["command_poll_interval"] = COMMAND_POLL_INTERVAL
     save_config()
@@ -746,6 +746,7 @@ def poll_command():
         "hostname": platform.node(),
         "mac": get_mac_address(),
         "agent_version": AGENT_VERSION,
+        "command_poll_interval": COMMAND_POLL_INTERVAL,
     }
     changed = False
 
@@ -774,6 +775,9 @@ def poll_command():
             interval_from_server = data.get("interval") or data.get("heartbeat_interval")
             if interval_from_server:
                 _set_interval(interval_from_server)
+            command_poll_interval = data.get("command_poll_interval")
+            if command_poll_interval:
+                _set_command_poll_interval(command_poll_interval)
             elif changed:
                 save_config()
 
@@ -828,6 +832,22 @@ def _set_interval(seconds):
     cfg["interval"] = parsed
     save_config()
     log(f"Heartbeat interval updated to {parsed}s")
+
+
+def _set_command_poll_interval(seconds):
+    global COMMAND_POLL_INTERVAL
+
+    try:
+        parsed = int(seconds)
+    except Exception:
+        log(f"Invalid command poll interval payload: {seconds}")
+        return
+
+    parsed = max(5, min(3600, parsed))
+    COMMAND_POLL_INTERVAL = parsed
+    cfg["command_poll_interval"] = parsed
+    save_config()
+    log(f"Command poll interval updated to {parsed}s")
 
 
 def _restart_agent_process():
@@ -927,6 +947,13 @@ def execute_command(command_payload):
         if seconds is None and isinstance(command_payload, dict):
             seconds = command_payload.get("seconds")
         _set_interval(seconds)
+        return command_name
+
+    if command_name in {"set_command_poll_interval", "command_poll_interval"}:
+        seconds = command_args.get("seconds") if isinstance(command_args, dict) else None
+        if seconds is None and isinstance(command_payload, dict):
+            seconds = command_payload.get("seconds")
+        _set_command_poll_interval(seconds)
         return command_name
 
     if command_name in {"sync", "sync_now"}:
@@ -1163,6 +1190,7 @@ def send():
         "device_token": DEVICE_TOKEN,
         "agent_version": AGENT_VERSION,
         "heartbeat_interval": INTERVAL,
+        "command_poll_interval": COMMAND_POLL_INTERVAL,
         "hostname": platform.node(),
         "device_user": getpass.getuser(),
         "serial_number": get_serial(),
@@ -1209,6 +1237,9 @@ def send():
     interval_from_server = response.get("interval") or response.get("heartbeat_interval")
     if interval_from_server:
         _set_interval(interval_from_server)
+    command_poll_interval = response.get("command_poll_interval")
+    if command_poll_interval:
+        _set_command_poll_interval(command_poll_interval)
     else:
         save_config()
 
@@ -1269,6 +1300,7 @@ def get_client_dashboard_data():
         "device_token": DEVICE_TOKEN or cfg.get("device_token"),
         "agent_version": AGENT_VERSION,
         "heartbeat_interval": int(INTERVAL),
+        "command_poll_interval": int(COMMAND_POLL_INTERVAL),
         "sync_status": cfg.get("last_sync_status") or "unknown",
         "sync_at": cfg.get("last_sync_at"),
         "client_ip": get_ip(),

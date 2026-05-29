@@ -1,4 +1,4 @@
-﻿<?php helper('device'); ?>
+<?php helper('device'); ?>
 <?php
 $extra = $extra ?? device_extra($device);
 $hw = $hw ?? device_hardware($device);
@@ -6,11 +6,11 @@ $insights = $insights ?? [];
 $session = is_array($extra['session'] ?? null) ? $extra['session'] : [];
 $health = is_array($extra['health'] ?? null) ? $extra['health'] : [];
 
-$heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? 900));
+$heartbeatInterval = max(86400, (int)($extra['heartbeat_interval'] ?? 86400));
 $heartbeatLabel = $heartbeatInterval >= 60
     ? (number_format($heartbeatInterval / 60, 0) . ' menit')
     : ($heartbeatInterval . ' detik');
-$commandPollInterval = max(5, (int)($session['command_poll_interval'] ?? 5));
+$commandPollInterval = max(0, (int)($session['command_poll_interval'] ?? $extra['command_poll_interval'] ?? 0));
 $hardwareRefreshHours = max(1, (int)($health['hardware_refresh_interval_hours'] ?? 12));
 $hardwareRefreshLabel = $hardwareRefreshHours >= 24
     ? number_format($hardwareRefreshHours / 24, 0) . ' hari'
@@ -112,9 +112,9 @@ $liveState = [
                 <h4 class="fw-bold mb-1"><?= esc($device['hostname'] ?? '-') ?></h4>
                 <p class="text-muted mb-3 it-hero-meta">
                     User device <strong><?= esc($device['device_user'] ?? '-') ?></strong>
-                    <span class="it-meta-sep">•</span>
+                    <span class="it-meta-sep">&middot;</span>
                     IP client <strong><?= esc($displayIp) ?></strong>
-                    <span class="it-meta-sep">•</span>
+                    <span class="it-meta-sep">&middot;</span>
                     Agent <strong><?= esc($device['agent_version'] ?? '-') ?></strong>
                 </p>
                 <div class="d-flex flex-wrap gap-2 mb-3">

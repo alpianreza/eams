@@ -95,7 +95,8 @@ class AgentController extends Controller
             'health'       => $data['health'] ?? $oldExtra['health'] ?? [],
             'last_sync_status' => $data['last_sync_status'] ?? $oldExtra['last_sync_status'] ?? null,
             'last_sync_at' => $data['last_sync_at'] ?? $oldExtra['last_sync_at'] ?? null,
-            'heartbeat_interval' => $data['heartbeat_interval'] ?? $data['interval'] ?? $oldExtra['heartbeat_interval'] ?? $this->defaultHeartbeatInterval(),
+            'heartbeat_interval' => $oldExtra['heartbeat_interval'] ?? $data['heartbeat_interval'] ?? $data['interval'] ?? $this->defaultHeartbeatInterval(),
+            'command_poll_interval' => $oldExtra['command_poll_interval'] ?? $data['command_poll_interval'] ?? $this->defaultCommandPollInterval(),
             'heartbeat_boost_until' => $oldExtra['heartbeat_boost_until'] ?? 0,
             'heartbeat_boost_interval' => $oldExtra['heartbeat_boost_interval'] ?? $this->remoteHeartbeatInterval(),
             'heartbeat_normal_interval' => $oldExtra['heartbeat_normal_interval'] ?? $this->defaultHeartbeatInterval(),
@@ -114,6 +115,7 @@ class AgentController extends Controller
 
         $resolvedHeartbeatInterval = $this->resolveHeartbeatInterval($extra);
         $extra['heartbeat_interval'] = $resolvedHeartbeatInterval;
+        $extra['command_poll_interval'] = $this->resolveCommandPollInterval($extra);
 
         $payload['cpu'] = json_encode($extra, JSON_UNESCAPED_UNICODE);
 
@@ -154,6 +156,7 @@ class AgentController extends Controller
             'status'      => 'ok',
             'device_token' => $deviceToken,
             'heartbeat_interval' => $latestHeartbeatInterval,
+            'command_poll_interval' => $this->resolveCommandPollInterval($latestExtra),
             'command'     => $command,
             'client_profile' => $clientProfile,
             'remote_lock_until' => (int) ($latestExtra['remote_lock_until'] ?? 0),
@@ -208,10 +211,17 @@ class AgentController extends Controller
             ]);
         }
 
+        $throttled = $this->throttleCommandPoll($data);
+        if ($throttled !== null) {
+            return $this->response->setJSON($throttled);
+        }
+
         $device = $this->findDeviceByIdentity($data);
         if (!$device) {
             return $this->response->setJSON([
                 'status' => 'missing',
+                'heartbeat_interval' => $this->defaultHeartbeatInterval(),
+                'command_poll_interval' => $this->defaultCommandPollInterval(),
                 'command' => null,
                 'server_time' => date(DATE_ATOM),
             ]);
@@ -227,6 +237,7 @@ class AgentController extends Controller
             'status' => 'ok',
             'device_token' => $latestDevice['device_token'] ?? null,
             'heartbeat_interval' => $this->resolveHeartbeatInterval($latestExtra),
+            'command_poll_interval' => $this->resolveCommandPollInterval($latestExtra),
             'command' => $command,
             'remote_lock_until' => (int) ($latestExtra['remote_lock_until'] ?? 0),
             'server_time' => date(DATE_ATOM),
@@ -461,10 +472,11 @@ class AgentController extends Controller
         }
 
         $now = time();
-        $extra['heartbeat_boost_until'] = $now + $this->remoteBoostSeconds();
-        $extra['heartbeat_boost_interval'] = $this->remoteHeartbeatInterval();
+        $extra['heartbeat_boost_until'] = 0;
+        $extra['heartbeat_boost_interval'] = $this->defaultHeartbeatInterval();
         $extra['heartbeat_normal_interval'] = $this->defaultHeartbeatInterval();
-        $extra['heartbeat_interval'] = $this->remoteHeartbeatInterval();
+        $extra['heartbeat_interval'] = $this->defaultHeartbeatInterval();
+        $extra['command_poll_interval'] = $this->defaultCommandPollInterval();
         $extra['remote_lock_until'] = $now + $this->remoteLockSeconds();
         $extra['remote_lock_action'] = $command;
         $extra['last_remote_request_at'] = $now;
@@ -497,7 +509,9 @@ class AgentController extends Controller
         $extra['command'] = null;
         $extra['remote_lock_until'] = 0;
         $extra['remote_lock_action'] = null;
+        $extra['heartbeat_boost_until'] = 0;
         $extra['heartbeat_interval'] = $this->resolveHeartbeatInterval($extra);
+        $extra['command_poll_interval'] = $this->resolveCommandPollInterval($extra);
         $this->deviceModel->update($deviceId, [
             'cpu' => json_encode($extra, JSON_UNESCAPED_UNICODE),
         ]);
@@ -511,12 +525,33 @@ class AgentController extends Controller
 
     private function defaultHeartbeatInterval(): int
     {
-        return max(60, (int) env('agent.defaultHeartbeatInterval', 600));
+        return max(86400, (int) env('agent.defaultHeartbeatInterval', 86400));
     }
 
     private function remoteHeartbeatInterval(): int
     {
-        return max(10, (int) env('agent.remoteHeartbeatInterval', 10));
+        return max($this->defaultHeartbeatInterval(), (int) env('agent.remoteHeartbeatInterval', 86400));
+    }
+
+    private function defaultCommandPollInterval(): int
+    {
+        return max(0, (int) env('agent.commandPollInterval', 0));
+    }
+
+    private function resolveCommandPollInterval(array $extra): int
+    {
+        $defaultInterval = $this->defaultCommandPollInterval();
+        if ($defaultInterval <= 0) {
+            return 0;
+        }
+
+        $interval = (int) ($extra['command_poll_interval'] ?? $defaultInterval);
+        return max(5, $interval);
+    }
+
+    private function commandPollThrottleSeconds(): int
+    {
+        return max(1, (int) env('agent.commandPollThrottleSeconds', 5));
     }
 
     private function remoteBoostSeconds(): int
@@ -531,8 +566,8 @@ class AgentController extends Controller
 
     private function resolveHeartbeatInterval(array $extra): int
     {
-        $normalInterval = max(60, (int) ($extra['heartbeat_normal_interval'] ?? $this->defaultHeartbeatInterval()));
-        $remoteInterval = max(10, (int) ($extra['heartbeat_boost_interval'] ?? $this->remoteHeartbeatInterval()));
+        $normalInterval = max($this->defaultHeartbeatInterval(), (int) ($extra['heartbeat_normal_interval'] ?? $this->defaultHeartbeatInterval()));
+        $remoteInterval = max($this->defaultHeartbeatInterval(), (int) ($extra['heartbeat_boost_interval'] ?? $this->remoteHeartbeatInterval()));
         $boostUntil = (int) ($extra['heartbeat_boost_until'] ?? 0);
         $hasQueuedCommand = $this->extractQueuedCommandName($extra['command'] ?? null) !== '';
 
@@ -613,7 +648,10 @@ class AgentController extends Controller
             'cpu_usage' => $extra['cpu_usage'] ?? null,
             'ram_usage' => $extra['ram_usage'] ?? null,
             'hardware' => is_array($extra['hardware'] ?? null) ? $extra['hardware'] : [],
-            'session' => is_array($extra['session'] ?? null) ? $extra['session'] : [],
+            'session' => array_merge(
+                is_array($extra['session'] ?? null) ? $extra['session'] : [],
+                ['command_poll_interval' => $this->resolveCommandPollInterval($extra)]
+            ),
             'diagnostics' => is_array($extra['diagnostics'] ?? null) ? $extra['diagnostics'] : [],
             'last_command_result' => is_array($extra['last_command_result'] ?? null) ? $extra['last_command_result'] : null,
             'asset' => $assetSummary,
@@ -756,6 +794,49 @@ class AgentController extends Controller
         $this->commandModel->update((int) $existing['id'], $updatePayload);
     }
 
+    private function throttleCommandPoll(array $data): ?array
+    {
+        $identity = trim((string) ($data['device_token'] ?? $data['mac'] ?? $data['hostname'] ?? ''));
+        if ($identity === '') {
+            $identity = $this->request->getIPAddress() . '|' . (string) $this->request->getUserAgent();
+        }
+
+        $dir = WRITEPATH . 'cache' . DIRECTORY_SEPARATOR . 'agent-command-poll';
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+
+        if (!is_dir($dir) || !is_writable($dir)) {
+            return null;
+        }
+
+        $now = time();
+        $window = $this->commandPollThrottleSeconds();
+        $file = $dir . DIRECTORY_SEPARATOR . sha1($identity) . '.json';
+        $lastAt = 0;
+
+        if (is_file($file)) {
+            $raw = json_decode((string) @file_get_contents($file), true);
+            $lastAt = is_array($raw) ? (int) ($raw['last_at'] ?? 0) : 0;
+        }
+
+        if ($lastAt > 0 && ($now - $lastAt) < $window) {
+            return [
+                'status' => 'ok',
+                'device_token' => $data['device_token'] ?? null,
+                'heartbeat_interval' => $this->defaultHeartbeatInterval(),
+                'command_poll_interval' => $this->defaultCommandPollInterval(),
+                'command' => null,
+                'remote_lock_until' => 0,
+                'server_time' => date(DATE_ATOM),
+                'throttled' => true,
+                'retry_after' => max(1, $window - ($now - $lastAt)),
+            ];
+        }
+
+        @file_put_contents($file, json_encode(['last_at' => $now], JSON_UNESCAPED_UNICODE), LOCK_EX);
+        return null;
+    }
     private function syncRuntimeFromCommandPoll(int $deviceId, array $device, array $data): void
     {
         $extra = $this->decodeExtra($device['cpu'] ?? null);

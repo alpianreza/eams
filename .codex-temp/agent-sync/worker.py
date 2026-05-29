@@ -1,24 +1,71 @@
+import atexit
 import time
 import traceback
+import ctypes
 
 import agent_core
+
+_WORKER_MUTEX = None
 
 
 def _command_poll_interval():
     try:
-        return max(10, float(getattr(agent_core, "COMMAND_POLL_INTERVAL", 10) or 10))
+        return max(5, float(getattr(agent_core, "COMMAND_POLL_INTERVAL", 5) or 5))
     except Exception:
-        return 10.0
+        return 5.0
 
 
 def _sync_interval():
     try:
-        return max(10, float(getattr(agent_core, "INTERVAL", 600) or 600))
+        return max(5, float(getattr(agent_core, "INTERVAL", 900) or 900))
     except Exception:
-        return 600.0
+        return 900.0
+
+
+def _release_single_instance():
+    global _WORKER_MUTEX
+
+    if _WORKER_MUTEX is None or agent_core.os.name != "nt":
+        return
+
+    try:
+        ctypes.windll.kernel32.ReleaseMutex(_WORKER_MUTEX)
+        ctypes.windll.kernel32.CloseHandle(_WORKER_MUTEX)
+    except Exception:
+        pass
+    _WORKER_MUTEX = None
+
+
+def _acquire_single_instance():
+    global _WORKER_MUTEX
+
+    if agent_core.os.name != "nt":
+        return True
+
+    try:
+        kernel32 = ctypes.windll.kernel32
+        mutex = kernel32.CreateMutexW(None, False, "Global\\YHSClientWorkerLoop")
+        already_exists = kernel32.GetLastError() == 183
+        if already_exists:
+            try:
+                kernel32.CloseHandle(mutex)
+            except Exception:
+                pass
+            agent_core.log("Worker instance already running, skip duplicate start")
+            return False
+
+        _WORKER_MUTEX = mutex
+        atexit.register(_release_single_instance)
+        return True
+    except Exception as exc:
+        agent_core.log(f"Worker single-instance guard unavailable: {exc}")
+        return True
 
 
 def worker_loop():
+    if not _acquire_single_instance():
+        return
+
     agent_core.log("Worker started")
 
     next_sync_at = time.time()

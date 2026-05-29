@@ -79,6 +79,11 @@ if (! function_exists('access_menu_catalog')) {
         'group' => 'Compliance',
         'path' => '/compliance/report',
       ],
+      'thermal_imaging' => [
+        'label' => 'Thermal Imaging',
+        'group' => 'Compliance',
+        'path' => '/compliance/thermal-imaging',
+      ],
       'ems_reports' => [
         'label' => 'EMS Report',
         'group' => 'Compliance',
@@ -288,6 +293,7 @@ if (! function_exists('resolve_page_key_from_path')) {
       '/compliance/progress' => 'compliance_progress',
       '/holidays' => 'holidays',
       '/compliance/report' => 'compliance_report',
+      '/compliance/thermal-imaging' => 'thermal_imaging',
       '/ems-reports' => 'ems_reports',
       '/fdm-data-collection' => 'fdm_data_collection',
       '/compliance/questionnaires' => 'questionnaires',

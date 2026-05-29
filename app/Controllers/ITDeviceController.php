@@ -171,7 +171,7 @@ class ITDeviceController extends BaseController
   private function buildInsights(array $device, array $extra): array
   {
     $insights = [];
-    $heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? (int) env('agent.defaultHeartbeatInterval', 900)));
+    $heartbeatInterval = max(86400, (int)($extra['heartbeat_interval'] ?? (int) env('agent.defaultHeartbeatInterval', 86400)));
 
     $pendingUpdates = (int)($extra['pending'] ?? 0);
     if ($pendingUpdates >= 10) {
@@ -275,7 +275,7 @@ class ITDeviceController extends BaseController
       }
 
       $extra = json_decode($d['cpu'] ?? '{}', true) ?: [];
-      $heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? (int) env('agent.defaultHeartbeatInterval', 900)));
+      $heartbeatInterval = max(86400, (int)($extra['heartbeat_interval'] ?? (int) env('agent.defaultHeartbeatInterval', 86400)));
 
       if (!device_is_online($d, $heartbeatInterval) && !empty($d['last_seen'])) {
         $hours = (time() - strtotime($d['last_seen'])) / 3600;
@@ -383,8 +383,8 @@ class ITDeviceController extends BaseController
     $commandId = $this->generateCommandId();
     $actionLabel = trim((string)($options['action_label'] ?? strtoupper($action)));
     $forceUpdate = (bool)($options['force_update'] ?? false);
-    $normalInterval = max(60, (int) env('agent.defaultHeartbeatInterval', 900));
-    $remoteInterval = max(10, (int) env('agent.remoteHeartbeatInterval', 10));
+    $normalInterval = max(86400, (int) env('agent.defaultHeartbeatInterval', 86400));
+    $remoteInterval = max($normalInterval, (int) env('agent.remoteHeartbeatInterval', 86400));
     $boostSeconds = max(60, (int) env('agent.remoteBoostSeconds', 180));
     $lockSeconds = max(10, (int) env('agent.remoteLockSeconds', 25));
 
@@ -394,10 +394,11 @@ class ITDeviceController extends BaseController
       'args' => $args,
       'queued_at' => date(DATE_ATOM, $now),
     ];
-    $extra['heartbeat_boost_until'] = $now + $boostSeconds;
-    $extra['heartbeat_boost_interval'] = $remoteInterval;
+    $extra['heartbeat_boost_until'] = 0;
+    $extra['heartbeat_boost_interval'] = $normalInterval;
     $extra['heartbeat_normal_interval'] = $normalInterval;
-    $extra['heartbeat_interval'] = $remoteInterval;
+    $extra['heartbeat_interval'] = $normalInterval;
+    $extra['command_poll_interval'] = max(5, (int) env('agent.commandPollInterval', 5));
     $extra['remote_lock_until'] = $now + $lockSeconds;
     $extra['remote_lock_action'] = $action;
     $extra['last_remote_request_at'] = $now;
@@ -412,13 +413,169 @@ class ITDeviceController extends BaseController
 
     $this->recordCommandQueue((int) $device['id'], $commandId, $action, $args);
 
+    $push = $this->pushRemoteCommandToAgent($device, $extra['command']);
+    if (!empty($push['ok'])) {
+      $this->markCommandDispatchedLocal((int) $device['id'], $commandId);
+      $this->clearQueuedRemoteCommand((int) $device['id'], $commandId);
+
+      return [
+        'ok' => true,
+        'message' => "Perintah {$actionLabel} dikirim langsung ke agent.",
+        'delivery' => 'push',
+        'push_target' => $push['target'] ?? null,
+        'lock_until' => $extra['remote_lock_until'],
+        'heartbeat_interval' => $normalInterval,
+        'command_id' => $commandId,
+      ];
+    }
+
     return [
       'ok' => true,
-      'message' => "Perintah {$actionLabel} berhasil diantrikan. Lock aktif {$lockSeconds} detik.",
+      'message' => "Perintah {$actionLabel} diantrikan. Push langsung gagal, fallback polling agent aktif.",
+      'delivery' => 'queued',
+      'push_error' => $push['message'] ?? null,
       'lock_until' => $extra['remote_lock_until'],
-      'heartbeat_interval' => $remoteInterval,
+      'heartbeat_interval' => $normalInterval,
       'command_id' => $commandId,
     ];
+  }
+
+  private function pushRemoteCommandToAgent(array $device, array $command): array
+  {
+    $token = trim((string)($device['device_token'] ?? ''));
+    if ($token === '') {
+      return ['ok' => false, 'message' => 'Device token kosong'];
+    }
+
+    $port = max(1, min(65535, (int) env('agent.pushPort', 8765)));
+    $timeout = max(1, min(10, (int) env('agent.pushTimeout', 2)));
+    $payload = [
+      'device_token' => $token,
+      'command' => $command,
+    ];
+
+    foreach ($this->agentPushTargets($device, $port) as $target) {
+      $result = $this->postJsonToAgent($target, $payload, $timeout);
+      if (!empty($result['ok'])) {
+        return ['ok' => true, 'target' => $target, 'response' => $result['body'] ?? null];
+      }
+    }
+
+    return ['ok' => false, 'message' => 'Agent push endpoint tidak merespons'];
+  }
+
+  private function agentPushTargets(array $device, int $port): array
+  {
+    $extra = json_decode($device['cpu'] ?? '{}', true) ?: [];
+    $candidates = [
+      $extra['lan_ip'] ?? null,
+      $device['last_ip'] ?? null,
+      $extra['request_ip'] ?? null,
+    ];
+
+    $targets = [];
+    foreach ($candidates as $candidate) {
+      $ip = trim((string)$candidate);
+      if ($ip === '' || $ip === '127.0.0.1' || $ip === '0.0.0.0' || stripos($ip, '::1') !== false) {
+        continue;
+      }
+      if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+        continue;
+      }
+      $targets[] = "http://{$ip}:{$port}/command";
+    }
+
+    return array_values(array_unique($targets));
+  }
+
+  private function postJsonToAgent(string $url, array $payload, int $timeout): array
+  {
+    $body = json_encode($payload, JSON_UNESCAPED_UNICODE);
+
+    if (function_exists('curl_init')) {
+      $ch = curl_init($url);
+      curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $body,
+        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => $timeout,
+        CURLOPT_TIMEOUT => $timeout,
+      ]);
+      $responseBody = curl_exec($ch);
+      $statusCode = (int) curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+      $error = curl_error($ch);
+      curl_close($ch);
+
+      return [
+        'ok' => $statusCode >= 200 && $statusCode < 300,
+        'status' => $statusCode,
+        'body' => $responseBody,
+        'message' => $error,
+      ];
+    }
+
+    $context = stream_context_create([
+      'http' => [
+        'method' => 'POST',
+        'header' => "Content-Type: application/json\r\n",
+        'content' => $body,
+        'timeout' => $timeout,
+        'ignore_errors' => true,
+      ],
+    ]);
+    $responseBody = @file_get_contents($url, false, $context);
+    $statusLine = $http_response_header[0] ?? '';
+    preg_match('/\s(\d{3})\s/', $statusLine, $matches);
+    $statusCode = (int)($matches[1] ?? 0);
+
+    return [
+      'ok' => $statusCode >= 200 && $statusCode < 300,
+      'status' => $statusCode,
+      'body' => $responseBody,
+    ];
+  }
+
+  private function markCommandDispatchedLocal(int $deviceId, string $commandId): void
+  {
+    if (!$this->commandLogTableExists()) {
+      return;
+    }
+
+    $existing = $this->commandModel
+      ->where('device_id', $deviceId)
+      ->where('command_id', $commandId)
+      ->first();
+
+    if (!$existing) {
+      return;
+    }
+
+    $status = strtolower(trim((string)($existing['status'] ?? 'queued')));
+    if (in_array($status, ['success', 'error'], true)) {
+      return;
+    }
+
+    $this->commandModel->update((int)$existing['id'], ['status' => 'dispatched']);
+  }
+
+  private function clearQueuedRemoteCommand(int $deviceId, string $commandId): void
+  {
+    $device = $this->deviceModel->find($deviceId);
+    if (!$device) {
+      return;
+    }
+
+    $extra = json_decode($device['cpu'] ?? '{}', true) ?: [];
+    $command = is_array($extra['command'] ?? null) ? $extra['command'] : [];
+    if (trim((string)($command['id'] ?? '')) !== $commandId) {
+      return;
+    }
+
+    $extra['command'] = null;
+    $this->deviceModel->update($deviceId, [
+      'cpu' => json_encode($extra, JSON_UNESCAPED_UNICODE),
+    ]);
   }
 
   private function queuedCommandName($commandPayload): string

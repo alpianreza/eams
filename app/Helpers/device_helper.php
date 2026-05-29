@@ -354,7 +354,7 @@ if (!function_exists('device_is_online')) {
       return false;
     }
 
-    $threshold = max(30, $interval * 2);
+    $threshold = max(172800, $interval * 2);
     return (time() - strtotime($device['last_seen'])) <= $threshold;
   }
 }

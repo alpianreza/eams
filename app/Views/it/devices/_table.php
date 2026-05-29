@@ -26,7 +26,7 @@
                 <?php foreach ($devices as $d): ?>
                     <?php
                     $extra = json_decode($d['cpu'] ?? '{}', true) ?? [];
-$heartbeatInterval = max(10, (int)($extra['heartbeat_interval'] ?? 900));
+$heartbeatInterval = max(86400, (int)($extra['heartbeat_interval'] ?? 86400));
                     $online = device_is_online($d, $heartbeatInterval);
                     $score = device_risk_score($d);
                     [$label, $badge] = device_risk_label($score);

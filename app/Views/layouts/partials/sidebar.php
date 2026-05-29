@@ -32,6 +32,7 @@ $canChecklistMaster = canAccessPage('checklist_master');
 $canQrGallery = canAccessPage('qr_gallery');
 $canHolidays = canAccessPage('holidays');
 $canComplianceReport = canAccessPage('compliance_report');
+$canThermalImaging = canAccessPage('thermal_imaging');
 $canEmsReports = canAccessPage('ems_reports');
 $canFdm = canAccessPage('fdm_data_collection');
 $canQuestionnaires = canAccessPage('questionnaires');
@@ -59,6 +60,7 @@ $showChecklistMaster = canShowMenuPage(['admin', 'compliance'], 'checklist_maste
 $showQrGallery = canShowMenuPage(['admin', 'compliance'], 'qr_gallery');
 $showHolidays = canShowMenuPage(['admin', 'compliance'], 'holidays');
 $showComplianceReport = canShowMenuPage(['admin', 'compliance', 'auditor'], 'compliance_report');
+$showThermalImaging = canShowMenuPage(['admin', 'compliance', 'staff'], 'thermal_imaging');
 $showEmsReports = canShowMenuPage(['admin', 'compliance', 'office'], 'ems_reports');
 $showFdm = canShowMenuPage(['admin', 'compliance', 'office'], 'fdm_data_collection');
 $showQuestionnaires = canShowMenuPage(['admin', 'compliance'], 'questionnaires');
@@ -186,7 +188,7 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
         <?php endif; ?>
 
         <!-- ================= COMPLIANCE ================= -->
-        <?php if ($showComplianceDashboard || $showComplianceProgress || $showComplianceInventory || $showChecklistMaster || $showQrGallery || $showHolidays || $showComplianceReport || $showEmsReports || $showFdm || $showQuestionnaires || $showEvidenceCenter || $showBoiler || $showIpal || $showPdamWater || $showCompliancePrint): ?>
+        <?php if ($showComplianceDashboard || $showComplianceProgress || $showComplianceInventory || $showChecklistMaster || $showQrGallery || $showHolidays || $showComplianceReport || $showThermalImaging || $showEmsReports || $showFdm || $showQuestionnaires || $showEvidenceCenter || $showBoiler || $showIpal || $showPdamWater || $showCompliancePrint): ?>
           <li class="nav-header sidebar-section-title">COMPLIANCE</li>
         <?php endif; ?>
 
@@ -285,6 +287,16 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
               class="nav-link <?= $isCompliance && $seg2 === 'report' ? 'active' : '' ?>">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>Report</p>
+            </a>
+          </li>
+        <?php endif; ?>
+
+        <?php if ($showThermalImaging && $canThermalImaging): ?>
+          <li class="nav-item">
+            <a href="/compliance/thermal-imaging"
+              class="nav-link <?= $isCompliance && $seg2 === 'thermal-imaging' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-thermometer-half"></i>
+              <p>Thermal Imaging</p>
             </a>
           </li>
         <?php endif; ?>

@@ -259,6 +259,15 @@ $routes->group('compliance/report', ['filter' => 'auth'], function ($routes) {
     $routes->get('inventory-by-type', 'ComplianceReportController::getInventoryByType');
 });
 
+$routes->group('compliance/thermal-imaging', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'ThermalImagingController::index');
+    $routes->get('create', 'ThermalImagingController::create');
+    $routes->post('store', 'ThermalImagingController::store');
+    $routes->post('locations/store', 'ThermalImagingController::storeLocation');
+    $routes->get('(:num)', 'ThermalImagingController::show/$1');
+    $routes->get('(:num)/pdf', 'ThermalImagingController::pdf/$1');
+});
+
 $routes->group('compliance/questionnaires', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'ComplianceQuestionnaireController::index');
     $routes->get('analytics', 'ComplianceQuestionnaireController::analytics');
