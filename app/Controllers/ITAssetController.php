@@ -117,7 +117,7 @@ class ITAssetController extends BaseController
 
     public function assignSave($assetId)
     {
-        if (session()->get('permission') === 'read' && session()->get('role') !== 'admin') {
+        if (! hasWriteAccess()) {
             return redirect()->back()
                 ->with('error', 'Anda hanya punya akses baca');
         }
@@ -163,7 +163,7 @@ class ITAssetController extends BaseController
 
     public function store()
     {
-        if (session()->get('permission') === 'read' && session()->get('role') !== 'admin') {
+        if (! hasWriteAccess()) {
             return redirect()->back()
                 ->with('error', 'Anda hanya punya akses baca');
         }

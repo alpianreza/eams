@@ -411,6 +411,15 @@ $routes->group('pdam-water', ['filter' => 'auth'], function ($routes) {
     $routes->post('delete', 'PdamWaterController::delete');
 });
 
+$routes->group('pdam-water-boiler', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'PdamWaterBoilerController::index');
+    $routes->get('detail/(:segment)', 'PdamWaterBoilerController::detail/$1');
+    $routes->get('export-excel', 'PdamWaterBoilerController::exportExcel');
+    $routes->get('export-pdf', 'PdamWaterBoilerController::exportPdf');
+    $routes->post('save', 'PdamWaterBoilerController::save');
+    $routes->post('delete', 'PdamWaterBoilerController::delete');
+});
+
 $routes->add('logstores/(:any)', function () {
     return service('response')->setStatusCode(404);
 });

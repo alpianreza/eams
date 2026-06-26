@@ -1034,6 +1034,6 @@ class EmsReportController extends BaseController
 
     private function isReadOnlyUser(): bool
     {
-        return session()->get('permission') === 'read' && session()->get('role') !== 'admin';
+        return isReadOnlyAccess();
     }
 }

@@ -40,6 +40,7 @@ $canEvidenceCenter = canAccessPage('evidence_center');
 $canBoiler = canAccessPage('boiler_fuel');
 $canIpal = canAccessPage('ipal');
 $canPdamWater = canAccessPage('pdam_water');
+$canPdamWaterBoiler = canAccessPage('pdam_water_boiler');
 $canCompliancePrint = canAccessPage('compliance_print');
 $canUsersManagement = canAccessPage('users_management');
 $canAuditLogs = canAccessPage('audit_logs');
@@ -68,6 +69,7 @@ $showEvidenceCenter = canShowMenuPage(['admin', 'compliance', 'auditor'], 'evide
 $showBoiler = canShowMenuPage(['admin', 'compliance'], 'boiler_fuel');
 $showIpal = canShowMenuPage(['admin', 'compliance'], 'ipal');
 $showPdamWater = canShowMenuPage(['admin', 'compliance'], 'pdam_water');
+$showPdamWaterBoiler = canShowMenuPage(['admin', 'compliance'], 'pdam_water_boiler');
 $showCompliancePrint = canShowMenuPage(['admin', 'compliance', 'auditor'], 'compliance_print');
 $showUsersManagement = canShowMenuPage(['admin', 'compliance'], 'users_management');
 $showAuditLogs = canShowMenuPage(['admin', 'compliance'], 'audit_logs');
@@ -188,7 +190,7 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
         <?php endif; ?>
 
         <!-- ================= COMPLIANCE ================= -->
-        <?php if ($showComplianceDashboard || $showComplianceProgress || $showComplianceInventory || $showChecklistMaster || $showQrGallery || $showHolidays || $showComplianceReport || $showThermalImaging || $showEmsReports || $showFdm || $showQuestionnaires || $showEvidenceCenter || $showBoiler || $showIpal || $showPdamWater || $showCompliancePrint): ?>
+        <?php if ($showComplianceDashboard || $showComplianceProgress || $showComplianceInventory || $showChecklistMaster || $showQrGallery || $showHolidays || $showComplianceReport || $showThermalImaging || $showEmsReports || $showFdm || $showQuestionnaires || $showEvidenceCenter || $showBoiler || $showIpal || $showPdamWater || $showPdamWaterBoiler || $showCompliancePrint): ?>
           <li class="nav-header sidebar-section-title">COMPLIANCE</li>
         <?php endif; ?>
 
@@ -343,10 +345,10 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
         <?php endif; ?>
 
         <?php
-        $isUtilityMenu = in_array($seg1, ['boiler', 'ipal', 'pdam-water']);
+        $isUtilityMenu = in_array($seg1, ['boiler', 'ipal', 'pdam-water', 'pdam-water-boiler']);
         ?>
 
-        <?php if ($showBoiler || $showIpal || $showPdamWater): ?>
+        <?php if ($showBoiler || $showIpal || $showPdamWater || $showPdamWaterBoiler): ?>
           <li class="nav-item">
 
             <a class="nav-link <?= $isUtilityMenu ? 'active' : '' ?>"
@@ -391,6 +393,16 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
                   class="nav-link <?= $seg1 === 'pdam-water' ? 'active' : '' ?>">
                   <i class="fas fa-faucet"></i>
                   <p>Air PDAM</p>
+                </a>
+              </li>
+              <?php endif; ?>
+
+              <?php if ($showPdamWaterBoiler && $canPdamWaterBoiler): ?>
+              <li class="nav-item">
+                <a href="<?= base_url('pdam-water-boiler') ?>"
+                  class="nav-link <?= $seg1 === 'pdam-water-boiler' ? 'active' : '' ?>">
+                  <i class="fas fa-faucet-drip"></i>
+                  <p>Air PDAM Boiler</p>
                 </a>
               </li>
               <?php endif; ?>

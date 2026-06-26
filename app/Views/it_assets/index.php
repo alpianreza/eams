@@ -3,7 +3,7 @@
 <?php
 $role       = session()->get('role');
 $permission = session()->get('permission');
-$isWritable = ($permission === 'write' || $role === 'admin');
+$isWritable = function_exists('hasWriteAccess') ? hasWriteAccess() : ($permission === 'write' || $role === 'admin');
 
 $filterItems = [
     ['value' => '', 'label' => 'Semua IT'],

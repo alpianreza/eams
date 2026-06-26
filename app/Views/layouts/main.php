@@ -1,6 +1,7 @@
 <?php
 $isWritable = $isWritable ?? false;
 $role       = $role ?? session()->get('role') ?? 'viewer';
+$isReadOnlyAccess = function_exists('isReadOnlyAccess') ? isReadOnlyAccess() : false;
 
 $segments = service('uri')->getSegments();
 
@@ -68,7 +69,7 @@ if (!empty($backUrl)) {
 
 </head>
 
-<body class="layout-fixed sidebar-expand-lg bg-body-secondary eams-v2">
+<body class="layout-fixed sidebar-expand-lg bg-body-secondary eams-v2<?= $isReadOnlyAccess ? ' is-read-only' : '' ?>" data-read-only="<?= $isReadOnlyAccess ? '1' : '0' ?>">
 
     <?php if (session()->get('logged_in')): ?>
 
@@ -173,6 +174,56 @@ if (!empty($backUrl)) {
         }
     });
 </script>
+
+<?php if ($isReadOnlyAccess && session()->get('logged_in')): ?>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const message = "Akses read only hanya bisa membaca data.";
+            const mutatingMethods = ["post", "put", "patch", "delete"];
+
+            document.querySelectorAll("form").forEach((form) => {
+                const method = (form.getAttribute("method") || "get").toLowerCase();
+                if (!mutatingMethods.includes(method) || form.dataset.readonlyAllow === "1") {
+                    return;
+                }
+
+                form.classList.add("read-only-locked-form");
+                form.querySelectorAll("input, textarea, select, button").forEach((control) => {
+                    if (control.type === "hidden" || control.dataset.readonlyAllow === "1") {
+                        return;
+                    }
+
+                    control.disabled = true;
+                    control.setAttribute("aria-disabled", "true");
+                });
+            });
+
+            document.addEventListener("submit", function(event) {
+                const form = event.target;
+                if (!(form instanceof HTMLFormElement) || form.dataset.readonlyAllow === "1") {
+                    return;
+                }
+
+                const method = (form.getAttribute("method") || "get").toLowerCase();
+                if (mutatingMethods.includes(method)) {
+                    event.preventDefault();
+                    window.safeToast?.(message, "warning");
+                }
+            }, true);
+
+            const originalFetch = window.fetch;
+            window.fetch = function(resource, options = {}) {
+                const method = (options.method || "get").toLowerCase();
+                if (mutatingMethods.includes(method) && options.readonlyAllow !== true) {
+                    window.safeToast?.(message, "warning");
+                    return Promise.reject(new Error(message));
+                }
+
+                return originalFetch.apply(this, arguments);
+            };
+        });
+    </script>
+<?php endif; ?>
 
 
 <!-- Page Specific Script -->

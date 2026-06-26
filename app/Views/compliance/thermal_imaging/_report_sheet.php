@@ -73,7 +73,6 @@ $imageSrc = static function (?string $path) use ($isPdf): string {
   </table>
 
   <div class="thermal-section-title">Inspection Report</div>
-  <div class="thermal-area-box"><?= esc($report['area_name']) ?></div>
 
   <table class="thermal-output-table">
     <thead>

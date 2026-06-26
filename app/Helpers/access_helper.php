@@ -119,6 +119,11 @@ if (! function_exists('access_menu_catalog')) {
         'group' => 'Boiler & Utility',
         'path' => '/pdam-water',
       ],
+      'pdam_water_boiler' => [
+        'label' => 'Air PDAM Boiler',
+        'group' => 'Boiler & Utility',
+        'path' => '/pdam-water-boiler',
+      ],
       'compliance_print' => [
         'label' => 'Print Center',
         'group' => 'Compliance',
@@ -203,17 +208,25 @@ if (! function_exists('hasConfiguredPageAccess')) {
   }
 }
 
+if (! function_exists('isReadOnlyAccess')) {
+  function isReadOnlyAccess(): bool
+  {
+    $role = strtolower(trim((string) session()->get('role')));
+    $roleKey = str_replace([' ', '-'], '_', $role);
+    $permission = strtolower(trim((string) session()->get('permission')));
+
+    if ($roleKey === 'admin') {
+      return false;
+    }
+
+    return $permission === 'read' || in_array($roleKey, ['read', 'readonly', 'read_only'], true);
+  }
+}
+
 if (! function_exists('hasWriteAccess')) {
   function hasWriteAccess(): bool
   {
-    $role = (string) session()->get('role');
-    $permission = (string) session()->get('permission');
-
-    if ($role === 'admin') {
-      return true;
-    }
-
-    return $permission !== 'read';
+    return ! isReadOnlyAccess();
   }
 }
 
@@ -301,6 +314,7 @@ if (! function_exists('resolve_page_key_from_path')) {
       '/boiler' => 'boiler_fuel',
       '/ipal' => 'ipal',
       '/pdam-water' => 'pdam_water',
+      '/pdam-water-boiler' => 'pdam_water_boiler',
       '/compliance/print' => 'compliance_print',
       '/users' => 'users_management',
       '/audit-logs' => 'audit_logs',

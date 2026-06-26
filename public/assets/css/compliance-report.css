@@ -141,7 +141,7 @@
   border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
-.eams-export-float {
+.compliance-report-export-float.eams-export-float {
   position: fixed;
   right: 24px;
   bottom: 28px;
@@ -151,7 +151,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: auto !important;
+  min-width: 0;
+  height: auto !important;
   padding: 0.6rem 0.95rem;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
@@ -174,9 +179,11 @@
     height: 160px;
   }
 
-  .eams-export-float {
+  .compliance-report-export-float.eams-export-float {
     right: 16px;
     bottom: 20px;
+    width: auto !important;
+    height: auto !important;
     padding: 0.52rem 0.72rem;
     font-size: 0.82rem;
   }

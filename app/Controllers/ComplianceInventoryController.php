@@ -118,7 +118,7 @@ class ComplianceInventoryController extends BaseController
       'perPage'     => $perPage,
       'sort'        => $sort,
       'direction'   => $direction,
-      'isWritable'  => true
+      'isWritable'  => hasWriteAccess()
     ]);
   }
 

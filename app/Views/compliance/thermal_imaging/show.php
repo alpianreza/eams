@@ -59,12 +59,6 @@
     font-size: 16px;
   }
 
-  .thermal-area-box {
-    border: 1px solid #111;
-    padding: 2px 6px;
-    margin-bottom: 9px;
-  }
-
   .thermal-output-table {
     width: 100%;
     border-collapse: collapse;

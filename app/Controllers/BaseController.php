@@ -30,10 +30,10 @@ abstract class BaseController extends Controller
         // ==============================
         $this->role = session()->get('role') ?? 'viewer';
 
-        $this->isWritable = in_array($this->role, [
+        $this->isWritable = hasWriteAccess() && in_array($this->role, [
             'admin',
             'compliance'
-        ]);
+        ], true);
 
         // ==============================
         // GLOBAL NOTIFICATION (SIDEBAR)

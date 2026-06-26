@@ -41,7 +41,7 @@ foreach ($locations as $location) {
         <div>
           <p class="text-uppercase text-muted small fw-bold mb-1">Thermal Imaging</p>
           <h5 class="mb-1 fw-bold">Buat Inspection Report</h5>
-          <p class="text-muted mb-0">User pilih lokasi dan isi Celsius; admin/compliance bisa tambah lokasi baru.</p>
+          <p class="text-muted mb-0">User pilih lokasi dan isi Celsius.</p>
         </div>
         <button type="submit" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1">
           <i class="bi bi-save"></i>
@@ -67,10 +67,6 @@ foreach ($locations as $location) {
           <div class="col-12 col-md-4">
             <label class="form-label">Facility</label>
             <input type="text" name="facility" class="form-control" value="<?= esc(old('facility') ?: $defaultFacility) ?>" required>
-          </div>
-          <div class="col-12">
-            <label class="form-label">Inspection Area</label>
-            <input type="text" name="area_name" class="form-control" value="<?= esc(old('area_name') ?: $defaultArea) ?>" required>
           </div>
         </div>
       </div>
@@ -124,7 +120,7 @@ foreach ($locations as $location) {
               </div>
               <div class="col-12 col-lg-4">
                 <label class="form-label">Celsius (°C)</label>
-                <input type="number" name="celsius[]" class="form-control" min="0" step="0.1" placeholder="31.5" required>
+                <input type="number" name="celsius[]" class="form-control" min="0" step="0.1" placeholder="0.0" required>
               </div>
               <div class="col-12 col-lg-6">
                 <label class="form-label">Findings</label>
@@ -139,6 +135,13 @@ foreach ($locations as $location) {
         </div>
       </div>
     </section>
+
+    <div class="d-flex justify-content-end mt-3">
+      <button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-2 px-4">
+        <i class="bi bi-save"></i>
+        Simpan Report
+      </button>
+    </div>
   </form>
 </div>
 

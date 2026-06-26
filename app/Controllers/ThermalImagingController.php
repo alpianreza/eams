@@ -56,7 +56,6 @@ class ThermalImagingController extends BaseController
       'canManageLocations' => $this->canManageLocations(),
       'defaultInspector' => (string) session()->get('name'),
       'defaultFacility' => 'PT.Younghyun Star',
-      'defaultArea' => 'Main Building (Sewing Area)',
     ]);
   }
 
@@ -69,13 +68,12 @@ class ThermalImagingController extends BaseController
     $inspectionDate = trim((string) $this->request->getPost('inspection_date'));
     $inspectorName = trim((string) $this->request->getPost('inspector_name'));
     $facility = trim((string) $this->request->getPost('facility'));
-    $areaName = trim((string) $this->request->getPost('area_name'));
 
     if (! preg_match('/^\d{4}-\d{2}-\d{2}$/', $inspectionDate)) {
       return redirect()->back()->withInput()->with('error', 'Tanggal inspeksi wajib diisi dengan benar.');
     }
 
-    if ($inspectorName === '' || $facility === '' || $areaName === '') {
+    if ($inspectorName === '' || $facility === '') {
       return redirect()->back()->withInput()->with('error', 'General information wajib dilengkapi.');
     }
 
@@ -95,7 +93,7 @@ class ThermalImagingController extends BaseController
       'inspection_date' => $inspectionDate,
       'inspector_name' => $inspectorName,
       'facility' => $facility,
-      'area_name' => $areaName,
+      'area_name' => '',
       'created_by' => session()->get('user_id'),
     ]);
 

@@ -117,7 +117,7 @@ $monthNames = [
   </div>
 </div>
 
-<a id="exportFloating" class="btn btn-danger eams-export-float d-none" target="_blank">
+<a id="exportFloating" class="btn btn-danger eams-export-float compliance-report-export-float d-none" target="_blank">
   <i class="bi bi-file-earmark-pdf me-1"></i>
   Export PDF
 </a>

@@ -547,6 +547,21 @@
   opacity: 0.4;
 }
 
+body.is-read-only .read-only-locked-form {
+  opacity: 0.72;
+}
+
+body.is-read-only .read-only-locked-form input:disabled,
+body.is-read-only .read-only-locked-form textarea:disabled,
+body.is-read-only .read-only-locked-form select:disabled {
+  cursor: not-allowed;
+  background-color: #f8fafc;
+}
+
+body.is-read-only .read-only-locked-form button:disabled {
+  cursor: not-allowed;
+}
+
 .eams-export-float {
   position: fixed;
   bottom: 30px;

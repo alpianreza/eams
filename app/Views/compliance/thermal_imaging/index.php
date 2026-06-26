@@ -26,14 +26,13 @@
               <th>Tanggal</th>
               <th>Inspector</th>
               <th>Facility</th>
-              <th>Area</th>
               <th width="180" class="text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
             <?php if (empty($reports)): ?>
               <tr>
-                <td colspan="6" class="text-center text-muted py-4">Belum ada thermal imaging report.</td>
+                <td colspan="5" class="text-center text-muted py-4">Belum ada thermal imaging report.</td>
               </tr>
             <?php endif; ?>
 
@@ -43,7 +42,6 @@
                 <td><?= esc(date('d M Y', strtotime($report['inspection_date']))) ?></td>
                 <td><?= esc($report['inspector_name']) ?></td>
                 <td><?= esc($report['facility']) ?></td>
-                <td><?= esc($report['area_name']) ?></td>
                 <td class="text-center">
                   <div class="btn-group btn-group-sm">
                     <a href="/compliance/thermal-imaging/<?= (int) $report['id'] ?>" class="btn btn-outline-primary">
