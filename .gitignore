@@ -1,3 +1,4 @@
 writable/session/eams_session*
 public/download/agent/*
 writable/cache/agent-command-poll/*
+writable/logs/*.log
