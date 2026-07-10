@@ -1194,6 +1194,20 @@
   }
 }
 
+@media (max-width: 768px) {
+  .questionnaire-admin-table {
+    table-layout: fixed;
+  }
+
+  .questionnaire-admin-table th,
+  .questionnaire-admin-table td {
+    font-size: 0.68rem;
+    padding: 0.35rem 0.25rem;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+}
+
 @media (max-width: 576px) {
   .questionnaire-progress-slim.is-public {
     top: .2rem;

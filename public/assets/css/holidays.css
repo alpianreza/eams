@@ -78,6 +78,12 @@
   }
 
   .holiday-page .holiday-table {
-    font-size: 0.82rem;
+    table-layout: fixed;
+  }
+
+  .holiday-page .holiday-table th,
+  .holiday-page .holiday-table td {
+    word-wrap: break-word;
+    white-space: normal;
   }
 }

@@ -197,4 +197,31 @@
     min-height: 220px;
     height: 220px;
   }
+
+  .employee-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .employee-table th,
+  .employee-table td {
+    font-size: 0.68rem;
+    padding: 0.35rem 0.25rem;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+
+  .employee-person {
+    gap: 0.4rem;
+  }
+
+  .employee-person__avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+  }
+
+  .employee-person__name {
+    font-size: 0.7rem;
+  }
 }

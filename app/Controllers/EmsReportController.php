@@ -201,8 +201,11 @@ class EmsReportController extends BaseController
         $months = $this->sanitizeMonths($this->request->getPost('months'));
         $this->persistWaterConsumption($year, $productionOutput, $months);
 
+        helper('audit');
+        audit_log('ems_water_consumption_save', 'Menyimpan EMS Water Consumption tahun ' . $year);
+
         return redirect()->to('/ems-reports/water-consumption?year=' . $year)
-            ->with('success', 'Data water consumption berhasil disimpan.');
+            ->with('success', 'Data water consumption berhasil disimpan');
     }
 
     public function saveElectricConsumption()
@@ -224,8 +227,11 @@ class EmsReportController extends BaseController
         $months = $this->sanitizeMonths($this->request->getPost('months'));
         $this->persistElectricConsumption($year, $productionOutput, $months);
 
+        helper('audit');
+        audit_log('ems_electric_consumption_save', 'Menyimpan EMS Electric Consumption tahun ' . $year);
+
         return redirect()->to('/ems-reports/electric-consumption?year=' . $year)
-            ->with('success', 'Data electric consumption berhasil disimpan.');
+            ->with('success', 'Data electric consumption berhasil disimpan');
     }
 
     public function saveStationaryCombustion()
@@ -270,6 +276,9 @@ class EmsReportController extends BaseController
         $this->persistWaterConsumption($year, $productionOutput, $months);
         $dataset = $this->buildWaterDataset($year);
 
+        helper('audit');
+        audit_log('ems_water_consumption_save', 'Menyimpan EMS Water Consumption tahun ' . $year . ' (AJAX)');
+
         return $this->response->setJSON([
             'ok' => true,
             'message' => 'Data water consumption tersimpan otomatis.',
@@ -308,6 +317,9 @@ class EmsReportController extends BaseController
         $months = $this->sanitizeMonths($this->request->getPost('months'));
         $this->persistElectricConsumption($year, $productionOutput, $months);
         $dataset = $this->buildElectricDataset($year);
+
+        helper('audit');
+        audit_log('ems_electric_consumption_save', 'Menyimpan EMS Electric Consumption tahun ' . $year . ' (AJAX)');
 
         return $this->response->setJSON([
             'ok' => true,
@@ -354,6 +366,11 @@ class EmsReportController extends BaseController
             $this->persistCombustionConsumption($this->mobileYearModel, $this->mobileEntryModel, $year, $productionOutput, $sectionValues);
             $dataset = $this->buildMobileDataset($year);
         }
+
+        helper('audit');
+        $action = 'ems_' . $type . '_combustion_save';
+        $label = $type === 'stationary' ? 'Stationary' : 'Mobile';
+        audit_log($action, 'Menyimpan EMS ' . $label . ' Combustion tahun ' . $year);
 
         return $this->response->setJSON([
             'ok' => true,

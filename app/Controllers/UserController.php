@@ -332,6 +332,9 @@ class UserController extends BaseController
       ->where('id', $id)
       ->update(['status' => 'inactive']);
 
+    helper('audit');
+    audit_log('deactivate_user', 'Menonaktifkan user ID ' . $id);
+
     return redirect()->to('users')->with('success', 'User dinonaktifkan');
   }
 
@@ -344,6 +347,9 @@ class UserController extends BaseController
     $this->db->table('users')
       ->where('id', $id)
       ->update(['status' => 'active']);
+
+    helper('audit');
+    audit_log('activate_user', 'Mengaktifkan user ID ' . $id);
 
     return redirect()->to('users')->with('success', 'User diaktifkan');
   }

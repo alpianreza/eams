@@ -354,6 +354,8 @@ $routes->get('compliance/progress/export', 'ProgressController::export', ['filte
 $routes->get('compliance/progress/detail', 'ProgressController::getUserDetailAjax', ['filter' => 'auth']);
 $routes->post('compliance/progress/remind', 'ProgressController::sendReminderAjax', ['filter' => 'auth']);
 
+$routes->get('compliance/ranking', 'ComplianceRankingController::index', ['filter' => 'auth']);
+
 $routes->get('compliance/inventory/get/(:num)', 'ComplianceInventoryController::get/$1', ['filter' => 'auth']);
 
 $routes->group('compliance/inventory', ['filter' => 'auth'], function ($routes) {

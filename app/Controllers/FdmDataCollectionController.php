@@ -118,6 +118,9 @@ class FdmDataCollectionController extends BaseController
         $this->persistProductionSection($year, $retailers, $workforce);
         $dataset = $this->buildProductionSectionDataset($year);
 
+        helper('audit');
+        audit_log('fdm_data_collection_save', 'Menyimpan FDM Production Section tahun ' . $year);
+
         return $this->response->setJSON([
             'ok' => true,
             'message' => 'Data production section tersimpan.',

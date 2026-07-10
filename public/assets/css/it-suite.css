@@ -461,4 +461,16 @@
   .it-shell .it-stack-card .card-body {
     padding-inline: 0.95rem;
   }
+
+  .it-shell .it-table {
+    table-layout: fixed;
+  }
+
+  .it-shell .it-table th,
+  .it-shell .it-table td {
+    font-size: 0.68rem;
+    padding: 0.35rem 0.25rem;
+    word-wrap: break-word;
+    white-space: normal;
+  }
 }

@@ -97,12 +97,51 @@
     font-size: 1.3rem;
   }
 
+  /* Mobile: fit screen */
+  .home-dashboard-page .table-responsive {
+    overflow: hidden;
+  }
+
   .home-dashboard-page .home-pending-table {
-    font-size: 0.8rem;
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
   }
 
   .home-dashboard-page .home-pending-table th,
   .home-dashboard-page .home-pending-table td {
-    padding: 0.45rem 0.5rem;
+    padding: 0.3rem 0.2rem;
+    white-space: normal;
+    word-wrap: break-word;
+    font-size: 0.6rem;
+    line-height: 1.2;
   }
+
+  .home-dashboard-page .home-pending-table th {
+    font-size: 0.55rem;
+    letter-spacing: 0;
+  }
+
+  .home-dashboard-page .home-pending-table td:nth-child(1) {
+    font-size: 0.6rem;
+  }
+
+  .home-dashboard-page .home-pending-table .btn-sm {
+    font-size: 0.55rem;
+    padding: 0.12rem 0.25rem;
+    --bs-btn-padding-y: 0.1rem;
+    --bs-btn-padding-x: 0.25rem;
+  }
+
+  .home-dashboard-page .home-pending-table .badge {
+    font-size: 0.5rem;
+    padding: 0.1rem 0.2rem;
+  }
+
+  .home-dashboard-page .home-pending-table th:nth-child(1) { width: 8% }
+  .home-dashboard-page .home-pending-table th:nth-child(2) { width: 26% }
+  .home-dashboard-page .home-pending-table th:nth-child(3) { width: 24% }
+  .home-dashboard-page .home-pending-table th:nth-child(4) { width: 15% }
+  .home-dashboard-page .home-pending-table th:nth-child(5) { width: 11% }
+  .home-dashboard-page .home-pending-table th:nth-child(6) { width: 16% }
 }

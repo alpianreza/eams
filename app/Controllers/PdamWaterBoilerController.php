@@ -244,6 +244,9 @@ class PdamWaterBoilerController extends BaseController
       $id = $this->model->insert($data);
     }
 
+    helper('audit');
+    audit_log('pdam_water_boiler_create', 'Menyimpan log PDAM Water Boiler tanggal ' . $date);
+
     return $this->response->setJSON([
       'status' => 'success',
       'id' => $id,
@@ -261,6 +264,9 @@ class PdamWaterBoilerController extends BaseController
       $existing = $this->model->where('log_date', $date)->first();
       if ($existing) {
         $this->model->delete((int) $existing['id']);
+
+        helper('audit');
+        audit_log('pdam_water_boiler_delete', 'Menghapus log PDAM Water Boiler tanggal ' . $date);
       }
     }
 

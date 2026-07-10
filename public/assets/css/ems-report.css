@@ -274,7 +274,7 @@
 
 @media (max-width: 768px) {
   .ems-page .ems-hero-card .card-body {
-    padding: 0.95rem;
+    padding: 0.85rem;
   }
 
   .ems-page .ems-month-grid {
@@ -283,14 +283,32 @@
 
   .ems-page .ems-wide-table {
     min-width: 880px;
+    font-size: 0.7rem;
+  }
+
+  .ems-page .ems-wide-table th,
+  .ems-page .ems-wide-table td {
+    padding: 0.3rem 0.25rem;
   }
 
   .ems-page .ems-electric-table {
     min-width: 1140px;
+    font-size: 0.7rem;
+  }
+
+  .ems-page .ems-electric-table th,
+  .ems-page .ems-electric-table td {
+    padding: 0.3rem 0.25rem;
   }
 
   .ems-page .ems-ghg-table {
     min-width: 860px;
+    font-size: 0.7rem;
+  }
+
+  .ems-page .ems-ghg-table th,
+  .ems-page .ems-ghg-table td {
+    padding: 0.3rem 0.25rem;
   }
 
   .ems-page .ems-inline-search {

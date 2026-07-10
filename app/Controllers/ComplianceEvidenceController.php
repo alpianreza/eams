@@ -120,6 +120,8 @@ class ComplianceEvidenceController extends BaseController
 
   public function updateFollowUp()
   {
+    helper('audit');
+
     if (! $this->request->isAJAX()) {
       return redirect()->back();
     }
@@ -161,6 +163,9 @@ class ComplianceEvidenceController extends BaseController
       ];
 
       $this->logModel->update($id, $data);
+
+      helper('audit');
+      audit_log('evidence_update_followup', 'Status tindak lanjut evidence ID: ' . $id . ' diubah ke: ' . $status);
 
       return $this->response->setJSON([
         'status' => 'success',

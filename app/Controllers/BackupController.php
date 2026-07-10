@@ -30,6 +30,8 @@ class BackupController extends BaseController
     {
         try {
             $this->backupManager->createDatabaseBackup();
+            helper('audit');
+            audit_log('backup_create', 'Backup database berhasil dibuat.');
             return $this->redirectSuccess('Backup database berhasil dibuat.');
         } catch (\Throwable $exception) {
             log_message('error', 'Backup database gagal: {message}', ['message' => $exception->getMessage()]);
@@ -41,6 +43,8 @@ class BackupController extends BaseController
     {
         try {
             $this->backupManager->createFilesBackup();
+            helper('audit');
+            audit_log('backup_create', 'Backup file berhasil dibuat.');
             return $this->redirectSuccess('Backup file berhasil dibuat.');
         } catch (\Throwable $exception) {
             log_message('error', 'Backup file gagal: {message}', ['message' => $exception->getMessage()]);
@@ -52,6 +56,8 @@ class BackupController extends BaseController
     {
         try {
             $this->backupManager->createFullBackup();
+            helper('audit');
+            audit_log('backup_create', 'Backup penuh berhasil dibuat.');
             return $this->redirectSuccess('Backup penuh berhasil dibuat.');
         } catch (\Throwable $exception) {
             log_message('error', 'Backup penuh gagal: {message}', ['message' => $exception->getMessage()]);
@@ -91,6 +97,8 @@ class BackupController extends BaseController
     {
         try {
             $this->backupManager->deleteBackup((string) $fileName);
+            helper('audit');
+            audit_log('backup_delete', 'File backup dihapus: ' . (string) $fileName);
             return $this->redirectSuccess('File backup berhasil dihapus.');
         } catch (\Throwable $exception) {
             log_message('error', 'Hapus backup gagal: {message}', ['message' => $exception->getMessage()]);
@@ -102,6 +110,8 @@ class BackupController extends BaseController
     {
         try {
             $this->backupManager->restoreDatabase((string) $fileName);
+            helper('audit');
+            audit_log('backup_restore', 'Restore database dari: ' . (string) $fileName);
             return $this->redirectSuccess('Restore database berhasil dijalankan.');
         } catch (\Throwable $exception) {
             log_message('error', 'Restore database gagal: {message}', ['message' => $exception->getMessage()]);
@@ -113,6 +123,8 @@ class BackupController extends BaseController
     {
         try {
             $this->backupManager->restoreFiles((string) $fileName);
+            helper('audit');
+            audit_log('backup_restore', 'Restore file upload dari: ' . (string) $fileName);
             return $this->redirectSuccess('Restore file upload berhasil dijalankan.');
         } catch (\Throwable $exception) {
             log_message('error', 'Restore file gagal: {message}', ['message' => $exception->getMessage()]);
@@ -124,6 +136,8 @@ class BackupController extends BaseController
     {
         try {
             $this->backupManager->restoreFull((string) $fileName);
+            helper('audit');
+            audit_log('backup_restore', 'Restore penuh dari: ' . (string) $fileName);
             return $this->redirectSuccess('Restore penuh berhasil dijalankan.');
         } catch (\Throwable $exception) {
             log_message('error', 'Restore penuh gagal: {message}', ['message' => $exception->getMessage()]);

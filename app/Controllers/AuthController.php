@@ -57,6 +57,9 @@ class AuthController extends BaseController
             'page_access' => $user['page_access'] ?? null,
         ]);
 
+        helper('audit');
+        audit_log('login', 'User ' . $user['name'] . ' (' . $user['username'] . ') login');
+
         // cek redirect dari filter (misal scan QR)
         $redirect = session()->get('redirect_after_login');
         session()->remove('redirect_after_login');
@@ -71,6 +74,13 @@ class AuthController extends BaseController
     // logout
     public function logout()
     {
+        $userId   = session()->get('user_id');
+        $userName = session()->get('name');
+        $username = session()->get('username');
+
+        helper('audit');
+        audit_log('logout', 'User ' . ($userName ?? 'ID:' . $userId) . ' logout');
+
         session()->destroy();
         return redirect()->to('/login');
     }

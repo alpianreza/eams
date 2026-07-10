@@ -5,11 +5,6 @@
   border: 1px solid rgba(37, 99, 235, 0.15) !important;
 }
 
-.compliance-inventory-detail .no-lift:hover {
-  transform: none !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
-}
-
 .compliance-inventory-detail .detail-hero-actions {
   justify-content: flex-end;
   align-self: flex-start;
@@ -215,16 +210,25 @@
 
   .compliance-inventory-detail .detail-hero-actions {
     width: 100%;
-    justify-content: flex-end;
+    flex-direction: column;
   }
 
   .compliance-inventory-detail .detail-hero-actions .btn {
-    flex: 0 0 auto;
+    width: 100%;
+    justify-content: center;
   }
 
   .compliance-inventory-detail .inventory-info-table th,
   .compliance-inventory-detail .inventory-info-table td {
-    font-size: 0.82rem;
+    font-size: 0.78rem;
+  }
+
+  .compliance-inventory-detail .inventory-info-table {
+    table-layout: fixed;
+  }
+
+  .compliance-inventory-detail .inventory-info-table th {
+    width: 38%;
   }
 
   .month-nav-wrap {
@@ -238,11 +242,28 @@
 
   .inventory-grid-table {
     min-width: 620px;
+    font-size: 0.72rem;
+  }
+
+  .inventory-grid-table th,
+  .inventory-grid-table td {
+    padding: 0.3rem 0.25rem;
   }
 
   .inventory-photo-preview,
   .inventory-qr-img {
     max-height: 220px;
+  }
+
+  .table-checklist {
+    table-layout: fixed;
+  }
+
+  .table-checklist th,
+  .table-checklist td {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.25rem;
+    word-wrap: break-word;
   }
 }
 
@@ -268,5 +289,88 @@
   .compliance-modal-footer {
     padding-left: 0.8rem;
     padding-right: 0.8rem;
+  }
+
+  /* 🔥 RESPONSIVE TABLES — mobile-first */
+  .inventory-detail-month-wrap .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    max-width: 100%;
+  }
+
+  .inventory-detail-month-wrap .table-responsive::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .inventory-detail-month-wrap .table-responsive::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  .inventory-grid-table {
+    min-width: auto;
+    font-size: 0.7rem;
+  }
+
+  .inventory-grid-table th,
+  .inventory-grid-table td {
+    padding: 0.28rem 0.3rem;
+    white-space: nowrap;
+  }
+
+  .inventory-grid-table .sticky-left {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: #fff;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.68rem;
+  }
+
+  .inventory-grid-table thead .sticky-left {
+    background: #f8fafc;
+  }
+
+  .inventory-grid-table i {
+    font-size: 0.75rem;
+  }
+
+  /* Riwayat checklist */
+  .inventory-detail-month-wrap .table-checklist {
+    font-size: 0.72rem;
+  }
+
+  .inventory-detail-month-wrap .table-checklist th,
+  .inventory-detail-month-wrap .table-checklist td {
+    padding: 0.32rem 0.35rem;
+    white-space: nowrap;
+  }
+
+  .inventory-detail-month-wrap .table-checklist td:nth-child(3) {
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .inventory-detail-month-wrap .table-checklist .badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.35rem;
+  }
+
+  /* Monthly table — Catatan dan Foto kolom compress */
+  .inventory-detail-month-wrap .table-bordered td:nth-child(3) {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .inventory-thumb-small {
+    max-height: 30px;
   }
 }

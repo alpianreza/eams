@@ -115,6 +115,22 @@
     min-width: 0;
     flex: 1 1 calc(50% - 0.35rem);
   }
+
+  .checklist-page .table-checklist {
+    table-layout: fixed;
+  }
+
+  .checklist-page .table-checklist th,
+  .checklist-page .table-checklist td {
+    font-size: 0.7rem;
+    padding: 0.35rem 0.25rem;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+
+  .checklist-page .table-checklist thead th {
+    font-size: 0.62rem;
+  }
 }
 
 @media (max-width: 576px) {

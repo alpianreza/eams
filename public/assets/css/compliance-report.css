@@ -173,6 +173,16 @@
 
   .compliance-report-page .report-grid-table {
     min-width: 680px;
+    font-size: 0.7rem;
+  }
+
+  .compliance-report-page .report-grid-table th,
+  .compliance-report-page .report-grid-table td {
+    padding: 0.3rem 0.25rem;
+  }
+
+  .compliance-report-page .report-grid-table thead th {
+    font-size: 0.62rem;
   }
 
   .compliance-report-page .report-finding-img {

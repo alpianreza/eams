@@ -114,6 +114,9 @@ class BoilerFuelController extends BaseController
       $id = $this->model->insert($data);
     }
 
+    helper('audit');
+    audit_log('boiler_fuel_save', 'Data bahan bakar boiler disimpan untuk tanggal: ' . $date);
+
     return $this->response->setJSON([
       'status' => 'success',
       'id'     => $id
@@ -127,6 +130,9 @@ class BoilerFuelController extends BaseController
     if ($id) {
       $this->model->delete($id);
     }
+
+    helper('audit');
+    audit_log('boiler_fuel_delete', 'Data bahan bakar boiler dihapus ID: ' . ($id ?? '-'));
 
     return $this->response->setJSON(['status' => 'deleted']);
   }

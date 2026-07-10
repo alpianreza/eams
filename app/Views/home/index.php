@@ -167,14 +167,14 @@ if ($progress < 50) {
               <th width="56" class="text-center">No</th>
               <th>Nama Item</th>
               <th>Lokasi</th>
-              <th width="120" class="text-center">Frekuensi</th>
-              <th width="90" class="text-center">Sisa</th>
-              <th width="140" class="text-center">Aksi</th>
+              <th width="100" class="text-center">Freq</th>
+              <th width="70" class="text-center">Sisa</th>
+              <th width="120" class="text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
             <?php if (empty($pendingList)): ?>
-              <tr>
+              <tr class="home-empty-row">
                 <td colspan="6" class="text-center py-5">
                   <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
                   <div class="fw-semibold">Semua periode sudah selesai</div>

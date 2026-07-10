@@ -100,6 +100,8 @@ class ComplianceChecklistMasterController extends BaseController
    */
   public function store()
   {
+    helper('audit');
+
     $itemTypeId = (int) $this->request->getPost('item_type_id');
     $question = trim((string) $this->request->getPost('question'));
 
@@ -120,6 +122,8 @@ class ComplianceChecklistMasterController extends BaseController
       'active'       => $this->request->getPost('active') ? 1 : 0,
     ]);
 
+    audit_log('checklist_master_create', 'Menambah pertanyaan checklist untuk item type ID ' . $itemTypeId . ': ' . $question);
+
     if ($this->request->isAJAX()) {
       return $this->response->setJSON(['status' => 'success']);
     }
@@ -133,6 +137,8 @@ class ComplianceChecklistMasterController extends BaseController
    */
   public function update($id)
   {
+    helper('audit');
+
     $question = trim((string) $this->request->getPost('question'));
     if ($question === '') {
       if ($this->request->isAJAX()) {
@@ -149,6 +155,8 @@ class ComplianceChecklistMasterController extends BaseController
       'require_photo' => $this->request->getPost('require_photo') ? 1 : 0,
       'active'        => $this->request->getPost('active') ? 1 : 0,
     ]);
+
+    audit_log('checklist_master_update', 'Mengupdate pertanyaan checklist ID ' . $id . ': ' . $question);
 
     if ($this->request->isAJAX()) {
       return $this->response->setJSON(['status' => 'success']);
@@ -184,9 +192,13 @@ class ComplianceChecklistMasterController extends BaseController
 
   public function delete($id)
   {
+    helper('audit');
+
     if ($this->request->isAJAX()) {
 
       $this->checklistMasterModel->delete($id);
+
+      audit_log('checklist_master_delete', 'Menghapus pertanyaan checklist ID ' . $id);
 
       return $this->response->setJSON([
         'status' => 'success'

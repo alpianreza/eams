@@ -120,8 +120,15 @@
     font-size: 0.98rem;
   }
 
+  .utility-shell .utility-table {
+    table-layout: fixed;
+  }
+
   .utility-shell .utility-table thead th,
   .utility-shell .utility-table tbody td {
-    font-size: 0.8rem;
+    font-size: 0.68rem;
+    padding: 0.35rem 0.25rem;
+    word-wrap: break-word;
+    white-space: normal;
   }
 }
