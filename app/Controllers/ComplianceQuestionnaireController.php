@@ -459,6 +459,51 @@ class ComplianceQuestionnaireController extends BaseController
     return redirect()->to(base_url('compliance/questionnaires/' . $questionnaireId))->with('success', 'Pengaturan identitas responden berhasil diperbarui.');
   }
 
+  public function updateSubmittedAt($responseId)
+  {
+    helper('audit');
+
+    if ($guard = $this->guardWrite()) {
+      return $guard;
+    }
+
+    $response = $this->responseModel->find((int) $responseId);
+    if (!$response) {
+      return $this->response->setStatusCode(404)->setJSON([
+        'success' => false,
+        'message' => 'Respon tidak ditemukan.',
+      ]);
+    }
+
+    $submittedAt = trim((string) $this->request->getPost('submitted_at'));
+    if ($submittedAt === '') {
+      return $this->response->setStatusCode(422)->setJSON([
+        'success' => false,
+        'message' => 'Tanggal wajib diisi.',
+      ]);
+    }
+
+    $dateRegex = '/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}(:\d{2})?)?$/';
+    if (!preg_match($dateRegex, $submittedAt)) {
+      return $this->response->setStatusCode(422)->setJSON([
+        'success' => false,
+        'message' => 'Format tanggal belum sesuai. Gunakan format: YYYY-MM-DD HH:MM',
+      ]);
+    }
+
+    $this->responseModel->update((int) $responseId, [
+      'submitted_at' => $submittedAt,
+    ]);
+
+    audit_log('questionnaire_response_update_date', 'Mengupdate tanggal respon ID ' . $responseId . ' di kuesioner ID ' . $response['questionnaire_id']);
+
+    return $this->response->setJSON([
+      'success' => true,
+      'message' => 'Tanggal berhasil diperbarui.',
+      'submitted_at' => $submittedAt,
+    ]);
+  }
+
   public function deleteResponse($responseId)
   {
     if ($guard = $this->guardWrite()) {
