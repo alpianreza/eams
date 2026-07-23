@@ -78,7 +78,7 @@ $showAuditLogs = canShowMenuPage(['admin', 'compliance'], 'audit_logs');
 $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
 ?>
 
-<aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
+<aside id="appSidebar" class="app-sidebar bg-dark shadow" data-bs-theme="dark" aria-label="Navigasi utama">
   <div class="sidebar-brand eams-sidebar-brand">
     <a href="<?= base_url('/') ?>" class="brand-link d-flex align-items-center justify-content-start gap-2">
       <?php if ($hasBrandLogo): ?>

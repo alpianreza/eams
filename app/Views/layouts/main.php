@@ -65,6 +65,7 @@ if (!empty($backUrl)) {
     <link rel="stylesheet" href="<?= base_url('adminlte4/css/adminlte.min.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/mobile.css') ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=' . time()) ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/compliance-console.css?v=' . filemtime(FCPATH . 'assets/css/compliance-console.css')) ?>">
     <?= $this->renderSection('styles') ?>
 
 </head>
@@ -85,7 +86,7 @@ if (!empty($backUrl)) {
 
 
             <!-- ================= MAIN ================= -->
-            <main class="app-main">
+            <main class="app-main" id="main" tabindex="-1">
                 <div class="app-content">
                     <div class="container-fluid py-4">
                         <?php if ($resolvedBackUrl !== ''): ?>
