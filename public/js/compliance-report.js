@@ -45,13 +45,21 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function resetItemSelect() {
-    els.itemType.innerHTML = '<option value="">Pilih Item</option>';
+    els.itemType.replaceChildren();
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Pilih Item";
+    els.itemType.appendChild(opt);
     els.itemType.value = "";
     els.itemType.disabled = true;
   }
 
   function resetInventorySelect() {
-    els.inventory.innerHTML = '<option value="">Pilih No Inventaris</option>';
+    els.inventory.replaceChildren();
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Pilih No Inventaris";
+    els.inventory.appendChild(opt);
     els.inventory.value = "";
     els.inventory.disabled = true;
   }
@@ -93,12 +101,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchJson(`${endpoints.itemByCategory}?category_id=${encodeURIComponent(categoryId)}`)
       .then((rows) => {
-        let options = '<option value="">Pilih Item</option>';
+        els.itemType.replaceChildren();
+        const firstOpt = document.createElement("option");
+        firstOpt.value = "";
+        firstOpt.textContent = "Pilih Item";
+        els.itemType.appendChild(firstOpt);
+
         rows.forEach((row) => {
-          options += `<option value="${row.id}">${row.name}</option>`;
+          const opt = document.createElement("option");
+          opt.value = row.id;
+          opt.textContent = row.name;
+          els.itemType.appendChild(opt);
         });
 
-        els.itemType.innerHTML = options;
         els.itemType.disabled = false;
       })
       .catch(() => {
@@ -116,12 +131,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchJson(`${endpoints.inventoryByType}?item_type_id=${encodeURIComponent(itemTypeId)}`)
       .then((rows) => {
-        let options = '<option value="">Pilih No Inventaris</option>';
+        els.inventory.replaceChildren();
+        const firstOpt = document.createElement("option");
+        firstOpt.value = "";
+        firstOpt.textContent = "Pilih No Inventaris";
+        els.inventory.appendChild(firstOpt);
+
         rows.forEach((row) => {
-          options += `<option value="${row.id}">${row.asset_code}</option>`;
+          const opt = document.createElement("option");
+          opt.value = row.id;
+          opt.textContent = row.asset_code;
+          els.inventory.appendChild(opt);
         });
 
-        els.inventory.innerHTML = options;
         els.inventory.disabled = false;
       })
       .catch(() => {

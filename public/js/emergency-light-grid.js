@@ -23,24 +23,28 @@
 
     if (state === 'ok') {
       cell.classList.add('is-ok');
-      cell.innerHTML = '<i class="bi bi-check-lg"></i>';
+      cell.replaceChildren(document.createElement('i'));
+      cell.firstChild.className = 'bi bi-check-lg';
       return;
     }
 
     if (state === 'not_ok') {
       cell.classList.add('is-not-ok');
-      cell.innerHTML = '<i class="bi bi-x-lg"></i>';
+      cell.replaceChildren(document.createElement('i'));
+      cell.firstChild.className = 'bi bi-x-lg';
       return;
     }
 
     if (state === 'na') {
       cell.classList.add('is-na');
-      cell.innerHTML = '<i class="bi bi-dash-lg"></i>';
+      cell.replaceChildren(document.createElement('i'));
+      cell.firstChild.className = 'bi bi-dash-lg';
       return;
     }
 
     cell.classList.add('is-empty');
-    cell.innerHTML = '<span class="el-cell-mark"></span>';
+    cell.replaceChildren(document.createElement('span'));
+    cell.firstChild.className = 'el-cell-mark';
   };
 
   const setAllEmptyCellsToOk = () => {

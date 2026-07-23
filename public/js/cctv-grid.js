@@ -21,18 +21,21 @@
 
     if (state === 'ok') {
       cell.classList.add('is-ok');
-      cell.innerHTML = '<i class="bi bi-check-lg"></i>';
+      cell.replaceChildren(document.createElement('i'));
+      cell.firstChild.className = 'bi bi-check-lg';
       return;
     }
 
     if (state === 'not_ok' || state === 'na') {
       cell.classList.add('is-alert');
-      cell.innerHTML = state === 'na' ? '<i class="bi bi-dash-lg"></i>' : '<i class="bi bi-exclamation-lg"></i>';
+      cell.replaceChildren(document.createElement('i'));
+      cell.firstChild.className = state === 'na' ? 'bi bi-dash-lg' : 'bi bi-exclamation-lg';
       return;
     }
 
     cell.classList.add('is-empty');
-    cell.innerHTML = '<span class="cctv-cell-mark"></span>';
+    cell.replaceChildren(document.createElement('span'));
+    cell.firstChild.className = 'cctv-cell-mark';
   };
 
   const saveCell = async (cell, mode) => {

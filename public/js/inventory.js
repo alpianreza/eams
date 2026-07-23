@@ -666,7 +666,11 @@ function updateInventoryRowFromEditForm(target, form, response) {
         cells[5].textContent = type || "-";
         cells[6].textContent = specific || "-";
         cells[7].textContent = pic || "-";
-        cells[8].innerHTML = `<span class="badge ${statusMeta.badgeClass}">${statusMeta.label}</span>`;
+        cells[8].replaceChildren();
+        const badge = document.createElement("span");
+        badge.className = `badge ${statusMeta.badgeClass}`;
+        badge.textContent = statusMeta.label;
+        cells[8].appendChild(badge);
         cells[9].textContent = remark || "-";
       }
 
@@ -682,13 +686,25 @@ function updateInventoryRowFromEditForm(target, form, response) {
     if (element.matches(".inventory-card")) {
       const metaRows = element.querySelectorAll(".inventory-mobile-meta div");
       if (metaRows[0]) {
-        metaRows[0].innerHTML = `<strong>Tipe:</strong> ${escapeHtml(type || "-")}`;
+        metaRows[0].replaceChildren();
+        metaRows[0].appendChild(document.createTextNode("Tipe: "));
+        const strong = document.createElement("strong");
+        strong.textContent = type || "-";
+        metaRows[0].appendChild(strong);
       }
       if (metaRows[1]) {
-        metaRows[1].innerHTML = `<strong>Area:</strong> ${escapeHtml(specific || "-")}`;
+        metaRows[1].replaceChildren();
+        metaRows[1].appendChild(document.createTextNode("Area: "));
+        const strong = document.createElement("strong");
+        strong.textContent = specific || "-";
+        metaRows[1].appendChild(strong);
       }
       if (metaRows[2]) {
-        metaRows[2].innerHTML = `<strong>PIC:</strong> ${escapeHtml(pic || "-")}`;
+        metaRows[2].replaceChildren();
+        metaRows[2].appendChild(document.createTextNode("PIC: "));
+        const strong = document.createElement("strong");
+        strong.textContent = pic || "-";
+        metaRows[2].appendChild(strong);
       }
 
       const badge = element.querySelector(".badge");

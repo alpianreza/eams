@@ -23,21 +23,32 @@
   let detailRequest = null;
 
   const renderGridLoading = () => {
-    return `
-      <div class="evidence-grid-state text-center p-4">
-        <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
-        <div class="mt-2">Memuat evidence...</div>
-      </div>
-    `;
+    const wrapper = document.createElement("div");
+    wrapper.className = "evidence-grid-state text-center p-4";
+    const spinner = document.createElement("div");
+    spinner.className = "spinner-border spinner-border-sm text-primary";
+    spinner.setAttribute("role", "status");
+    spinner.setAttribute("aria-hidden", "true");
+    const msg = document.createElement("div");
+    msg.className = "mt-2";
+    msg.textContent = "Memuat evidence...";
+    wrapper.append(spinner, msg);
+    return wrapper;
   };
 
   const renderGridError = (message) => {
-    return `
-      <div class="evidence-grid-state text-center p-4 text-danger">
-        <div class="fw-semibold">${message}</div>
-        <button type="button" class="btn btn-outline-danger btn-sm mt-2" id="btnEvidenceRetry">Coba Lagi</button>
-      </div>
-    `;
+    const wrapper = document.createElement("div");
+    wrapper.className = "evidence-grid-state text-center p-4 text-danger";
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "fw-semibold";
+    msgDiv.textContent = message;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn btn-outline-danger btn-sm mt-2";
+    btn.id = "btnEvidenceRetry";
+    btn.textContent = "Coba Lagi";
+    wrapper.append(msgDiv, btn);
+    return wrapper;
   };
 
   const getRequestedPage = (href) => {
@@ -59,7 +70,7 @@
       gridRequest.abort();
     }
 
-    $grid.html(renderGridLoading());
+    $grid.empty().append(renderGridLoading());
 
     gridRequest = $.ajax({
       url: endpoints.ajax,
@@ -73,7 +84,7 @@
       timeout: 20000,
     })
       .done((res) => {
-        $grid.html(res);
+        $grid.empty().append(res);
       })
       .fail((xhr, textStatus) => {
         if (textStatus === "abort") {
@@ -84,7 +95,7 @@
           ? "Server sedang sibuk. Silakan coba lagi."
           : "Gagal memuat data evidence.";
 
-        $grid.html(renderGridError(message));
+        $grid.empty().append(renderGridError(message));
       });
   };
 
@@ -98,7 +109,7 @@
     }
 
     evidenceModal.show();
-    $detailBody.html('<div class="text-center p-4">Memuat detail evidence...</div>');
+    $detailBody.empty().append($('<div class="text-center p-4">Memuat detail evidence...</div>'));
 
     const detailUrl = `${endpoints.detailBase.replace(/\/$/, "")}/${id}`;
 
@@ -108,7 +119,7 @@
       timeout: 20000,
     })
       .done((res) => {
-        $detailBody.html(res);
+        $detailBody.empty().append(res);
       })
       .fail((xhr, textStatus) => {
         if (textStatus === "abort") {
@@ -119,7 +130,7 @@
           ? "Terjadi kesalahan saat memuat detail evidence."
           : "Detail evidence tidak dapat ditampilkan.";
 
-        $detailBody.html(`<div class="text-center text-danger p-4">${message}</div>`);
+        $detailBody.empty().append($(`<div class="text-center text-danger p-4">${message}</div>`));
       });
   };
 
@@ -194,7 +205,7 @@
       if (detailRequest && detailRequest.readyState !== 4) {
         detailRequest.abort();
       }
-      $detailBody.html('<div class="text-center p-4">Memuat detail evidence...</div>');
+      $detailBody.empty().append($('<div class="text-center p-4">Memuat detail evidence...</div>'));
     });
   }
 

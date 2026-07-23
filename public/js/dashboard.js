@@ -551,32 +551,51 @@ function renderRiskList(elementId, rows, labelKey) {
   list.innerHTML = "";
 
   if (!rows.length) {
-    list.innerHTML =
-      '<li class="list-group-item text-muted px-0">Belum ada temuan tidak sesuai untuk periode ini.</li>';
+    const li = document.createElement("li");
+    li.className = "list-group-item text-muted px-0";
+    li.textContent = "Belum ada temuan tidak sesuai untuk periode ini.";
+    list.appendChild(li);
     return;
   }
 
   const maxTotal = Math.max(...rows.map((row) => toNumber(row.total)), 1);
 
   rows.forEach((row, index) => {
-    const title = escapeHtml(row[labelKey] || "-");
+    const title = row[labelKey] || "-";
     const total = toNumber(row.total);
     const width = Math.max(8, Math.round((total / maxTotal) * 100));
 
-    list.innerHTML += `
-      <li class="list-group-item px-0 py-2 border-0">
-        <div class="d-flex align-items-start justify-content-between gap-2">
-          <div class="d-flex align-items-center gap-2 min-w-0">
-            <span class="risk-rank">#${index + 1}</span>
-            <span class="risk-title text-truncate">${title}</span>
-          </div>
-          <span class="badge text-bg-danger rounded-pill">${total}</span>
-        </div>
-        <div class="progress risk-mini-progress mt-2">
-          <div class="progress-bar bg-danger" role="progressbar" style="width:${width}%"></div>
-        </div>
-      </li>
-    `;
+    const li = document.createElement("li");
+    li.className = "list-group-item px-0 py-2 border-0";
+
+    const summary = document.createElement("div");
+    summary.className = "d-flex align-items-start justify-content-between gap-2";
+    const titleGroup = document.createElement("div");
+    titleGroup.className = "d-flex align-items-center gap-2 min-w-0";
+
+    const rank = document.createElement("span");
+    rank.className = "risk-rank";
+    rank.textContent = `#${index + 1}`;
+    const titleNode = document.createElement("span");
+    titleNode.className = "risk-title text-truncate";
+    titleNode.textContent = title;
+    titleGroup.append(rank, titleNode);
+
+    const badge = document.createElement("span");
+    badge.className = "badge text-bg-danger rounded-pill";
+    badge.textContent = String(total);
+    summary.append(titleGroup, badge);
+
+    const progress = document.createElement("div");
+    progress.className = "progress risk-mini-progress mt-2";
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar bg-danger";
+    progressBar.setAttribute("role", "progressbar");
+    progressBar.style.width = `${width}%`;
+    progress.appendChild(progressBar);
+
+    li.append(summary, progress);
+    list.appendChild(li);
   });
 }
 
@@ -586,7 +605,11 @@ function renderRiskFallback(elementId, message) {
     return;
   }
 
-  list.innerHTML = `<li class="list-group-item text-muted px-0">${escapeHtml(message)}</li>`;
+  list.replaceChildren();
+  const li = document.createElement("li");
+  li.className = "list-group-item text-muted px-0";
+  li.textContent = message;
+  list.appendChild(li);
 }
 
 async function loadPendingChecklist() {
@@ -651,11 +674,14 @@ function renderPendingLoadingRows() {
     return;
   }
 
-  tbody.innerHTML = `
-    <tr>
-      <td colspan="5" class="text-muted">Memuat data ceklis tertunda...</td>
-    </tr>
-  `;
+  tbody.replaceChildren();
+  const tr = document.createElement("tr");
+  const td = document.createElement("td");
+  td.colSpan = 5;
+  td.className = "text-muted";
+  td.textContent = "Memuat data ceklis tertunda...";
+  tr.appendChild(td);
+  tbody.appendChild(tr);
 }
 
 function applySearchAndRender(resetPage = false) {
@@ -721,16 +747,14 @@ function renderPendingTable() {
   }
 
   closeActivePopover();
-  tbody.innerHTML = "";
+  tbody.replaceChildren();
 
   const dataSource = pendingState.filtered;
 
   if (!dataSource.length) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" class="text-muted text-center py-3">Tidak ada ceklis tertunda untuk filter ini.</td>
-      </tr>
-    `;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="5" class="text-muted text-center py-3">Tidak ada ceklis tertunda untuk filter ini.</td>`;
+    tbody.appendChild(tr);
     renderPendingPagination(0);
     return;
   }
@@ -746,28 +770,30 @@ function renderPendingTable() {
     const frequencyBadgeClass = getFrequencyBadgeClass(row.frequency || "");
     const riskBadgeClass = getRiskBadgeClass(row);
 
-    tbody.innerHTML += `
-      <tr>
-        <td class="fw-semibold">${escapeHtml(row.item_name || "-")}</td>
-        <td>${escapeHtml(row.specific_area || "-")}</td>
-        <td>
-          <span class="badge text-bg-secondary">${escapeHtml(row.pic || "-")}</span>
-        </td>
-        <td>
-          <span class="badge ${frequencyBadgeClass}">${escapeHtml(
-            getFrequencyDisplayLabel(row.frequency || "-"),
-          )}</span>
-        </td>
-        <td>
-          <button
-            type="button"
-            class="badge border-0 pending-badge ${riskBadgeClass}"
-            data-missing="${missingJson}">
-            ${escapeHtml(row.status || "Lihat Detail")}
-          </button>
-        </td>
-      </tr>
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="fw-semibold"></td>
+      <td></td>
+      <td>
+        <span class="badge text-bg-secondary"></span>
+      </td>
+      <td>
+        <span class="badge ${frequencyBadgeClass}"></span>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="badge border-0 pending-badge ${riskBadgeClass}"
+          data-missing="${missingJson}">
+        </button>
+      </td>
     `;
+    tr.cells[0].textContent = row.item_name || "-";
+    tr.cells[1].textContent = row.specific_area || "-";
+    tr.cells[2].querySelector("span").textContent = row.pic || "-";
+    tr.cells[3].querySelector("span").textContent = getFrequencyDisplayLabel(row.frequency || "-");
+    tr.cells[4].querySelector("button").textContent = row.status || "Lihat Detail";
+    tbody.appendChild(tr);
   });
 
   renderPendingPagination(dataSource.length);
@@ -872,10 +898,22 @@ function showMissingPopover(target) {
   }
 
   const content = missingDates.length
-    ? `<ul class="mb-0 ps-3">${missingDates
-        .map((date) => `<li>${escapeHtml(String(date))}</li>`)
-        .join("")}</ul>`
-    : "<span class=\"text-muted\">Tidak ada detail tertunda.</span>";
+    ? (() => {
+        const ul = document.createElement("ul");
+        ul.className = "mb-0 ps-3";
+        missingDates.forEach((date) => {
+          const li = document.createElement("li");
+          li.textContent = String(date);
+          ul.appendChild(li);
+        });
+        return ul;
+      })()
+    : (() => {
+        const span = document.createElement("span");
+        span.className = "text-muted";
+        span.textContent = "Tidak ada detail tertunda.";
+        return span;
+      })();
 
   pendingState.activePopover = new bootstrap.Popover(target, {
     content,
