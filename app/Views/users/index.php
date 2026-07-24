@@ -120,18 +120,18 @@ $bootRoles = array_map(static function (array $role): array {
 
         <div class="card-body pt-0">
           <div class="table-responsive">
-            <table class="table table-striped table-bordered align-middle mb-0 users-table">
+            <table class="table table-striped table-bordered align-middle mb-0">
               <thead class="table-dark">
                 <tr>
-                  <th style="width:3.5%">No</th>
-                  <th style="width:15%">Nama</th>
-                  <th style="width:10%">Username</th>
-                  <th class="d-none d-md-table-cell" style="width:14%">WhatsApp</th>
-                  <th style="width:10%">Role</th>
-                  <th style="width:10%">Permission</th>
-                  <th style="width:8%">Hal.</th>
-                  <th style="width:7%">Status</th>
-                  <th style="width:15%">Aksi</th>
+                  <th width="50">No</th>
+                  <th>Nama</th>
+                  <th>Username</th>
+                  <th>WhatsApp</th>
+                  <th>Role</th>
+                  <th>Permission</th>
+                  <th>Halaman</th>
+                  <th>Status</th>
+                  <th width="180">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,9 +142,9 @@ $bootRoles = array_map(static function (array $role): array {
                       <div class="fw-semibold" x-text="user.name"></div>
                     </td>
                     <td x-text="user.username"></td>
-                    <td class="d-none d-md-table-cell">
+                    <td>
                       <span x-show="user.wa_number" class="text-success fw-semibold" x-text="user.wa_number"></span>
-                      <span x-show="!user.wa_number" class="text-danger">-</span>
+                      <span x-show="!user.wa_number" class="text-danger">Belum ada</span>
                     </td>
                     <td>
                       <span class="badge bg-light text-dark border" x-text="displayRole(user.role)"></span>
@@ -152,17 +152,17 @@ $bootRoles = array_map(static function (array $role): array {
                     <td>
                       <span class="badge" :class="user.permission === 'write' ? 'bg-primary' : 'bg-secondary'" x-text="user.permission"></span>
                     </td>
-                    <td class="text-center">
+                    <td>
                       <span class="badge bg-light text-dark border">
-                        <span x-text="user.page_access_count"></span>
+                        <span x-text="user.page_access_count"></span> menu
                       </span>
                     </td>
-                    <td class="text-center">
+                    <td>
                       <span class="badge bg-success" x-show="user.status === 'active'">Aktif</span>
-                      <span class="badge bg-secondary" x-show="user.status !== 'active'">Off</span>
+                      <span class="badge bg-secondary" x-show="user.status !== 'active'">Nonaktif</span>
                     </td>
                     <td>
-                      <div class="d-flex gap-1">
+                      <div class="d-flex flex-wrap gap-1">
                         <a class="btn btn-sm btn-warning" :href="`/users/edit/${user.id}`">Edit</a>
 
                         <form method="post" :action="user.status === 'active' ? `/users/deactivate/${user.id}` : `/users/activate/${user.id}`">
@@ -237,61 +237,6 @@ $bootRoles = array_map(static function (array $role): array {
   </section>
 </div>
 
-<?= $this->endSection() ?>
-
-<?= $this->section('styles') ?>
-<style>
-  .users-page .users-table {
-    table-layout: fixed;
-  }
-  .users-page .users-table th {
-    font-size: 0.72rem;
-    letter-spacing: 0;
-  }
-  .users-page .users-table td {
-    font-size: 0.8rem;
-    white-space: normal;
-  }
-  .users-page .users-table td:last-child {
-    white-space: nowrap;
-  }
-  .users-page .users-table .badge {
-    font-size: 0.68rem;
-    font-weight: 500;
-  }
-  .users-page .users-table .btn-sm {
-    font-size: 0.72rem;
-    padding: 0.2rem 0.4rem;
-  }
-  @media (max-width: 1200px) {
-    .users-page .users-table th:nth-child(4),
-    .users-page .users-table td:nth-child(4) {
-      display: none;
-    }
-  }
-  @media (max-width: 768px) {
-    .users-page .users-table th,
-    .users-page .users-table td {
-      font-size: 0.7rem;
-      padding: 0.35rem 0.25rem;
-    }
-    .users-page .users-table th:first-child,
-    .users-page .users-table th:nth-child(4),
-    .users-page .users-table th:nth-child(7),
-    .users-page .users-table td:first-child,
-    .users-page .users-table td:nth-child(4),
-    .users-page .users-table td:nth-child(7) {
-      display: none;
-    }
-    .users-page .users-table .btn-sm {
-      font-size: 0.6rem;
-      padding: 0.12rem 0.3rem;
-    }
-    .users-page .users-table .badge {
-      font-size: 0.55rem;
-    }
-  }
-</style>
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>

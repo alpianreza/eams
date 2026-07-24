@@ -28,7 +28,6 @@ class ComplianceItemTypeController extends BaseController
 
   public function store()
   {
-    helper('audit');
 
     $this->itemTypeModel->insert([
       'inventory_category_id' => $this->request->getPost('inventory_category_id'),
@@ -36,8 +35,6 @@ class ComplianceItemTypeController extends BaseController
       'code'                  => $this->request->getPost('code'),
       'active'                => 1,
     ]);
-
-    audit_log('item_type_create', 'Menambah item type: ' . $this->request->getPost('name') . ' kode ' . $this->request->getPost('code'));
 
     return redirect()
       ->to(site_url('compliance/checklist/master'))

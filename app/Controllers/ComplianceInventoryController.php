@@ -125,8 +125,6 @@ class ComplianceInventoryController extends BaseController
 
   public function update($id)
   {
-    helper('audit');
-
     if (!hasRole(['admin', 'compliance'])) {
       return $this->response->setJSON(['status' => 'error']);
     }
@@ -183,8 +181,6 @@ class ComplianceInventoryController extends BaseController
     ];
 
     $this->inventoryModel->update($id, $data);
-
-    audit_log('inventory_updated', 'Inventory ID ' . $id . ' updated');
 
     // =====================================
     // QR REGENERATE JIKA CODE BERUBAH
@@ -248,8 +244,6 @@ class ComplianceInventoryController extends BaseController
 
   public function delete($id)
   {
-    helper('audit');
-
     if (! hasRole(['admin', 'compliance'])) {
 
       if ($this->request->isAJAX()) {
@@ -260,8 +254,6 @@ class ComplianceInventoryController extends BaseController
     }
 
     $this->inventoryModel->delete($id);
-
-    audit_log('inventory_deleted', 'Inventory ID ' . $id . ' deleted');
 
     // AJAX mode
     if ($this->request->isAJAX()) {
@@ -275,8 +267,6 @@ class ComplianceInventoryController extends BaseController
 
   public function store()
   {
-    helper('audit');
-
     if (!hasRole(['admin', 'compliance'])) {
       return redirect()->to('/unauthorized');
     }
@@ -347,8 +337,6 @@ class ComplianceInventoryController extends BaseController
 
     $this->inventoryModel->insert($data);
     $inventoryId = $this->inventoryModel->getInsertID();
-
-    audit_log('inventory_added', 'Inventory added with asset_code ' . $assetCode);
 
     // =====================================
     // QR GENERATE
@@ -643,8 +631,6 @@ class ComplianceInventoryController extends BaseController
 
   public function updatePhoto($id)
   {
-    helper('audit');
-
     $inventory = $this->inventoryModel->find($id);
     if (! $inventory) {
 
@@ -704,8 +690,6 @@ class ComplianceInventoryController extends BaseController
     $this->inventoryModel->update($id, [
       'photo' => $newName
     ]);
-
-    audit_log('photo_updated', 'Photo updated for inventory ID ' . $id);
 
     // ================= RESPONSE =================
     if ($this->request->isAJAX()) {
@@ -1030,7 +1014,7 @@ class ComplianceInventoryController extends BaseController
     }
 
     helper('checklist');
-    helper('audit');
+
 
     $inventoryId = $this->request->getPost('inventory_id');
     $periodKey   = $this->request->getPost('period_key');
@@ -1137,7 +1121,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    audit_log('checklist_submit', 'Checklist inventory ID ' . $inventoryId . ' periode ' . $periodKey . ' submitted');
 
     return redirect()
       ->to(base_url('compliance/inventory/detail/' . $inventoryId))
@@ -1244,7 +1227,6 @@ class ComplianceInventoryController extends BaseController
     }
 
     helper('checklist');
-    helper('audit');
 
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = (string) $this->request->getPost('period_key');
@@ -1339,8 +1321,6 @@ class ComplianceInventoryController extends BaseController
         'check_date' => $periodKey,
       ]);
 
-      audit_log('checklist_cctv', 'Checklist CCTV inventory ID ' . $inventoryId . ' status ' . $mode);
-
       return $this->response->setJSON([
         'ok' => true,
         'state' => $mode,
@@ -1362,8 +1342,6 @@ class ComplianceInventoryController extends BaseController
       'checked_by' => session()->get('name'),
       'created_at' => date('Y-m-d H:i:s'),
     ]);
-
-    audit_log('checklist_cctv', 'Checklist CCTV inventory ID ' . $inventoryId . ' status ' . $mode);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -1388,7 +1366,6 @@ class ComplianceInventoryController extends BaseController
     }
 
     helper('checklist');
-    helper('audit');
 
     $ym = trim((string) $this->request->getPost('ym'));
     if (! preg_match('/^\d{4}-\d{2}$/', $ym)) {
@@ -1492,8 +1469,6 @@ class ComplianceInventoryController extends BaseController
       }
     }
 
-    audit_log('checklist_cctv_bulk', 'Bulk mark CCTV periode ' . $ym . ' inserted ' . $inserted . ' checklist rows');
-
     return $this->response->setJSON([
       'ok' => true,
       'inserted' => $inserted,
@@ -1594,8 +1569,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -1685,8 +1658,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_emergency_light', 'Checklist Emergency Light inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -1813,8 +1784,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -1904,8 +1873,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_exit_light', 'Checklist Emergency Exit Light inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -2030,8 +1997,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -2121,8 +2086,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_first_aid_box', 'Checklist First Aid Box inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -2313,7 +2276,6 @@ class ComplianceInventoryController extends BaseController
     }
 
     helper('checklist');
-    helper('audit');
 
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
@@ -2410,8 +2372,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_first_aid_content', 'Checklist First Aid Content inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -2634,8 +2594,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -2722,8 +2680,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_fire_extinguisher', 'Checklist Fire Extinguisher inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -2920,8 +2876,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -3008,8 +2962,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_intrusion_alarm', 'Checklist Intrusion Alarm inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -3220,8 +3172,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -3308,8 +3258,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_hydrant', 'Checklist Hydrant inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -3521,8 +3469,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -3609,8 +3555,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_smoke_detector', 'Checklist Smoke Detector inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -4051,7 +3995,6 @@ class ComplianceInventoryController extends BaseController
     }
 
     helper('checklist');
-    helper('audit');
 
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $templateId = (int) $this->request->getPost('template_id');
@@ -4190,8 +4133,6 @@ class ComplianceInventoryController extends BaseController
     } else {
       $logModel->insert($payload);
     }
-
-    audit_log('checklist_generic_grid', 'Checklist generic grid inventory ID ' . $inventoryId . ' template ID ' . $templateId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -4379,8 +4320,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -4476,8 +4415,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_gate', 'Checklist Gate inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,
@@ -4610,8 +4547,6 @@ class ComplianceInventoryController extends BaseController
       ]);
     }
 
-    helper('audit');
-
     $inventoryId = (int) $this->request->getPost('inventory_id');
     $periodKey = trim((string) $this->request->getPost('period_key'));
     $templateId = (int) $this->request->getPost('template_id');
@@ -4698,8 +4633,6 @@ class ComplianceInventoryController extends BaseController
         'created_at' => date('Y-m-d H:i:s'),
       ]);
     }
-
-    audit_log('checklist_heat_detector', 'Checklist Heat Detector inventory ID ' . $inventoryId . ' status ' . $mode . ' periode ' . $periodKey);
 
     return $this->response->setJSON([
       'ok' => true,

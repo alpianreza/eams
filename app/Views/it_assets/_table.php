@@ -55,7 +55,7 @@ $no = 1 + ($devicesPerPage * ($currentPage - 1));
                                 <a href="<?= base_url('it-assets/detail/' . $a['id']) ?>" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-eye"></i> Detail
                                 </a>
-                                <?php if (hasWriteAccess()): ?>
+                                <?php if (function_exists('hasWriteAccess') ? hasWriteAccess() : (session()->get('permission') === 'write' || session()->get('role') === 'admin')): ?>
                                     <a href="<?= base_url('it-assets/edit/' . $a['id']) ?>" class="btn btn-sm btn-outline-warning">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </a>

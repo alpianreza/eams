@@ -186,9 +186,6 @@ class ITAssetController extends BaseController
             'location'      => $this->request->getPost('location'),
         ]);
 
-        helper('audit');
-        audit_log('it_asset_create', 'Membuat asset IT ' . $this->request->getPost('asset_name'));
-
         return redirect()->to('it-assets')
             ->with('success', 'Asset berhasil ditambahkan');
     }
@@ -241,9 +238,6 @@ class ITAssetController extends BaseController
                     'returned_at' => date('Y-m-d H:i:s'),
                 ]);
         }
-
-        helper('audit');
-        audit_log('it_asset_update', 'Mengupdate asset IT ID ' . $id);
 
         return redirect()->to('it-assets/detail/' . $id)
             ->with('success', 'Asset berhasil diperbarui');

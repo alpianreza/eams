@@ -109,9 +109,6 @@ class ThermalImagingController extends BaseController
       return redirect()->back()->withInput()->with('error', 'Laporan gagal disimpan.');
     }
 
-    helper('audit');
-    audit_log('thermal_imaging_create', 'Membuat thermal imaging report ID ' . $reportId);
-
     return redirect()
       ->to('/compliance/thermal-imaging/' . $reportId)
       ->with('success', 'Thermal imaging report berhasil dibuat.');

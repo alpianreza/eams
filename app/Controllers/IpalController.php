@@ -86,9 +86,6 @@ class IpalController extends BaseController
       $this->model->insert($data);
     }
 
-    helper('audit');
-    audit_log('ipal_save', 'Data IPAL disimpan untuk tanggal: ' . $date);
-
     return $this->response->setJSON(['status' => 'ok']);
   }
 

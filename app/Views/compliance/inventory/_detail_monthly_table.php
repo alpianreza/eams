@@ -2,10 +2,10 @@
   <table class="table table-bordered align-middle mb-0 inventory-grid-table">
     <thead class="table-light">
       <tr>
-        <th class="text-nowrap" style="width:34%">Pengecekan</th>
-        <th class="text-center text-nowrap" style="width:14%">Status</th>
-        <th class="text-nowrap">Catatan</th>
-        <th class="text-center text-nowrap" style="width:14%">Foto</th>
+        <th width="38%">Pengecekan</th>
+        <th width="16%" class="text-center">Status</th>
+        <th>Catatan</th>
+        <th width="15%" class="text-center">Foto</th>
       </tr>
     </thead>
     <tbody>
@@ -17,7 +17,7 @@
 
       <?php foreach ($detailLogs as $row): ?>
         <tr>
-          <td class="text-wrap" style="min-width:100px;word-break:break-word"><?= esc($row['question']) ?></td>
+          <td><?= esc($row['question']) ?></td>
 
           <td class="text-center">
             <?php if ($row['status'] === 'ok'): ?>
@@ -29,7 +29,7 @@
             <?php endif; ?>
           </td>
 
-          <td class="text-wrap" style="max-width:150px;word-break:break-word"><?= esc($row['remark'] ?: '-') ?></td>
+          <td><?= esc($row['remark'] ?: '-') ?></td>
 
           <td class="text-center">
             <?php if ($row['photo']): ?>

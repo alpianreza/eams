@@ -54,11 +54,6 @@ if (! function_exists('access_menu_catalog')) {
         'group' => 'Compliance',
         'path' => '/compliance/progress',
       ],
-      'compliance_ranking' => [
-        'label' => 'Ranking User',
-        'group' => 'Compliance',
-        'path' => '/compliance/ranking',
-      ],
       'compliance_inventory' => [
         'label' => 'Inventory / Asset',
         'group' => 'Compliance',
@@ -213,25 +208,18 @@ if (! function_exists('hasConfiguredPageAccess')) {
   }
 }
 
-if (! function_exists('normalize_role')) {
-  function normalize_role(string $role): string
-  {
-    return str_replace([' ', '-'], '_', strtolower(trim($role)));
-  }
-}
-
 if (! function_exists('isReadOnlyAccess')) {
   function isReadOnlyAccess(): bool
   {
-    $role = normalize_role((string) session()->get('role'));
+    $role = strtolower(trim((string) session()->get('role')));
+    $roleKey = str_replace([' ', '-'], '_', $role);
+    $permission = strtolower(trim((string) session()->get('permission')));
 
-    if ($role === 'admin') {
+    if ($roleKey === 'admin') {
       return false;
     }
 
-    $permission = strtolower(trim((string) session()->get('permission')));
-
-    return $permission === 'read' || in_array($role, ['read', 'readonly', 'read_only'], true);
+    return $permission === 'read' || in_array($roleKey, ['read', 'readonly', 'read_only'], true);
   }
 }
 
@@ -242,66 +230,20 @@ if (! function_exists('hasWriteAccess')) {
   }
 }
 
-if (! function_exists('getDefaultPageAccess')) {
-  function getDefaultPageAccess(string $role): array
-  {
-    $role = normalize_role($role);
-
-    $defaults = [
-      'admin' => null, // admin = all
-      'staff' => [
-        'home',
-        'compliance_inventory',
-      ],
-      'compliance' => [
-        'home',
-        'patrol_daily',
-        'patrol_dashboard',
-        'compliance_dashboard',
-        'compliance_progress',
-        'compliance_ranking',
-        'compliance_inventory',
-        'checklist_master',
-        'qr_gallery',
-        'holidays',
-        'compliance_report',
-        'thermal_imaging',
-        'ems_reports',
-        'fdm_data_collection',
-        'questionnaires',
-        'evidence_center',
-        'boiler_fuel',
-        'ipal',
-        'pdam_water',
-        'pdam_water_boiler',
-        'compliance_print',
-      ],
-    ];
-
-    return $defaults[$role] ?? [];
-  }
-}
-
 if (! function_exists('canAccessPage')) {
   function canAccessPage(string $pageKey): bool
   {
-    $role = normalize_role((string) session()->get('role'));
-
+    $role = (string) session()->get('role');
     if ($role === 'admin') {
       return true;
     }
 
-    if (hasConfiguredPageAccess()) {
-      $access = session_page_access();
-      return in_array($pageKey, $access, true);
-    }
-
-    $defaults = getDefaultPageAccess($role);
-    if ($defaults === null) {
+    if (! hasConfiguredPageAccess()) {
       return true;
     }
 
-    return in_array($pageKey, $defaults, true);
+    $access = session_page_access();
+    return in_array($pageKey, $access, true);
   }
 }
 
@@ -321,10 +263,7 @@ if (! function_exists('canAccessAnyPage')) {
 if (! function_exists('canShowMenuPage')) {
   function canShowMenuPage(array $roles, string $pageKey): bool
   {
-    $sessionRole = normalize_role((string) session()->get('role'));
-    $normalizedRoles = array_map('normalize_role', $roles);
-
-    if (in_array($sessionRole, $normalizedRoles, true)) {
+    if (in_array((string) session()->get('role'), $roles, true)) {
       return true;
     }
 
@@ -365,7 +304,6 @@ if (! function_exists('resolve_page_key_from_path')) {
       '/compliance/checklist' => 'compliance_inventory',
       '/compliance/dashboard' => 'compliance_dashboard',
       '/compliance/progress' => 'compliance_progress',
-      '/compliance/ranking' => 'compliance_ranking',
       '/holidays' => 'holidays',
       '/compliance/report' => 'compliance_report',
       '/compliance/thermal-imaging' => 'thermal_imaging',
@@ -400,34 +338,17 @@ if (! function_exists('resolve_default_landing_url')) {
   {
     $catalog = access_menu_catalog();
 
-    $role = normalize_role((string) session()->get('role'));
-
-    if ($role === 'admin') {
+    if ((string) session()->get('role') === 'admin' || ! hasConfiguredPageAccess()) {
       return base_url('home');
     }
 
-    if (hasConfiguredPageAccess()) {
-      $access = session_page_access();
-      foreach ($access as $pageKey) {
-        if (! isset($catalog[$pageKey]['path'])) {
-          continue;
-        }
-
-        return base_url(ltrim((string) $catalog[$pageKey]['path'], '/'));
-      }
-    } else {
-      $defaults = getDefaultPageAccess($role);
-      if ($defaults !== null) {
-        foreach ($defaults as $pageKey) {
-          if (! isset($catalog[$pageKey]['path'])) {
-            continue;
-          }
-
-          return base_url(ltrim((string) $catalog[$pageKey]['path'], '/'));
-        }
+    $access = session_page_access();
+    foreach ($access as $pageKey) {
+      if (! isset($catalog[$pageKey]['path'])) {
+        continue;
       }
 
-      return base_url('home');
+      return base_url(ltrim((string) $catalog[$pageKey]['path'], '/'));
     }
 
     return base_url('home');

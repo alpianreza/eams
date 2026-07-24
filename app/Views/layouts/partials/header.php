@@ -24,8 +24,8 @@ $notifBadge = $notifCount > 99 ? '99+' : (string)$notifCount;
   <div class="container-fluid d-flex align-items-center app-header-inner">
 
     <div class="d-flex align-items-center header-left-controls">
-      <button type="button" class="btn btn-link header-sidebar-toggle header-icon-btn" data-lte-toggle="sidebar" aria-label="Buka tutup sidebar" aria-controls="appSidebar">
-        <i class="bi bi-list" aria-hidden="true"></i>
+      <button class="btn btn-link header-sidebar-toggle header-icon-btn" data-lte-toggle="sidebar" aria-label="Buka tutup sidebar">
+        <i class="bi bi-list"></i>
       </button>
 
       <div class="app-header-title">

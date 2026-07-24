@@ -514,9 +514,6 @@ class PatrolController extends BaseController
       ->get()
       ->getRowArray();
 
-    helper('audit');
-    audit_log('patrol_session_start', 'Sesi patroli dimulai untuk rute ID: ' . $routeId);
-
     return $this->json([
       'ok' => true,
       'message' => 'Sesi patroli dimulai.',
@@ -709,9 +706,6 @@ class PatrolController extends BaseController
       ->get()
       ->getRowArray();
 
-    helper('audit');
-    audit_log('patrol_session_scan', 'Checkpoint di-scan: ' . ($nextCheckpoint['code'] ?? '-') . ' status: ' . $status . ' pada sesi ID: ' . $sessionId);
-
     return $this->json([
       'ok' => true,
       'message' => sprintf('Check-in %s berhasil.', $nextCheckpoint['code'] ?? 'checkpoint'),
@@ -767,9 +761,6 @@ class PatrolController extends BaseController
         'ended_at' => $this->now(),
         'updated_at' => $this->now(),
       ]);
-
-    helper('audit');
-    audit_log('patrol_session_cancel', 'Sesi patroli dibatalkan ID: ' . $sessionId);
 
     return $this->json([
       'ok' => true,
@@ -875,9 +866,6 @@ class PatrolController extends BaseController
 
       $this->db->table('patrol_checkpoints')->where('id', $checkpointId)->update($update);
     }
-
-    helper('audit');
-    audit_log('patrol_layout_save', 'Layout patroli disimpan: ' . $name);
 
     return $this->json([
       'ok' => true,

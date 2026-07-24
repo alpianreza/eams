@@ -280,7 +280,6 @@ $routes->group('compliance/questionnaires', ['filter' => 'auth'], function ($rou
     $routes->post('submit/(:num)', 'ComplianceQuestionnaireController::submit/$1');
     $routes->get('response/(:num)', 'ComplianceQuestionnaireController::responseDetail/$1');
     $routes->get('response/(:num)/pdf', 'ComplianceQuestionnaireController::responsePdf/$1');
-    $routes->post('response/update-submitted-at/(:num)', 'ComplianceQuestionnaireController::updateSubmittedAt/$1');
     $routes->post('response/delete/(:num)', 'ComplianceQuestionnaireController::deleteResponse/$1');
     $routes->get('(:num)/excel', 'ComplianceQuestionnaireController::exportExcel/$1');
     $routes->post('(:num)/respondent-settings', 'ComplianceQuestionnaireController::updateRespondentSettings/$1');
@@ -354,8 +353,6 @@ $routes->get('compliance/progress/ajax', 'ProgressController::getProgressAjax', 
 $routes->get('compliance/progress/export', 'ProgressController::export', ['filter' => 'auth']);
 $routes->get('compliance/progress/detail', 'ProgressController::getUserDetailAjax', ['filter' => 'auth']);
 $routes->post('compliance/progress/remind', 'ProgressController::sendReminderAjax', ['filter' => 'auth']);
-
-$routes->get('compliance/ranking', 'ComplianceRankingController::index', ['filter' => 'auth']);
 
 $routes->get('compliance/inventory/get/(:num)', 'ComplianceInventoryController::get/$1', ['filter' => 'auth']);
 

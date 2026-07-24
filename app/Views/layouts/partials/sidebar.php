@@ -27,7 +27,6 @@ $canDeviceControl = canAccessPage('device_control');
 $canEmployees = canAccessPage('employees');
 $canComplianceDashboard = canAccessPage('compliance_dashboard');
 $canComplianceProgress = canAccessPage('compliance_progress');
-$canComplianceRanking = canAccessPage('compliance_ranking');
 $canComplianceInventory = canAccessPage('compliance_inventory');
 $canChecklistMaster = canAccessPage('checklist_master');
 $canQrGallery = canAccessPage('qr_gallery');
@@ -57,7 +56,6 @@ $showDeviceControl = canShowMenuPage(['admin'], 'device_control');
 $showEmployees = canShowMenuPage(['admin'], 'employees');
 $showComplianceDashboard = canShowMenuPage(['admin', 'compliance', 'auditor'], 'compliance_dashboard');
 $showComplianceProgress = canShowMenuPage(['admin', 'compliance'], 'compliance_progress');
-$showComplianceRanking = canShowMenuPage(['admin', 'compliance', 'staff'], 'compliance_ranking');
 $showComplianceInventory = canShowMenuPage(['admin', 'compliance', 'staff'], 'compliance_inventory');
 $showChecklistMaster = canShowMenuPage(['admin', 'compliance'], 'checklist_master');
 $showQrGallery = canShowMenuPage(['admin', 'compliance'], 'qr_gallery');
@@ -78,7 +76,7 @@ $showAuditLogs = canShowMenuPage(['admin', 'compliance'], 'audit_logs');
 $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
 ?>
 
-<aside id="appSidebar" class="app-sidebar bg-dark shadow" data-bs-theme="dark" aria-label="Navigasi utama">
+<aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
   <div class="sidebar-brand eams-sidebar-brand">
     <a href="<?= base_url('/') ?>" class="brand-link d-flex align-items-center justify-content-start gap-2">
       <?php if ($hasBrandLogo): ?>
@@ -192,7 +190,7 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
         <?php endif; ?>
 
         <!-- ================= COMPLIANCE ================= -->
-        <?php if ($showComplianceDashboard || $showComplianceProgress || $showComplianceRanking || $showComplianceInventory || $showChecklistMaster || $showQrGallery || $showHolidays || $showComplianceReport || $showThermalImaging || $showEmsReports || $showFdm || $showQuestionnaires || $showEvidenceCenter || $showBoiler || $showIpal || $showPdamWater || $showPdamWaterBoiler || $showCompliancePrint): ?>
+        <?php if ($showComplianceDashboard || $showComplianceProgress || $showComplianceInventory || $showChecklistMaster || $showQrGallery || $showHolidays || $showComplianceReport || $showThermalImaging || $showEmsReports || $showFdm || $showQuestionnaires || $showEvidenceCenter || $showBoiler || $showIpal || $showPdamWater || $showPdamWaterBoiler || $showCompliancePrint): ?>
           <li class="nav-header sidebar-section-title">COMPLIANCE</li>
         <?php endif; ?>
 
@@ -214,16 +212,6 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
               class="nav-link <?= $isCompliance && $seg2 === 'progress' ? 'active' : '' ?>">
               <i class="nav-icon bi bi-graph-up"></i>
               <p>Monitoring Progress</p>
-            </a>
-          </li>
-        <?php endif; ?>
-
-        <?php if ($showComplianceRanking && $canComplianceRanking): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('compliance/ranking') ?>"
-              class="nav-link <?= $isCompliance && $seg2 === 'ranking' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-trophy"></i>
-              <p>Ranking User</p>
             </a>
           </li>
         <?php endif; ?>

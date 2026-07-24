@@ -130,8 +130,6 @@ class ComplianceQuestionnaireController extends BaseController
 
   public function store()
   {
-    helper('audit');
-
     if ($guard = $this->guardWrite()) {
       return $guard;
     }
@@ -143,8 +141,6 @@ class ComplianceQuestionnaireController extends BaseController
 
     $this->questionnaireModel->insert($payload);
     $id = (int) $this->questionnaireModel->getInsertID();
-
-    audit_log('questionnaire_create', 'Membuat kuesioner: ' . ($payload['title'] ?? 'ID ' . $id));
 
     return redirect()
       ->to(base_url('compliance/questionnaires/' . $id))
@@ -172,8 +168,6 @@ class ComplianceQuestionnaireController extends BaseController
 
   public function update($id)
   {
-    helper('audit');
-
     if ($guard = $this->guardWrite()) {
       return $guard;
     }
@@ -190,15 +184,11 @@ class ComplianceQuestionnaireController extends BaseController
 
     $this->questionnaireModel->update((int) $id, $payload);
 
-    audit_log('questionnaire_update', 'Mengupdate kuesioner ID ' . $id);
-
     return redirect()->to(base_url('compliance/questionnaires/' . $id))->with('success', 'Data kuesioner berhasil diperbarui.');
   }
 
   public function delete($id)
   {
-    helper('audit');
-
     if ($guard = $this->guardWrite()) {
       return $guard;
     }
@@ -214,8 +204,6 @@ class ComplianceQuestionnaireController extends BaseController
     }
 
     $this->questionnaireModel->delete((int) $id);
-
-    audit_log('questionnaire_delete', 'Menghapus kuesioner ID ' . $id . ': ' . ($questionnaire['title'] ?? ''));
 
     return redirect()->to(base_url('compliance/questionnaires'))->with('success', 'Kuesioner berhasil dihapus.');
   }
@@ -262,8 +250,6 @@ class ComplianceQuestionnaireController extends BaseController
 
   public function storeQuestion($questionnaireId)
   {
-    helper('audit');
-
     if ($guard = $this->guardWrite()) {
       return $guard;
     }
@@ -288,8 +274,6 @@ class ComplianceQuestionnaireController extends BaseController
     $this->questionModel->insert($payload);
     $newQuestionId = (int) $this->questionModel->getInsertID();
     $this->resequenceQuestionOrder((int) $questionnaireId, $newQuestionId, $this->parseRequestedPosition(), true);
-
-    audit_log('questionnaire_question_create', 'Menambah pertanyaan ke kuesioner ID ' . $questionnaireId);
 
     if ($this->wantsJson()) {
       return $this->questionMutationResponse((int) $questionnaireId, 'Pertanyaan baru berhasil ditambahkan.', $newQuestionId);
@@ -353,8 +337,6 @@ class ComplianceQuestionnaireController extends BaseController
 
   public function updateQuestion($questionId)
   {
-    helper('audit');
-
     if ($guard = $this->guardWrite()) {
       return $guard;
     }
@@ -379,10 +361,8 @@ class ComplianceQuestionnaireController extends BaseController
     $this->questionModel->update((int) $questionId, $payload);
     $this->resequenceQuestionOrder((int) $question['questionnaire_id'], (int) $questionId, $this->parseRequestedPosition(), false);
 
-    audit_log('questionnaire_question_update', 'Mengupdate pertanyaan ID ' . $questionId . ' di kuesioner ID ' . $question['questionnaire_id']);
-
     if ($this->wantsJson()) {
-      return $this->questionMutationResponse($question['questionnaire_id'], 'Pertanyaan berhasil diperbarui.');
+      return $this->questionMutationResponse((int) $question['questionnaire_id'], 'Pertanyaan berhasil diperbarui.', (int) $questionId);
     }
 
     return redirect()->to(base_url('compliance/questionnaires/' . $question['questionnaire_id']))->with('success', 'Pertanyaan berhasil diperbarui.');
@@ -390,8 +370,6 @@ class ComplianceQuestionnaireController extends BaseController
 
   public function deleteQuestion($questionId)
   {
-    helper('audit');
-
     if ($guard = $this->guardWrite()) {
       return $guard;
     }
@@ -415,8 +393,6 @@ class ComplianceQuestionnaireController extends BaseController
 
     $this->questionModel->delete((int) $questionId);
     $this->normalizeQuestionOrder((int) $question['questionnaire_id']);
-
-    audit_log('questionnaire_question_delete', 'Menghapus pertanyaan ID ' . $questionId . ' dari kuesioner ID ' . $question['questionnaire_id']);
 
     if ($this->wantsJson()) {
       return $this->questionMutationResponse((int) $question['questionnaire_id'], 'Pertanyaan berhasil dihapus.');
@@ -457,51 +433,6 @@ class ComplianceQuestionnaireController extends BaseController
     }
 
     return redirect()->to(base_url('compliance/questionnaires/' . $questionnaireId))->with('success', 'Pengaturan identitas responden berhasil diperbarui.');
-  }
-
-  public function updateSubmittedAt($responseId)
-  {
-    helper('audit');
-
-    if ($guard = $this->guardWrite()) {
-      return $guard;
-    }
-
-    $response = $this->responseModel->find((int) $responseId);
-    if (!$response) {
-      return $this->response->setStatusCode(404)->setJSON([
-        'success' => false,
-        'message' => 'Respon tidak ditemukan.',
-      ]);
-    }
-
-    $submittedAt = trim((string) $this->request->getPost('submitted_at'));
-    if ($submittedAt === '') {
-      return $this->response->setStatusCode(422)->setJSON([
-        'success' => false,
-        'message' => 'Tanggal wajib diisi.',
-      ]);
-    }
-
-    $dateRegex = '/^\d{4}-\d{2}-\d{2}( \d{2}:\d{2}(:\d{2})?)?$/';
-    if (!preg_match($dateRegex, $submittedAt)) {
-      return $this->response->setStatusCode(422)->setJSON([
-        'success' => false,
-        'message' => 'Format tanggal belum sesuai. Gunakan format: YYYY-MM-DD HH:MM',
-      ]);
-    }
-
-    $this->responseModel->update((int) $responseId, [
-      'submitted_at' => $submittedAt,
-    ]);
-
-    audit_log('questionnaire_response_update_date', 'Mengupdate tanggal respon ID ' . $responseId . ' di kuesioner ID ' . $response['questionnaire_id']);
-
-    return $this->response->setJSON([
-      'success' => true,
-      'message' => 'Tanggal berhasil diperbarui.',
-      'submitted_at' => $submittedAt,
-    ]);
   }
 
   public function deleteResponse($responseId)
@@ -886,9 +817,6 @@ class ComplianceQuestionnaireController extends BaseController
     if (!$db->transStatus()) {
       return redirect()->back()->withInput()->with('error', 'Gagal menyimpan hasil kuesioner. Silakan coba lagi.');
     }
-
-    helper('audit');
-    audit_log('questionnaire_submit', 'Kuesioner di-submit: ' . ($questionnaire['title'] ?? '-') . ' kode: ' . ($responseData['response_code'] ?? '-'));
 
     if ($publicMode) {
       return redirect()
