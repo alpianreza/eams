@@ -1222,6 +1222,10 @@
   opacity: 1;
 }
 
+.questionnaire-table .editable-cell:hover .bi-pencil {
+  opacity: 1;
+}
+
 @media (max-width: 576px) {
   .questionnaire-progress-slim.is-public {
     top: .2rem;

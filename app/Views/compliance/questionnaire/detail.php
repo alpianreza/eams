@@ -220,7 +220,7 @@
                     <th x-show="respondentFields.name" x-cloak>Nama</th>
                     <th x-show="respondentFields.phone" x-cloak>Telepon</th>
                     <th x-show="respondentFields.email" x-cloak>Email</th>
-                    <th>Dikirim</th>
+                    <th><?php if ($isWriteAllowed): ?>Dikirim <i class="bi bi-pencil-square text-muted small ms-1"></i><?php else: ?>Dikirim<?php endif; ?></th>
                     <th class="text-end">Aksi</th>
                   </tr>
                 </thead>
@@ -231,7 +231,26 @@
                       <td x-show="respondentFields.name" x-cloak><?= esc($response['respondent_name']) ?></td>
                       <td x-show="respondentFields.phone" x-cloak><?= esc($response['phone'] ?: '-') ?></td>
                       <td x-show="respondentFields.email" x-cloak><?= esc($response['email'] ?: '-') ?></td>
-                      <td><?= esc($response['submitted_at'] ?: '-') ?></td>
+                      <?php if ($isWriteAllowed): ?>
+                        <td>
+                          <div class="d-flex align-items-center gap-1" x-data="{ editing: false, val: '<?= esc($response['submitted_at'] ?? '') ?>', originalVal: '<?= esc($response['submitted_at'] ?? '') ?>', saving: false }">
+                            <span x-show="!editing" @click="editing = true; originalVal = val; $nextTick(() => $refs.input.focus())" style="cursor:pointer" class="editable-cell">
+                              <span x-text="val || '-'"></span>
+                              <i class="bi bi-pencil text-muted small ms-1"></i>
+                            </span>
+                            <template x-if="editing">
+                              <form class="d-flex align-items-center gap-1 w-100" @submit.prevent="saveSubmittedAt($data, '<?= esc($relative('compliance/questionnaires/response/update-submitted-at/' . $response['id'])) ?>')">
+                                <input type="text" x-ref="input" x-model="val" class="form-control form-control-sm" placeholder="YYYY-MM-DD HH:MM" style="width:170px" @keydown.escape.prevent="val = originalVal; editing = false">
+                                <button type="submit" class="btn btn-sm btn-primary py-0 px-1" x-show="!saving" title="Simpan"><i class="bi bi-check-lg"></i></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-1" x-show="!saving" @click="val = originalVal; editing = false" title="Batal"><i class="bi bi-x-lg"></i></button>
+                                <span class="spinner-border spinner-border-sm" x-show="saving"></span>
+                              </form>
+                            </template>
+                          </div>
+                        </td>
+                      <?php else: ?>
+                        <td><?= esc($response['submitted_at'] ?: '-') ?></td>
+                      <?php endif; ?>
                       <td class="text-end">
                         <a href="<?= esc($response['detail_path']) ?>" class="btn btn-outline-primary btn-sm">Detail</a>
                         <a href="<?= esc($response['pdf_path']) ?>" class="btn btn-outline-success btn-sm" target="_blank">PDF</a>
@@ -748,6 +767,31 @@
 
             form.submit();
           }.bind(this));
+        },
+
+        async saveSubmittedAt(ctx, url) {
+          ctx.saving = true;
+          const formData = new FormData();
+          formData.append('submitted_at', ctx.val);
+          try {
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+              body: formData
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+              ctx.val = data.submitted_at;
+              ctx.originalVal = data.submitted_at;
+              safeToast(data.message || 'Tanggal tersimpan.', 'success');
+            } else {
+              safeToast(data.message || 'Gagal menyimpan tanggal.', 'error');
+            }
+          } catch (e) {
+            safeToast('Gagal menyimpan tanggal.', 'error');
+          }
+          ctx.saving = false;
+          ctx.editing = false;
         }
       };
     });

@@ -2038,3 +2038,165 @@ body.eams-v2 .nav-link:focus-visible {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ==========================================================
+   Sidebar Mini — Collapse to Icons
+   ========================================================== */
+
+/* Sidebar width saat collapse */
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar {
+  min-width: 4.2rem;
+  max-width: 4.2rem;
+}
+
+/* Brand: sembunyikan teks, logo tetap */
+body.eams-v2.sidebar-mini.sidebar-collapse .eams-sidebar-brand .brand-copy {
+  display: none;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .eams-sidebar-brand .brand-link {
+  justify-content: center;
+  padding: 0.72rem 0;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .eams-sidebar-brand .sidebar-brand-icon {
+  margin: 0 auto;
+}
+
+/* Section title: sembunyikan saat collapse */
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-section-title {
+  display: none !important;
+}
+
+/* Nav link: collapse */
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link {
+  justify-content: center;
+  padding: 0.6rem 0;
+  margin: 0 auto 0.15rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 10px;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link .nav-icon,
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link i:not(.sidebar-chevron) {
+  margin-right: 0;
+  font-size: 1.1rem;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link p {
+  display: none;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link .badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.55rem;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  line-height: 14px;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link .sidebar-chevron {
+  display: none;
+}
+
+/* Dropdown/submenu: sembunyikan saat collapse */
+body.eams-v2.sidebar-mini.sidebar-collapse .collapse.nav.flex-column.ms-4,
+body.eams-v2.sidebar-mini.sidebar-collapse .nav-treeview {
+  display: none !important;
+}
+
+/* Sidebar meta user: sembunyikan saat collapse */
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-meta {
+  display: none;
+}
+
+/* Ikon toggle ganti jadi icon yang lebih jelas */
+body.eams-v2.sidebar-mini.sidebar-collapse .header-sidebar-toggle i {
+  transition: transform 0.2s ease;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .header-sidebar-toggle i::before {
+  content: "\F479"; /* bi-layout-sidebar-inset */
+}
+
+/* HOVER: Munculkan sidebar penuh saat hover */
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover {
+  min-width: var(--lte-sidebar-width, 260px);
+  max-width: var(--lte-sidebar-width, 260px);
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .eams-sidebar-brand .brand-copy {
+  display: inline-flex;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .eams-sidebar-brand .brand-link {
+  justify-content: flex-start;
+  padding: 0.72rem 0.9rem;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-section-title {
+  display: block !important;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-menu .nav-link {
+  justify-content: flex-start;
+  padding: 0.5rem 0.65rem;
+  width: auto;
+  height: auto;
+  border-radius: var(--eams-radius-sm);
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-menu .nav-link .nav-icon,
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-menu .nav-link i:not(.sidebar-chevron) {
+  margin-right: 0.35rem;
+  font-size: inherit;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-menu .nav-link p {
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-menu .nav-link .badge {
+  position: static;
+  font-size: inherit;
+  min-width: auto;
+  height: auto;
+  padding: inherit;
+  line-height: inherit;
+  margin-left: auto;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-menu .nav-link .sidebar-chevron {
+  display: inline-block;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .collapse.nav.flex-column.ms-4 {
+  display: flex !important;
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-meta {
+  display: block;
+}
+
+/* Sidebar wrapper scrollbar */
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-wrapper {
+  scrollbar-width: thin;
+}
+
+/* Sidebar overlay untuk mobile */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1034;
+  background: rgba(0, 0, 0, 0.45);
+  display: none;
+}
+
+body.sidebar-open .sidebar-overlay {
+  display: block;
+}

@@ -280,6 +280,7 @@ $routes->group('compliance/questionnaires', ['filter' => 'auth'], function ($rou
     $routes->post('submit/(:num)', 'ComplianceQuestionnaireController::submit/$1');
     $routes->get('response/(:num)', 'ComplianceQuestionnaireController::responseDetail/$1');
     $routes->get('response/(:num)/pdf', 'ComplianceQuestionnaireController::responsePdf/$1');
+    $routes->post('response/update-submitted-at/(:num)', 'ComplianceQuestionnaireController::updateSubmittedAt/$1');
     $routes->post('response/delete/(:num)', 'ComplianceQuestionnaireController::deleteResponse/$1');
     $routes->get('(:num)/excel', 'ComplianceQuestionnaireController::exportExcel/$1');
     $routes->post('(:num)/respondent-settings', 'ComplianceQuestionnaireController::updateRespondentSettings/$1');

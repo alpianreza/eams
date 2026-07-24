@@ -69,7 +69,7 @@ if (!empty($backUrl)) {
 
 </head>
 
-<body class="layout-fixed sidebar-expand-lg bg-body-secondary eams-v2<?= $isReadOnlyAccess ? ' is-read-only' : '' ?>" data-read-only="<?= $isReadOnlyAccess ? '1' : '0' ?>">
+<body class="layout-fixed sidebar-mini sidebar-expand-lg bg-body-secondary eams-v2<?= $isReadOnlyAccess ? ' is-read-only' : '' ?>" data-read-only="<?= $isReadOnlyAccess ? '1' : '0' ?>">
 
     <?php if (session()->get('logged_in')): ?>
 
