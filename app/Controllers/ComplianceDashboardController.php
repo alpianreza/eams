@@ -446,8 +446,12 @@ class ComplianceDashboardController extends BaseController
       // PARAMETER FILTER
       // ============================
 
-      $year  = date('Y');
+      $year  = (string) ($this->request->getGet('year') ?? date('Y'));
       $month = $this->request->getGet('month') ?? date('m');
+
+      if (! preg_match('/^\d{4}$/', $year)) {
+        $year = date('Y');
+      }
       $filterFrequency = strtolower((string) $this->request->getGet('frequency'));
       $allowedFrequency = ['daily', 'weekly', 'monthly'];
 
@@ -470,8 +474,8 @@ class ComplianceDashboardController extends BaseController
       // TENTUKAN RANGE PERIODE
       // ============================
 
-      if ($month == $currentMonth) {
-        // Bulan aktif -> sampai hari ini
+      if ($year === date('Y') && $month == $currentMonth) {
+        // Bulan aktif pada tahun berjalan -> sampai hari ini
         $endDate = new \DateTime($year . '-' . $month . '-' . $currentDay);
       } else {
         // Bulan lampau -> full bulan

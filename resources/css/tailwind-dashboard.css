@@ -1,0 +1,18 @@
+/*
+ * Dashboard-only Tailwind entry point. Utilities use the `tw-` prefix and
+ * preflight is disabled in tailwind.config.js, so Bootstrap/AdminLTE remain
+ * untouched during the gradual migration.
+ */
+@tailwind utilities;
+
+@layer utilities {
+  .tw-dashboard-section-heading {
+    @apply tw-mb-2 tw-text-sm tw-font-semibold tw-text-slate-500;
+  }
+
+  @media (max-width: 767px) {
+    .tw-dashboard-mobile-stack {
+      @apply tw-w-full;
+    }
+  }
+}

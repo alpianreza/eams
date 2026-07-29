@@ -1,0 +1,109 @@
+/*
+ * Single EAMS application stylesheet entry point.
+ *
+ * Tailwind remains prefixed and disables Preflight so the existing Bootstrap /
+ * AdminLTE vendor layer keeps its component behavior during migration.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body.eams-v2,
+  body.eams-v2 *,
+  body.eams-v2 *::before,
+  body.eams-v2 *::after {
+    transition-property: background-color, border-color, color, box-shadow, fill, stroke;
+    transition-duration: 180ms;
+    transition-timing-function: ease;
+  }
+
+  body.eams-v2 .eams-sidebar-brand .brand-copy {
+    color: #ffffff !important;
+    font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    line-height: 1;
+  }
+}
+
+@layer components {
+  .tw-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.15rem;
+    height: 2.15rem;
+    padding: 0;
+    border: 1px solid var(--eams-border, #dbe4f1);
+    border-radius: 9999px;
+    color: var(--eams-text, #172033);
+    background: var(--eams-surface-subtle, #f8fafc);
+  }
+
+  .tw-theme-toggle:hover {
+    border-color: #93c5fd;
+    color: #1d4ed8;
+    background: var(--eams-primary-soft, #edf4ff);
+  }
+}
+
+@layer utilities {
+  [data-bs-theme="dark"].eams-v2 {
+    --eams-canvas: #0f172a;
+    --eams-surface: #1e293b;
+    --eams-surface-subtle: #1e293b;
+    --eams-border: #334155;
+    --eams-border-strong: #475569;
+    --eams-text: #f8fafc;
+    --eams-muted: #94a3b8;
+    --eams-primary: #60a5fa;
+    --eams-primary-soft: rgba(96, 165, 250, 0.1);
+    --eams-focus: rgba(96, 165, 250, 0.3);
+    --bs-body-bg: var(--eams-canvas);
+    --bs-body-color: var(--eams-text);
+    --bs-secondary-bg: var(--eams-surface-subtle);
+    --bs-tertiary-bg: var(--eams-surface);
+    --bs-border-color: var(--eams-border);
+  }
+
+  [data-bs-theme="dark"].eams-v2 .app-wrapper,
+  [data-bs-theme="dark"].eams-v2 .app-main,
+  [data-bs-theme="dark"].eams-v2 .app-content {
+    background: var(--eams-canvas);
+  }
+
+  [data-bs-theme="dark"].eams-v2 .app-header,
+  [data-bs-theme="dark"].eams-v2 .card,
+  [data-bs-theme="dark"].eams-v2 .dropdown-menu,
+  [data-bs-theme="dark"].eams-v2 .form-control,
+  [data-bs-theme="dark"].eams-v2 .form-select,
+  [data-bs-theme="dark"].eams-v2 .input-group-text {
+    color: var(--eams-text);
+    background-color: var(--eams-surface);
+    border-color: var(--eams-border);
+  }
+
+  [data-bs-theme="dark"].eams-v2 .text-dark,
+  [data-bs-theme="dark"].eams-v2 .text-muted,
+  [data-bs-theme="dark"].eams-v2 .form-label,
+  [data-bs-theme="dark"].eams-v2 .header-title-text {
+    color: var(--eams-muted) !important;
+  }
+
+  [data-bs-theme="dark"].eams-v2 .header-title-text {
+    color: var(--eams-text) !important;
+  }
+
+  body.eams-v2 .app-sidebar .sidebar-wrapper,
+  body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-wrapper {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  body.eams-v2 .app-sidebar .sidebar-wrapper::-webkit-scrollbar,
+  body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+}

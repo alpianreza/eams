@@ -76,19 +76,15 @@ $showAuditLogs = canShowMenuPage(['admin', 'compliance'], 'audit_logs');
 $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
 ?>
 
-<aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
-  <div class="sidebar-brand eams-sidebar-brand">
-    <a href="<?= base_url('/') ?>" class="brand-link d-flex align-items-center justify-content-start gap-2">
+<aside class="app-sidebar tw-bg-slate-900 tw-text-white tw-shadow-lg tw-transition-all tw-duration-300" data-bs-theme="dark">
+  <div class="sidebar-brand eams-sidebar-brand tw-border-b tw-border-slate-800 tw-bg-slate-950">
+    <a href="<?= base_url('/') ?>" class="brand-link tw-flex tw-items-center tw-justify-start tw-gap-3 tw-p-4">
       <?php if ($hasBrandLogo): ?>
-        <img src="<?= esc($brandLogoUrl) ?>" class="sidebar-brand-icon" alt="EAMS">
-        <span class="brand-copy">
-          <span class="brand-text fw-bold">EAMS</span>
-        </span>
-      <?php else: ?>
-        <span class="brand-copy">
-          <span class="brand-text fw-bold">EAMS</span>
-        </span>
+        <img src="<?= esc($brandLogoUrl) ?>" class="sidebar-brand-icon tw-h-9 tw-w-9" alt="EAMS">
       <?php endif; ?>
+      <span class="brand-copy tw-font-black tw-text-2xl tw-tracking-widest tw-text-white tw-font-sans">
+        EAMS
+      </span>
     </a>
   </div>
 

@@ -1,7 +1,10 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid compliance-dashboard">
+<div class="container-fluid compliance-dashboard tw-p-4">
+<div id="compliance-dashboard-meta" class="d-none"
+     data-year="<?= esc((string)$selectedYear) ?>"
+     data-base-url="<?= rtrim(base_url(), '/') ?>"></div>
 
   <section class="card shadow-sm border-0 mb-4 compliance-hero-card no-lift">
     <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">

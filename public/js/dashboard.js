@@ -25,6 +25,10 @@ const pendingState = {
 let currentType = "monthly";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const meta = document.getElementById("compliance-dashboard-meta");
+  if (!meta) return;
+  window.SELECTED_YEAR = meta.dataset.year;
+  window.BASE_URL = meta.dataset.baseUrl;
   bindDashboardEvents();
   syncProgressTypeWithTab(currentType);
   loadDashboard();
@@ -130,7 +134,7 @@ async function loadTrend(type) {
     const data = await fetchJson(
       buildUrl("/compliance/dashboard/trend", {
         type,
-        year: selectedYear,
+        year: window.SELECTED_YEAR,
         month,
       }),
     );
@@ -260,7 +264,7 @@ async function loadProgressTrend() {
   setPanelLoading("progressPanel", true);
 
   const type = document.getElementById("progressType")?.value || "monthly";
-  const year = document.getElementById("progressYear")?.value || selectedYear;
+  const year = document.getElementById("progressYear")?.value || window.SELECTED_YEAR;
   const month =
     document.getElementById("progressMonth")?.value ||
     new Date().getMonth() + 1;
@@ -383,7 +387,7 @@ async function loadStatusPie() {
   setPanelLoading("piePanel", true);
 
   const type = document.getElementById("progressType")?.value || "monthly";
-  const year = document.getElementById("progressYear")?.value || selectedYear;
+  const year = document.getElementById("progressYear")?.value || window.SELECTED_YEAR;
   const month =
     document.getElementById("progressMonth")?.value ||
     new Date().getMonth() + 1;
@@ -501,7 +505,7 @@ async function loadRiskInsight() {
   setPanelLoading("riskItemPanel", true);
   setPanelLoading("riskAreaPanel", true);
 
-  const year = document.getElementById("progressYear")?.value || selectedYear;
+  const year = document.getElementById("progressYear")?.value || window.SELECTED_YEAR;
   const month =
     document.getElementById("progressMonth")?.value ||
     new Date().getMonth() + 1;
@@ -1038,7 +1042,7 @@ function formatLabel(periodKey, type) {
 
 function buildUrl(path, params = {}) {
   const cleanPath = `/${String(path || "").replace(/^\/+/, "")}`;
-  const rawBase = String(baseUrl || "").trim();
+  const rawBase = String(window.BASE_URL || "").trim();
 
   let basePath = "";
 

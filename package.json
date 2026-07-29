@@ -1,0 +1,30 @@
+{
+  "name": "eams",
+  "version": "1.0.0",
+  "description": "CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure. More information can be found at the [official site](https://codeigniter.com).",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tailwind:build": "tailwindcss -i ./resources/css/tailwind-app.css -o ./public/assets/css/tailwind-app.css --minify",
+    "tailwind:watch": "tailwindcss -i ./resources/css/tailwind-app.css -o ./public/assets/css/tailwind-app.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alpianreza/eams.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/alpianreza/eams/issues"
+  },
+  "homepage": "https://github.com/alpianreza/eams#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.4",
+    "tailwindcss": "^3.4.17"
+  }
+}

@@ -1698,6 +1698,21 @@ body.eams-v2 {
   --eams-shadow: 0 3px 12px rgba(15, 23, 42, 0.055);
   --eams-shadow-raised: 0 8px 20px rgba(15, 23, 42, 0.08);
   color: var(--eams-text);
+  background-color: var(--eams-canvas);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-bs-theme="dark"] body.eams-v2 {
+  --eams-canvas: #0f172a;
+  --eams-surface: #1e293b;
+  --eams-surface-subtle: #1e293b;
+  --eams-border: #334155;
+  --eams-border-strong: #475569;
+  --eams-text: #f8fafc;
+  --eams-muted: #94a3b8;
+  --eams-primary: #60a5fa;
+  --eams-primary-soft: rgba(96, 165, 250, 0.1);
+  --eams-focus: rgba(96, 165, 250, 0.3);
 }
 
 body.eams-v2 .app-wrapper {
@@ -1778,20 +1793,17 @@ body.eams-v2 .app-header .dropdown-item:focus-visible {
   color: #1d4ed8;
 }
 
+/* Sidebar wrapper scrollbar */
 body.eams-v2 .app-sidebar .sidebar-wrapper {
   min-height: calc(100vh - 68px);
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(186, 230, 253, 0.36) transparent;
+  /* Hilangkan scrollbar */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
 body.eams-v2 .app-sidebar .sidebar-wrapper::-webkit-scrollbar {
-  width: 5px;
-}
-
-body.eams-v2 .app-sidebar .sidebar-wrapper::-webkit-scrollbar-thumb {
-  border-radius: 999px;
-  background: rgba(186, 230, 253, 0.36);
+  display: none; /* Chrome/Safari/Opera */
 }
 
 body.eams-v2 .eams-sidebar-brand .brand-link {
@@ -2078,25 +2090,12 @@ body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link {
   border-radius: 10px;
 }
 
-body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link .nav-icon,
-body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link i:not(.sidebar-chevron) {
-  margin-right: 0;
-  font-size: 1.1rem;
-}
-
 body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link p {
   display: none;
 }
 
 body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link .badge {
-  position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 0.55rem;
-  min-width: 14px;
-  height: 14px;
-  padding: 0 3px;
-  line-height: 14px;
+  display: none;
 }
 
 body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-menu .nav-link .sidebar-chevron {
@@ -2185,7 +2184,12 @@ body.eams-v2.sidebar-mini.sidebar-collapse .app-sidebar:hover .sidebar-meta {
 
 /* Sidebar wrapper scrollbar */
 body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-wrapper {
-  scrollbar-width: thin;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+body.eams-v2.sidebar-mini.sidebar-collapse .sidebar-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
 }
 
 /* Sidebar overlay untuk mobile */

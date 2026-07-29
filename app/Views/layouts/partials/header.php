@@ -34,6 +34,11 @@ $notifBadge = $notifCount > 99 ? '99+' : (string)$notifCount;
     </div>
 
     <ul class="navbar-nav ms-auto align-items-center flex-row header-right-controls">
+      <li class="nav-item me-2">
+        <button id="theme-toggle" type="button" class="tw-theme-toggle" aria-label="Aktifkan tema gelap" title="Ganti tema">
+          <i class="bi bi-moon-stars"></i>
+        </button>
+      </li>
       <li class="nav-item dropdown header-notif-item me-1">
         <a class="nav-link position-relative header-notif-toggle"
           data-bs-toggle="dropdown"

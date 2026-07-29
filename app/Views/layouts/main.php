@@ -63,13 +63,15 @@ if (!empty($backUrl)) {
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= base_url('adminlte4/css/adminlte.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/mobile.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=' . time()) ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=' . filemtime(FCPATH . 'assets/css/app.css')) ?>">
     <?= $this->renderSection('styles') ?>
+    <link rel="stylesheet" href="<?= base_url('assets/css/tailwind-app.css?v=' . filemtime(FCPATH . 'assets/css/tailwind-app.css')) ?>">
 
 </head>
 
-<body class="layout-fixed sidebar-mini sidebar-expand-lg bg-body-secondary eams-v2<?= $isReadOnlyAccess ? ' is-read-only' : '' ?>" data-read-only="<?= $isReadOnlyAccess ? '1' : '0' ?>">
+<body class="layout-fixed sidebar-mini sidebar-expand-lg bg-body-secondary eams-v2<?= $isReadOnlyAccess ? ' is-read-only' : '' ?>"
+      data-read-only="<?= $isReadOnlyAccess ? '1' : '0' ?>"
+      data-bs-theme="<?= isset($_COOKIE['theme']) ? $_COOKIE['theme'] : 'light' ?>">
 
     <?php if (session()->get('logged_in')): ?>
 
@@ -137,6 +139,26 @@ if (!empty($backUrl)) {
 <script src="<?= base_url('js/app.js') ?>"></script>
 <script src="<?= base_url('js/checklist-master.js?v=' . filemtime(FCPATH . 'js/checklist-master.js')) ?>"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<script>
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  const applyTheme = (theme) => {
+    const isDark = theme === 'dark';
+    body.setAttribute('data-bs-theme', theme);
+    themeToggle.innerHTML = isDark ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
+    themeToggle.setAttribute('aria-label', isDark ? 'Aktifkan tema terang' : 'Aktifkan tema gelap');
+    document.cookie = `theme=${theme};path=/;max-age=31536000;SameSite=Lax`;
+  };
+
+  if (themeToggle) {
+    applyTheme(body.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light');
+    themeToggle.addEventListener('click', () => {
+      applyTheme(body.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+    });
+  }
+</script>
 
 <script>
     window.FLASH_MESSAGE = {
