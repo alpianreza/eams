@@ -2,24 +2,24 @@
 
 .home-dashboard-page .no-lift:hover {
   transform: none !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: var(--e-2) !important;
 }
 
 .home-dashboard-page .home-hero-card {
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(99, 102, 241, 0.1), rgba(255, 255, 255, 0.96));
-  border: 1px solid rgba(59, 130, 246, 0.16) !important;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(99, 102, 241, 0.1), var(--c-surface));
+  border: 1px solid var(--c-primary-soft) !important;
 }
 
 .home-dashboard-page .home-kicker {
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: #1e3a8a;
-  background: rgba(37, 99, 235, 0.12);
+  color: var(--c-primary);
+  background: var(--c-primary-soft);
 }
 
 .home-dashboard-page .home-month-form {
@@ -35,17 +35,17 @@
 }
 
 .home-dashboard-page .home-hero-btn {
-  border-radius: 999px;
+  border-radius: var(--r-full);
   padding: 0.38rem 0.8rem;
   font-weight: 600;
 }
 
 .home-dashboard-page .home-stat-card {
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  border: 1px solid var(--c-border) !important;
 }
 
 .home-dashboard-page .home-stat-label {
-  color: #64748b;
+  color: var(--c-text-muted);
   font-size: 0.78rem;
   margin-bottom: 0.3rem;
 }
@@ -63,12 +63,12 @@
 
 .home-dashboard-page .home-progress-wrap {
   height: 0.8rem;
-  background: #e2e8f0;
+  background: var(--c-surface-sunk);
 }
 
 .home-dashboard-page .home-pending-table thead th {
   font-size: 0.78rem;
-  color: #334155;
+  color: var(--c-text);
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
