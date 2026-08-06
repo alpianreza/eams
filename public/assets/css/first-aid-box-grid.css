@@ -1,186 +1,28 @@
-.fab-grid-wrap {
-  max-height: calc(100vh - 240px);
-}
+@import url('checklist-grid.css?v=1');
+
+/* Grid Kotak P3K — kolom: No | Kode | Lokasi | ...pemeriksaan
+ * Satu-satunya grid dengan kolom Kode sticky di tengah. */
 
 .fab-grid-table {
-  --fab-border: #1f293733;
-  min-width: 1040px;
-  font-size: 0.85rem;
-}
-
-.fab-grid-table th,
-.fab-grid-table td {
-  border-color: var(--fab-border);
-  white-space: nowrap;
-  padding: 0.5rem 0.6rem;
-}
-
-.fab-grid-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  background: #f8fafc;
-  text-align: center;
-  font-weight: 700;
-}
-
-.fab-grid-table .sticky-left {
-  position: sticky;
-  background: #fff;
-  z-index: 3;
-}
-
-.fab-grid-table thead .sticky-left {
-  background: #f8fafc;
-  z-index: 5;
-}
-
-.fab-grid-table .sticky-no {
-  left: 0;
-  width: 52px;
-  min-width: 52px;
-  max-width: 52px;
-}
-
-.fab-grid-table .sticky-code {
-  left: 52px;
-  min-width: 118px;
-  max-width: 118px;
-}
-
-.fab-grid-table .sticky-location {
-  left: 170px;
-  min-width: 180px;
-  max-width: 240px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.35;
+  --grid-min-w: 1040px;
+  --col-code-w: 118px;
+  --col-key-w: 240px;
+  --cell-w: 84px;
+  --cell-h: 40px;
+  --grid-pad-x: 0.6rem;
 }
 
 .fab-grid-table .head-sub {
-  font-size: 0.78rem;
-  line-height: 1.2;
   min-width: 96px;
   white-space: normal;
 }
 
-.fab-grid-table tbody tr.is-focused td {
-  background: #eff6ff;
-}
-
-.fab-grid-table tbody tr.is-focused .sticky-left {
-  background: #eff6ff;
-}
-
-.fab-check-cell {
-  width: 84px;
-  min-width: 84px;
-  height: 40px;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-
-.fab-check-cell:hover {
-  background: #f1f5f9;
-}
-
-.fab-check-cell.is-ok {
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 1rem;
-}
-
-.fab-check-cell.is-not-ok {
-  background: #fee2e2;
-  color: #b91c1c;
-  font-size: 1rem;
-}
-
-.fab-check-cell.is-saving {
-  outline: 2px solid #0ea5e9;
-  outline-offset: -2px;
-}
-
-.fab-cell-mark {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #cbd5e1;
-}
-
-.fab-legend-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.legend-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-}
-
-.legend-box.is-ok {
-  background: #dcfce7;
-  border-color: #86efac;
-}
-
-.legend-box.is-not-ok {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
 @media (max-width: 991.98px) {
-  .fab-grid-wrap {
-    max-height: none;
-  }
-
   .fab-grid-table {
-    min-width: 880px;
-    font-size: 0.8rem;
-  }
-
-  .fab-grid-table .sticky-no {
-    width: 44px;
-    min-width: 44px;
-    max-width: 44px;
-  }
-
-  .fab-grid-table .sticky-code {
-    left: 44px;
-    min-width: 96px;
-    max-width: 96px;
-  }
-
-  .fab-grid-table .sticky-location {
-    left: 140px;
-    min-width: 150px;
-    max-width: 180px;
-  }
-
-  .fab-check-cell {
-    width: 70px;
-    min-width: 70px;
-    height: 36px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .table-responsive {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  .table-responsive::-webkit-scrollbar {
-    height: 3px;
-  }
-  .table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+    --grid-min-w: 880px;
+    --col-code-w: 96px;
+    --col-key-w: 180px;
+    --cell-w: 70px;
+    --cell-h: 36px;
   }
 }

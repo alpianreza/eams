@@ -1,64 +1,13 @@
-.fe-grid-wrap {
-  max-height: calc(100vh - 240px);
-}
+@import url('checklist-grid.css?v=1');
+
+/* Grid APAR — kolom: No | Lokasi | ...pemeriksaan berkelompok */
 
 .fe-grid-table {
-  --fe-border: #1f293733;
-  min-width: 1500px;
-  font-size: 0.85rem;
-}
-
-.fe-grid-table th,
-.fe-grid-table td {
-  border-color: var(--fe-border);
-  white-space: nowrap;
-  padding: 0.5rem 0.6rem;
-}
-
-.fe-grid-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  background: #f8fafc;
-  text-align: center;
-  font-weight: 700;
-}
-
-.fe-grid-table .sticky-left {
-  position: sticky;
-  background: #fff;
-  z-index: 3;
-}
-
-.fe-grid-table thead .sticky-left {
-  background: #f8fafc;
-  z-index: 5;
-}
-
-.fe-grid-table .sticky-no {
-  left: 0;
-  width: 52px;
-  min-width: 52px;
-  max-width: 52px;
-}
-
-.fe-grid-table .sticky-location {
-  left: 52px;
-  min-width: 170px;
-  max-width: 220px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.35;
-}
-
-.fe-grid-table .group-band {
-  font-size: 0.82rem;
-  letter-spacing: 0.02em;
-}
-
-.fe-grid-table .head-sub {
-  font-size: 0.78rem;
-  line-height: 1.2;
+  --grid-min-w: 1500px;
+  --col-key-w: 220px;
+  --cell-w: 84px;
+  --cell-h: 40px;
+  --grid-pad-x: 0.6rem;
 }
 
 .fe-grid-table .col-static {
@@ -69,123 +18,11 @@
   min-width: 82px;
 }
 
-.fe-grid-table tbody tr.is-focused td {
-  background: #eff6ff;
-}
-
-.fe-grid-table tbody tr.is-focused .sticky-left {
-  background: #eff6ff;
-}
-
-.field-cell {
-  color: #475569;
-  background: #f8fafc;
-  text-align: center;
-}
-
-.fe-check-cell {
-  width: 84px;
-  min-width: 84px;
-  height: 40px;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-
-.fe-check-cell:hover {
-  background: #f1f5f9;
-}
-
-.fe-check-cell.is-ok {
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 1rem;
-}
-
-.fe-check-cell.is-not-ok {
-  background: #fee2e2;
-  color: #b91c1c;
-  font-size: 1rem;
-}
-
-.fe-check-cell.is-saving {
-  outline: 2px solid #0ea5e9;
-  outline-offset: -2px;
-}
-
-.fe-cell-mark {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #cbd5e1;
-}
-
-.fe-legend-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.legend-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-}
-
-.legend-box.is-ok {
-  background: #dcfce7;
-  border-color: #86efac;
-}
-
-.legend-box.is-not-ok {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
 @media (max-width: 991.98px) {
-  .fe-grid-wrap {
-    max-height: none;
-  }
-
   .fe-grid-table {
-    min-width: 1280px;
-    font-size: 0.8rem;
-  }
-
-  .fe-grid-table .sticky-no {
-    width: 44px;
-    min-width: 44px;
-    max-width: 44px;
-  }
-
-  .fe-grid-table .sticky-location {
-    left: 44px;
-    min-width: 140px;
-    max-width: 170px;
-  }
-
-  .fe-check-cell {
-    width: 72px;
-    min-width: 72px;
-    height: 36px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .table-responsive {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  .table-responsive::-webkit-scrollbar {
-    height: 3px;
-  }
-  .table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+    --grid-min-w: 1280px;
+    --col-key-w: 170px;
+    --cell-w: 72px;
+    --cell-h: 36px;
   }
 }

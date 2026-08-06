@@ -1,206 +1,23 @@
-.gg-grid-wrap {
-  max-height: calc(100vh - 240px);
-}
+@import url('checklist-grid.css?v=1');
+
+/* Grid generik — kolom: No | (Slot waktu) | Pertanyaan | ...hari
+ * Satu-satunya grid yang punya kolom slot waktu opsional.
+ * Kolom pertanyaan otomatis bergeser lewat kelas `.with-slot`. */
 
 .gg-grid-table {
-  --gg-border: #1f293733;
-  min-width: 820px;
-  font-size: 0.85rem;
-}
-
-.gg-grid-table th,
-.gg-grid-table td {
-  border-color: var(--gg-border);
-  white-space: nowrap;
-  padding: 0.55rem 0.65rem;
-}
-
-.gg-grid-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  background: #f8fafc;
-  text-align: center;
-  font-weight: 700;
-}
-
-.gg-grid-table .sticky-left {
-  position: sticky;
-  background: #fff;
-  z-index: 3;
-}
-
-.gg-grid-table thead .sticky-left {
-  background: #f8fafc;
-  z-index: 5;
-}
-
-.gg-grid-table .sticky-no {
-  left: 0;
-  width: 52px;
-  min-width: 52px;
-  max-width: 52px;
-}
-
-.gg-grid-table .sticky-slot {
-  left: 52px;
-  width: 84px;
-  min-width: 84px;
-  max-width: 84px;
-}
-
-.gg-grid-table .sticky-question {
-  left: 52px;
-  min-width: 220px;
-  max-width: 360px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.35;
-}
-
-.gg-grid-table .sticky-question.with-slot {
-  left: 136px;
-}
-
-.gg-grid-table thead .sticky-question,
-.gg-grid-table tbody .sticky-question {
-  width: auto;
-}
-
-.gg-grid-table thead th.is-offday {
-  background: #475569;
-  color: #fff;
-}
-
-.gg-check-cell {
-  width: 42px;
-  min-width: 42px;
-  height: 38px;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-
-.gg-check-cell:hover:not(.is-offday) {
-  background: #f1f5f9;
-}
-
-.gg-check-cell.is-offday {
-  background: #475569;
-  color: #475569;
-  cursor: not-allowed;
-}
-
-.gg-check-cell.is-ok {
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 1rem;
-}
-
-.gg-check-cell.is-not-ok {
-  background: #fee2e2;
-  color: #b91c1c;
-  font-size: 1rem;
-}
-
-.gg-check-cell.is-saving {
-  outline: 2px solid #0ea5e9;
-  outline-offset: -2px;
-}
-
-.gg-cell-mark {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-}
-
-.gg-legend-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.legend-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-}
-
-.legend-box.is-ok {
-  background: #dcfce7;
-  border-color: #86efac;
-}
-
-.legend-box.is-not-ok {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
-.legend-box.is-offday {
-  background: #475569;
-  border-color: #334155;
+  --grid-min-w: 820px;
+  --col-key-w: 360px;
+  --col-slot-w: 84px;
+  --grid-pad-x: 0.65rem;
+  --grid-pad-y: 0.55rem;
 }
 
 @media (max-width: 991.98px) {
-  .gg-grid-wrap {
-    max-height: none;
-  }
-
   .gg-grid-table {
-    min-width: 680px;
-    font-size: 0.8rem;
-  }
-
-  .gg-grid-table th,
-  .gg-grid-table td {
-    padding: 0.45rem 0.5rem;
-  }
-
-  .gg-grid-table .sticky-no {
-    width: 44px;
-    min-width: 44px;
-    max-width: 44px;
-  }
-
-  .gg-grid-table .sticky-slot {
-    left: 44px;
-    width: 72px;
-    min-width: 72px;
-    max-width: 72px;
-  }
-
-  .gg-grid-table .sticky-question {
-    left: 44px;
-    min-width: 170px;
-    max-width: 240px;
-  }
-
-  .gg-grid-table .sticky-question.with-slot {
-    left: 116px;
-  }
-
-  .gg-check-cell {
-    width: 36px;
-    min-width: 36px;
-    height: 34px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .table-responsive {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  .table-responsive::-webkit-scrollbar {
-    height: 3px;
-  }
-  .table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+    --grid-min-w: 680px;
+    --col-key-w: 240px;
+    --col-slot-w: 72px;
+    --cell-w: 36px;
+    --cell-h: 34px;
   }
 }

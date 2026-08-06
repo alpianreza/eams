@@ -1,59 +1,11 @@
-.ia-grid-wrap {
-  max-height: calc(100vh - 240px);
-}
+@import url('checklist-grid.css?v=1');
+
+/* Grid Alarm Intrusi — kolom: No | Lokasi | ...minggu */
 
 .ia-grid-table {
-  --ia-border: #1f293733;
-  min-width: 1500px;
-  font-size: 0.85rem;
-}
-
-.ia-grid-table th,
-.ia-grid-table td {
-  border-color: var(--ia-border);
-  white-space: nowrap;
-  padding: 0.5rem 0.55rem;
-}
-
-.ia-grid-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  background: #f8fafc;
-  text-align: center;
-  font-weight: 700;
-}
-
-.ia-grid-table .sticky-left {
-  position: sticky;
-  background: #fff;
-  z-index: 3;
-}
-
-.ia-grid-table thead .sticky-left {
-  background: #f8fafc;
-  z-index: 5;
-}
-
-.ia-grid-table .sticky-no {
-  left: 0;
-  width: 52px;
-  min-width: 52px;
-  max-width: 52px;
-}
-
-.ia-grid-table .sticky-location {
-  left: 52px;
-  min-width: 170px;
-  max-width: 220px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.35;
-}
-
-.ia-grid-table .month-band,
-.ia-grid-table .question-head {
-  font-size: 0.8rem;
+  --grid-min-w: 1500px;
+  --col-key-w: 220px;
+  --cell-w: 48px;
 }
 
 .ia-grid-table .week-head,
@@ -65,117 +17,11 @@
   min-width: 120px;
 }
 
-.ia-grid-table tbody tr.is-focused td {
-  background: #eff6ff;
-}
-
-.ia-grid-table tbody tr.is-focused .sticky-left {
-  background: #eff6ff;
-}
-
-.ia-check-cell {
-  width: 48px;
-  min-width: 48px;
-  height: 38px;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-
-.ia-check-cell:hover {
-  background: #f1f5f9;
-}
-
-.ia-check-cell.is-ok {
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 1rem;
-}
-
-.ia-check-cell.is-not-ok {
-  background: #fee2e2;
-  color: #b91c1c;
-  font-size: 1rem;
-}
-
-.ia-check-cell.is-saving {
-  outline: 2px solid #0ea5e9;
-  outline-offset: -2px;
-}
-
-.ia-cell-mark {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #cbd5e1;
-}
-
-.ia-legend-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.legend-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-}
-
-.legend-box.is-ok {
-  background: #dcfce7;
-  border-color: #86efac;
-}
-
-.legend-box.is-not-ok {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
 @media (max-width: 991.98px) {
-  .ia-grid-wrap {
-    max-height: none;
-  }
-
   .ia-grid-table {
-    min-width: 1240px;
-    font-size: 0.8rem;
-  }
-
-  .ia-grid-table .sticky-no {
-    width: 44px;
-    min-width: 44px;
-    max-width: 44px;
-  }
-
-  .ia-grid-table .sticky-location {
-    left: 44px;
-    min-width: 130px;
-    max-width: 170px;
-  }
-
-  .ia-check-cell {
-    width: 42px;
-    min-width: 42px;
-    height: 34px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .table-responsive {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  .table-responsive::-webkit-scrollbar {
-    height: 3px;
-  }
-  .table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+    --grid-min-w: 1240px;
+    --col-key-w: 170px;
+    --cell-w: 42px;
+    --cell-h: 34px;
   }
 }

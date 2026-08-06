@@ -1,0 +1,331 @@
+/* =====================================================================
+ * CHECKLIST GRID — BASIS BERSAMA
+ * ---------------------------------------------------------------------
+ * Sebelumnya 10 file grid (cctv, gate, hydrant, dst) berisi kerangka CSS
+ * yang sama persis dengan prefix berbeda. Sekarang kerangka itu ada di
+ * sini saja, dan tiap file tipe hanya mengatur angka khasnya lewat
+ * custom property.
+ *
+ * Selector memakai pola [class*="-grid-table"] supaya cocok dengan semua
+ * prefix yang sudah ada (.cctv-grid-table, .gg-grid-table, .sd-grid-table
+ * dan seterusnya) tanpa perlu mengubah satu baris pun di file View.
+ *
+ * WAJIB: tokens.css harus dimuat lebih dulu (sudah global di layout).
+ *
+ * --- Cara menambah tipe grid baru ---
+ * 1. Buat file xxx-grid.css
+ * 2. Baris pertama: @import url('checklist-grid.css?v=1');
+ * 3. Set variabel di bawah sesuai kebutuhan. Selesai.
+ * ===================================================================== */
+
+/* =====================================================================
+ * VARIABEL
+ * ===================================================================== */
+[class*="-grid-table"] {
+  /* Lebar kolom sticky. Semuanya TETAP (bukan rentang min/max) karena
+     posisi kolom berikutnya dihitung dari angka ini. Lebar elastis =
+     posisi meleset = kolom tumpang tindih. Ini akar bug yang lama. */
+  --col-no-w: 52px;
+  --col-code-w: 0px;
+  --col-slot-w: 0px;
+  --col-key-w: 200px;
+  --col-key2-w: 0px;
+
+  /* Sel centang */
+  --cell-w: 42px;
+  --cell-h: 38px;
+
+  /* Tabel */
+  --grid-min-w: 1100px;
+  --grid-font-size: 0.85rem;
+  --grid-pad-y: 0.5rem;
+  --grid-pad-x: 0.55rem;
+
+  /* Posisi turunan — JANGAN di-set manual di file tipe. */
+  --off-after-no: var(--col-no-w);
+  --off-after-code: calc(var(--col-no-w) + var(--col-code-w));
+  --off-after-slot: calc(var(--col-no-w) + var(--col-slot-w));
+  --off-after-key: calc(var(--col-no-w) + var(--col-code-w) + var(--col-key-w));
+
+  min-width: var(--grid-min-w);
+  font-size: var(--grid-font-size);
+}
+
+/* =====================================================================
+ * KERANGKA TABEL
+ * ===================================================================== */
+[class*="-grid-wrap"] {
+  max-height: calc(100vh - 240px);
+}
+
+[class*="-grid-table"] th,
+[class*="-grid-table"] td {
+  border-color: var(--c-border);
+  white-space: nowrap;
+  padding: var(--grid-pad-y) var(--grid-pad-x);
+}
+
+[class*="-grid-table"] thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: var(--c-surface-sunk);
+  color: var(--c-text);
+  text-align: center;
+  font-weight: 700;
+}
+
+/* =====================================================================
+ * KOLOM STICKY
+ * Semua nilai `left` DIHITUNG, tidak pernah ditulis manual.
+ * ===================================================================== */
+[class*="-grid-table"] .sticky-left {
+  position: sticky;
+  z-index: 3;
+  background: var(--c-surface);
+}
+
+[class*="-grid-table"] thead .sticky-left {
+  z-index: 5;
+  background: var(--c-surface-sunk);
+}
+
+[class*="-grid-table"] .sticky-no {
+  left: 0;
+  width: var(--col-no-w);
+  min-width: var(--col-no-w);
+  max-width: var(--col-no-w);
+}
+
+[class*="-grid-table"] .sticky-code {
+  left: var(--off-after-no);
+  width: var(--col-code-w);
+  min-width: var(--col-code-w);
+  max-width: var(--col-code-w);
+}
+
+[class*="-grid-table"] .sticky-slot {
+  left: var(--off-after-no);
+  width: var(--col-slot-w);
+  min-width: var(--col-slot-w);
+  max-width: var(--col-slot-w);
+}
+
+/* Kolom identitas utama: nama / lokasi / pertanyaan.
+   Berada setelah kolom No (dan setelah Kode bila ada). */
+[class*="-grid-table"] .sticky-name,
+[class*="-grid-table"] .sticky-location,
+[class*="-grid-table"] .sticky-question {
+  left: var(--off-after-code);
+  width: var(--col-key-w);
+  min-width: var(--col-key-w);
+  max-width: var(--col-key-w);
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+/* Varian dengan kolom slot waktu di depannya */
+[class*="-grid-table"] .sticky-question.with-slot {
+  left: var(--off-after-slot);
+}
+
+[class*="-grid-table"] .sticky-footer {
+  left: 0;
+  z-index: 3;
+  background: var(--c-surface);
+  font-weight: 700;
+}
+
+/* =====================================================================
+ * SEL CENTANG
+ * ===================================================================== */
+[class*="-check-cell"] {
+  width: var(--cell-w);
+  min-width: var(--cell-w);
+  height: var(--cell-h);
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+[class*="-check-cell"]:hover:not(.is-offday):not(.is-na) {
+  background: var(--c-surface-hover);
+}
+
+[class*="-check-cell"]:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: -2px;
+}
+
+[class*="-check-cell"].is-ok {
+  background: var(--c-ok-soft);
+  color: var(--c-ok);
+  font-size: 1rem;
+}
+
+/* `is-alert` (CCTV) dan `is-not-ok` (grid lain) artinya sama.
+   Keduanya didukung supaya View lama tidak perlu diubah. */
+[class*="-check-cell"].is-not-ok,
+[class*="-check-cell"].is-alert {
+  background: var(--c-late-soft);
+  color: var(--c-late);
+  font-size: 1rem;
+}
+
+[class*="-check-cell"].is-na {
+  background: var(--c-offday-soft);
+  color: var(--c-offday);
+  font-size: 1rem;
+}
+
+[class*="-check-cell"].is-offday {
+  background: var(--c-offday);
+  color: var(--c-offday);
+  cursor: not-allowed;
+}
+
+[class*="-check-cell"].is-saving {
+  outline: 2px solid var(--c-info);
+  outline-offset: -2px;
+}
+
+/* Baris yang sedang difokuskan */
+[class*="-grid-table"] tbody tr.is-focused td,
+[class*="-grid-table"] tbody tr.is-focused .sticky-left {
+  background: var(--c-primary-soft);
+}
+
+/* Kolom hari libur di header */
+[class*="-grid-table"] th.is-offday,
+[class*="-grid-table"] thead th.is-offday {
+  background: var(--c-offday);
+  color: #ffffff;
+}
+
+/* Sel isian non-interaktif */
+.field-cell {
+  color: var(--c-text-muted);
+  background: var(--c-surface-sunk);
+  text-align: center;
+}
+
+/* Header vertikal (dipakai grid smoke detector) */
+[class*="-grid-table"] .vertical-head {
+  height: 144px;
+  padding: 0;
+  vertical-align: bottom;
+}
+
+[class*="-grid-table"] .vertical-head > span {
+  display: inline-block;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  line-height: 1.1;
+  padding: 10px 0;
+}
+
+/* Pita judul */
+[class*="-grid-table"] .month-band,
+[class*="-grid-table"] .question-head {
+  font-size: 0.8rem;
+}
+
+[class*="-grid-table"] .group-band {
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+[class*="-grid-table"] .head-sub {
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+
+/* =====================================================================
+ * PENANDA & LEGENDA
+ * Dulu .legend-box didefinisikan ulang identik di 10 file dan bocor ke
+ * seluruh aplikasi. Sekarang satu definisi saja.
+ * ===================================================================== */
+[class*="-cell-mark"] {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--c-border-strong);
+}
+
+[class*="-legend-pill"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--r-sm);
+}
+
+.legend-box.is-ok {
+  background: var(--c-ok-soft);
+  border-color: var(--c-ok-border);
+}
+
+.legend-box.is-not-ok,
+.legend-box.is-alert {
+  background: var(--c-late-soft);
+  border-color: var(--c-late-border);
+}
+
+.legend-box.is-na {
+  background: var(--c-offday-soft);
+  border-color: var(--c-offday-border);
+}
+
+.legend-box.is-offday {
+  background: var(--c-offday);
+  border-color: var(--c-offday);
+}
+
+/* =====================================================================
+ * RESPONSIF
+ * Cukup ubah variabelnya; semua posisi ikut menyesuaikan sendiri.
+ * ===================================================================== */
+@media (max-width: 991.98px) {
+  [class*="-grid-wrap"] {
+    max-height: none;
+  }
+
+  [class*="-grid-table"] {
+    --col-no-w: 44px;
+    --grid-font-size: 0.8rem;
+    --grid-pad-y: 0.45rem;
+    --grid-pad-x: 0.5rem;
+  }
+}
+
+/* Target sentuh layak di perangkat sentuh (WCAG menyarankan 44px). */
+@media (pointer: coarse) {
+  [class*="-check-cell"] {
+    height: max(var(--cell-h), 44px);
+  }
+}
+
+@media (max-width: 768px) {
+  .table-responsive {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .table-responsive::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: var(--c-border-strong);
+    border-radius: var(--r-sm);
+  }
+}

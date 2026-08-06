@@ -1,66 +1,11 @@
-.hyd-grid-wrap {
-  max-height: calc(100vh - 240px);
-}
+@import url('checklist-grid.css?v=1');
+
+/* Grid Hydrant — kolom: No | Pertanyaan | ...minggu, dengan baris total */
 
 .hyd-grid-table {
-  --hyd-border: #1f293733;
-  min-width: 1580px;
-  font-size: 0.85rem;
-}
-
-.hyd-grid-table th,
-.hyd-grid-table td {
-  border-color: var(--hyd-border);
-  white-space: nowrap;
-  padding: 0.5rem 0.55rem;
-}
-
-.hyd-grid-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  background: #f8fafc;
-  text-align: center;
-  font-weight: 700;
-}
-
-.hyd-grid-table .sticky-left {
-  position: sticky;
-  background: #fff;
-  z-index: 3;
-}
-
-.hyd-grid-table thead .sticky-left {
-  background: #f8fafc;
-  z-index: 5;
-}
-
-.hyd-grid-table .sticky-no {
-  left: 0;
-  width: 52px;
-  min-width: 52px;
-  max-width: 52px;
-}
-
-.hyd-grid-table .sticky-question {
-  left: 52px;
-  min-width: 180px;
-  max-width: 240px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.35;
-}
-
-.hyd-grid-table .sticky-footer {
-  left: 0;
-  z-index: 3;
-  background: #fff;
-  font-weight: 700;
-}
-
-.hyd-grid-table .month-band,
-.hyd-grid-table .question-head {
-  font-size: 0.8rem;
+  --grid-min-w: 1580px;
+  --col-key-w: 240px;
+  --cell-w: 46px;
 }
 
 .hyd-grid-table .col-week {
@@ -71,109 +16,11 @@
   min-width: 110px;
 }
 
-.hyd-check-cell {
-  width: 46px;
-  min-width: 46px;
-  height: 38px;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-
-.hyd-check-cell:hover {
-  background: #f1f5f9;
-}
-
-.hyd-check-cell.is-ok {
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 1rem;
-}
-
-.hyd-check-cell.is-not-ok {
-  background: #fee2e2;
-  color: #b91c1c;
-  font-size: 1rem;
-}
-
-.hyd-check-cell.is-saving {
-  outline: 2px solid #0ea5e9;
-  outline-offset: -2px;
-}
-
-.hyd-cell-mark {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: #cbd5e1;
-}
-
-.hyd-legend-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.legend-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-}
-
-.legend-box.is-ok {
-  background: #dcfce7;
-  border-color: #86efac;
-}
-
-.legend-box.is-not-ok {
-  background: #fee2e2;
-  border-color: #fca5a5;
-}
-
 @media (max-width: 991.98px) {
-  .hyd-grid-wrap {
-    max-height: none;
-  }
-
   .hyd-grid-table {
-    min-width: 1280px;
-    font-size: 0.8rem;
-  }
-
-  .hyd-grid-table .sticky-no {
-    width: 44px;
-    min-width: 44px;
-    max-width: 44px;
-  }
-
-  .hyd-grid-table .sticky-question {
-    left: 44px;
-    min-width: 140px;
-    max-width: 180px;
-  }
-
-  .hyd-check-cell {
-    width: 40px;
-    min-width: 40px;
-    height: 34px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .table-responsive {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  .table-responsive::-webkit-scrollbar {
-    height: 3px;
-  }
-  .table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+    --grid-min-w: 1280px;
+    --col-key-w: 180px;
+    --cell-w: 40px;
+    --cell-h: 34px;
   }
 }

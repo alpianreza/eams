@@ -1,191 +1,30 @@
-.cctv-grid-wrap {
-  max-height: calc(100vh - 240px);
-}
+@import url('checklist-grid.css?v=1');
+
+/* Grid CCTV — kolom: No | Nama | Lokasi | ...hari
+ * Punya DUA kolom identitas sticky, jadi kolom kedua digeser manual.
+ * Di sinilah dulu terjadi tumpang tindih 22px: `left` kolom Lokasi
+ * ditulis 180px padahal kolom Nama boleh melar sampai 202px. */
 
 .cctv-grid-table {
-  --cctv-border: #1f293733;
-  min-width: 1180px;
-  font-size: 0.85rem;
+  --grid-min-w: 1180px;
+  --col-key-w: 150px;
+  --col-key2-w: 180px;
+  --cell-w: 38px;
+  --cell-h: 36px;
 }
 
-.cctv-grid-table th,
-.cctv-grid-table td {
-  border-color: var(--cctv-border);
-  white-space: nowrap;
-  padding: 0.5rem 0.55rem;
-}
-
-.cctv-grid-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  background: #f8fafc;
-  text-align: center;
-  font-weight: 700;
-}
-
-.cctv-grid-table .sticky-left {
-  position: sticky;
-  background: #fff;
-  z-index: 3;
-}
-
-.cctv-grid-table thead .sticky-left {
-  background: #f8fafc;
-  z-index: 5;
-}
-
-.cctv-grid-table .sticky-no {
-  left: 0;
-  width: 52px;
-  min-width: 52px;
-  max-width: 52px;
-}
-
-.cctv-grid-table .sticky-name {
-  left: 52px;
-  min-width: 128px;
-  max-width: 150px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.35;
-}
-
+/* Kolom Lokasi berada setelah kolom Nama. */
 .cctv-grid-table .sticky-location {
-  left: 180px;
-  min-width: 150px;
-  max-width: 180px;
-  white-space: normal;
-  word-break: break-word;
-  line-height: 1.35;
-}
-
-.cctv-grid-table tbody tr.is-focused td {
-  background: #eff6ff;
-}
-
-.cctv-grid-table tbody tr.is-focused .sticky-left {
-  background: #eff6ff;
-}
-
-.cctv-grid-table th.is-offday {
-  background: #475569;
-  color: #fff;
-}
-
-.cctv-check-cell {
-  width: 38px;
-  min-width: 38px;
-  height: 36px;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-
-.cctv-check-cell:hover:not(.is-offday) {
-  background: #f1f5f9;
-}
-
-.cctv-check-cell.is-offday {
-  background: #475569;
-  color: #475569;
-  cursor: not-allowed;
-}
-
-.cctv-check-cell.is-ok {
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 1rem;
-}
-
-.cctv-check-cell.is-alert {
-  background: #fee2e2;
-  color: #b91c1c;
-  font-size: 1rem;
-}
-
-.cctv-check-cell.is-saving {
-  outline: 2px solid #0ea5e9;
-  outline-offset: -2px;
-}
-
-.cctv-cell-mark {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-}
-
-.cctv-legend-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.legend-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-}
-
-.legend-box.is-ok {
-  background: #dcfce7;
-  border-color: #86efac;
-}
-
-.legend-box.is-offday {
-  background: #475569;
-  border-color: #334155;
-}
-
-.legend-box.is-alert {
-  background: #fee2e2;
-  border-color: #fca5a5;
+  left: var(--off-after-key);
+  width: var(--col-key2-w);
+  min-width: var(--col-key2-w);
+  max-width: var(--col-key2-w);
 }
 
 @media (max-width: 991.98px) {
-  .cctv-grid-wrap {
-    max-height: none;
-  }
-
   .cctv-grid-table {
-    min-width: 980px;
-    font-size: 0.8rem;
-  }
-
-  .cctv-grid-table .sticky-no {
-    width: 44px;
-    min-width: 44px;
-    max-width: 44px;
-  }
-
-  .cctv-grid-table .sticky-name {
-    left: 44px;
-    min-width: 104px;
-    max-width: 120px;
-  }
-
-  .cctv-grid-table .sticky-location {
-    left: 148px;
-    min-width: 120px;
-    max-width: 140px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .table-responsive {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  .table-responsive::-webkit-scrollbar {
-    height: 3px;
-  }
-  .table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+    --grid-min-w: 980px;
+    --col-key-w: 120px;
+    --col-key2-w: 140px;
   }
 }
