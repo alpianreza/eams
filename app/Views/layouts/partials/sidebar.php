@@ -78,7 +78,7 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
 $isUtilityMenu = in_array($seg1, ['boiler', 'ipal', 'pdam-water', 'pdam-water-boiler']);
 ?>
 
-<aside class="app-sidebar" data-bs-theme="dark">
+<aside class="app-sidebar">
   <div class="sidebar-brand eams-sidebar-brand">
     <a href="<?= base_url('/') ?>" class="brand-link">
       <?php if ($hasBrandLogo): ?>
