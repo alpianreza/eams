@@ -1,17 +1,19 @@
 .utility-shell .card {
-  border-radius: 14px;
+  border-radius: var(--r-lg);
 }
 
+/* Gradien hero bersifat dekoratif, sengaja tidak ditokenkan. */
 .utility-shell .utility-hero-card {
   border: 1px solid rgba(14, 116, 144, 0.16) !important;
-  background: linear-gradient(135deg, rgba(14, 116, 144, 0.12), rgba(30, 64, 175, 0.08), #ffffff);
+  background: linear-gradient(135deg, rgba(14, 116, 144, 0.12), rgba(30, 64, 175, 0.08), var(--c-surface));
 }
 
+/* Aksen tosca khas modul utilitas, bukan warna semantik aplikasi. */
 .utility-shell .utility-kicker {
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -24,12 +26,12 @@
 }
 
 .utility-shell .utility-stat-card {
-  border: 1px solid rgba(148, 163, 184, 0.25) !important;
+  border: 1px solid var(--c-border) !important;
 }
 
 .utility-shell .utility-stat-label {
   font-size: 0.76rem;
-  color: #64748b;
+  color: var(--c-text-muted);
   letter-spacing: 0.02em;
 }
 
@@ -37,16 +39,16 @@
   margin-top: 0.18rem;
   font-size: 1.05rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--c-text);
 }
 
 .utility-shell .utility-table-card {
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  border: 1px solid var(--c-border) !important;
 }
 
 .utility-shell .utility-table thead th {
-  background: #f8fafc;
-  color: #334155;
+  background: var(--c-surface-sunk);
+  color: var(--c-text);
   font-size: 0.76rem;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -58,26 +60,27 @@
 }
 
 .utility-shell .utility-table input.form-control {
-  border-color: #cbd5e1;
+  border-color: var(--c-border-strong);
 }
 
+/* Cincin fokus sengaja tetap rgba agar tembus pandang. */
 .utility-shell .utility-table input.form-control:focus {
-  border-color: #60a5fa;
+  border-color: var(--c-primary);
   box-shadow: 0 0 0 0.16rem rgba(37, 99, 235, 0.15);
 }
 
 .utility-shell .utility-offday-row td {
-  background: #fee2e2 !important;
+  background: var(--c-late-soft) !important;
 }
 
 .utility-shell .utility-mobile-card {
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+  border: 1px solid var(--c-border) !important;
+  box-shadow: var(--e-2);
 }
 
 .utility-shell .utility-mobile-offday {
-  border-color: rgba(220, 38, 38, 0.35) !important;
-  background: rgba(254, 242, 242, 0.84);
+  border-color: var(--c-late-border) !important;
+  background: var(--c-late-soft);
 }
 
 .utility-shell .utility-mobile-metric {
@@ -85,14 +88,14 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.84rem;
-  color: #475569;
+  color: var(--c-text-muted);
   margin-bottom: 0.15rem;
 }
 
 .utility-shell .utility-alert {
-  border-radius: 12px;
-  border: 1px solid rgba(220, 38, 38, 0.25);
-  background: rgba(254, 226, 226, 0.72);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--c-late-border);
+  background: var(--c-late-soft);
 }
 
 .utility-shell .utility-inline-metric {
@@ -102,12 +105,12 @@
 }
 
 .utility-shell .utility-inline-metric span {
-  color: #64748b;
+  color: var(--c-text-muted);
   font-size: 0.8rem;
 }
 
 .utility-shell .utility-inline-metric strong {
-  color: #0f172a;
+  color: var(--c-text);
   font-size: 1.08rem;
 }
 
