@@ -1,15 +1,10 @@
-
-/* Mobile */
-@media (max-width: 768px) {
-  .table-responsive {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-  }
-  .table-responsive::-webkit-scrollbar {
-    height: 3px;
-  }
-  .table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-  }
-}
+/*
+ * Berkas ini sudah tidak berisi aturan apa pun.
+ *
+ * Sebelumnya hanya mengatur scrollbar .table-responsive di layar kecil,
+ * dan isinya persis sama dengan heat-detector-grid.css. Aturan itu kini
+ * ada di assets/css/mobile.css dan sudah memakai token warna.
+ *
+ * Berkas dipertahankan agar view yang masih menautkannya tidak 404.
+ * Aman dihapus setelah tautannya dibersihkan dari view terkait.
+ */
