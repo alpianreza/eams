@@ -80,18 +80,12 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
     <!--
-      Font Awesome masih dimuat karena sebagian view lama memakai fas fa-*.
-      Layout utama, sidebar, header, home, dan dashboard compliance sudah
-      sepenuhnya Bootstrap Icons. Baris ini boleh dihapus setelah view
-      sisanya disisir.
+      Bootstrap Icons adalah SATU-SATUNYA pustaka ikon di proyek ini.
+      Font Awesome sudah dihapus. Jangan menambah pustaka ikon kedua:
+      pakai kelas bi bi-* saja. Daftar ikon: https://icons.getbootstrap.com
     -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
