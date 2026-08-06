@@ -360,58 +360,21 @@ body.eams-v2 {
 }
 
 /* =====================================================================
- * PENAMBALAN DARK MODE UNTUK KOMPONEN LAMA
+ * TAMBALAN DARK MODE UNTUK KELAS UTILITAS BOOTSTRAP
  * ---------------------------------------------------------------------
- * 37 file CSS lama masih meng-hardcode #fff / #f8fafc sehingga tabel
- * checklist tetap putih saat dark mode. Blok ini menambalnya secara
- * menyeluruh lewat selector pola.
+ * Kelas di bawah ini ditulis langsung di markup PHP, bukan di file CSS,
+ * jadi migrasi token tidak menjangkaunya. Tanpa tambalan ini, kartu dan
+ * teks yang memakai .bg-white atau .text-dark akan tetap putih terang
+ * saat mode gelap.
  *
- * TODO: hapus blok ini setelah hex hardcode di file grid dibersihkan.
+ * Tambalan untuk grid checklist sudah DIHAPUS: checklist-grid.css kini
+ * sepenuhnya memakai token, dan tambalan lamanya justru punya
+ * specificity lebih tinggi sehingga kolom hari libur tampil berbeda
+ * antara mode terang dan gelap.
+ *
+ * Cara membersihkan sisa ini: ganti .bg-white menjadi .card polos dan
+ * .text-dark menjadi kelas semantik di file View, lalu hapus blok ini.
  * ===================================================================== */
-[data-bs-theme="dark"] [class*="-grid-table"] thead th,
-[data-bs-theme="dark"] [class*="-grid-table"] thead .sticky-left {
-  background: var(--c-surface-sunk);
-  color: var(--c-text);
-}
-
-[data-bs-theme="dark"] [class*="-grid-table"] .sticky-left {
-  background: var(--c-surface);
-}
-
-[data-bs-theme="dark"] [class*="-grid-table"] td,
-[data-bs-theme="dark"] [class*="-grid-table"] th {
-  border-color: var(--c-border);
-  color: var(--c-text);
-}
-
-[data-bs-theme="dark"] [class*="-check-cell"]:hover:not(.is-offday) {
-  background: var(--c-surface-hover);
-}
-
-[data-bs-theme="dark"] [class*="-check-cell"].is-ok,
-[data-bs-theme="dark"] .legend-box.is-ok {
-  background: var(--c-ok-soft);
-  color: var(--c-ok);
-  border-color: var(--c-ok-border);
-}
-
-[data-bs-theme="dark"] [class*="-check-cell"].is-alert,
-[data-bs-theme="dark"] [class*="-check-cell"].is-not-ok,
-[data-bs-theme="dark"] .legend-box.is-alert,
-[data-bs-theme="dark"] .legend-box.is-not-ok {
-  background: var(--c-late-soft);
-  color: var(--c-late);
-  border-color: var(--c-late-border);
-}
-
-[data-bs-theme="dark"] [class*="-check-cell"].is-offday,
-[data-bs-theme="dark"] .legend-box.is-offday,
-[data-bs-theme="dark"] [class*="-grid-table"] th.is-offday {
-  background: var(--c-offday-soft);
-  color: var(--c-offday);
-  border-color: var(--c-offday-border);
-}
-
 [data-bs-theme="dark"] .text-dark {
   color: var(--c-text) !important;
 }
@@ -424,17 +387,6 @@ body.eams-v2 {
 [data-bs-theme="dark"] .bg-light {
   background-color: var(--c-surface) !important;
   color: var(--c-text);
-}
-
-[data-bs-theme="dark"] .app-wrapper,
-[data-bs-theme="dark"] .app-main,
-[data-bs-theme="dark"] .app-content {
-  background: var(--c-canvas);
-}
-
-[data-bs-theme="dark"] .app-header {
-  background: var(--c-surface);
-  border-color: var(--c-border);
 }
 
 /* =====================================================================
