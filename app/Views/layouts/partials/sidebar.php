@@ -74,16 +74,18 @@ $showCompliancePrint = canShowMenuPage(['admin', 'compliance', 'auditor'], 'comp
 $showUsersManagement = canShowMenuPage(['admin', 'compliance'], 'users_management');
 $showAuditLogs = canShowMenuPage(['admin', 'compliance'], 'audit_logs');
 $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
+
+$isUtilityMenu = in_array($seg1, ['boiler', 'ipal', 'pdam-water', 'pdam-water-boiler']);
 ?>
 
-<aside class="app-sidebar tw-bg-slate-900 tw-text-white tw-shadow-lg tw-transition-all tw-duration-300" data-bs-theme="dark">
-  <div class="sidebar-brand eams-sidebar-brand tw-border-b tw-border-slate-800 tw-bg-slate-950">
-    <a href="<?= base_url('/') ?>" class="brand-link tw-flex tw-items-center tw-justify-start tw-gap-3 tw-p-4">
+<aside class="app-sidebar" data-bs-theme="dark">
+  <div class="sidebar-brand eams-sidebar-brand">
+    <a href="<?= base_url('/') ?>" class="brand-link">
       <?php if ($hasBrandLogo): ?>
-        <img src="<?= esc($brandLogoUrl) ?>" class="sidebar-brand-icon tw-h-9 tw-w-9" alt="EAMS">
+        <img src="<?= esc($brandLogoUrl) ?>" class="sidebar-brand-icon" alt="EAMS">
       <?php endif; ?>
-      <span class="brand-copy tw-font-black tw-text-2xl tw-tracking-widest tw-text-white tw-font-sans">
-        EAMS
+      <span class="brand-copy">
+        <span class="brand-text">EAMS</span>
       </span>
     </a>
   </div>
@@ -107,21 +109,23 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
           </li>
         <?php endif; ?>
 
-        <!-- PATROL -->
+        <!-- SECURITY -->
         <?php if (($showPatrolDaily || $showPatrolDashboard) && ($canPatrolDaily || $canPatrolDashboard)): ?>
           <li class="nav-header sidebar-section-title">SECURITY</li>
+
           <?php if ($showPatrolDaily && $canPatrolDaily): ?>
-          <li class="nav-item">
-            <a href="/patrol"
-              class="nav-link <?= $isPatrolMenu ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-compass"></i>
-              <p>Patrol Harian</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('patrol') ?>"
+                class="nav-link <?= $isPatrolMenu ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-compass"></i>
+                <p>Patrol Harian</p>
+              </a>
+            </li>
           <?php endif; ?>
+
           <?php if ($showPatrolDashboard && $canPatrolDashboard): ?>
             <li class="nav-item">
-              <a href="/patrol/dashboard"
+              <a href="<?= base_url('patrol/dashboard') ?>"
                 class="nav-link <?= $seg1 === 'patrol' && $seg2 === 'dashboard' ? 'active' : '' ?>">
                 <i class="nav-icon bi bi-speedometer2"></i>
                 <p>Patrol Dashboard</p>
@@ -130,67 +134,66 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
           <?php endif; ?>
         <?php endif; ?>
 
-        <!-- ================= IT ASSET ================= -->
+        <!-- IT ASSET -->
         <?php if ($showItCenter || $showDashboardIt || $showItAssets || $showDeviceControl || $showEmployees): ?>
           <li class="nav-header sidebar-section-title">IT ASSET</li>
 
           <?php if ($showItCenter && $canItCenter): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('it') ?>"
-              class="nav-link <?= $seg1 === 'it' && $seg2 === '' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-grid"></i>
-              <p>IT Center</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('it') ?>"
+                class="nav-link <?= $seg1 === 'it' && $seg2 === '' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-grid"></i>
+                <p>IT Center</p>
+              </a>
+            </li>
           <?php endif; ?>
 
           <?php if ($showDashboardIt && $canDashboardIt): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('dashboard-it') ?>"
-              class="nav-link <?= $seg1 === 'dashboard-it' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-pie-chart"></i>
-              <p>Dashboard IT</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('dashboard-it') ?>"
+                class="nav-link <?= $seg1 === 'dashboard-it' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-pie-chart"></i>
+                <p>Dashboard IT</p>
+              </a>
+            </li>
           <?php endif; ?>
 
           <?php if ($showItAssets && $canItAssets): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('it-assets') ?>"
-              class="nav-link <?= $seg1 === 'it-assets' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-pc-display"></i>
-              <p>Data Asset IT</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('it-assets') ?>"
+                class="nav-link <?= $seg1 === 'it-assets' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-pc-display"></i>
+                <p>Data Asset IT</p>
+              </a>
+            </li>
           <?php endif; ?>
 
           <?php if ($showDeviceControl && $canDeviceControl): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('it/devices') ?>"
-              class="nav-link <?= $seg1 === 'it' && $seg2 === 'devices' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-cpu"></i>
-              <p>Device Control</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('it/devices') ?>"
+                class="nav-link <?= $seg1 === 'it' && $seg2 === 'devices' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-cpu"></i>
+                <p>Device Control</p>
+              </a>
+            </li>
           <?php endif; ?>
 
           <?php if ($showEmployees && $canEmployees): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('employees') ?>"
-              class="nav-link <?= $seg1 === 'employees' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-people"></i>
-              <p>Users IT</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('employees') ?>"
+                class="nav-link <?= $seg1 === 'employees' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-people"></i>
+                <p>Users IT</p>
+              </a>
+            </li>
           <?php endif; ?>
         <?php endif; ?>
 
-        <!-- ================= COMPLIANCE ================= -->
+        <!-- COMPLIANCE -->
         <?php if ($showComplianceDashboard || $showComplianceProgress || $showComplianceInventory || $showChecklistMaster || $showQrGallery || $showHolidays || $showComplianceReport || $showThermalImaging || $showEmsReports || $showFdm || $showQuestionnaires || $showEvidenceCenter || $showBoiler || $showIpal || $showPdamWater || $showPdamWaterBoiler || $showCompliancePrint): ?>
           <li class="nav-header sidebar-section-title">COMPLIANCE</li>
         <?php endif; ?>
 
-        <!-- DASHBOARD COMPLIANCE -->
         <?php if ($showComplianceDashboard && $canComplianceDashboard): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/dashboard') ?>"
@@ -201,7 +204,6 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
           </li>
         <?php endif; ?>
 
-        <!-- PROGRESS -->
         <?php if ($showComplianceProgress && $canComplianceProgress): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/progress') ?>"
@@ -212,7 +214,7 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
           </li>
         <?php endif; ?>
 
-        <!-- CHECKLIST MENU -->
+        <!-- CHECKLIST -->
         <?php if ($showComplianceInventory || $showChecklistMaster || $showQrGallery): ?>
           <li class="nav-item">
             <a class="nav-link <?= $isChecklistMenu ? 'active' : '' ?>"
@@ -231,43 +233,39 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
               id="menuComplianceChecklist">
 
               <?php if ($showComplianceInventory && $canComplianceInventory): ?>
-              <li class="nav-item">
-                <a href="<?= base_url('compliance/inventory') ?>"
-                  class="nav-link <?= $seg2 === 'inventory' ? 'active' : '' ?>">
-                  <i class="fa-solid fa-industry"></i>
-                  <p>Inventory / Asset</p>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="<?= base_url('compliance/inventory') ?>"
+                    class="nav-link <?= $seg2 === 'inventory' ? 'active' : '' ?>">
+                    <i class="nav-icon bi bi-box-seam"></i>
+                    <p>Inventory / Asset</p>
+                  </a>
+                </li>
               <?php endif; ?>
 
               <?php if ($showChecklistMaster && $canChecklistMaster): ?>
                 <li class="nav-item">
                   <a href="<?= site_url('compliance/checklist/master') ?>"
                     class="nav-link <?= url_is('compliance/checklist/master*') ? 'active' : '' ?>">
-                    <i class="nav-icon fa-solid fa-list-check"></i>
+                    <i class="nav-icon bi bi-card-checklist"></i>
                     <p>Checklist Master</p>
                   </a>
                 </li>
               <?php endif; ?>
 
               <?php if ($showQrGallery && $canQrGallery): ?>
-
                 <li class="nav-item">
                   <a href="<?= base_url('compliance/inventory/qr-center') ?>"
-                    class="nav-link <?= ($seg2 == 'qr-center') ? 'active' : '' ?>">
-
-                    <i class="nav-icon fas fa-qrcode"></i>
+                    class="nav-link <?= $seg2 === 'qr-center' ? 'active' : '' ?>">
+                    <i class="nav-icon bi bi-qr-code"></i>
                     <p>QR Gallery</p>
                   </a>
                 </li>
-
               <?php endif; ?>
 
             </ul>
           </li>
         <?php endif; ?>
 
-        <!-- HOLIDAYS -->
         <?php if ($showHolidays && $canHolidays): ?>
           <li class="nav-item">
             <a href="<?= site_url('holidays') ?>"
@@ -278,12 +276,11 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
           </li>
         <?php endif; ?>
 
-        <!-- REPORT -->
         <?php if ($showComplianceReport && $canComplianceReport): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/report') ?>"
               class="nav-link <?= $isCompliance && $seg2 === 'report' ? 'active' : '' ?>">
-              <i class="nav-icon fas fa-file-alt"></i>
+              <i class="nav-icon bi bi-file-earmark-text"></i>
               <p>Report</p>
             </a>
           </li>
@@ -291,7 +288,7 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
 
         <?php if ($showThermalImaging && $canThermalImaging): ?>
           <li class="nav-item">
-            <a href="/compliance/thermal-imaging"
+            <a href="<?= base_url('compliance/thermal-imaging') ?>"
               class="nav-link <?= $isCompliance && $seg2 === 'thermal-imaging' ? 'active' : '' ?>">
               <i class="nav-icon bi bi-thermometer-half"></i>
               <p>Thermal Imaging</p>
@@ -329,33 +326,27 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
           </li>
         <?php endif; ?>
 
-        <!-- EVIDENCE -->
         <?php if ($showEvidenceCenter && $canEvidenceCenter): ?>
           <li class="nav-item">
             <a href="<?= base_url('compliance/evidence') ?>"
               class="nav-link <?= $isCompliance && $seg2 === 'evidence' ? 'active' : '' ?>">
-              <i class="nav-icon fas fa-camera"></i>
+              <i class="nav-icon bi bi-camera"></i>
               <p>Evidence Center</p>
             </a>
           </li>
         <?php endif; ?>
 
-        <?php
-        $isUtilityMenu = in_array($seg1, ['boiler', 'ipal', 'pdam-water', 'pdam-water-boiler']);
-        ?>
-
+        <!-- BOILER & UTILITY -->
         <?php if ($showBoiler || $showIpal || $showPdamWater || $showPdamWaterBoiler): ?>
           <li class="nav-item">
-
             <a class="nav-link <?= $isUtilityMenu ? 'active' : '' ?>"
               data-bs-toggle="collapse"
               href="#menuUtility"
               role="button"
               aria-expanded="<?= $isUtilityMenu ? 'true' : 'false' ?>">
-
-              <i class="nav-icon fas fa-industry"></i>
+              <i class="nav-icon bi bi-buildings"></i>
               <p>
-                Boiler & Utility
+                Boiler &amp; Utility
                 <i class="bi bi-chevron-down float-end sidebar-chevron"></i>
               </p>
             </a>
@@ -364,91 +355,91 @@ $showBackups = canShowMenuPage(['admin', 'compliance'], 'backups');
               id="menuUtility">
 
               <?php if ($showBoiler && $canBoiler): ?>
-              <li class="nav-item">
-                <a href="<?= base_url('boiler') ?>"
-                  class="nav-link <?= $seg1 === 'boiler' ? 'active' : '' ?>">
-                  <i class="fas fa-fire"></i>
-                  <p>Boiler Fuel</p>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="<?= base_url('boiler') ?>"
+                    class="nav-link <?= $seg1 === 'boiler' ? 'active' : '' ?>">
+                    <i class="nav-icon bi bi-fire"></i>
+                    <p>Boiler Fuel</p>
+                  </a>
+                </li>
               <?php endif; ?>
 
               <?php if ($showIpal && $canIpal): ?>
-              <li class="nav-item">
-                <a href="<?= base_url('ipal') ?>"
-                  class="nav-link <?= $seg1 === 'ipal' ? 'active' : '' ?>">
-                  <i class="fas fa-water"></i>
-                  <p>IPAL Limbah</p>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="<?= base_url('ipal') ?>"
+                    class="nav-link <?= $seg1 === 'ipal' ? 'active' : '' ?>">
+                    <i class="nav-icon bi bi-water"></i>
+                    <p>IPAL Limbah</p>
+                  </a>
+                </li>
               <?php endif; ?>
 
               <?php if ($showPdamWater && $canPdamWater): ?>
-              <li class="nav-item">
-                <a href="<?= base_url('pdam-water') ?>"
-                  class="nav-link <?= $seg1 === 'pdam-water' ? 'active' : '' ?>">
-                  <i class="fas fa-faucet"></i>
-                  <p>Air PDAM</p>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="<?= base_url('pdam-water') ?>"
+                    class="nav-link <?= $seg1 === 'pdam-water' ? 'active' : '' ?>">
+                    <i class="nav-icon bi bi-moisture"></i>
+                    <p>Air PDAM</p>
+                  </a>
+                </li>
               <?php endif; ?>
 
               <?php if ($showPdamWaterBoiler && $canPdamWaterBoiler): ?>
-              <li class="nav-item">
-                <a href="<?= base_url('pdam-water-boiler') ?>"
-                  class="nav-link <?= $seg1 === 'pdam-water-boiler' ? 'active' : '' ?>">
-                  <i class="fas fa-faucet-drip"></i>
-                  <p>Air PDAM Boiler</p>
-                </a>
-              </li>
+                <li class="nav-item">
+                  <a href="<?= base_url('pdam-water-boiler') ?>"
+                    class="nav-link <?= $seg1 === 'pdam-water-boiler' ? 'active' : '' ?>">
+                    <i class="nav-icon bi bi-droplet"></i>
+                    <p>Air PDAM Boiler</p>
+                  </a>
+                </li>
               <?php endif; ?>
 
             </ul>
-
           </li>
         <?php endif; ?>
 
         <?php if ($showCompliancePrint && $canCompliancePrint): ?>
           <li class="nav-item">
-            <a href="<?= base_url('compliance/print') ?>" class="nav-link <?= $isCompliance && $seg2 === 'print' ? 'active' : '' ?>">
-              <i class="nav-icon fas fa-print"></i>
+            <a href="<?= base_url('compliance/print') ?>"
+              class="nav-link <?= $isCompliance && $seg2 === 'print' ? 'active' : '' ?>">
+              <i class="nav-icon bi bi-printer"></i>
               <p>Print Center</p>
             </a>
           </li>
         <?php endif; ?>
 
-        <!-- ================= ADMIN ================= -->
+        <!-- ADMIN -->
         <?php if ($showUsersManagement || $showAuditLogs || $showBackups): ?>
           <li class="nav-header sidebar-section-title">ADMIN</li>
 
           <?php if ($showUsersManagement && $canUsersManagement): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('users') ?>"
-              class="nav-link <?= $seg1 === 'users' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-person-gear"></i>
-              <p>Manajemen User</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('users') ?>"
+                class="nav-link <?= $seg1 === 'users' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-person-gear"></i>
+                <p>Manajemen User</p>
+              </a>
+            </li>
           <?php endif; ?>
 
           <?php if ($showAuditLogs && $canAuditLogs): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('audit-logs') ?>"
-              class="nav-link <?= $seg1 === 'audit-logs' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-shield-check"></i>
-              <p>Audit Log</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('audit-logs') ?>"
+                class="nav-link <?= $seg1 === 'audit-logs' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-shield-check"></i>
+                <p>Audit Log</p>
+              </a>
+            </li>
           <?php endif; ?>
 
           <?php if ($showBackups && $canBackups): ?>
-          <li class="nav-item">
-            <a href="<?= base_url('backups') ?>"
-              class="nav-link <?= $seg1 === 'backups' ? 'active' : '' ?>">
-              <i class="nav-icon bi bi-hdd-stack"></i>
-              <p>Backup</p>
-            </a>
-          </li>
+            <li class="nav-item">
+              <a href="<?= base_url('backups') ?>"
+                class="nav-link <?= $seg1 === 'backups' ? 'active' : '' ?>">
+                <i class="nav-icon bi bi-hdd-stack"></i>
+                <p>Backup</p>
+              </a>
+            </li>
           <?php endif; ?>
         <?php endif; ?>
 
