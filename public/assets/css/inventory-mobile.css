@@ -2,36 +2,37 @@
 
 .compliance-inventory-page .no-lift:hover {
   transform: none !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: var(--e-2) !important;
 }
 
+/* Gradien hero bersifat dekoratif, sengaja tidak ditokenkan. */
 .compliance-inventory-page .inventory-hero-card {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(14, 165, 233, 0.12), rgba(255, 255, 255, 0.96));
-  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(14, 165, 233, 0.12), var(--c-surface));
+  border: 1px solid var(--c-primary-soft) !important;
 }
 
 .inventory-kicker {
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: #0f3f8f;
-  background: rgba(37, 99, 235, 0.12);
+  color: var(--c-primary);
+  background: var(--c-primary-soft);
 }
 
 .compliance-inventory-page .inventory-filter-card,
 .compliance-inventory-page .inventory-table-card {
-  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  border: 1px solid var(--c-border) !important;
 }
 
 .inventory-table thead th {
   font-size: 0.78rem;
   letter-spacing: 0.02em;
-  color: #334155;
-  border-bottom-color: #e2e8f0;
+  color: var(--c-text);
+  border-bottom-color: var(--c-border);
   white-space: nowrap;
   vertical-align: middle;
 }
@@ -58,15 +59,15 @@
 .inventory-sort-btn i {
   flex: 0 0 auto;
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--c-text-muted);
 }
 
 .inventory-sort-btn:hover {
-  color: #0f3f8f;
+  color: var(--c-primary);
 }
 
 .inventory-sort-btn:hover i {
-  color: #2563eb;
+  color: var(--c-primary);
 }
 
 .inventory-row-actions .btn {
@@ -83,8 +84,8 @@
 }
 
 .inventory-mobile .inventory-card {
-  border: 1px solid rgba(148, 163, 184, 0.22) !important;
-  border-radius: 14px;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-lg);
 }
 
 .compliance-inventory-page .inventory-hero-actions {
@@ -105,17 +106,19 @@
 /* Skeleton loading */
 #inventoryAjax {
   position: relative;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition-base);
 }
 
 #inventoryAjax.is-loading {
   opacity: 0.45;
 }
 
+/* Tirai memakai warna permukaan supaya tidak menyala putih saat gelap. */
 #inventorySkeleton {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.65);
+  background: var(--c-surface);
+  opacity: 0.65;
   pointer-events: none;
   z-index: 2;
 }
@@ -123,8 +126,8 @@
 .skeleton-row {
   height: 16px;
   width: 100%;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #e2e8f0 25%, #f8fafc 40%, #e2e8f0 63%);
+  border-radius: var(--r-sm);
+  background: linear-gradient(90deg, var(--c-border) 25%, var(--c-surface-sunk) 40%, var(--c-border) 63%);
   background-size: 400% 100%;
   animation: inventory-skeleton 1.15s ease-in-out infinite;
 }
@@ -139,23 +142,23 @@
 }
 
 .inventory-pagination .page-link {
-  border-radius: 999px;
+  border-radius: var(--r-full);
   margin: 0 3px;
   min-width: 34px;
   text-align: center;
-  border-color: #cbd5e1;
-  color: #334155;
+  border-color: var(--c-border-strong);
+  color: var(--c-text);
 }
 
 .inventory-pagination .page-item.active .page-link {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #fff;
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: var(--c-primary-contrast);
 }
 
 .inventory-pagination .page-link:hover {
-  background: #eff6ff;
-  border-color: #93c5fd;
+  background: var(--c-primary-soft);
+  border-color: var(--c-primary);
 }
 
 .inventory-pagination-nav {
