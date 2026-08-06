@@ -1,6 +1,0 @@
-/*
- * Shared shell utilities. Tailwind uses the `tw-` prefix and has preflight
- * disabled, allowing these utilities to layer safely over Bootstrap/AdminLTE.
- */
-@tailwind utilities;
-
