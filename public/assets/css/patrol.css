@@ -2,11 +2,12 @@
   display: none !important;
 }
 
+/* Gradien hero bersifat dekoratif, sengaja tidak ditokenkan. */
 .patrol-hero {
   background:
     radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 30%),
     radial-gradient(circle at right center, rgba(16, 185, 129, 0.16), transparent 32%),
-    linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    linear-gradient(180deg, var(--c-surface) 0%, var(--c-surface-sunk) 100%);
   border-radius: 1.4rem;
 }
 
@@ -16,35 +17,15 @@
 .patrol-mini-stat,
 .patrol-dashboard-box {
   border-radius: 1rem;
-  background: #fff;
+  background: var(--c-surface);
 }
 
 .patrol-map-card {
   overflow: hidden;
 }
 
-.patrol-map {
-  --patrol-map-max-width: 700px;
-  position: relative;
-  display: block;
-  width: min(100%, var(--patrol-map-max-width));
-  max-width: var(--patrol-map-max-width);
-  aspect-ratio: 542 / 504;
-  min-height: 0;
-  border-radius: 1.25rem;
-  background:
-    radial-gradient(circle at 18% 18%, rgba(34, 197, 94, 0.14), transparent 22%),
-    radial-gradient(circle at 82% 18%, rgba(59, 130, 246, 0.1), transparent 22%),
-    linear-gradient(180deg, #eef3f7 0%, #dfe8ef 100%);
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  overflow: hidden;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100% 100%;
-  margin: 0 auto;
-}
-
+/* Latar denah sengaja abu kebiruan tetap, supaya marker tetap kontras. */
+.patrol-map,
 .patrol-layout-canvas {
   --patrol-map-max-width: 700px;
   position: relative;
@@ -58,7 +39,7 @@
     radial-gradient(circle at 18% 18%, rgba(34, 197, 94, 0.14), transparent 22%),
     radial-gradient(circle at 82% 18%, rgba(59, 130, 246, 0.1), transparent 22%),
     linear-gradient(180deg, #eef3f7 0%, #dfe8ef 100%);
-  border: 1px solid rgba(148, 163, 184, 0.22);
+  border: 1px solid var(--c-border);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   overflow: hidden;
   background-repeat: no-repeat;
@@ -115,8 +96,8 @@
   position: absolute;
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(226, 232, 240, 0.95));
-  border: 1px solid rgba(100, 116, 139, 0.16);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid var(--c-border);
+  box-shadow: var(--e-3);
 }
 
 .patrol-building-main {
@@ -159,11 +140,11 @@
   font-weight: 800;
   font-size: 0.9rem;
   transform: translate(-50%, -50%);
-  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+  box-shadow: var(--e-3);
   color: #fff;
   cursor: pointer;
   z-index: 4;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
 }
 
 .patrol-layout-marker {
@@ -184,7 +165,7 @@
 }
 
 .patrol-layout-marker.is-selected {
-  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.18), 0 12px 24px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.18), var(--e-3);
 }
 
 .patrol-map-dashboard .patrol-marker {
@@ -206,6 +187,11 @@
   transform: translate(-50%, -50%) scale(1.08);
 }
 
+/*
+ * Warna marker adalah kode visual denah patroli, bukan warna semantik
+ * komponen. Sengaja dibiarkan gradien asli supaya tetap terbaca di atas
+ * gambar denah apa pun, terang maupun gelap.
+ */
 .patrol-marker.is-next {
   background: linear-gradient(180deg, #2563eb, #1d4ed8);
 }
@@ -243,13 +229,13 @@
   align-items: center;
   gap: 2px;
   padding: 0.14rem 0.3rem;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   font-size: 0.58rem;
   font-weight: 700;
   color: #fff;
   background: rgba(15, 23, 42, 0.88);
   border: 2px solid rgba(255, 255, 255, 0.92);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
+  box-shadow: var(--e-2);
 }
 
 @keyframes patrolPulse {
@@ -265,45 +251,45 @@
 
 .patrol-chip {
   font-size: 0.76rem;
-  background: rgba(255, 255, 255, 0.85) !important;
+  background: var(--c-surface) !important;
 }
 
 .patrol-chip-btn {
-  border: 1px solid rgba(148, 163, 184, 0.28) !important;
+  border: 1px solid var(--c-border) !important;
 }
 
 .patrol-chip-btn.is-selected {
-  background: rgba(37, 99, 235, 0.12) !important;
-  border-color: rgba(37, 99, 235, 0.45) !important;
+  background: var(--c-primary-soft) !important;
+  border-color: var(--c-primary) !important;
 }
 
 .patrol-next-card {
-  background: linear-gradient(180deg, #eff6ff, #ffffff);
-  border: 1px solid rgba(37, 99, 235, 0.14);
+  background: linear-gradient(180deg, var(--c-primary-soft), var(--c-surface));
+  border: 1px solid var(--c-primary-soft);
   padding: 0.9rem 1rem;
 }
 
 .patrol-mini-stat,
 .patrol-dashboard-box,
 .patrol-log-item {
-  border: 1px solid rgba(148, 163, 184, 0.15);
-  background: #fff;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
   padding: 0.9rem 1rem;
 }
 
 .patrol-checkpoint-card {
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  background: #fff;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
   border-radius: 0.95rem;
   padding: 0.85rem 0.95rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
 }
 
 .patrol-checkpoint-card:hover,
 .patrol-checkpoint-card.is-selected {
   transform: translateY(-1px);
-  border-color: rgba(37, 99, 235, 0.35);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border-color: var(--c-primary);
+  box-shadow: var(--e-3);
 }
 
 .patrol-editor-panel {
@@ -333,21 +319,21 @@
   justify-content: center;
   font-weight: 800;
   color: #fff;
-  background: #64748b;
+  background: var(--c-text-muted);
   border: 3px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.14);
+  box-shadow: var(--e-2);
 }
 
 .timeline-item.is-next .timeline-bullet {
-  background: #2563eb;
+  background: var(--c-primary);
 }
 
 .timeline-item.is-done .timeline-bullet {
-  background: #10b981;
+  background: var(--c-ok);
 }
 
 .timeline-item.is-pending .timeline-bullet {
-  background: #94a3b8;
+  background: var(--c-text-subtle);
 }
 
 .patrol-preview {
@@ -380,10 +366,7 @@
 }
 
 @media (max-width: 991.98px) {
-  .patrol-map {
-    max-width: 100%;
-  }
-
+  .patrol-map,
   .patrol-layout-canvas {
     max-width: 100%;
   }
@@ -394,10 +377,7 @@
 }
 
 @media (max-width: 575.98px) {
-  .patrol-map {
-    max-width: 100%;
-  }
-
+  .patrol-map,
   .patrol-layout-canvas {
     max-width: 100%;
   }
@@ -406,20 +386,21 @@
     display: none;
   }
 
+  /* Marker tetap >= 30px supaya masih nyaman disentuh jempol. */
   .patrol-marker {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     font-size: 0.8rem;
   }
 
   .patrol-layout-marker {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
   }
 
   .patrol-map-dashboard .patrol-marker {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     font-size: 0.72rem;
   }
 
