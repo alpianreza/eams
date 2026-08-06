@@ -61,7 +61,8 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- viewport-fit=cover wajib supaya env(safe-area-inset-*) aktif di iPhone berponi -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
 
     <title><?= esc($pageTitle . ' | EAMS') ?></title>
@@ -102,11 +103,17 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
       3. compat  : sisa kelas tw- dari view lama (sementara)
       4. app     : app.css
       5. halaman : renderSection('styles')
+      6. mobile  : mobile.css <- SENGAJA PALING AKHIR
+
+      mobile.css harus dimuat setelah CSS halaman karena banyak file
+      halaman memakai !important dan memperkecil font sampai 0.62rem.
+      Kalau dipasang lebih awal, perbaikan mobile akan kalah.
     -->
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/tokens.css') ?>">
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/compat-tailwind.css') ?>">
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/app.css') ?>">
     <?= $this->renderSection('styles') ?>
+    <link rel="stylesheet" href="<?= $assetUrl('assets/css/mobile.css') ?>">
 
 </head>
 
@@ -179,7 +186,7 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
 
 
 <script src="<?= base_url('js/app.js') ?>"></script>
-<script src="<?= base_url('js/checklist-master.js?v=' . filemtime(FCPATH . 'js/checklist-master.js')) ?>"></script>
+<script src="<?= $assetUrl('js/checklist-master.js') ?>"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <script>

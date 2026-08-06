@@ -1,64 +1,394 @@
-/* =========================
-   ADMINLTE MOBILE OVERRIDE
-========================= */
+/* =====================================================================
+ * LAPISAN MOBILE EAMS
+ * ---------------------------------------------------------------------
+ * Dimuat PALING AKHIR di main.php, sesudah renderSection('styles'),
+ * supaya menang atas CSS per halaman yang banyak memakai !important
+ * dan memperkecil font sampai 0.62rem.
+ *
+ * Prinsip yang dipakai:
+ * 1. Teks tetap terbaca. Minimal 0.8rem, bukan diperas.
+ * 2. Sasaran sentuh minimal 44x44 px (pedoman Apple, WCAG 2.5.5).
+ * 3. Input minimal 16px supaya iOS tidak auto-zoom saat difokus.
+ * 4. Tabel lebar digeser horizontal, bukan dipaksa muat.
+ * 5. Safe area iPhone dihormati (poni atas, garis home bawah).
+ *
+ * Grid checklist (Fase 3) sengaja dikecualikan dari aturan font tabel
+ * karena lebar selnya sudah diatur variabel sendiri.
+ * ===================================================================== */
+
+:root {
+  --m-tap: 44px;
+  --m-safe-top: env(safe-area-inset-top, 0px);
+  --m-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --m-safe-left: env(safe-area-inset-left, 0px);
+  --m-safe-right: env(safe-area-inset-right, 0px);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (max-width: 991.98px) {
+  /* ---------------------------------------------------------------
+   * A. LACI SIDEBAR
+   * Backdrop gelap supaya jelas sidebar sedang menutupi konten,
+   * dan konten di belakang tidak ikut tergulir.
+   * --------------------------------------------------------------- */
+  .app-sidebar {
+    z-index: 1045;
+    padding-top: var(--m-safe-top);
+    padding-bottom: var(--m-safe-bottom);
+  }
+
+  body.sidebar-open::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background: rgba(16, 24, 40, 0.5);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
+
 @media (max-width: 768px) {
+  /* ---------------------------------------------------------------
+   * B. TATA LETAK DASAR & SAFE AREA
+   * --------------------------------------------------------------- */
   body {
     font-size: 15px;
+    overflow-x: hidden;
   }
 
-  h1 {
-    font-size: 1.4rem;
-  }
-  h2 {
-    font-size: 1.25rem;
-  }
-  h3 {
-    font-size: 1.1rem;
-  }
-  h4 {
-    font-size: 1rem;
-  }
-  h5 {
-    font-size: 0.95rem;
-  }
-
-  .btn {
-    padding: 0.55rem 0.8rem;
-    font-size: 0.9rem;
-  }
-
-  .form-control,
-  .form-select {
-    padding: 0.45rem 0.6rem;
-  }
-
-  .table td,
-  .table th {
-    padding: 0.5rem;
-    font-size: 0.82rem;
-  }
-
-  /* Checklist khusus */
-  .status-group .btn {
-    flex: 1;
-    justify-content: center;
-  }
-
-  /* Sidebar auto hidden */
-  .app-sidebar {
-    transform: translateX(-100%);
-  }
-
-  body.sidebar-open .app-sidebar {
-    transform: translateX(0);
-  }
-
+  .app-main,
   .app-content {
-    padding: 0.35rem 0.5rem;
+    padding-left: max(0.5rem, var(--m-safe-left));
+    padding-right: max(0.5rem, var(--m-safe-right));
   }
 
   .app-content > .container-fluid {
-    padding-left: 0.35rem;
-    padding-right: 0.35rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-bottom: calc(1rem + var(--m-safe-bottom));
+  }
+
+  .app-header {
+    padding-top: var(--m-safe-top);
+  }
+
+  h1 { font-size: 1.35rem; }
+  h2 { font-size: 1.2rem; }
+  h3 { font-size: 1.08rem; }
+  h4 { font-size: 1rem; }
+  h5 { font-size: 0.95rem; }
+
+  /* Kartu jadi lebih rapat, bayangan dikurangi supaya enteng digulir. */
+  .card {
+    border-radius: var(--r-lg);
+    box-shadow: var(--e-1) !important;
+  }
+
+  .card-body {
+    padding: 0.85rem;
+  }
+
+  .row {
+    --bs-gutter-x: 0.75rem;
+  }
+
+  /* ---------------------------------------------------------------
+   * C. SASARAN SENTUH
+   * Semua tombol dan tautan aksi minimal 44x44 px. Ini penyebab
+   * utama salah pencet di halaman checklist dan kalender.
+   * --------------------------------------------------------------- */
+  .btn,
+  .page-link,
+  .nav-link,
+  .dropdown-item {
+    min-height: var(--m-tap);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .btn-sm {
+    min-height: 40px;
+    padding: 0.4rem 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  /* Tombol ikon persegi tetap persegi, jangan melar. */
+  .btn-icon,
+  .btn.rounded-circle,
+  .inventory-row-actions .btn,
+  .report-nav-btn-circle {
+    min-width: var(--m-tap);
+    width: var(--m-tap) !important;
+    height: var(--m-tap) !important;
+    padding: 0 !important;
+  }
+
+  /* Deretan tombol boleh turun baris, jangan memaksa satu baris. */
+  .btn-group,
+  .btn-toolbar,
+  .status-group {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .btn-group > .btn {
+    border-radius: var(--r-md) !important;
+  }
+
+  /* Kotak centang dan radio lebih mudah dipencet. */
+  .form-check-input {
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.1rem;
+  }
+
+  .form-check-label {
+    padding-left: 0.2rem;
+    min-height: 1.6rem;
+  }
+
+  /* ---------------------------------------------------------------
+   * D. FORMULIR
+   * 16px itu ambang iOS. Di bawah itu Safari otomatis memperbesar
+   * halaman saat input difokus, lalu tata letak terlihat rusak.
+   * --------------------------------------------------------------- */
+  .form-control,
+  .form-select,
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="date"],
+  input[type="time"],
+  input[type="month"],
+  textarea,
+  select {
+    font-size: 16px !important;
+    min-height: var(--m-tap);
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--r-md);
+  }
+
+  textarea.form-control {
+    min-height: 96px;
+  }
+
+  .form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+
+  .input-group > .form-control,
+  .input-group > .form-select {
+    min-width: 0;
+  }
+
+  /* Filter panel: satu kolom penuh, tombol selebar layar. */
+  .card .row > [class*="col-"] {
+    margin-bottom: 0.5rem;
+  }
+
+  /* ---------------------------------------------------------------
+   * E. TABEL
+   * Sebelumnya tabel diperas dengan table-layout: fixed dan font
+   * 0.62-0.7rem sampai tidak terbaca. Sekarang dibiarkan lebar lalu
+   * digeser horizontal, dengan kepala tabel yang lengket.
+   * --------------------------------------------------------------- */
+  .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+
+  /* Petunjuk halus bahwa tabel masih bisa digeser. */
+  .table-responsive::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  .table-responsive::-webkit-scrollbar-thumb {
+    background: var(--c-border-strong);
+    border-radius: var(--r-full);
+  }
+
+  .table:not([class*="-grid-table"]) {
+    table-layout: auto !important;
+  }
+
+  .table:not([class*="-grid-table"]) th,
+  .table:not([class*="-grid-table"]) td {
+    font-size: 0.82rem !important;
+    padding: 0.55rem 0.6rem !important;
+    white-space: nowrap;
+    word-wrap: normal !important;
+    vertical-align: middle;
+  }
+
+  .table:not([class*="-grid-table"]) thead th {
+    font-size: 0.75rem !important;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--c-surface-sunk);
+  }
+
+  /* Kolom keterangan panjang boleh turun baris, diberi batas lebar. */
+  .table td.wrap,
+  .table td[data-wrap="1"] {
+    white-space: normal;
+    min-width: 180px;
+    max-width: 260px;
+  }
+
+  /* ---------------------------------------------------------------
+   * F. MODAL JADI BOTTOM SHEET
+   * Muncul dari bawah, sudut atas membulat, isi bisa digulir sendiri.
+   * Pola ini jauh lebih nyaman dipakai satu tangan.
+   * --------------------------------------------------------------- */
+  .modal-dialog:not(.modal-fullscreen) {
+    margin: 0;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .modal-dialog:not(.modal-fullscreen) .modal-content {
+    border-radius: 18px 18px 0 0;
+    border-bottom: 0;
+    max-height: 92vh;
+    padding-bottom: var(--m-safe-bottom);
+  }
+
+  /* Gagang kecil di atas, penanda bahwa ini panel yang muncul dari bawah. */
+  .modal-dialog:not(.modal-fullscreen) .modal-content::before {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin: 0.55rem auto 0;
+    border-radius: var(--r-full);
+    background: var(--c-border-strong);
+    flex: 0 0 auto;
+  }
+
+  .modal-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-footer {
+    position: sticky;
+    bottom: 0;
+    background: var(--c-surface);
+    border-top: 1px solid var(--c-border);
+    gap: 0.5rem;
+  }
+
+  .modal-footer > .btn {
+    flex: 1 1 auto;
+  }
+
+  /* ---------------------------------------------------------------
+   * G. TOMBOL MENGAMBANG
+   * Diangkat di atas garis home iPhone supaya tidak tertutup.
+   * --------------------------------------------------------------- */
+  .eams-export-float,
+  .compliance-report-export-float.eams-export-float {
+    right: max(14px, var(--m-safe-right)) !important;
+    bottom: calc(16px + var(--m-safe-bottom)) !important;
+    box-shadow: var(--e-3);
+  }
+
+  /* ---------------------------------------------------------------
+   * H. LAIN-LAIN
+   * --------------------------------------------------------------- */
+  /* Lencana dan pil status tetap terbaca. */
+  .badge,
+  .status-pill {
+    font-size: 0.72rem;
+    padding: 0.32rem 0.5rem;
+  }
+
+  /* Paginasi cukup lebar untuk jempol. */
+  .pagination {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    justify-content: center;
+  }
+
+  .page-link {
+    min-width: var(--m-tap);
+  }
+
+  /* Judul kartu tidak terpotong. */
+  .card-header {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  /* Notifikasi SweetAlert ikut naik di atas safe area. */
+  .swal2-container {
+    padding-bottom: calc(1rem + var(--m-safe-bottom));
+  }
+
+  /* Gambar tidak pernah melebihi layar. */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* =====================================================================
+ * LAYAR SANGAT KECIL
+ * ===================================================================== */
+@media (max-width: 400px) {
+  .app-content > .container-fluid {
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+  }
+
+  .card-body {
+    padding: 0.7rem;
+  }
+
+  .btn {
+    font-size: 0.85rem;
+  }
+}
+
+/* =====================================================================
+ * PERANGKAT SENTUH TANPA MELIHAT LEBAR LAYAR
+ * Tablet dan layar sentuh besar juga butuh sasaran sentuh yang layak.
+ * ===================================================================== */
+@media (pointer: coarse) {
+  .btn,
+  .page-link,
+  .form-check-input,
+  .dropdown-item {
+    touch-action: manipulation;
+  }
+
+  /* Hilangkan efek hover yang menempel di layar sentuh. */
+  .card:hover,
+  .checklist-master-card:hover,
+  .evidence-card-button:hover,
+  .qr-album-card:hover {
+    transform: none !important;
   }
 }
