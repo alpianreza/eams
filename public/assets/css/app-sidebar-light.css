@@ -1,0 +1,98 @@
+/*
+ * Sidebar terang (Fase 2).
+ *
+ * Dimuat setelah app-shell.css dan app-polish.css lewat @import di
+ * app.css, jadi berhak menimpa gradien navy lama.
+ *
+ * Semua nilai memakai token, jadi sidebar ikut berganti sendiri saat
+ * mode gelap diaktifkan. Tidak ada warna yang dikunci di sini.
+ *
+ * Membatalkan: hapus satu baris @import app-sidebar-light.css di
+ * app.css, dan sidebar kembali navy.
+ */
+
+body.eams-v2 .app-sidebar {
+  background: var(--c-surface) !important;
+  border-right: 1px solid var(--c-border);
+  color: var(--c-text);
+  box-shadow: none;
+}
+
+/* Merek */
+body.eams-v2 .eams-sidebar-brand {
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
+}
+
+body.eams-v2 .eams-sidebar-brand .brand-copy,
+body.eams-v2 .eams-sidebar-brand .brand-copy .brand-text {
+  color: var(--c-text);
+}
+
+/* Judul kelompok */
+body.eams-v2 .app-sidebar .sidebar-section-title {
+  color: var(--c-text-subtle) !important;
+}
+
+/* Item menu */
+body.eams-v2 .app-sidebar .nav-link {
+  color: var(--c-text-muted) !important;
+  border-color: transparent;
+}
+
+body.eams-v2 .app-sidebar .nav-link:hover {
+  background: var(--c-surface-hover) !important;
+  border-color: transparent;
+  color: var(--c-text) !important;
+}
+
+body.eams-v2 .app-sidebar .nav-link.active {
+  background: var(--c-primary-soft) !important;
+  border-color: transparent;
+  color: var(--c-primary-hover) !important;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+body.eams-v2 .app-sidebar .nav-link.active .nav-icon,
+body.eams-v2 .app-sidebar .nav-link.active i {
+  color: var(--c-primary-hover);
+}
+
+/* Pita penanda halaman aktif */
+body.eams-v2 .app-sidebar .nav-link.active::before {
+  background: var(--c-primary);
+}
+
+/* Submenu sedikit lebih redup dari induknya */
+body.eams-v2 .app-sidebar .collapse .nav-link {
+  color: var(--c-text-subtle) !important;
+}
+
+body.eams-v2 .app-sidebar .collapse .nav-link:hover,
+body.eams-v2 .app-sidebar .collapse .nav-link.active {
+  color: var(--c-text) !important;
+}
+
+body.eams-v2 .app-sidebar .collapse .nav-link.active {
+  color: var(--c-primary-hover) !important;
+}
+
+/* Kartu identitas pengguna di bawah */
+body.eams-v2 .app-sidebar .sidebar-meta {
+  background: var(--c-surface-sunk);
+  border: 1px solid var(--c-border);
+}
+
+body.eams-v2 .app-sidebar .sidebar-meta-label {
+  color: var(--c-text-subtle);
+}
+
+body.eams-v2 .app-sidebar .sidebar-meta-value {
+  color: var(--c-text);
+}
+
+/* Lencana notifikasi tetap kontras di latar terang */
+body.eams-v2 .app-sidebar .nav-link .badge {
+  border: 1px solid transparent;
+}
