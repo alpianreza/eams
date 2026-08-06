@@ -1,0 +1,213 @@
+/* =====================================================================
+ * EAMS UI Stability
+ * ---------------------------------------------------------------------
+ * 1. Menyamakan tema awal mode "system" sebelum skrip bawah halaman
+ *    dijalankan, sehingga tidak ada kilatan terang/gelap.
+ * 2. Menjamin tombol tema, notifikasi, dan profil tidak terpotong pada
+ *    header ponsel, termasuk layar sempit dan safe area iPhone.
+ * ===================================================================== */
+
+/*
+ * main.php menulis atribut ini secara blocking di <head>. Nilainya harus
+ * sama dengan token dark utama agar pelepasan atribut setelah halaman
+ * siap tidak menghasilkan perubahan warna kedua.
+ */
+html[data-eams-pending-theme="dark"] {
+  color-scheme: dark;
+
+  --c-canvas: #0f1117;
+  --c-surface: #16181f;
+  --c-surface-sunk: #1c1f28;
+  --c-surface-hover: #20242e;
+  --c-border: #262a35;
+  --c-border-strong: #363c4a;
+  --c-text: #e6e8ee;
+  --c-text-muted: #9096a5;
+  --c-text-subtle: #6b7280;
+
+  --c-primary: #6690f0;
+  --c-primary-hover: #7ea3f5;
+  --c-primary-soft: rgba(102, 144, 240, 0.14);
+
+  --c-ok: #47cd89;
+  --c-ok-soft: rgba(71, 205, 137, 0.14);
+  --c-ok-border: rgba(71, 205, 137, 0.3);
+
+  --c-late: #f97066;
+  --c-late-soft: rgba(249, 112, 102, 0.14);
+  --c-late-border: rgba(249, 112, 102, 0.3);
+
+  --c-pending: #fdb022;
+  --c-pending-soft: rgba(253, 176, 34, 0.14);
+  --c-pending-border: rgba(253, 176, 34, 0.3);
+
+  --c-offday: #98a2b3;
+  --c-offday-soft: #1c1f28;
+  --c-offday-border: #363c4a;
+
+  --c-info: #6690f0;
+  --c-info-soft: rgba(102, 144, 240, 0.12);
+
+  --c-sidebar: #12141a;
+  --c-sidebar-deep: #0d0f14;
+  --c-sidebar-border: #232833;
+  --c-sidebar-text: #d5d9e2;
+
+  --e-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --e-2: 0 4px 8px -2px rgba(0, 0, 0, 0.5);
+  --e-3: 0 12px 24px -6px rgba(0, 0, 0, 0.6);
+}
+
+/* Jangan animasikan warna awal sebelum tema efektif ditetapkan. */
+html[data-eams-pending-theme] body.eams-v2,
+html[data-eams-pending-theme] body.eams-v2 .card,
+html[data-eams-pending-theme] body.eams-v2 .app-header,
+html[data-eams-pending-theme] body.eams-v2 .app-sidebar,
+html[data-eams-pending-theme] body.eams-v2 .dropdown-menu,
+html[data-eams-pending-theme] body.eams-v2 .form-control,
+html[data-eams-pending-theme] body.eams-v2 .form-select,
+html[data-eams-pending-theme] body.eams-v2 .table,
+html[data-eams-pending-theme] body.eams-v2 .btn {
+  transition: none !important;
+}
+
+/* Utilitas Bootstrap literal juga harus benar pada frame pertama. */
+html[data-eams-pending-theme="dark"] .text-dark {
+  color: var(--c-text) !important;
+}
+
+html[data-eams-pending-theme="dark"] .text-muted {
+  color: var(--c-text-muted) !important;
+}
+
+html[data-eams-pending-theme="dark"] .bg-white,
+html[data-eams-pending-theme="dark"] .bg-light {
+  background-color: var(--c-surface) !important;
+  color: var(--c-text);
+}
+
+/* Avatar lokal yang gagal dimuat diganti oleh app.js. */
+body.eams-v2 .header-profile-avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--c-border-strong);
+  border-radius: var(--r-full);
+  background: var(--c-surface-sunk);
+  color: var(--c-text);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+body.eams-v2 .header-profile-head .header-profile-avatar-fallback {
+  width: 42px;
+  height: 42px;
+  font-size: 1.45rem;
+}
+
+@media (max-width: 768px) {
+  body.eams-v2 .app-header .app-header-inner {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap !important;
+    padding-left: max(0.5rem, var(--m-safe-left));
+    padding-right: max(0.5rem, var(--m-safe-right));
+  }
+
+  body.eams-v2 .app-header .header-left-controls {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  body.eams-v2 .app-header .app-header-title {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  body.eams-v2 .app-header .header-right-controls {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    flex: 0 0 auto;
+    flex-wrap: nowrap !important;
+    align-items: center;
+    gap: 0.2rem;
+    margin-left: auto !important;
+    padding-left: 0.15rem;
+  }
+
+  body.eams-v2 .app-header .header-right-controls > .nav-item,
+  body.eams-v2 .app-header .header-notif-item,
+  body.eams-v2 .app-header .header-profile-item {
+    display: flex !important;
+    flex: 0 0 auto;
+    align-items: center;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  body.eams-v2 .app-header .header-sidebar-toggle,
+  body.eams-v2 .app-header .theme-toggle,
+  body.eams-v2 .app-header .header-notif-toggle,
+  body.eams-v2 .app-header .header-profile-toggle {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    flex: 0 0 44px;
+    width: 44px !important;
+    min-width: 44px;
+    height: 44px !important;
+    min-height: 44px;
+    padding: 0 !important;
+    align-items: center;
+    justify-content: center !important;
+    line-height: 1;
+  }
+
+  body.eams-v2 .app-header .header-notif-toggle > .bi {
+    display: block !important;
+    color: currentColor;
+    font-size: 1.15rem !important;
+    line-height: 1;
+  }
+
+  body.eams-v2 .app-header .header-profile-avatar,
+  body.eams-v2 .app-header .header-profile-toggle .header-profile-avatar-fallback {
+    display: block;
+    width: 32px !important;
+    min-width: 32px;
+    max-width: none;
+    height: 32px !important;
+    object-fit: cover;
+  }
+
+  body.eams-v2 .app-header .header-profile-toggle .header-profile-avatar-fallback {
+    display: inline-flex;
+  }
+
+  body.eams-v2 .app-header .header-notif-menu,
+  body.eams-v2 .app-header .header-profile-menu {
+    max-width: calc(100vw - max(1rem, var(--m-safe-left) + var(--m-safe-right)));
+  }
+}
+
+@media (max-width: 400px) {
+  body.eams-v2 .app-header .app-header-inner {
+    gap: 0.2rem;
+    padding-left: max(0.25rem, var(--m-safe-left));
+    padding-right: max(0.25rem, var(--m-safe-right));
+  }
+
+  body.eams-v2 .app-header .header-right-controls {
+    gap: 0.1rem;
+    padding-left: 0;
+  }
+
+  body.eams-v2 .app-header .header-title-text {
+    max-width: 22vw;
+  }
+}
