@@ -1,0 +1,217 @@
+/*
+ * Lapisan dashboard compliance.
+ *
+ * Dimuat lewat @import di app.css, setelah app-base.css.
+ */
+
+.compliance-dashboard .card { border-radius: var(--r-lg); }
+
+/* Gradien hero bersifat dekoratif, sengaja tidak ditokenkan. */
+.compliance-dashboard .compliance-hero-card {
+  background: linear-gradient(
+    135deg,
+    rgba(70, 128, 255, 0.12),
+    rgba(4, 169, 245, 0.1),
+    var(--c-surface)
+  );
+  border: 1px solid var(--c-primary-soft) !important;
+}
+
+.compliance-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--r-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--c-primary);
+  background: var(--c-primary-soft);
+}
+
+.compliance-kpi-card { border: 1px solid var(--c-border) !important; }
+
+.compliance-kpi-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--c-text-muted);
+}
+
+.compliance-kpi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+/* Latar rgba dipertahankan supaya ikon menyatu dengan kartu. */
+.kpi-tone-slate .compliance-kpi-icon { background: rgba(51, 65, 85, 0.1); color: var(--c-text); }
+.kpi-tone-success .compliance-kpi-icon { background: rgba(34, 197, 94, 0.14); color: var(--c-ok); }
+.kpi-tone-danger .compliance-kpi-icon { background: rgba(239, 68, 68, 0.16); color: var(--c-late); }
+.kpi-tone-info .compliance-kpi-icon { background: rgba(2, 132, 199, 0.16); color: var(--c-info); }
+.kpi-tone-warning .compliance-kpi-icon { background: rgba(245, 158, 11, 0.18); color: var(--c-pending); }
+
+.compliance-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--c-border) !important;
+}
+
+/*
+ * Dulu rgba(255,255,255,.76) yang selalu putih, jadi berkedip terang
+ * di mode gelap. Sekarang ikut --c-surface dan buram penuh.
+ */
+.dashboard-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--c-surface);
+  backdrop-filter: blur(1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--c-text-muted);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-base);
+  z-index: 3;
+}
+
+.compliance-panel.is-loading .dashboard-loading-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+.compliance-chart-wrap { position: relative; }
+
+.chart-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--c-text-muted);
+  background: var(--c-surface-sunk);
+  border-radius: var(--r-lg);
+  padding: 0.75rem;
+}
+
+.frequency-tabs .btn { min-width: 82px; }
+
+.frequency-tabs .btn.active {
+  color: var(--c-primary-contrast);
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+.compliance-risk-list .list-group-item + .list-group-item {
+  border-top: 1px dashed var(--c-border);
+}
+
+.risk-rank {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--c-text);
+  background: var(--c-surface-sunk);
+  flex: 0 0 auto;
+}
+
+.risk-title {
+  font-weight: 600;
+  color: var(--c-text);
+  min-width: 0;
+}
+
+.risk-mini-progress {
+  height: 6px;
+  background: var(--c-surface-sunk);
+}
+
+.compliance-summary-cards .summary-pill {
+  min-width: 108px;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.78rem;
+}
+
+.summary-pill strong { font-size: 1rem; }
+
+.summary-pill-daily {
+  border-color: var(--c-late-border);
+  color: var(--c-late);
+  background: var(--c-late-soft);
+}
+
+.summary-pill-weekly {
+  border-color: var(--c-pending-border);
+  color: var(--c-pending);
+  background: var(--c-pending-soft);
+}
+
+.summary-pill-monthly {
+  border-color: var(--c-border-strong);
+  color: var(--c-text);
+  background: var(--c-surface-sunk);
+}
+
+.summary-pill-total {
+  border-color: var(--c-offday-border);
+  color: var(--c-offday);
+  background: var(--c-offday-soft);
+}
+
+.pending-table thead th {
+  background: var(--c-surface-sunk);
+  border-bottom-color: var(--c-border);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  color: var(--c-text);
+}
+
+.pending-table td { font-size: 0.84rem; }
+
+.pending-table tr:hover td { background: var(--c-surface-hover); }
+
+.pending-badge { cursor: pointer; }
+
+.pending-pagination .btn { min-width: 36px; }
+
+@media (max-width: 768px) {
+  .compliance-dashboard .dashboard-year-filter { width: 100%; }
+
+  .compliance-dashboard .dashboard-year-filter .form-select { width: 100%; }
+
+  .compliance-dashboard .frequency-tabs .btn { min-width: 72px; }
+
+  .compliance-dashboard .dashboard-progress-filters,
+  .compliance-dashboard .pending-controls-left { width: 100%; }
+
+  .compliance-dashboard .dashboard-progress-filters .form-select,
+  .compliance-dashboard .pending-controls-left .form-select,
+  .compliance-dashboard .pending-controls-left .form-control {
+    width: 100% !important;
+  }
+
+  .compliance-summary-cards .summary-pill {
+    flex: 1 1 calc(50% - 0.3rem);
+    min-width: 0;
+  }
+}
