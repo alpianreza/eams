@@ -1,18 +1,19 @@
 .employee-page {
+  /* Aksen tosca identitas modul kepegawaian, sengaja tidak ditokenkan. */
   --employee-accent: #0f766e;
   --employee-accent-soft: rgba(15, 118, 110, 0.14);
-  --employee-border: rgba(148, 163, 184, 0.22);
-  --employee-surface: linear-gradient(135deg, #f7fbff 0%, #eef6ff 100%);
+  --employee-border: var(--c-border);
+  --employee-surface: linear-gradient(135deg, var(--c-surface-sunk) 0%, var(--c-primary-soft) 100%);
 }
 
 .employee-hero-card {
-  background: linear-gradient(135deg, #ffffff 0%, #ecf6ff 55%, #eefaf7 100%);
+  background: linear-gradient(135deg, var(--c-surface) 0%, var(--c-primary-soft) 55%, var(--c-surface-sunk) 100%);
   border-radius: 24px;
   overflow: hidden;
 }
 
 .employee-hero-card--soft {
-  background: linear-gradient(135deg, #ffffff 0%, #f4f9ff 60%, #f7fcfb 100%);
+  background: linear-gradient(135deg, var(--c-surface) 0%, var(--c-surface-sunk) 60%, var(--c-surface-hover) 100%);
 }
 
 .employee-kicker,
@@ -33,7 +34,7 @@
 
 .employee-stat-card .card-body,
 .employee-form-card .card-body {
-  background: #fff;
+  background: var(--c-surface);
 }
 
 .employee-table-card {
@@ -42,8 +43,8 @@
 
 .employee-table thead th {
   white-space: nowrap;
-  background: #f8fbff;
-  color: #475569;
+  background: var(--c-surface-sunk);
+  color: var(--c-text-muted);
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -98,7 +99,7 @@
 
 .employee-person__name {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--c-text);
   text-decoration: none;
 }
 
@@ -111,9 +112,9 @@
   align-items: center;
   justify-content: center;
   padding: 0.36rem 0.72rem;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   background: var(--employee-accent-soft);
-  color: #0f766e;
+  color: var(--employee-accent);
   font-weight: 700;
 }
 
@@ -127,13 +128,13 @@
   height: 100%;
   padding: 1rem 1.1rem;
   border: 1px solid var(--employee-border);
-  background: #f8fbff;
+  background: var(--c-surface-sunk);
 }
 
 .employee-info-item strong {
   display: block;
   font-size: 1rem;
-  color: #0f172a;
+  color: var(--c-text);
 }
 
 .employee-summary-stack {
@@ -147,15 +148,15 @@
   justify-content: space-between;
   padding: 0.95rem 1rem;
   border: 1px solid var(--employee-border);
-  background: #f8fbff;
+  background: var(--c-surface-sunk);
 }
 
 .employee-summary-chip span {
-  color: #64748b;
+  color: var(--c-text-muted);
 }
 
 .employee-summary-chip strong {
-  color: #0f172a;
+  color: var(--c-text);
   font-size: 1.1rem;
 }
 
@@ -179,7 +180,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: var(--c-text-muted);
   font-weight: 600;
 }
 
@@ -218,7 +219,7 @@
   .employee-person__avatar {
     width: 34px;
     height: 34px;
-    border-radius: 12px;
+    border-radius: var(--r-lg);
   }
 
   .employee-person__name {
