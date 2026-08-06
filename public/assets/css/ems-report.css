@@ -4,20 +4,22 @@
 
 .ems-page .no-lift:hover {
   transform: none !important;
-  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06) !important;
+  box-shadow: var(--e-2) !important;
 }
 
+/* Gradien hero bersifat dekoratif, sengaja tidak ditokenkan. */
 .ems-page .ems-hero-card {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(16, 185, 129, 0.12), rgba(255, 255, 255, 0.96));
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(16, 185, 129, 0.12), var(--c-surface));
   border: 1px solid rgba(14, 116, 144, 0.16) !important;
 }
 
+/* Aksen tosca khas modul EMS, bukan warna semantik aplikasi. */
 .ems-page .ems-kicker,
 .ems-page .ems-section-kicker {
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -26,7 +28,7 @@
 }
 
 .ems-page .ems-report-card {
-  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  border: 1px solid var(--c-border) !important;
   border-radius: 18px;
 }
 
@@ -37,7 +39,7 @@
 .ems-page .ems-card-title {
   font-size: 1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--c-text);
 }
 
 .ems-page .ems-inline-search {
@@ -45,10 +47,11 @@
   width: min(100%, 340px);
 }
 
+/* Aksen langit pada ikon kartu, sepasang dengan hero. */
 .ems-page .ems-card-icon {
   width: 2.75rem;
   height: 2.75rem;
-  border-radius: 14px;
+  border-radius: var(--r-lg);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -64,17 +67,17 @@
 }
 
 .ems-page .ems-month-field {
-  border: 1px solid rgba(226, 232, 240, 0.95);
-  border-radius: 12px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
   padding: 0.75rem;
-  background: #f8fafc;
+  background: var(--c-surface-sunk);
 }
 
 .ems-page .ems-combustion-editor-block {
-  border: 1px solid rgba(226, 232, 240, 0.95);
+  border: 1px solid var(--c-border);
   border-radius: 16px;
   padding: 0.85rem;
-  background: #ffffff;
+  background: var(--c-surface);
 }
 
 .ems-page .ems-report-sheet-head {
@@ -84,32 +87,32 @@
 .ems-page .ems-sheet-title {
   font-size: 1.1rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--c-text);
   margin-bottom: 0.25rem;
 }
 
 .ems-page .ems-sheet-subtitle {
   font-weight: 700;
-  color: #1e293b;
+  color: var(--c-text);
   margin-bottom: 0.15rem;
 }
 
 .ems-page .ems-sheet-address,
 .ems-page .ems-sheet-meta {
   font-size: 0.84rem;
-  color: #64748b;
+  color: var(--c-text-muted);
 }
 
 .ems-page .ems-combustion-sheet-title {
   font-size: 1rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--c-text);
   margin-bottom: 0.75rem;
 }
 
 .ems-page .ems-table thead th {
-  background: #f8fafc;
-  color: #334155;
+  background: var(--c-surface-sunk);
+  color: var(--c-text);
   font-size: 0.78rem;
   white-space: nowrap;
 }
@@ -129,7 +132,7 @@
 }
 
 .ems-page .ems-electric-table thead th {
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  background: linear-gradient(180deg, var(--c-surface-sunk) 0%, var(--c-surface-hover) 100%);
   text-align: center;
 }
 
@@ -137,17 +140,17 @@
   position: sticky;
   left: 0;
   z-index: 1;
-  background: #fff;
+  background: var(--c-surface);
 }
 
 .ems-page .ems-electric-table tbody td:first-child,
 .ems-page .ems-electric-table tbody td:nth-child(2) {
-  background: #fff;
+  background: var(--c-surface);
 }
 
 .ems-page .ems-table thead .sticky-col,
 .ems-page .ems-table tfoot .sticky-col {
-  background: #f8fafc;
+  background: var(--c-surface-sunk);
   z-index: 2;
 }
 
@@ -156,36 +159,36 @@
   align-items: center;
   gap: 0.45rem;
   padding: 0.42rem 0.72rem;
-  border-radius: 999px;
+  border-radius: var(--r-full);
   font-size: 0.8rem;
   font-weight: 600;
-  border: 1px solid rgba(148, 163, 184, 0.28);
-  background: #fff;
-  color: #334155;
+  border: 1px solid var(--c-border);
+  background: var(--c-surface);
+  color: var(--c-text);
 }
 
 .ems-page .ems-save-chip.is-dirty {
-  background: #fff7ed;
-  border-color: #fdba74;
-  color: #9a3412;
+  background: var(--c-pending-soft);
+  border-color: var(--c-pending-border);
+  color: var(--c-pending);
 }
 
 .ems-page .ems-save-chip.is-saving {
-  background: #eff6ff;
-  border-color: #93c5fd;
-  color: #1d4ed8;
+  background: var(--c-info-soft);
+  border-color: var(--c-primary);
+  color: var(--c-info);
 }
 
 .ems-page .ems-save-chip.is-saved {
-  background: #ecfdf5;
-  border-color: #86efac;
-  color: #166534;
+  background: var(--c-ok-soft);
+  border-color: var(--c-ok-border);
+  color: var(--c-ok);
 }
 
 .ems-page .ems-save-chip.is-error {
-  background: #fef2f2;
-  border-color: #fca5a5;
-  color: #b91c1c;
+  background: var(--c-late-soft);
+  border-color: var(--c-late-border);
+  color: var(--c-late);
 }
 
 .ems-page .spin {
@@ -198,18 +201,18 @@
 }
 
 .ems-page .ems-change-cell.is-positive {
-  background: #fef3c7;
-  color: #92400e;
+  background: var(--c-pending-soft);
+  color: var(--c-pending);
 }
 
 .ems-page .ems-change-cell.is-negative {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--c-late-soft);
+  color: var(--c-late);
 }
 
 .ems-page .ems-change-cell.is-neutral {
-  background: #f8fafc;
-  color: #475569;
+  background: var(--c-surface-sunk);
+  color: var(--c-text-muted);
 }
 
 .ems-page .ems-trend-row td {
@@ -225,11 +228,12 @@
   min-width: 180px;
 }
 
+/* Dulu gradien hitam, hilang saat dark mode. Sekarang ikut warna primer. */
 .ems-page .ems-trend-bar {
   display: block;
   width: 100%;
   border-radius: 3px 3px 0 0;
-  background: linear-gradient(180deg, #111827 0%, #2f2f2f 100%);
+  background: linear-gradient(180deg, var(--c-primary) 0%, var(--c-primary-hover) 100%);
 }
 
 .ems-page .ems-trend-change {
@@ -238,9 +242,10 @@
 
 .ems-page .ems-summary-row td,
 .ems-page .ems-summary-row th {
-  background: #f8fafc;
+  background: var(--c-surface-sunk);
 }
 
+/* Navy identitas laporan EMS, sengaja tetap di terang maupun gelap. */
 .ems-page .ems-electric-foot th {
   background: #0f2f66 !important;
   color: #fff !important;
@@ -252,10 +257,11 @@
 
 .ems-page .ems-ghg-total-row td,
 .ems-page .ems-ghg-total-row th {
-  background: #eff6ff;
+  background: var(--c-primary-soft);
   font-weight: 700;
 }
 
+/* Navy identitas laporan EMS, sengaja tetap di terang maupun gelap. */
 .ems-page .ems-ghg-grand-row td,
 .ems-page .ems-ghg-grand-row th {
   background: #0f2f66;
