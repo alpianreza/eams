@@ -1,0 +1,106 @@
+/*
+ * Bilah navigasi bawah untuk ponsel.
+ *
+ * Dimuat paling akhir di main.php, setelah mobile.css.
+ *
+ * Di atas 768px bilah ini tidak dirender sama sekali, jadi tidak ada
+ * biaya tata letak di desktop.
+ */
+
+.eams-bottom-nav { display: none; }
+
+@media (max-width: 768px) {
+  .eams-bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1030;
+    display: flex;
+    align-items: stretch;
+    background: var(--c-surface);
+    border-top: 1px solid var(--c-border);
+    box-shadow: 0 -2px 12px rgba(16, 24, 40, 0.08);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .eams-bottom-nav-item {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 6px 2px;
+    border: 0;
+    background: transparent;
+    color: var(--c-text-muted);
+    text-decoration: none;
+    font-size: 0.66rem;
+    font-weight: 600;
+    line-height: 1.1;
+    touch-action: manipulation;
+    transition: color var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .eams-bottom-nav-item i {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .eams-bottom-nav-item span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .eams-bottom-nav-item:active { background: var(--c-surface-hover); }
+
+  .eams-bottom-nav-item.is-active { color: var(--c-primary); }
+
+  /* Pita tipis di atas item aktif sebagai penanda kedua selain warna. */
+  .eams-bottom-nav-item.is-active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 28px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--c-primary);
+    transform: translateY(-6px);
+  }
+
+  .eams-bottom-nav-item {
+    position: relative;
+  }
+
+  .eams-bottom-nav-item:focus-visible {
+    outline: 2px solid var(--c-primary);
+    outline-offset: -3px;
+  }
+
+  /*
+   * Beri ruang di bawah konten supaya baris terakhir tabel dan tombol
+   * simpan tidak tertutup bilah ini.
+   */
+  body.eams-v2 .app-main .container-fluid.py-4 {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  body.eams-v2 .eams-footer {
+    margin-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Tombol ekspor mengambang naik supaya tidak bertabrakan. */
+  .eams-export-float {
+    bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Saat laci sidebar terbuka, bilah bawah tidak perlu ikut menonjol. */
+body.sidebar-open .eams-bottom-nav {
+  z-index: 1030;
+}
