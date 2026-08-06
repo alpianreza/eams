@@ -26,21 +26,21 @@
   <?php else: ?>
     <?php
     $itemIcons = [
-      'Fire Extinguisher' => 'fa-solid fa-fire-extinguisher',
-      'CCTV' => 'fa-solid fa-video',
-      'AC' => 'fa-solid fa-snowflake',
-      'Kursi' => 'fa-solid fa-chair',
-      'Meja' => 'fa-solid fa-table',
-      'Laptop' => 'fa-solid fa-laptop',
-      'Komputer' => 'fa-solid fa-desktop',
-      'Emergency Exit Door' => 'fa-solid fa-door-open',
-      'Emergency Light' => 'fa-solid fa-lightbulb',
-      'Exit Light Sign' => 'fa-solid fa-signs-post',
-      'Smoke Detector' => 'fa-solid fa-smog',
-      'Fire Alarm' => 'fa-solid fa-bell',
-      'Hydrant' => 'fa-solid fa-faucet',
-      'Heat Detector' => 'fa-solid fa-temperature-high',
-      'intursion Alarm' => 'fa-solid fa-bell-slash',
+      'Fire Extinguisher' => 'bi bi-fire',
+      'CCTV' => 'bi bi-camera-video',
+      'AC' => 'bi bi-snow',
+      'Kursi' => 'bi bi-person-workspace',
+      'Meja' => 'bi bi-table',
+      'Laptop' => 'bi bi-laptop',
+      'Komputer' => 'bi bi-pc-display',
+      'Emergency Exit Door' => 'bi bi-door-open',
+      'Emergency Light' => 'bi bi-lightbulb',
+      'Exit Light Sign' => 'bi bi-signpost-2',
+      'Smoke Detector' => 'bi bi-cloud-haze2',
+      'Fire Alarm' => 'bi bi-bell',
+      'Hydrant' => 'bi bi-moisture',
+      'Heat Detector' => 'bi bi-thermometer-high',
+      'intursion Alarm' => 'bi bi-bell-slash',
     ];
 
     $tones = ['primary', 'success', 'info', 'warning', 'secondary', 'danger'];
@@ -50,7 +50,7 @@
       <?php foreach ($items as $item): ?>
         <?php
         $itemName = (string) $item['name'];
-        $icon = $itemIcons[$itemName] ?? 'fa-solid fa-box';
+        $icon = $itemIcons[$itemName] ?? 'bi bi-box-seam';
         $tone = $tones[$item['id'] % count($tones)];
         ?>
 

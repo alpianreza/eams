@@ -27,14 +27,14 @@
     <div class="row g-3">
       <?php
       $styleMap = [
-        'Fire Safety' => ['tone' => 'danger',  'icon' => 'fa-solid fa-fire-extinguisher'],
-        'HSE' => ['tone' => 'warning', 'icon' => 'fa-solid fa-helmet-safety'],
-        'CTPAT' => ['tone' => 'primary', 'icon' => 'fa-solid fa-shield-halved'],
-        'EMS' => ['tone' => 'success', 'icon' => 'fa-solid fa-leaf'],
-        'Utility' => ['tone' => 'info', 'icon' => 'fa-solid fa-bolt'],
-        'Maintenance' => ['tone' => 'secondary', 'icon' => 'fa-solid fa-screwdriver-wrench'],
-        'Maintenance (Machinery)' => ['tone' => 'primary', 'icon' => 'fa-solid fa-industry'],
-        'Social' => ['tone' => 'success', 'icon' => 'fa-solid fa-users'],
+        'Fire Safety' => ['tone' => 'danger',  'icon' => 'bi bi-fire'],
+        'HSE' => ['tone' => 'warning', 'icon' => 'bi bi-cone-striped'],
+        'CTPAT' => ['tone' => 'primary', 'icon' => 'bi bi-shield-check'],
+        'EMS' => ['tone' => 'success', 'icon' => 'bi bi-tree'],
+        'Utility' => ['tone' => 'info', 'icon' => 'bi bi-lightning-charge'],
+        'Maintenance' => ['tone' => 'secondary', 'icon' => 'bi bi-tools'],
+        'Maintenance (Machinery)' => ['tone' => 'primary', 'icon' => 'bi bi-buildings'],
+        'Social' => ['tone' => 'success', 'icon' => 'bi bi-people'],
       ];
       ?>
 
@@ -42,7 +42,7 @@
         <?php
         $name = (string) $cat['name'];
         $tone = $styleMap[$name]['tone'] ?? 'dark';
-        $icon = $styleMap[$name]['icon'] ?? 'fa-solid fa-layer-group';
+        $icon = $styleMap[$name]['icon'] ?? 'bi bi-layers';
         ?>
 
         <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
