@@ -1,7 +1,7 @@
 <?= $this->extend('layouts/main') ?>
 <?= $this->section('content') ?>
 
-<div class="container-fluid compliance-dashboard tw-p-4">
+<div class="container-fluid compliance-dashboard p-4">
 <div id="compliance-dashboard-meta" class="d-none"
      data-year="<?= esc((string)$selectedYear) ?>"
      data-base-url="<?= rtrim(base_url(), '/') ?>"></div>
@@ -75,7 +75,7 @@
         <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
         <span>Memuat tren...</span>
       </div>
-      <div class="card-header bg-white border-0 pb-0">
+      <div class="card-header bg-transparent border-0 pb-0">
         <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
           <div>
             <h6 class="fw-semibold mb-1">Pergerakan Status</h6>
