@@ -35,10 +35,11 @@ $notifBadge = $notifCount > 99 ? '99+' : (string)$notifCount;
 
     <ul class="navbar-nav ms-auto align-items-center flex-row header-right-controls">
       <li class="nav-item me-2">
-        <button id="theme-toggle" type="button" class="tw-theme-toggle" aria-label="Aktifkan tema gelap" title="Ganti tema">
+        <button id="theme-toggle" type="button" class="theme-toggle" aria-label="Ganti tema" title="Ganti tema">
           <i class="bi bi-moon-stars"></i>
         </button>
       </li>
+
       <li class="nav-item dropdown header-notif-item me-1">
         <a class="nav-link position-relative header-notif-toggle"
           data-bs-toggle="dropdown"
@@ -123,7 +124,7 @@ $notifBadge = $notifCount > 99 ? '99+' : (string)$notifCount;
               src="<?= $photoUrl ?>"
               alt="Profile">
             <div>
-              <div class="fw-semibold text-dark"><?= esc($userName) ?></div>
+              <div class="fw-semibold"><?= esc($userName) ?></div>
               <div class="small text-muted">Peran: <?= esc($roleName) ?></div>
             </div>
           </li>
