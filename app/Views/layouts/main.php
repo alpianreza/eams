@@ -85,8 +85,9 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
 
     <!--
       Font Awesome masih dimuat karena sebagian view lama memakai fas fa-*.
-      Layout utama, sidebar, dan header sudah sepenuhnya Bootstrap Icons.
-      Baris ini boleh dihapus setelah view lain disisir.
+      Layout utama, sidebar, header, home, dan dashboard compliance sudah
+      sepenuhnya Bootstrap Icons. Baris ini boleh dihapus setelah view
+      sisanya disisir.
     -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -105,12 +106,11 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
       URUTAN PEMUATAN CSS (jangan diubah sembarangan):
       1. vendor  : bootstrap, adminlte
       2. token   : tokens.css  <- sumber kebenaran warna & tema
-      3. compat  : sisa kelas tw- dari view lama (tinggal satu kelas)
-      4. app     : app.css <- manifes @import lima lapisan
-      5. halaman : renderSection('styles')
-      6. mobile  : mobile.css <- SENGAJA PALING AKHIR
-      7. bottom  : bottom-nav.css
-      8. stack   : table-stack.css
+      3. app     : app.css <- manifes @import enam lapisan
+      4. halaman : renderSection('styles')
+      5. mobile  : mobile.css <- SENGAJA PALING AKHIR
+      6. bottom  : bottom-nav.css
+      7. stack   : table-stack.css
 
       mobile.css harus menang atas CSS per halaman, karena banyak file
       halaman memakai !important dan memperkecil font sampai 0.62rem.
@@ -121,7 +121,6 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
       yang diatur di sana.
     -->
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/tokens.css') ?>">
-    <link rel="stylesheet" href="<?= $assetUrl('assets/css/compat-tailwind.css') ?>">
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/app.css') ?>">
     <?= $this->renderSection('styles') ?>
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/mobile.css') ?>">
