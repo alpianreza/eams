@@ -21,6 +21,32 @@ document.addEventListener("DOMContentLoaded", function () {
   // Alias for legacy modules.
   window.appToast = window.safeToast;
 
+  // Jangan bergantung pada avatar eksternal di header. Jika gambar gagal
+  // dimuat (umum pada jaringan seluler/ad blocker), tampilkan ikon lokal.
+  const replaceBrokenAvatar = (avatar) => {
+    if (!avatar?.isConnected || avatar.dataset.fallbackApplied === "1") return;
+
+    avatar.dataset.fallbackApplied = "1";
+
+    const fallback = document.createElement("span");
+    fallback.className = "header-profile-avatar-fallback";
+    fallback.setAttribute("role", "img");
+    fallback.setAttribute("aria-label", avatar.alt || "Profil pengguna");
+    fallback.innerHTML = '<i class="bi bi-person" aria-hidden="true"></i>';
+
+    avatar.replaceWith(fallback);
+  };
+
+  document.querySelectorAll("img.header-profile-avatar").forEach((avatar) => {
+    avatar.addEventListener("error", () => replaceBrokenAvatar(avatar), {
+      once: true,
+    });
+
+    if (avatar.complete && avatar.naturalWidth === 0) {
+      replaceBrokenAvatar(avatar);
+    }
+  });
+
   const WRAP_CLASS = "table-responsive-mobile";
 
   const wrapTable = (table) => {
