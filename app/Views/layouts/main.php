@@ -110,13 +110,15 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
       5. halaman : renderSection('styles')
       6. mobile  : mobile.css <- SENGAJA PALING AKHIR
       7. bottom  : bottom-nav.css
+      8. stack   : table-stack.css
 
       mobile.css harus menang atas CSS per halaman, karena banyak file
       halaman memakai !important dan memperkecil font sampai 0.62rem.
       Kalau dipindah ke atas, perbaikan mobile akan tertimpa lagi.
 
-      bottom-nav.css paling akhir karena ia menambah ruang bawah pada
-      container dan menggeser tombol ekspor mengambang.
+      bottom-nav.css dan table-stack.css berada setelah mobile.css
+      karena keduanya menimpa perilaku tabel dan jarak bawah konten
+      yang diatur di sana.
     -->
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/tokens.css') ?>">
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/compat-tailwind.css') ?>">
@@ -124,6 +126,7 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
     <?= $this->renderSection('styles') ?>
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/mobile.css') ?>">
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/bottom-nav.css') ?>">
+    <link rel="stylesheet" href="<?= $assetUrl('assets/css/table-stack.css') ?>">
 
 </head>
 
@@ -351,6 +354,14 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
         });
     </script>
 <?php endif; ?>
+
+
+<!--
+  Tabel kartu bertumpuk untuk ponsel. Ditaruh sebelum skrip halaman
+  supaya skrip yang memuat tabel lewat AJAX bisa memanggil
+  window.eamsTableStack.refresh(elemenInduk) setelah selesai.
+-->
+<script src="<?= $assetUrl('js/table-stack.js') ?>"></script>
 
 
 <!-- Page Specific Script -->
