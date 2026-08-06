@@ -1,47 +1,18 @@
-/* =====================================================================
- * COMPAT LAYER — SEMENTARA
- * ---------------------------------------------------------------------
- * Tailwind sudah dihapus dari proyek. Beberapa view lama masih memakai
- * kelas berawalan `tw-`. File ini menyediakan padanannya dalam CSS biasa
- * yang sudah terhubung ke design token, sehingga sidebar tetap ikut tema.
+/*
+ * Sisa kelas Tailwind dari view lama.
  *
- * Kelas yang masih terpakai:
- *   - app/Views/layouts/partials/sidebar.php
- *   - app/Views/compliance/dashboard/index.php  (tw-p-4)
+ * Tailwind sudah dicabut dari proyek ini. Berkas ini hanya jembatan
+ * sementara untuk kelas tw- yang masih tertinggal di markup.
  *
- * TODO (Fase 2): saat sidebar dibangun ulang, ganti kelas `tw-*` di view
- * dengan kelas semantik, lalu HAPUS file ini beserta tautannya di layout.
- * ===================================================================== */
+ * Sidebar dan header sudah bersih. Yang tersisa tinggal satu:
+ *
+ *   app/Views/compliance/dashboard/index.php
+ *     <div class="container-fluid compliance-dashboard tw-p-4">
+ *
+ * Cara menghabiskannya: ganti tw-p-4 jadi p-4 di berkas itu, hapus
+ * berkas ini, lalu hapus <link>-nya di main.php. Tiga langkah, selesai.
+ */
 
-/* --- Layout --- */
-.tw-flex { display: flex; }
-.tw-items-center { align-items: center; }
-.tw-justify-start { justify-content: flex-start; }
-.tw-gap-3 { gap: var(--s-3); }
-
-/* --- Spacing --- */
-.tw-p-4 { padding: var(--s-4); }
-
-/* --- Ukuran --- */
-.tw-h-9 { height: 2.25rem; }
-.tw-w-9 { width: 2.25rem; }
-
-/* --- Warna (terhubung ke token, bukan hex mati) --- */
-.tw-bg-slate-900 { background-color: var(--c-sidebar); }
-.tw-bg-slate-950 { background-color: var(--c-sidebar-deep); }
-.tw-border-slate-800 { border-color: var(--c-sidebar-border); }
-.tw-text-white { color: #ffffff; }
-
-/* --- Border --- */
-.tw-border-b { border-bottom-width: 1px; border-bottom-style: solid; }
-
-/* --- Efek --- */
-.tw-shadow-lg { box-shadow: var(--e-3); }
-.tw-transition-all { transition-property: all; }
-.tw-duration-300 { transition-duration: 300ms; }
-
-/* --- Tipografi --- */
-.tw-font-sans { font-family: var(--f-sans); }
-.tw-font-black { font-weight: 800; }
-.tw-text-2xl { font-size: var(--t-2xl); }
-.tw-tracking-widest { letter-spacing: 0.12em; }
+.tw-p-4 {
+  padding: var(--s-4);
+}

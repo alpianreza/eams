@@ -83,6 +83,11 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+    <!--
+      Font Awesome masih dimuat karena sebagian view lama memakai fas fa-*.
+      Layout utama, sidebar, dan header sudah sepenuhnya Bootstrap Icons.
+      Baris ini boleh dihapus setelah view lain disisir.
+    -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous">
@@ -100,20 +105,25 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
       URUTAN PEMUATAN CSS (jangan diubah sembarangan):
       1. vendor  : bootstrap, adminlte
       2. token   : tokens.css  <- sumber kebenaran warna & tema
-      3. compat  : sisa kelas tw- dari view lama (sementara)
-      4. app     : app.css
+      3. compat  : sisa kelas tw- dari view lama (tinggal satu kelas)
+      4. app     : app.css <- manifes @import lima lapisan
       5. halaman : renderSection('styles')
       6. mobile  : mobile.css <- SENGAJA PALING AKHIR
+      7. bottom  : bottom-nav.css
 
       mobile.css harus menang atas CSS per halaman, karena banyak file
       halaman memakai !important dan memperkecil font sampai 0.62rem.
       Kalau dipindah ke atas, perbaikan mobile akan tertimpa lagi.
+
+      bottom-nav.css paling akhir karena ia menambah ruang bawah pada
+      container dan menggeser tombol ekspor mengambang.
     -->
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/tokens.css') ?>">
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/compat-tailwind.css') ?>">
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/app.css') ?>">
     <?= $this->renderSection('styles') ?>
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/mobile.css') ?>">
+    <link rel="stylesheet" href="<?= $assetUrl('assets/css/bottom-nav.css') ?>">
 
 </head>
 
@@ -142,7 +152,7 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
                         <?php if ($resolvedBackUrl !== ''): ?>
                             <div class="mb-3">
                                 <a href="<?= esc($resolvedBackUrl) ?>" class="btn btn-outline-secondary btn-sm content-back-link">
-                                    <i class="fa-solid fa-left-long me-1"></i> Kembali
+                                    <i class="bi bi-arrow-left me-1"></i> Kembali
                                 </a>
                             </div>
                         <?php endif; ?>
@@ -153,6 +163,8 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
 
             <?= $this->include('layouts/partials/footer') ?>
 
+            <!-- ============ NAVIGASI BAWAH (hanya ponsel) ============ -->
+            <?= $this->include('layouts/partials/bottom-nav') ?>
 
         </div>
 
