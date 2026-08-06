@@ -13,14 +13,14 @@
 
       <div class="col-md-6">
         <button id="btnPrintItem" class="btn btn-outline-primary btn-lg btn-block">
-          <i class="fas fa-print"></i><br>
+          <i class="bi bi-printer"></i><br>
           Print Per Inventory
         </button>
       </div>
 
       <div class="col-md-6">
         <button id="btnPrintBatch" class="btn btn-outline-success btn-lg btn-block">
-          <i class="fas fa-layer-group"></i><br>
+          <i class="bi bi-layers"></i><br>
           Print Batch
         </button>
       </div>
@@ -187,7 +187,7 @@
     <div class="text-right mt-3">
 
         <button id="btnPreviewPrint" class="btn btn-primary">
-            <i class="fas fa-print"></i> Print
+            <i class="bi bi-printer"></i> Print
         </button>
 
     </div>

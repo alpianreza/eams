@@ -67,7 +67,7 @@
 
     <div class="d-flex justify-content-end mt-3">
       <button id="btnPreviewBatchPrint" class="btn btn-success">
-        <i class="fas fa-print"></i> Preview Print
+        <i class="bi bi-printer"></i> Preview Print
       </button>
     </div>
 
