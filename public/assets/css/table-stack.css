@@ -1,0 +1,113 @@
+/*
+ * Tabel jadi kartu bertumpuk di ponsel.
+ *
+ * Dimuat setelah mobile.css, jadi berhak menimpanya. Beberapa aturan
+ * memakai !important semata-mata untuk mengalahkan !important milik
+ * mobile.css dan CSS halaman, bukan karena malas.
+ *
+ * Kelas .is-stacked dipasang oleh table-stack.js, tidak ditulis
+ * manual di View.
+ */
+
+@media (max-width: 768px) {
+  /* Tabel bertumpuk tidak perlu geser horizontal. */
+  .table-responsive.has-stacked {
+    overflow-x: visible !important;
+    border-radius: 0;
+  }
+
+  table.is-stacked,
+  table.is-stacked tbody,
+  table.is-stacked tr,
+  table.is-stacked td {
+    display: block;
+    width: 100%;
+  }
+
+  table.is-stacked {
+    min-width: 0 !important;
+    table-layout: auto !important;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* Kepala tabel tidak dipakai lagi, isinya pindah ke tiap baris. */
+  table.is-stacked thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  table.is-stacked tr {
+    margin-bottom: 0.6rem;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    overflow: hidden;
+  }
+
+  table.is-stacked tr:last-child { margin-bottom: 0; }
+
+  table.is-stacked td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    text-align: right;
+    white-space: normal !important;
+    border: 0 !important;
+    padding: 0.5rem 0.7rem !important;
+    font-size: 0.84rem !important;
+  }
+
+  table.is-stacked td + td {
+    border-top: 1px solid var(--c-border) !important;
+  }
+
+  /* Nama kolom, diisi otomatis oleh table-stack.js. */
+  table.is-stacked td::before {
+    content: attr(data-label);
+    flex: 0 0 40%;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.76rem;
+    line-height: 1.35;
+    color: var(--c-text-muted);
+  }
+
+  /* Kolom tanpa judul, misal kolom tombol aksi: tampil melebar penuh. */
+  table.is-stacked td[data-label=""] {
+    justify-content: flex-end;
+    background: var(--c-surface-sunk);
+  }
+
+  table.is-stacked td[data-label=""]::before { display: none; }
+
+  /* Baris pertama biasanya identitas, dibuat sedikit lebih tegas. */
+  table.is-stacked td:first-child {
+    background: var(--c-surface-sunk);
+    font-weight: 600;
+    color: var(--c-text);
+  }
+
+  table.is-stacked tfoot {
+    display: block;
+    margin-top: 0.5rem;
+  }
+
+  table.is-stacked tfoot tr {
+    background: var(--c-surface-sunk);
+  }
+
+  /* Tombol di dalam kartu tetap nyaman disentuh. */
+  table.is-stacked td .btn-group,
+  table.is-stacked td .btn-toolbar {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.35rem;
+  }
+}
