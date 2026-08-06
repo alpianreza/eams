@@ -61,7 +61,7 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
 
 <head>
     <meta charset="UTF-8">
-    <!-- viewport-fit=cover wajib supaya env(safe-area-inset-*) aktif di iPhone berponi -->
+    <!-- viewport-fit=cover wajib supaya env(safe-area-inset-*) terbaca di iPhone -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
 
@@ -105,9 +105,9 @@ $resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
       5. halaman : renderSection('styles')
       6. mobile  : mobile.css <- SENGAJA PALING AKHIR
 
-      mobile.css harus dimuat setelah CSS halaman karena banyak file
+      mobile.css harus menang atas CSS per halaman, karena banyak file
       halaman memakai !important dan memperkecil font sampai 0.62rem.
-      Kalau dipasang lebih awal, perbaikan mobile akan kalah.
+      Kalau dipindah ke atas, perbaikan mobile akan tertimpa lagi.
     -->
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/tokens.css') ?>">
     <link rel="stylesheet" href="<?= $assetUrl('assets/css/compat-tailwind.css') ?>">
