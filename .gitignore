@@ -1,6 +1,54 @@
-writable/session/eams_session*
-public/download/agent/*
+# ==============================
+# Environment & secrets
+# ==============================
+.env
+.env.*
+!env.example
+
+# ==============================
+# Dependencies (jangan di-commit)
+# ==============================
+/vendor/
+/node_modules/
+
+# ==============================
+# Build artifacts
+# ==============================
+/build/
+
+# ==============================
+# Runtime / writable
+# ==============================
+/writable/cache/*
+!/writable/cache/index.html
+/writable/logs/*
+!/writable/logs/index.html
+/writable/session/*
+!/writable/session/index.html
+/writable/debugbar/*
+/writable/temp/*
+/writable/uploads/*
+!/writable/uploads/index.html
 writable/cache/agent-command-poll/*
-writable/logs/*.log
-writable/debugbar/*
+
+# ==============================
+# App-specific runtime output
+# ==============================
+public/download/agent/*
 public/download/agent/archive/*
+
+# ==============================
+# Tooling & editor
+# ==============================
+.claude/
+.codex-temp/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ==============================
+# Testing
+# ==============================
+/phpunit.xml
+/.phpunit.cache/

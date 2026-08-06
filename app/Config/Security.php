@@ -11,36 +11,34 @@ class Security extends BaseConfig
      * CSRF Protection Method
      * --------------------------------------------------------------------------
      *
-     * Protection Method for Cross Site Request Forgery protection.
-     *
      * @var string 'cookie' or 'session'
      */
-    public string $csrfProtection = 'cookie';
+    public string $csrfProtection = 'session';
 
     /**
      * --------------------------------------------------------------------------
      * CSRF Token Randomization
      * --------------------------------------------------------------------------
      *
-     * Randomize the CSRF Token for added security.
+     * Token di-mask ulang tiap render untuk mitigasi BREACH.
+     * Token diambil client dari meta tag yang disuntik CsrfAssetFilter,
+     * jadi randomisasi aman dipakai.
      */
-    public bool $tokenRandomize = false;
+    public bool $tokenRandomize = true;
 
     /**
      * --------------------------------------------------------------------------
      * CSRF Token Name
      * --------------------------------------------------------------------------
      *
-     * Token name for Cross Site Request Forgery protection.
+     * Diganti dari default framework (csrf_test_name).
      */
-    public string $tokenName = 'csrf_test_name';
+    public string $tokenName = 'eams_csrf_token';
 
     /**
      * --------------------------------------------------------------------------
      * CSRF Header Name
      * --------------------------------------------------------------------------
-     *
-     * Header name for Cross Site Request Forgery protection.
      */
     public string $headerName = 'X-CSRF-TOKEN';
 
@@ -49,18 +47,14 @@ class Security extends BaseConfig
      * CSRF Cookie Name
      * --------------------------------------------------------------------------
      *
-     * Cookie name for Cross Site Request Forgery protection.
+     * Diganti dari default framework (csrf_cookie_name).
      */
-    public string $cookieName = 'csrf_cookie_name';
+    public string $cookieName = 'eams_csrf_cookie';
 
     /**
      * --------------------------------------------------------------------------
      * CSRF Expires
      * --------------------------------------------------------------------------
-     *
-     * Expiration time for Cross Site Request Forgery protection cookie.
-     *
-     * Defaults to two hours (in seconds).
      */
     public int $expires = 7200;
 
@@ -69,18 +63,16 @@ class Security extends BaseConfig
      * CSRF Regenerate
      * --------------------------------------------------------------------------
      *
-     * Regenerate CSRF Token on every submission.
+     * Sengaja false: aplikasi ini banyak memakai AJAX paralel (polling agent,
+     * grid checklist). Rotasi token tiap request akan membuat request yang
+     * sedang in-flight memakai token basi dan gagal 403.
      */
-    public bool $regenerate = true;
+    public bool $regenerate = false;
 
     /**
      * --------------------------------------------------------------------------
      * CSRF Redirect
      * --------------------------------------------------------------------------
-     *
-     * Redirect to previous page with error on failure.
-     *
-     * @see https://codeigniter4.github.io/userguide/libraries/security.html#redirection-on-failure
      */
     public bool $redirect = (ENVIRONMENT === 'production');
 }
