@@ -31,6 +31,28 @@ if (!empty($backUrl)) {
     }
 }
 
+/**
+ * Cache busting untuk semua file CSS/JS lokal.
+ * Aman kalau file belum ada (mis. hasil build belum dijalankan).
+ */
+$assetUrl = static function (string $relativePath): string {
+    $absolutePath = FCPATH . $relativePath;
+    $version = is_file($absolutePath) ? (string) filemtime($absolutePath) : '1';
+
+    return base_url($relativePath) . '?v=' . $version;
+};
+
+/**
+ * Preferensi tema: 'light' | 'dark' | 'system'.
+ * Dibaca di sisi server supaya tidak ada kedipan warna saat halaman dibuka.
+ * Untuk 'system', atribut sengaja dikosongkan lalu diisi oleh skrip blocking
+ * di <head> berdasarkan prefers-color-scheme.
+ */
+$themePreference = $_COOKIE['theme'] ?? 'light';
+if (!in_array($themePreference, ['light', 'dark', 'system'], true)) {
+    $themePreference = 'light';
+}
+$resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
 ?>
 
 
@@ -40,9 +62,19 @@ if (!empty($backUrl)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
 
     <title><?= esc($pageTitle . ' | EAMS') ?></title>
 
+    <!-- Terapkan tema sistem sebelum render pertama (anti kedip) -->
+    <script>
+        (function () {
+            var pref = <?= json_encode($themePreference) ?>;
+            if (pref !== 'system') return;
+            var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-eams-pending-theme', dark ? 'dark' : 'light');
+        })();
+    </script>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -60,18 +92,28 @@ if (!empty($backUrl)) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-
-    <!-- Custom CSS -->
+    <!-- AdminLTE (vendor) -->
     <link rel="stylesheet" href="<?= base_url('adminlte4/css/adminlte.min.css') ?>">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=' . filemtime(FCPATH . 'assets/css/app.css')) ?>">
+
+    <!--
+      URUTAN PEMUATAN CSS (jangan diubah sembarangan):
+      1. vendor  : bootstrap, adminlte
+      2. token   : tokens.css  <- sumber kebenaran warna & tema
+      3. compat  : sisa kelas tw- dari view lama (sementara)
+      4. app     : app.css
+      5. halaman : renderSection('styles')
+    -->
+    <link rel="stylesheet" href="<?= $assetUrl('assets/css/tokens.css') ?>">
+    <link rel="stylesheet" href="<?= $assetUrl('assets/css/compat-tailwind.css') ?>">
+    <link rel="stylesheet" href="<?= $assetUrl('assets/css/app.css') ?>">
     <?= $this->renderSection('styles') ?>
-    <link rel="stylesheet" href="<?= base_url('assets/css/tailwind-app.css?v=' . filemtime(FCPATH . 'assets/css/tailwind-app.css')) ?>">
 
 </head>
 
 <body class="layout-fixed sidebar-mini sidebar-expand-lg bg-body-secondary eams-v2<?= $isReadOnlyAccess ? ' is-read-only' : '' ?>"
       data-read-only="<?= $isReadOnlyAccess ? '1' : '0' ?>"
-      data-bs-theme="<?= isset($_COOKIE['theme']) ? $_COOKIE['theme'] : 'light' ?>">
+      data-theme-preference="<?= esc($themePreference, 'attr') ?>"
+      <?php if ($resolvedTheme !== ''): ?>data-bs-theme="<?= esc($resolvedTheme, 'attr') ?>"<?php endif; ?>>
 
     <?php if (session()->get('logged_in')): ?>
 
@@ -141,23 +183,67 @@ if (!empty($backUrl)) {
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <script>
-  const themeToggle = document.getElementById('theme-toggle');
-  const body = document.body;
+  /* =====================================================================
+   * GANTI TEMA — 3 status: Terang -> Gelap -> Ikut Sistem
+   * Preferensi disimpan di cookie dan dibaca ulang di sisi server,
+   * sehingga tidak ada kedipan warna saat pindah halaman.
+   * ===================================================================== */
+  (function () {
+    var body = document.body;
+    var toggle = document.getElementById('theme-toggle');
+    var media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
-  const applyTheme = (theme) => {
-    const isDark = theme === 'dark';
-    body.setAttribute('data-bs-theme', theme);
-    themeToggle.innerHTML = isDark ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
-    themeToggle.setAttribute('aria-label', isDark ? 'Aktifkan tema terang' : 'Aktifkan tema gelap');
-    document.cookie = `theme=${theme};path=/;max-age=31536000;SameSite=Lax`;
-  };
+    var ORDER = ['light', 'dark', 'system'];
 
-  if (themeToggle) {
-    applyTheme(body.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'light');
-    themeToggle.addEventListener('click', () => {
-      applyTheme(body.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
-    });
-  }
+    var META = {
+      light:  { icon: 'bi bi-sun',         label: 'Tema terang. Klik untuk tema gelap.' },
+      dark:   { icon: 'bi bi-moon-stars',  label: 'Tema gelap. Klik untuk ikut sistem.' },
+      system: { icon: 'bi bi-circle-half', label: 'Ikut sistem. Klik untuk tema terang.' }
+    };
+
+    function effectiveTheme(pref) {
+      if (pref !== 'system') return pref;
+      return media && media.matches ? 'dark' : 'light';
+    }
+
+    function apply(pref, persist) {
+      body.setAttribute('data-theme-preference', pref);
+      body.setAttribute('data-bs-theme', effectiveTheme(pref));
+      document.documentElement.removeAttribute('data-eams-pending-theme');
+
+      if (toggle) {
+        toggle.innerHTML = '<i class="' + META[pref].icon + '"></i>';
+        toggle.setAttribute('aria-label', META[pref].label);
+        toggle.setAttribute('title', META[pref].label);
+      }
+
+      if (persist) {
+        document.cookie = 'theme=' + pref + ';path=/;max-age=31536000;SameSite=Lax';
+      }
+
+      window.dispatchEvent(new CustomEvent('eams:themechange', {
+        detail: { preference: pref, theme: effectiveTheme(pref) }
+      }));
+    }
+
+    var current = body.getAttribute('data-theme-preference') || 'light';
+    apply(current, false);
+
+    if (toggle) {
+      toggle.addEventListener('click', function () {
+        var next = ORDER[(ORDER.indexOf(current) + 1) % ORDER.length];
+        current = next;
+        apply(next, true);
+      });
+    }
+
+    // Ikuti perubahan tema OS secara langsung saat mode "system".
+    if (media && media.addEventListener) {
+      media.addEventListener('change', function () {
+        if (current === 'system') apply('system', false);
+      });
+    }
+  })();
 </script>
 
 <script>

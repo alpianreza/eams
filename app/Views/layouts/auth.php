@@ -1,3 +1,17 @@
+<?php
+$assetUrl = static function (string $relativePath): string {
+  $absolutePath = FCPATH . $relativePath;
+  $version = is_file($absolutePath) ? (string) filemtime($absolutePath) : '1';
+
+  return base_url($relativePath) . '?v=' . $version;
+};
+
+$themePreference = $_COOKIE['theme'] ?? 'light';
+if (!in_array($themePreference, ['light', 'dark', 'system'], true)) {
+  $themePreference = 'light';
+}
+$resolvedTheme = $themePreference === 'system' ? '' : $themePreference;
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -5,6 +19,7 @@
   <meta charset="UTF-8">
   <title>Login | EAMS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
 
   <!-- AdminLTE 4 -->
   <link rel="stylesheet" href="<?= base_url('adminlte4/css/adminlte.min.css') ?>">
@@ -17,9 +32,13 @@
   <!-- DataTables Bootstrap 5 -->
   <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
+  <!-- Design token -->
+  <link rel="stylesheet" href="<?= $assetUrl('assets/css/tokens.css') ?>">
+
 </head>
 
-<body class="login-page bg-body-secondary">
+<body class="login-page bg-body-secondary eams-v2"
+  <?php if ($resolvedTheme !== ''): ?>data-bs-theme="<?= esc($resolvedTheme, 'attr') ?>"<?php endif; ?>>
 
   <?= $this->renderSection('content') ?>
 
