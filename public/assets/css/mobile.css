@@ -104,15 +104,26 @@ html {
    * C. SASARAN SENTUH
    * Semua tombol dan tautan aksi minimal 44x44 px. Ini penyebab
    * utama salah pencet di halaman checklist dan kalender.
+   *
+   * Catatan: tombol ditengahkan, tetapi menu sidebar dan item
+   * dropdown WAJIB rata kiri supaya tetap terbaca sebagai daftar.
    * --------------------------------------------------------------- */
   .btn,
-  .page-link,
-  .nav-link,
-  .dropdown-item {
+  .page-link {
     min-height: var(--m-tap);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .nav-link,
+  .dropdown-item {
+    min-height: var(--m-tap);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
   }
