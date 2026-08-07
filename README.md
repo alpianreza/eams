@@ -1,73 +1,28 @@
-# CodeIgniter 4 Framework
+# EAMS — Enterprise Asset Management System
 
-## What is CodeIgniter?
+Aplikasi internal berbasis CodeIgniter 4 untuk pengelolaan asset, compliance checklist, monitoring progress, notifikasi, dan laporan.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Persyaratan
 
-This repository holds the distributable version of the framework.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+- PHP 8.1 atau lebih baru
+- MySQL/MariaDB
+- Extension `intl`, `mbstring`, `json`, `mysqlnd`, dan `curl`
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+Setelah memperbarui aplikasi, jalankan:
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+```bash
+php spark migrate
+```
 
-## Important Change with index.php
+## Reminder checklist WhatsApp
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
-
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
-
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
-
-## Contributing
-
-We welcome contributions from the community.
-
-Please read the [*Contributing to CodeIgniter*](https://github.com/codeigniter4/CodeIgniter4/blob/develop/CONTRIBUTING.md) section in the development repository.
-
-## Server Requirements
-
-PHP version 8.1 or higher is required, with the following extensions installed:
-
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
-
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
-
-## WhatsApp Weekly Checklist Reminder
-
-Project ini punya command untuk kirim reminder checklist mingguan via WhatsApp:
+Command WhatsApp yang sudah tersedia:
 
 ```bash
 php spark notify:weekly-checklist
 ```
 
-### Opsi command
+Opsi:
 
 ```bash
 php spark notify:weekly-checklist --dry-run
@@ -75,9 +30,7 @@ php spark notify:weekly-checklist --username=reza
 php spark notify:weekly-checklist --date=2026-03-26 --max-items=10
 ```
 
-### Konfigurasi `.env`
-
-Isi konfigurasi berikut:
+Konfigurasi `.env`:
 
 ```dotenv
 whatsapp.enabled = true
@@ -87,22 +40,65 @@ whatsapp.fonnteToken = <TOKEN_API_FONNTE>
 whatsapp.timeout = 20
 ```
 
-Jika tabel `users` belum punya kolom nomor WA, bisa pakai fallback mapping:
-
-```dotenv
-whatsapp.namePhoneMap = REZA ALPIAN:62812xxxxxxx,FITRI HANDAYANI:62813xxxxxxx
-```
-
-Command otomatis mencoba ambil nomor dari kolom berikut jika tersedia di tabel `users`:
-`wa_number`, `whatsapp_number`, `phone`, `phone_number`, `mobile`, `mobile_number`, `no_hp`, `no_telp`, `telp`.
-
-### Menjalankan seminggu sekali
-
-- Linux cron (contoh Senin jam 08:00):
+Cron mingguan, contoh Senin pukul 08:00:
 
 ```cron
 0 8 * * 1 cd /path/to/eams && php spark notify:weekly-checklist
 ```
 
-- Windows Task Scheduler:
-  jalankan `php C:\xampp\htdocs\eams\spark notify:weekly-checklist` dengan trigger mingguan.
+## Reminder checklist Email
+
+1. Isi email setiap user melalui **Manajemen User → Tambah/Edit User**.
+2. Aktifkan **Kirim juga melalui email** pada **Pengaturan Perusahaan → Kanal notifikasi global**.
+3. Isi konfigurasi SMTP di `.env`.
+
+Contoh SMTP TLS:
+
+```dotenv
+email.fromEmail = eams@perusahaan.com
+email.fromName = EAMS
+email.protocol = smtp
+email.SMTPHost = smtp.perusahaan.com
+email.SMTPUser = eams@perusahaan.com
+email.SMTPPass = <PASSWORD_SMTP>
+email.SMTPPort = 587
+email.SMTPCrypto = tls
+email.SMTPTimeout = 20
+email.mailType = text
+email.charset = UTF-8
+email.newline = "\r\n"
+email.CRLF = "\r\n"
+```
+
+> Jangan commit password SMTP ke repository. Simpan hanya di `.env` server.
+
+Uji dengan mode simulasi:
+
+```bash
+php spark notify:weekly-checklist-email --dry-run
+php spark notify:weekly-checklist-email --dry-run --username=reza
+```
+
+Kirim email reminder:
+
+```bash
+php spark notify:weekly-checklist-email
+```
+
+Opsi lengkap:
+
+```bash
+php spark notify:weekly-checklist-email --date=2026-08-07 --username=reza --max-items=10
+```
+
+Cron mingguan, contoh Senin pukul 08:05:
+
+```cron
+5 8 * * 1 cd /path/to/eams && php spark notify:weekly-checklist-email
+```
+
+Command email membuat notifikasi `reminder` di Notification Center dan mengirim email, tetapi tidak mengirim ulang WhatsApp. Pengiriman dengan tanggal dan user yang sama memakai deduplikasi agar tidak terkirim dua kali.
+
+## PIC Inventory
+
+PIC inventory disimpan sebagai relasi ke user login melalui tabel `compliance_inventory_pics`. Maksimal dua PIC: satu PIC utama dan satu PIC kedua. Kolom teks lama tetap dipertahankan sementara untuk kompatibilitas modul lama.
