@@ -14,10 +14,11 @@
  *   5. app-sidebar-light.css sidebar terang, Fase 2
  *   6. app-sidebar-mini.css  sidebar menciut jadi ikon
  *   7. ui-stability.css      anti-kedip tema + pengaman header mobile
+ *   8. ui-fixes.css          koreksi lintas halaman dengan specificity tinggi
  *
  * mobile.css dimuat setelah semua ini lewat <link> di main.php.
- * ui-stability.css memakai selektor shell yang lebih spesifik untuk
- * menjaga kontrol header tetap tersedia setelah aturan mobile global.
+ * File stability/fixes memakai selektor shell yang lebih spesifik untuk
+ * menjaga kontrol penting dari aturan global dan gaya inline halaman.
  *
  * Kalau salah satu berkas diubah, naikkan ?v= di barisnya supaya
  * peramban tidak menyajikan versi lama dari singgahan.
@@ -32,3 +33,4 @@
 @import url("app-sidebar-light.css?v=1");
 @import url("app-sidebar-mini.css?v=1");
 @import url("ui-stability.css?v=1");
+@import url("ui-fixes.css?v=1");

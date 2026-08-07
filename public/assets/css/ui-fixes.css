@@ -1,0 +1,116 @@
+/* =====================================================================
+ * EAMS UI fixes
+ * Koreksi lintas halaman yang perlu mengalahkan utility Bootstrap dan
+ * style inline lama tanpa menambah warna tema baru.
+ * ===================================================================== */
+
+/* Monitoring Progress: seluruh permukaan mengikuti token tema. */
+body.eams-v2 .progress-modern-page .progress-hero {
+  border: 1px solid var(--c-border) !important;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(94, 159, 232, 0.16), transparent 45%),
+    radial-gradient(circle at 95% 10%, rgba(94, 159, 232, 0.1), transparent 42%),
+    var(--c-surface) !important;
+  color: var(--c-text);
+}
+
+body.eams-v2 .progress-modern-page .progress-table-card,
+body.eams-v2 .progress-modern-page .progress-table-card .card-header,
+body.eams-v2 .progress-modern-page .progress-table-card .card-body,
+body.eams-v2 .progress-modern-page .summary-card {
+  border-color: var(--c-border) !important;
+  background: var(--c-surface) !important;
+  color: var(--c-text);
+}
+
+body.eams-v2 .progress-modern-page .summary-card {
+  border: 1px solid var(--c-border) !important;
+  box-shadow: var(--e-1);
+}
+
+body.eams-v2 .progress-modern-page .summary-card .summary-label {
+  color: var(--c-text-muted) !important;
+}
+
+body.eams-v2 .progress-modern-page .summary-card .summary-value {
+  color: var(--c-text) !important;
+}
+
+body.eams-v2 .progress-modern-page .progress-user-link {
+  color: var(--c-primary) !important;
+}
+
+body.eams-v2 .progress-modern-page .loading-skeleton {
+  background: var(--c-surface-sunk) !important;
+}
+
+body.eams-v2 .progress-modern-page .loading-skeleton::after {
+  background: linear-gradient(90deg, transparent, var(--c-surface-hover), transparent) !important;
+}
+
+body.eams-v2 .progress-modern-page .progress-search-wrap .input-group-text,
+body.eams-v2 .progress-modern-page .progress-search-wrap .form-control,
+body.eams-v2 .progress-modern-page .progress-month-filter {
+  border-color: var(--c-border-strong);
+  background-color: var(--c-surface) !important;
+  color: var(--c-text);
+}
+
+body.eams-v2 .progress-modern-page .table-light {
+  --bs-table-bg: var(--c-surface-sunk);
+  --bs-table-color: var(--c-text);
+  --bs-table-border-color: var(--c-border);
+}
+
+body.eams-v2 .progress-modern-page .progress-table-card .table tbody tr:hover > * {
+  background-color: var(--c-surface-hover) !important;
+}
+
+/* Dashboard Compliance: sisakan ruang tetap untuk chevron bawaan select. */
+body.eams-v2 .compliance-dashboard .dashboard-year-filter {
+  width: 112px;
+  min-width: 112px;
+}
+
+body.eams-v2 .compliance-dashboard .dashboard-year-filter .form-select,
+body.eams-v2 .compliance-dashboard #progressYear {
+  min-width: 96px;
+  padding-right: 2.35rem !important;
+  background-position: right 0.7rem center;
+  text-align: left;
+}
+
+body.eams-v2 .compliance-dashboard #monthFilter,
+body.eams-v2 .compliance-dashboard #progressMonth,
+body.eams-v2 .compliance-dashboard #pendingMonth {
+  padding-right: 2.35rem !important;
+  background-position: right 0.7rem center;
+}
+
+/* Sidebar: teks memakai sisa ruang, chevron selalu terkunci di kanan. */
+body.eams-v2 .app-sidebar .sidebar-menu .nav-link > p {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+}
+
+body.eams-v2 .app-sidebar .sidebar-menu .nav-link .sidebar-chevron {
+  flex: 0 0 auto;
+  margin-right: 0 !important;
+  margin-left: auto !important;
+  padding-left: var(--s-3);
+  float: none !important;
+}
+
+@media (max-width: 768px) {
+  body.eams-v2 .compliance-dashboard .dashboard-year-filter {
+    width: 100%;
+    min-width: 0;
+  }
+
+  body.eams-v2 .compliance-dashboard .dashboard-year-filter .form-select {
+    width: 100%;
+  }
+}
