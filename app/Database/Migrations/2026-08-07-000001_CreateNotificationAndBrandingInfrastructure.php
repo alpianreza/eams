@@ -15,7 +15,7 @@ class CreateNotificationAndBrandingInfrastructure extends Migration
                 'setting_key' => ['type' => 'VARCHAR', 'constraint' => 120],
                 'setting_value' => ['type' => 'TEXT', 'null' => true],
                 'is_secret' => ['type' => 'TINYINT', 'constraint' => 1, 'default' => 0],
-                'updated_by' => ['type' => 'INT', 'unsigned' => true, 'null' => true],
+                'updated_by' => ['type' => 'INT', 'null' => true],
                 'updated_at' => ['type' => 'DATETIME', 'default' => new RawSql('CURRENT_TIMESTAMP')],
             ]);
             $this->forge->addKey('id', true);
@@ -26,8 +26,8 @@ class CreateNotificationAndBrandingInfrastructure extends Migration
         if (! $this->db->tableExists('notifications')) {
             $this->forge->addField([
                 'id' => ['type' => 'BIGINT', 'unsigned' => true, 'auto_increment' => true],
-                'user_id' => ['type' => 'INT', 'unsigned' => true],
-                'actor_user_id' => ['type' => 'INT', 'unsigned' => true, 'null' => true],
+                'user_id' => ['type' => 'INT'],
+                'actor_user_id' => ['type' => 'INT', 'null' => true],
                 'type' => ['type' => 'VARCHAR', 'constraint' => 40, 'default' => 'info'],
                 'title' => ['type' => 'VARCHAR', 'constraint' => 180],
                 'message' => ['type' => 'TEXT'],
@@ -42,10 +42,13 @@ class CreateNotificationAndBrandingInfrastructure extends Migration
             ]);
             $this->forge->addKey('id', true);
             $this->forge->addKey(['user_id', 'read_at']);
+            $this->forge->addKey('actor_user_id');
             $this->forge->addKey('created_at');
             $this->forge->addUniqueKey('dedupe_key');
-            $this->forge->addForeignKey('user_id', 'users', 'id', 'CASCADE', 'CASCADE');
-            $this->forge->addForeignKey('actor_user_id', 'users', 'id', 'SET NULL', 'CASCADE');
+
+            // The legacy users table differs between installations (signedness,
+            // engine, and id type). Keep user references indexed at application
+            // level so this migration works on every existing EAMS database.
             $this->forge->createTable('notifications', true);
         }
 
