@@ -1,29 +1,7 @@
 /*
  * EAMS - manifes gaya aplikasi.
- *
- * Berkas ini dulu 44 KB berisi tiga lapisan yang saling menimpa dan
- * sulit dilacak. Isinya sekarang dipecah per lapisan.
- *
- * URUTAN DI BAWAH INI JANGAN DIUBAH. Setiap lapisan berhak menimpa
- * lapisan di atasnya, dan itulah cara cascade lama bekerja.
- *
- *   1. app-base.css          komponen warisan: kartu, tabel, header
- *   2. app-compliance.css    dashboard compliance
- *   3. app-shell.css         cangkang Layout Refresh 2.0
- *   4. app-polish.css        lapisan rapi terakhir, alias --eams-*
- *   5. app-sidebar-light.css sidebar terang, Fase 2
- *   6. app-sidebar-mini.css  sidebar menciut jadi ikon
- *   7. ui-stability.css      anti-kedip tema + pengaman header mobile
- *   8. ui-fixes.css          koreksi lintas halaman dengan specificity tinggi
- *
- * mobile.css dimuat setelah semua ini lewat <link> di main.php.
- * File stability/fixes memakai selektor shell yang lebih spesifik untuk
- * menjaga kontrol penting dari aturan global dan gaya inline halaman.
- *
- * Kalau salah satu berkas diubah, naikkan ?v= di barisnya supaya
- * peramban tidak menyajikan versi lama dari singgahan.
- *
- * Ingin sidebar navy lagi? Hapus baris app-sidebar-light.css.
+ * Urutan import mengikuti cascade shell yang sudah ada.
+ * mobile.css tetap dimuat paling akhir melalui layouts/main.php.
  */
 
 @import url("app-base.css?v=1");
@@ -34,3 +12,4 @@
 @import url("app-sidebar-mini.css?v=1");
 @import url("ui-stability.css?v=1");
 @import url("ui-fixes.css?v=1");
+@import url("mobile-sidebar-fix.css?v=1");

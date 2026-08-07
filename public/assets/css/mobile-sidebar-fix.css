@@ -1,0 +1,75 @@
+/* Mobile sidebar: keep expanded checklist items inside a scrollable viewport. */
+@media (max-width: 991.98px) {
+  body.eams-v2 .app-sidebar {
+    display: flex !important;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden !important;
+    box-sizing: border-box;
+  }
+
+  @supports (height: 100dvh) {
+    body.eams-v2 .app-sidebar {
+      height: 100dvh;
+      max-height: 100dvh;
+    }
+  }
+
+  body.eams-v2 .app-sidebar .eams-sidebar-brand {
+    flex: 0 0 auto;
+  }
+
+  body.eams-v2 .app-sidebar .sidebar-wrapper {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  body.eams-v2 .app-sidebar .sidebar-wrapper > nav {
+    flex: 0 0 auto;
+    min-height: min-content;
+  }
+
+  body.eams-v2 .app-sidebar .sidebar-menu {
+    width: 100%;
+    min-width: 0;
+    padding-bottom: 1.5rem;
+  }
+
+  body.eams-v2 .app-sidebar .sidebar-menu .nav-item,
+  body.eams-v2 .app-sidebar .sidebar-menu .nav-link,
+  body.eams-v2 .app-sidebar .sidebar-menu .nav-link > p {
+    min-width: 0;
+  }
+
+  body.eams-v2 .app-sidebar .sidebar-menu .nav-link > p {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  body.eams-v2 .app-sidebar #menuComplianceChecklist {
+    width: calc(100% - 0.75rem);
+    margin-left: 0.75rem !important;
+    padding-right: 0.25rem;
+  }
+
+  body.eams-v2 .app-sidebar #menuComplianceChecklist.show {
+    overflow: visible;
+  }
+
+  body.eams-v2 .app-sidebar #menuComplianceChecklist .nav-link {
+    width: 100%;
+    margin-left: 0 !important;
+    padding-right: 0.55rem;
+  }
+}
