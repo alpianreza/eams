@@ -11,9 +11,8 @@ class NotificationService
 {
     public function sendToUser(int $userId, array $payload): ?int
     {
+        if (! db_connect()->tableExists('notifications')) return null;
         $notificationModel = new NotificationModel();
-        if (! $notificationModel->db->tableExists('notifications')) return null;
-
         $dedupeKey = trim((string) ($payload['dedupe_key'] ?? ''));
         if ($dedupeKey !== '') {
             $existing = $notificationModel->where('dedupe_key', $dedupeKey)->first();
@@ -40,11 +39,11 @@ class NotificationService
         $user = (new UserModel())->find($userId);
         if ($user) {
             $settings = (new AppSettingModel())->allAsMap(true);
-            $emailStatus = $this->sendEmail($user, $data, $settings);
-            $waStatus = $this->sendWhatsApp($user, $data, $settings);
-            $notificationModel->update($id, ['email_status' => $emailStatus, 'whatsapp_status' => $waStatus]);
+            $notificationModel->update($id, [
+                'email_status' => $this->sendEmail($user, $data, $settings),
+                'whatsapp_status' => $this->sendWhatsApp($user, $data, $settings),
+            ]);
         }
-
         return $id;
     }
 
@@ -54,12 +53,10 @@ class NotificationService
         $recipient = trim((string) ($user['email'] ?? ''));
         if ($recipient === '' && filter_var($user['username'] ?? '', FILTER_VALIDATE_EMAIL)) $recipient = $user['username'];
         if (! filter_var($recipient, FILTER_VALIDATE_EMAIL)) return 'missing_target';
-
         try {
-            $company = $settings['company_name'] ?? 'EAMS';
             $email = Services::email();
             $email->setTo($recipient);
-            $email->setSubject('[' . $company . '] ' . $data['title']);
+            $email->setSubject('[' . ($settings['company_name'] ?? 'EAMS') . '] ' . $data['title']);
             $email->setMessage($data['message'] . "\n\n" . base_url(ltrim((string) $data['url'], '/')));
             return $email->send() ? 'sent' : 'failed';
         } catch (\Throwable $e) {
@@ -74,7 +71,6 @@ class NotificationService
         $number = preg_replace('/\D+/', '', (string) ($user['wa_number'] ?? ''));
         $webhook = trim((string) ($settings['notification_whatsapp_webhook'] ?? ''));
         if ($number === '' || $webhook === '') return 'missing_target';
-
         try {
             $headers = ['Accept' => 'application/json'];
             $token = trim((string) ($settings['notification_whatsapp_token'] ?? ''));
