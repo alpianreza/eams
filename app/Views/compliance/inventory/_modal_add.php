@@ -1,145 +1,26 @@
+<?php $picUsers = (new \App\Models\UserModel())->where('status', 'active')->orderBy('name', 'ASC')->findAll(); ?>
 <div class="modal fade" id="modalAddInventory" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content compliance-modal-content">
-      <form
-        action="<?= base_url('compliance/inventory/store') ?>"
-        method="post"
-        enctype="multipart/form-data"
-        id="formAddInventory"
-        onsubmit="return false;">
-
+      <form action="<?= base_url('compliance/inventory/store') ?>" method="post" enctype="multipart/form-data" id="formAddInventory" onsubmit="return false;">
         <?= csrf_field() ?>
-
-        <div class="modal-header compliance-modal-header">
-          <div>
-            <h5 class="modal-title fw-bold mb-0 d-inline-flex align-items-center gap-2">
-              <i class="bi bi-plus-circle"></i>
-              Tambah Compliance Inventory
-            </h5>
-            <div class="small text-muted mt-1">Lengkapi data aset agar siap dipakai untuk checklist.</div>
-          </div>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-        </div>
-
-        <div class="modal-body compliance-modal-body">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="category_id" class="form-label">Kategori Compliance</label>
-              <select name="category_id" id="category_id" class="form-select" required>
-                <option value="">-- pilih kategori --</option>
-                <?php foreach ($categories as $cat): ?>
-                  <option value="<?= $cat['id'] ?>"><?= esc($cat['name']) ?></option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label for="item_type_id" class="form-label">Nama Item / Inventory</label>
-              <select id="item_type_id" name="item_type_id" class="form-select" required>
-                <option value="">-- pilih item --</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label for="add_asset_code" class="form-label">No Inventaris</label>
-              <input
-                id="add_asset_code"
-                type="text"
-                name="asset_code"
-                class="form-control"
-                placeholder="Kosongkan untuk generate otomatis">
-            </div>
-
-            <div class="col-md-6">
-              <label for="add_type_description" class="form-label">Tipe / Spesifikasi</label>
-              <input
-                id="add_type_description"
-                type="text"
-                name="type_description"
-                class="form-control"
-                placeholder="3,5 Kg / CO2 / Thermatic">
-            </div>
-
-            <div class="col-md-6">
-              <label for="add_area_id" class="form-label">Area</label>
-              <select id="add_area_id" name="area_id" class="form-select" required>
-                <option value="">-- pilih area --</option>
-                <?php foreach ($areas as $area): ?>
-                  <option value="<?= $area['id'] ?>"><?= esc($area['name']) ?></option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label for="add_specific_area" class="form-label">Specific Area</label>
-              <input
-                id="add_specific_area"
-                type="text"
-                name="specific_area"
-                class="form-control"
-                placeholder="Office Lt. 1 / Line A">
-            </div>
-
-            <div class="col-md-6">
-              <label for="add_pic" class="form-label">PIC</label>
-              <input
-                id="add_pic"
-                type="text"
-                name="pic"
-                class="form-control"
-                placeholder="Nama penanggung jawab">
-            </div>
-
-            <div class="col-md-6">
-              <label for="add_status" class="form-label">Status</label>
-              <select id="add_status" name="status" class="form-select">
-                <option value="">-- pilih status --</option>
-                <option value="Good">Good</option>
-                <option value="Need Repair">Need Repair</option>
-                <option value="Not Active">Not Active</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label for="add_qty" class="form-label">Qty</label>
-              <input id="add_qty" type="number" name="qty" class="form-control" min="1" value="1">
-            </div>
-
-            <div class="col-md-6">
-              <label for="add_expired_date" class="form-label">Expired Date</label>
-              <input id="add_expired_date" type="date" name="expired_date" class="form-control">
-            </div>
-
-            <div class="col-12">
-              <label for="add_remark" class="form-label">Remark</label>
-              <textarea
-                id="add_remark"
-                name="remark"
-                rows="2"
-                class="form-control"
-                placeholder="Catatan tambahan"></textarea>
-            </div>
-
-            <div class="col-12">
-              <label for="add_photo" class="form-label">Foto Inventory</label>
-              <input id="add_photo" type="file" name="photo" class="form-control" accept="image/*">
-            </div>
-
-            <div class="col-12 text-center">
-              <img id="previewPhoto" class="img-fluid rounded d-none mt-2 inventory-add-preview" alt="Preview foto">
-            </div>
-          </div>
-        </div>
-
-        <div class="modal-footer compliance-modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-            Batal
-          </button>
-          <button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-1">
-            <i class="bi bi-save"></i>
-            Simpan Inventory
-          </button>
-        </div>
+        <div class="modal-header compliance-modal-header"><div><h5 class="modal-title fw-bold mb-0 d-inline-flex align-items-center gap-2"><i class="bi bi-plus-circle"></i> Tambah Compliance Inventory</h5><div class="small text-muted mt-1">Lengkapi data aset agar siap dipakai untuk checklist.</div></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button></div>
+        <div class="modal-body compliance-modal-body"><div class="row g-3">
+          <div class="col-md-6"><label for="category_id" class="form-label">Kategori Compliance</label><select name="category_id" id="category_id" class="form-select" required><option value="">-- pilih kategori --</option><?php foreach ($categories as $cat): ?><option value="<?= $cat['id'] ?>"><?= esc($cat['name']) ?></option><?php endforeach; ?></select></div>
+          <div class="col-md-6"><label for="item_type_id" class="form-label">Nama Item / Inventory</label><select id="item_type_id" name="item_type_id" class="form-select" required><option value="">-- pilih item --</option></select></div>
+          <div class="col-md-6"><label for="add_asset_code" class="form-label">No Inventaris</label><input id="add_asset_code" type="text" name="asset_code" class="form-control" placeholder="Kosongkan untuk generate otomatis"></div>
+          <div class="col-md-6"><label for="add_type_description" class="form-label">Tipe / Spesifikasi</label><input id="add_type_description" type="text" name="type_description" class="form-control" placeholder="3,5 Kg / CO2 / Thermatic"></div>
+          <div class="col-md-6"><label for="add_area_id" class="form-label">Area</label><select id="add_area_id" name="area_id" class="form-select" required><option value="">-- pilih area --</option><?php foreach ($areas as $area): ?><option value="<?= $area['id'] ?>"><?= esc($area['name']) ?></option><?php endforeach; ?></select></div>
+          <div class="col-md-6"><label for="add_specific_area" class="form-label">Specific Area</label><input id="add_specific_area" type="text" name="specific_area" class="form-control" placeholder="Office Lt. 1 / Line A"></div>
+          <div class="col-md-6"><label for="add_pic" class="form-label">PIC (User EAMS)</label><select id="add_pic" name="pic" class="form-select" required><option value="">-- pilih user aktif --</option><?php foreach ($picUsers as $picUser): ?><option value="<?= esc($picUser['name']) ?>"><?= esc($picUser['name']) ?> · <?= esc($picUser['username']) ?></option><?php endforeach; ?></select><small class="text-muted">PIC harus merupakan user yang dapat login.</small></div>
+          <div class="col-md-6"><label for="add_status" class="form-label">Status</label><select id="add_status" name="status" class="form-select"><option value="">-- pilih status --</option><option value="Good">Good</option><option value="Need Repair">Need Repair</option><option value="Not Active">Not Active</option></select></div>
+          <div class="col-md-6"><label for="add_qty" class="form-label">Qty</label><input id="add_qty" type="number" name="qty" class="form-control" min="1" value="1"></div>
+          <div class="col-md-6"><label for="add_expired_date" class="form-label">Expired Date</label><input id="add_expired_date" type="date" name="expired_date" class="form-control"></div>
+          <div class="col-12"><label for="add_remark" class="form-label">Remark</label><textarea id="add_remark" name="remark" rows="2" class="form-control" placeholder="Catatan tambahan"></textarea></div>
+          <div class="col-12"><label for="add_photo" class="form-label">Foto Inventory</label><input id="add_photo" type="file" name="photo" class="form-control" accept="image/*"></div>
+          <div class="col-12 text-center"><img id="previewPhoto" class="img-fluid rounded d-none mt-2 inventory-add-preview" alt="Preview foto"></div>
+        </div></div>
+        <div class="modal-footer compliance-modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-1"><i class="bi bi-save"></i> Simpan Inventory</button></div>
       </form>
     </div>
   </div>
