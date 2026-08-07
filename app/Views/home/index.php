@@ -1,250 +1,140 @@
 <?= $this->extend('layouts/main') ?>
 
 <?php
-$title = 'Home';
-$monthMap = [
-  1 => 'Januari',
-  2 => 'Februari',
-  3 => 'Maret',
-  4 => 'April',
-  5 => 'Mei',
-  6 => 'Juni',
-  7 => 'Juli',
-  8 => 'Agustus',
-  9 => 'September',
-  10 => 'Oktober',
-  11 => 'November',
-  12 => 'Desember',
-];
-
-$selectedMonthNumber = (int) date('n', strtotime($selectedMonth . '-01'));
-$selectedMonthYear = date('Y', strtotime($selectedMonth . '-01'));
-$selectedMonthLabel = ($monthMap[$selectedMonthNumber] ?? date('F', strtotime($selectedMonth . '-01'))) . ' ' . $selectedMonthYear;
-
-$pendingColor = $summary['pending'] > 0 ? 'text-warning' : 'text-success';
-$notOkColor   = $summary['not_ok'] > 0 ? 'text-danger' : 'text-success';
-
-$progressTextClass = 'text-success';
-if ($progress < 50) {
-  $progressTextClass = 'text-danger';
-} elseif ($progress < 80) {
-  $progressTextClass = 'text-warning';
-}
-
-$progressBarClass = 'bg-success';
-if ($progress < 50) {
-  $progressBarClass = 'bg-danger';
-} elseif ($progress < 80) {
-  $progressBarClass = 'bg-warning';
-}
+$title = 'Dashboard';
+$monthMap = [1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April', 5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus', 9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'];
+$selectedDate = DateTime::createFromFormat('!Y-m', $selectedMonth) ?: new DateTime('first day of this month');
+$selectedMonthLabel = ($monthMap[(int) $selectedDate->format('n')] ?? $selectedDate->format('F')) . ' ' . $selectedDate->format('Y');
+$progressValue = max(0, min(100, (int) $progress));
+$pendingItems = array_values(array_filter($pendingList, static fn(array $item): bool => (int) ($item['remaining'] ?? 0) > 0));
+$visiblePendingItems = array_slice($pendingItems, 0, 8);
+$pendingInventoryCount = count($pendingItems);
+$completedInventoryCount = max(0, (int) $summary['total'] - $pendingInventoryCount);
+$progressTone = $progressValue >= 80 ? 'is-success' : ($progressValue >= 50 ? 'is-warning' : 'is-danger');
+$statusTitle = $progressValue >= 100 ? 'Periode selesai' : ($progressValue >= 80 ? 'Hampir selesai' : ($progressValue >= 50 ? 'Perlu dipercepat' : 'Butuh perhatian'));
+$statusDescription = $progressValue >= 100
+  ? 'Seluruh kewajiban checklist pada periode ini sudah terpenuhi.'
+  : $pendingInventoryCount . ' inventaris masih memiliki checklist yang belum diselesaikan.';
 ?>
 
 <?= $this->section('content') ?>
 <div class="home-dashboard-page">
-  <section class="card border-0 shadow-sm home-hero-card no-lift mb-3">
-    <div class="card-body d-flex flex-wrap justify-content-between align-items-start gap-3">
-      <div>
-        <p class="home-kicker mb-1">Beranda Compliance</p>
-        <h5 class="mb-1 fw-bold">Halo, <?= esc(session('name')) ?></h5>
-        <p class="text-muted mb-0">Status checklist periode <strong><?= esc($selectedMonthLabel) ?></strong></p>
+  <section class="home-command-card mb-3">
+    <div class="home-command-copy">
+      <span class="home-eyebrow"><i class="bi bi-grid-1x2"></i> Pusat operasi compliance</span>
+      <h1>Selamat datang, <?= esc(session('name')) ?></h1>
+      <p>Pantau prioritas, selesaikan checklist, dan tindak lanjuti temuan dalam satu tampilan.</p>
+    </div>
 
-        <div class="home-hero-actions d-flex flex-wrap gap-2 mt-3">
-          <a href="<?= base_url('compliance/inventory') ?>" class="btn btn-sm btn-primary home-hero-btn">
-            <i class="bi bi-list-check me-1"></i> Mulai Ceklis
-          </a>
-
-          <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
-            <a href="<?= base_url('compliance/dashboard') ?>" class="btn btn-sm btn-outline-primary home-hero-btn">
-              <i class="bi bi-clipboard-data me-1"></i> Dashboard Compliance
-            </a>
-          <?php endif; ?>
-
-          <?php if (hasRole(['admin', 'compliance'])): ?>
-            <a href="<?= base_url('holidays') ?>" class="btn btn-sm btn-outline-secondary home-hero-btn">
-              <i class="bi bi-calendar-event me-1"></i> Hari Libur
-            </a>
-          <?php endif; ?>
+    <div class="home-command-tools">
+      <form method="get" class="home-period-form">
+        <label for="monthFilter">Periode laporan</label>
+        <div class="home-period-control">
+          <i class="bi bi-calendar3" aria-hidden="true"></i>
+          <select id="monthFilter" name="month" class="form-select" onchange="this.form.submit()">
+            <?php
+            $start = new DateTime('2026-01-01');
+            $end = new DateTime(date('Y-m-01'));
+            while ($start <= $end):
+              $value = $start->format('Y-m');
+              $label = ($monthMap[(int) $start->format('n')] ?? $start->format('F')) . ' ' . $start->format('Y');
+            ?>
+              <option value="<?= esc($value) ?>" <?= $selectedMonth === $value ? 'selected' : '' ?>><?= esc($label) ?></option>
+            <?php $start->modify('+1 month'); endwhile; ?>
+          </select>
         </div>
-      </div>
-
-      <form method="get" class="home-month-form ms-auto">
-        <label for="monthFilter" class="form-label form-label-sm mb-1">Periode</label>
-        <select id="monthFilter" name="month" class="form-select form-select-sm home-month-select" onchange="this.form.submit()">
-          <?php
-          $start = new DateTime('2026-01-01');
-          $end   = new DateTime(date('Y-m-01'));
-          while ($start <= $end):
-            $value = $start->format('Y-m');
-            $label = ($monthMap[(int) $start->format('n')] ?? $start->format('F')) . ' ' . $start->format('Y');
-          ?>
-            <option value="<?= esc($value) ?>" <?= $selectedMonth === $value ? 'selected' : '' ?>>
-              <?= esc($label) ?>
-            </option>
-          <?php
-            $start->modify('+1 month');
-          endwhile;
-          ?>
-        </select>
       </form>
+
+      <div class="home-command-actions">
+        <a href="<?= base_url('compliance/inventory') ?>" class="btn btn-primary"><i class="bi bi-check2-square"></i> Mulai checklist</a>
+        <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?>
+          <a href="<?= base_url('compliance/dashboard') ?>" class="btn btn-outline-primary"><i class="bi bi-bar-chart-line"></i> Analitik</a>
+        <?php endif; ?>
+      </div>
     </div>
   </section>
 
-  <div class="row g-3 mb-3">
-    <div class="col-6 col-lg-3">
-      <article class="card h-100 border-0 shadow-sm home-stat-card no-lift">
-        <div class="card-body">
-          <div class="home-stat-label">Total Inventory</div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="home-stat-value"><?= (int) $summary['total'] ?></div>
-            <span class="home-stat-icon text-info"><i class="bi bi-box-seam"></i></span>
-          </div>
-        </div>
-      </article>
-    </div>
+  <section class="home-kpi-grid mb-3" aria-label="Ringkasan <?= esc($selectedMonthLabel) ?>">
+    <article class="home-kpi-card is-primary">
+      <span class="home-kpi-icon"><i class="bi bi-activity"></i></span>
+      <div><span>Progress periode</span><strong><?= $progressValue ?>%</strong><small><?= esc($selectedMonthLabel) ?></small></div>
+    </article>
+    <article class="home-kpi-card">
+      <span class="home-kpi-icon"><i class="bi bi-box-seam"></i></span>
+      <div><span>Inventaris saya</span><strong><?= (int) $summary['total'] ?></strong><small><?= $completedInventoryCount ?> tanpa tunggakan</small></div>
+    </article>
+    <article class="home-kpi-card <?= (int) $summary['pending'] > 0 ? 'is-warning' : 'is-success' ?>">
+      <span class="home-kpi-icon"><i class="bi bi-clock-history"></i></span>
+      <div><span>Belum checklist</span><strong><?= (int) $summary['pending'] ?></strong><small><?= $pendingInventoryCount ?> inventaris terdampak</small></div>
+    </article>
+    <article class="home-kpi-card <?= (int) $summary['not_ok'] > 0 ? 'is-danger' : 'is-success' ?>">
+      <span class="home-kpi-icon"><i class="bi bi-exclamation-diamond"></i></span>
+      <div><span>Temuan</span><strong><?= (int) $summary['not_ok'] ?></strong><small><?= (int) $summary['not_ok'] > 0 ? 'Perlu tindak lanjut' : 'Tidak ada temuan' ?></small></div>
+    </article>
+  </section>
 
-    <div class="col-6 col-lg-3">
-      <article class="card h-100 border-0 shadow-sm home-stat-card no-lift">
-        <div class="card-body">
-          <div class="home-stat-label">Belum Checklist</div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="home-stat-value <?= esc($pendingColor) ?>"><?= (int) $summary['pending'] ?></div>
-            <span class="home-stat-icon text-warning"><i class="bi bi-hourglass-split"></i></span>
-          </div>
-        </div>
-      </article>
-    </div>
+  <div class="home-workspace-grid">
+    <section class="home-panel">
+      <header class="home-panel-header">
+        <div><span class="home-panel-kicker">Antrian kerja</span><h2>Prioritas checklist</h2><p>Inventaris dengan kewajiban yang belum selesai pada <?= esc($selectedMonthLabel) ?>.</p></div>
+        <?php if ($pendingInventoryCount > 0): ?><span class="home-count-badge"><?= $pendingInventoryCount ?> inventaris</span><?php endif; ?>
+      </header>
 
-    <div class="col-6 col-lg-3">
-      <article class="card h-100 border-0 shadow-sm home-stat-card no-lift">
-        <div class="card-body">
-          <div class="home-stat-label">Temuan</div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="home-stat-value <?= esc($notOkColor) ?>"><?= (int) $summary['not_ok'] ?></div>
-            <span class="home-stat-icon text-danger"><i class="bi bi-exclamation-triangle"></i></span>
-          </div>
-        </div>
-      </article>
-    </div>
+      <div class="home-task-list">
+        <?php if (empty($visiblePendingItems)): ?>
+          <div class="home-empty-state"><span><i class="bi bi-check2-circle"></i></span><h3>Semua checklist selesai</h3><p>Tidak ada antrian pekerjaan untuk periode ini.</p></div>
+        <?php else: ?>
+          <?php foreach ($visiblePendingItems as $inv): ?>
+            <?php
+            $missingPeriods = $inv['missing_periods'] ?? [];
+            $frequencyRaw = strtolower((string) ($inv['checklist_frequency'] ?? 'monthly'));
+            $frequencyMeta = match ($frequencyRaw) {
+              'daily' => ['label' => 'Harian', 'icon' => 'bi-calendar-day'],
+              'weekly' => ['label' => 'Mingguan', 'icon' => 'bi-calendar-week'],
+              default => ['label' => 'Bulanan', 'icon' => 'bi-calendar-month'],
+            };
+            $defaultPeriodKey = $selectedMonth;
+            if (!empty($missingPeriods)) {
+              $first = (string) $missingPeriods[0];
+              if ($frequencyRaw === 'daily') $defaultPeriodKey = $selectedMonth . '-' . $first;
+              elseif ($frequencyRaw === 'weekly') $defaultPeriodKey = $selectedMonth . '-W' . (int) $first;
+            }
+            $remaining = (int) ($inv['remaining'] ?? 0);
+            $checklistUrl = base_url('compliance/checklist/' . (int) $inv['id']) . '?period_key=' . urlencode($defaultPeriodKey);
+            ?>
+            <article class="home-task-row">
+              <span class="home-task-icon"><i class="bi <?= esc($frequencyMeta['icon']) ?>"></i></span>
+              <div class="home-task-main"><h3><?= esc($inv['item_name'] ?? '-') ?></h3><p><i class="bi bi-geo-alt"></i> <?= esc($inv['specific_area'] ?? 'Lokasi belum diatur') ?></p></div>
+              <div class="home-task-frequency"><span><?= esc($frequencyMeta['label']) ?></span><small>Frekuensi</small></div>
+              <button type="button" class="home-remaining-button open-popover" data-id="<?= (int) $inv['id'] ?>" data-frequency="<?= esc($frequencyRaw) ?>" data-missing="<?= esc(json_encode($missingPeriods), 'attr') ?>" aria-label="Lihat <?= $remaining ?> periode yang belum selesai"><strong><?= $remaining ?></strong><span>tersisa</span></button>
+              <a href="<?= esc($checklistUrl) ?>" class="btn btn-primary home-task-action">Kerjakan <i class="bi bi-arrow-right"></i></a>
+            </article>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
 
-    <div class="col-6 col-lg-3">
-      <article class="card h-100 border-0 shadow-sm home-stat-card no-lift">
-        <div class="card-body">
-          <div class="home-stat-label">Progress Bulan Ini</div>
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="home-stat-value <?= esc($progressTextClass) ?>"><?= (int) $progress ?>%</div>
-            <span class="home-stat-icon text-success"><i class="bi bi-graph-up-arrow"></i></span>
-          </div>
-        </div>
-      </article>
-    </div>
+      <?php if ($pendingInventoryCount > count($visiblePendingItems)): ?>
+        <footer class="home-panel-footer"><a href="<?= base_url('compliance/inventory') ?>">Lihat semua <?= $pendingInventoryCount ?> inventaris <i class="bi bi-arrow-right"></i></a></footer>
+      <?php endif; ?>
+    </section>
+
+    <aside class="home-side-column">
+      <section class="home-panel home-progress-panel">
+        <header class="home-panel-header is-compact"><div><span class="home-panel-kicker">Kesehatan periode</span><h2>Progress keseluruhan</h2></div></header>
+        <div class="home-progress-visual"><div class="home-progress-ring <?= esc($progressTone) ?>" style="--home-progress: <?= $progressValue ?>" role="img" aria-label="Progress <?= $progressValue ?> persen"><div><strong><?= $progressValue ?>%</strong><span>selesai</span></div></div></div>
+        <div class="home-status-callout <?= esc($progressTone) ?>"><i class="bi <?= $progressValue >= 100 ? 'bi-check-circle' : 'bi-info-circle' ?>"></i><div><strong><?= esc($statusTitle) ?></strong><p><?= esc($statusDescription) ?></p></div></div>
+      </section>
+
+      <section class="home-panel">
+        <header class="home-panel-header is-compact"><div><span class="home-panel-kicker">Navigasi cepat</span><h2>Buka modul</h2></div></header>
+        <nav class="home-shortcut-list" aria-label="Navigasi cepat">
+          <a href="<?= base_url('compliance/inventory') ?>"><span><i class="bi bi-boxes"></i></span><div><strong>Inventory compliance</strong><small>Kelola aset dan checklist</small></div><i class="bi bi-chevron-right"></i></a>
+          <?php if (hasRole(['admin', 'compliance', 'auditor'])): ?><a href="<?= base_url('compliance/dashboard') ?>"><span><i class="bi bi-clipboard-data"></i></span><div><strong>Dashboard compliance</strong><small>Analisis performa menyeluruh</small></div><i class="bi bi-chevron-right"></i></a><?php endif; ?>
+          <?php if (hasRole(['admin', 'compliance'])): ?><a href="<?= base_url('holidays') ?>"><span><i class="bi bi-calendar-event"></i></span><div><strong>Hari libur</strong><small>Atur kalender operasional</small></div><i class="bi bi-chevron-right"></i></a><?php endif; ?>
+        </nav>
+      </section>
+    </aside>
   </div>
-
-  <section class="card border-0 shadow-sm no-lift mb-3">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h6 class="mb-0 fw-semibold">Progress Checklist</h6>
-        <strong><?= (int) $progress ?>%</strong>
-      </div>
-      <div class="progress home-progress-wrap" role="progressbar" aria-label="Progress checklist" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?= (int) $progress ?>">
-        <div class="progress-bar <?= esc($progressBarClass) ?>" style="width: <?= (int) $progress ?>%;"></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="card border-0 shadow-sm no-lift">
-    <div class="card-header bg-transparent border-0 pb-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
-      <div>
-        <h6 class="mb-1 fw-semibold">Inventory Belum Checklist</h6>
-        <small class="text-muted">Periode <?= esc($selectedMonthLabel) ?></small>
-      </div>
-    </div>
-
-    <div class="card-body pt-2">
-      <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0 home-pending-table">
-          <thead>
-            <tr>
-              <th width="56" class="text-center">No</th>
-              <th>Nama Item</th>
-              <th>Lokasi</th>
-              <th width="120" class="text-center">Frekuensi</th>
-              <th width="90" class="text-center">Sisa</th>
-              <th width="140" class="text-center">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php if (empty($pendingList)): ?>
-              <tr>
-                <td colspan="6" class="text-center py-5">
-                  <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
-                  <div class="fw-semibold">Semua periode sudah selesai</div>
-                  <small class="text-muted">Pertahankan konsistensi checklist.</small>
-                </td>
-              </tr>
-            <?php else: ?>
-              <?php foreach ($pendingList as $i => $inv): ?>
-                <?php
-                $missingPeriods = $inv['missing_periods'] ?? [];
-                $frequencyRaw = strtolower((string)($inv['checklist_frequency'] ?? 'monthly'));
-
-                $frequencyLabel = match ($frequencyRaw) {
-                  'daily' => 'Harian',
-                  'weekly' => 'Mingguan',
-                  default => 'Bulanan',
-                };
-
-                if ((int)($inv['remaining'] ?? 0) === 0) {
-                  $remainingClass = 'btn-outline-success';
-                } elseif ((int)($inv['remaining'] ?? 0) <= 3) {
-                  $remainingClass = 'btn-outline-warning';
-                } else {
-                  $remainingClass = 'btn-outline-danger';
-                }
-
-                $defaultPeriodKey = $selectedMonth;
-                if (!empty($missingPeriods)) {
-                  $first = (string) $missingPeriods[0];
-                  if ($frequencyRaw === 'daily') {
-                    $defaultPeriodKey = $selectedMonth . '-' . $first;
-                  } elseif ($frequencyRaw === 'weekly') {
-                    $defaultPeriodKey = $selectedMonth . '-W' . (int) $first;
-                  }
-                }
-
-                $checklistUrl = base_url('compliance/checklist/' . (int) $inv['id']) . '?period_key=' . urlencode($defaultPeriodKey);
-                ?>
-                <tr>
-                  <td class="text-center"><?= $i + 1 ?></td>
-                  <td class="fw-semibold"><?= esc($inv['item_name'] ?? '-') ?></td>
-                  <td><?= esc($inv['specific_area'] ?? '-') ?></td>
-                  <td class="text-center">
-                    <span class="badge bg-light text-dark border"><?= esc($frequencyLabel) ?></span>
-                  </td>
-                  <td class="text-center">
-                    <button
-                      type="button"
-                      class="btn btn-sm <?= esc($remainingClass) ?> open-popover"
-                      data-id="<?= (int) $inv['id'] ?>"
-                      data-frequency="<?= esc($frequencyRaw) ?>"
-                      data-missing="<?= esc(json_encode($missingPeriods), 'attr') ?>">
-                      <?= (int) ($inv['remaining'] ?? 0) ?>
-                    </button>
-                  </td>
-                  <td class="text-center">
-                    <a
-                      href="<?= esc($checklistUrl) ?>"
-                      class="btn btn-sm btn-primary">
-                      Buka Ceklis
-                    </a>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
 </div>
 <?= $this->endSection() ?>
 
@@ -253,11 +143,6 @@ if ($progress < 50) {
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
-<script>
-  window.HOME_DASHBOARD = {
-    selectedMonth: "<?= esc($selectedMonth) ?>",
-    checklistBaseUrl: "<?= rtrim(base_url('compliance/checklist'), '/') ?>"
-  };
-</script>
+<script>window.HOME_DASHBOARD = {selectedMonth: "<?= esc($selectedMonth) ?>", checklistBaseUrl: "<?= rtrim(base_url('compliance/checklist'), '/') ?>"};</script>
 <script src="<?= base_url('js/home-dashboard.js?v=' . filemtime(FCPATH . 'js/home-dashboard.js')) ?>"></script>
 <?= $this->endSection() ?>
